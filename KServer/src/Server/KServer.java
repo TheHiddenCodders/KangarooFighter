@@ -1,0 +1,265 @@
+package Server;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import Kangaroo.Game;
+import Kangaroo.Kangaroo;
+import Packets.ClientReadyPacket;
+import Packets.GameFoundPacket;
+import Packets.GameReadyPacket;
+import Packets.LoginPacket;
+import Packets.MatchMakingPacket;
+import Packets.ServerInfoPacket;
+import Packets.UpdateKangarooPacket;
+
+/**
+ * Server class, contain everything need to interact with clients.
+ * @author Nerisma
+ *
+ */
+public class KServer extends Server 
+{
+	// Attributes
+	/** Since our server put kangaroos together, we need an array to store them. */
+	private ArrayList<Kangaroo> kangaroos;
+	/** We'll link our kangaroos to a game with this */
+	private HashMap<ClientProcessor, Game> gameLinker;
+	/** A list of all the games currently opened */
+	private ArrayList<Game> games;
+	/** In case two packet are needed for an action */
+	private Object o2;
+	
+	private static final boolean debug = true;
+	
+	/**
+	 * Simple constructor, build arrays, maps..
+	 */
+	public KServer()
+	{
+		kangaroos = new ArrayList<Kangaroo>();
+		games = new ArrayList<Game>();
+		gameLinker = new HashMap<ClientProcessor, Game>();
+	}
+	
+	/* Extended methods
+	 * 
+	 */
+	
+	@Override
+	public void onConnection(ClientProcessor cp)
+	{
+		if (debug)
+			System.out.println("Client connected to the server with ip: " + cp.getClient().getInetAddress().getHostAddress());
+		
+		/* On connection, we'll build a kangaroo associated to the client.
+		 * Then we'll add it to the kangaroos holder.
+		 */
+		kangaroos.add(new Kangaroo(cp));		 
+	}
+
+	@Override
+	public void onReceive(Object o, ClientProcessor cp)
+	{
+		if (debug)
+			System.out.println("Received: " + o.toString());
+		
+		// If a loginpacket is received
+		if (o.getClass().isAssignableFrom(LoginPacket.class))
+		{			
+			LoginPacket receivedPacket = (LoginPacket) o;
+			receivedPacket.accepted = !isClientPseudoAlreadyTaken(receivedPacket);
+			
+			displayAllKangaroos();
+			
+			// Send to the client (who sent the packet) the updated packet
+			this.send(cp, receivedPacket);
+		}
+		
+		// If a serverinfopacket is received
+		else if (o.getClass().isAssignableFrom(ServerInfoPacket.class))
+		{
+			ServerInfoPacket receivedPacket = (ServerInfoPacket) o;
+			receivedPacket.nGamesOnline = games.size(); // TODO
+			receivedPacket.nGamesPlayed = 0; // TODO
+			receivedPacket.nKangaroosOnline = kangaroos.size(); // TODO
+			receivedPacket.nKangaroosRegistered = 0; // TODO
+			
+			// Send to the client (who sent the packet) the updated packet
+			this.send(cp, receivedPacket);
+		}
+		
+		else if (o.getClass().isAssignableFrom(MatchMakingPacket.class))
+		{
+			MatchMakingPacket receivedPacket = (MatchMakingPacket) o;
+			
+			if (receivedPacket.search && getGameFromIP(receivedPacket.ip) == null)
+				putOnMatchMaking(receivedPacket);
+			
+			else if (!receivedPacket.search && getGameFromIP(receivedPacket.ip) != null)
+				games.remove(getGameFromIP(receivedPacket.ip));
+			
+		}
+		
+		else if (o.getClass().isAssignableFrom(UpdateKangarooPacket.class))
+		{
+			// TODO:
+		}
+		
+		else if (o.getClass().isAssignableFrom(ClientReadyPacket.class))
+		{
+			ClientReadyPacket packet = (ClientReadyPacket) o;
+			
+			if (o2 != null)
+			{
+				ClientReadyPacket packet2 = (ClientReadyPacket) o2;
+				send(getKangarooFromIP(packet2.ip).getClient(), new GameReadyPacket());
+				send(getKangarooFromIP(packet.ip).getClient(), new GameReadyPacket());
+			}
+			else
+			{
+				o2 = o;
+			}
+		}
+			
+	}
+
+	@Override
+	public void onDisconnection(ClientProcessor cp)
+	{
+		if (debug)
+			System.out.println("Client disconnected from server with ip: " + cp.getClient().getInetAddress().getHostAddress());
+		
+		try
+		{
+			kangaroos.remove(getKangarooFromIP(cp.getClient().getInetAddress().getHostAddress()));
+			cp.getClient().close();
+		} catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/* Methods
+	 * Here, we'll put all the methods who will be used onReceive or onDisconnection
+	 * Those methods threats packets
+	 */
+	/**
+	 * Check if the client pseudo is already taken
+	 * @param packet the login packet
+	 * @return true if it's already taken, false if isn't
+	 */
+	private boolean isClientPseudoAlreadyTaken(LoginPacket packet)
+	{
+		for (int i = 0; i < kangaroos.size(); i++)
+		{
+			if (kangaroos.get(i).getName().equals(packet.pseudo))
+			{
+				if (debug)
+					System.err.println("Pseudo \"" + packet.pseudo + "\" already taken.");
+				
+				return true;
+			}
+		}
+		
+		getKangarooFromIP(packet.ip).setName(packet.pseudo);
+		return false;
+	}	
+	
+	/**
+	 * Put k on matchmaking
+	 * @param k the kangaroo to send in seekGame
+	 */
+	private void putOnMatchMaking(MatchMakingPacket p)
+	{
+		Kangaroo k = getKangarooFromIP(p.ip);
+		
+		boolean gameFound = false;
+		
+		// Check if a game is waiting
+		for (Game game : games)
+		{
+			// if a waiting game is found
+			if ( game.isWaiting() )
+			{
+				// Link the player in this game
+				game.linkKangaroo(k);
+				gameLinker.put(k.getClient(), game);
+				gameFound = true;
+				
+				System.out.println("Kangaroo : " + k.getName() + " found a game : " + games.indexOf(game));
+				System.out.println("Kangaroo : " + game.getK1().getName() + " found another kangaroo to play");
+				
+				// Send to kangaroos that game have been found
+				GameFoundPacket foundPacket = new GameFoundPacket();
+				foundPacket.ip = game.getK1().getClient().remote.getAddress().getHostAddress();
+				send(game.getK1().getClient(), foundPacket);
+				
+				foundPacket.ip = game.getK2().getClient().remote.getAddress().getHostAddress();
+				send(game.getK2().getClient(), foundPacket);
+				
+				// Send kangaroo's informations 
+				game.init();
+				
+				break;
+			}
+		}
+		
+		// If the game was not found
+		if (!gameFound)
+		{
+			// Create a new game, wait another player and send a request
+			Game newGame = new Game(k);
+			games.add( newGame );
+			gameLinker.put(k.getClient(), newGame);
+			
+			System.out.println("Kangaroo : " + k.getName() + " created a game and wait : " + games.indexOf(newGame));
+		}
+	}
+	
+	/**
+	 * Get a kangaroo from the ip of a client
+	 * @param ip
+	 * @return the associated kangaroo or null if no kangaroo exist with this ip
+	 */
+	private Kangaroo getKangarooFromIP(String ip)
+	{
+		for (Kangaroo kangaroo : kangaroos)
+			if (kangaroo.getClient().remote.getAddress().getHostAddress().equals(ip))
+				return kangaroo;
+		
+		return null;
+	}
+	
+	/**
+	 * Get a game from the ip of a client
+	 * @param ip
+	 * @return the associated game or null if no game exist with this ip
+	 */
+	private Game getGameFromIP(String ip)
+	{
+		for (Game game : games)
+			if (game.getK2() != null)
+				if (game.getK1().getClient().remote.getAddress().equals(ip) || game.getK2().getClient().remote.getAddress().equals(ip))
+					return game;
+			else
+				if (game.getK1().getClient().remote.getAddress().equals(ip))
+					return game;
+		
+		return null;
+	}
+	
+	private void displayAllKangaroos()
+	{
+		System.out.println("--------------------------");
+		
+		for (Kangaroo k : kangaroos)
+		{
+			System.out.println(k.getName() + " - " + k.getClient().getClient().getInetAddress().getHostAddress());
+		}
+		
+		System.out.println("--------------------------");
+	}
+}
