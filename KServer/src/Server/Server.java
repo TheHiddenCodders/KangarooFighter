@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import Packets.HeartBeatPacket;
+
 /** Encapsulate the server socket and can handle multiple clients.
  * 
  */
@@ -19,6 +21,13 @@ public abstract class Server
 	private ServerSocket server = null;
 	protected boolean running;
 	protected ArrayList<ClientProcessor> clients;
+	
+	/** Amount of time without answer to heartbeat, considered as disconnected */
+	private static final long timeout = 5000;
+	/** Amount of time between two heartbeat */
+	private static final long hbDelay = 10000;
+	
+	private float timeSinceLastHeartbeat = System.currentTimeMillis();
 	
 	/** Default constructor, create a serverSocket with a default port.
 	 * 
@@ -62,7 +71,7 @@ public abstract class Server
 	 */
 	public void open()
 	{
-		// Create the thread
+		// Create the ServerClient/Communication thread (synchrone)
 		Thread t = new Thread(new Runnable()
 		{
 			@Override
@@ -106,7 +115,30 @@ public abstract class Server
 			
 	      });
 	      t.start();
+	      
+	      // TODO: MAKE IT WORK (Usefull for disconnection during game)
+	      Thread t2 = new Thread(new Runnable()
+	      {
+			
+			@Override
+			public void run()
+			{	
+				while (running)
+				{		
+					// Send heartbeat if it's necessary (delay handled in the function)
+					sendHeartBeat();
+					
+					// Disconnect clients which have a last heartbeat answer time > timeout
+					disconnectInactives();
+				}
+			}
+			
+	      });
+	      //t2.start(); 
+	      
 	}
+	
+	
 	
 	public abstract void onConnection(ClientProcessor cp);
 	public abstract void onReceive(Object o, ClientProcessor cp);
@@ -152,6 +184,33 @@ public abstract class Server
 		}
 	}
 
+	/**
+	 * Send heartbeat to all clients
+	 */
+	public void sendHeartBeat()
+	{
+		if (System.currentTimeMillis() - timeSinceLastHeartbeat > hbDelay)
+		{
+			send(-1, new HeartBeatPacket());
+			timeSinceLastHeartbeat = System.currentTimeMillis();
+		}
+	}
+	
+	/**
+	 * Called each frames
+	 */
+	public void disconnectInactives()
+	{
+		for (ClientProcessor cp : clients)
+		{
+			// If last heatbeat answer is > timeout
+			if (System.currentTimeMillis() - cp.getLastHeartBeatAnswer() > timeout)
+			{
+				onDisconnection(cp);
+				System.err.println(cp.remote.getHostString() + " no answer to heartbeat");
+			}
+		}
+	}
 	
 	/**
 	 * 

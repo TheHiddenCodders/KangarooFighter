@@ -9,6 +9,7 @@ import Kangaroo.Kangaroo;
 import Packets.ClientReadyPacket;
 import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
+import Packets.HeartBeatPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
@@ -43,8 +44,8 @@ public class KServer extends Server
 		gameLinker = new HashMap<ClientProcessor, Game>();
 	}
 	
-	/* Extended methods
-	 * 
+	/* 
+	 * Extended methods
 	 */
 	
 	@Override
@@ -53,7 +54,8 @@ public class KServer extends Server
 		if (debug)
 			System.out.println("Client connected to the server with ip: " + cp.getClient().getInetAddress().getHostAddress());
 		
-		/* On connection, we'll build a kangaroo associated to the client.
+		/*
+		 * On connection, we'll build a kangaroo associated to the client.
 		 * Then we'll add it to the kangaroos holder.
 		 */
 		kangaroos.add(new Kangaroo(cp));		 
@@ -65,8 +67,14 @@ public class KServer extends Server
 		if (debug)
 			System.out.println("Received: " + o.toString());
 		
-		// If a loginpacket is received
-		if (o.getClass().isAssignableFrom(LoginPacket.class))
+		// Receive heartbeat
+		if (o.getClass().isAssignableFrom(HeartBeatPacket.class))			
+			cp.setLastHeartBeatAnswer(System.currentTimeMillis());
+		
+		/**
+		 *  If a login packet is received
+		 */
+		else if (o.getClass().isAssignableFrom(LoginPacket.class))
 		{			
 			LoginPacket receivedPacket = (LoginPacket) o;
 			receivedPacket.accepted = !isClientPseudoAlreadyTaken(receivedPacket);
@@ -77,7 +85,9 @@ public class KServer extends Server
 			this.send(cp, receivedPacket);
 		}
 		
-		// If a serverinfopacket is received
+		/**
+		 *  If a server info packet is received
+		 */
 		else if (o.getClass().isAssignableFrom(ServerInfoPacket.class))
 		{
 			ServerInfoPacket receivedPacket = (ServerInfoPacket) o;
@@ -90,6 +100,9 @@ public class KServer extends Server
 			this.send(cp, receivedPacket);
 		}
 		
+		/**
+		 * 
+		 */
 		else if (o.getClass().isAssignableFrom(MatchMakingPacket.class))
 		{
 			MatchMakingPacket receivedPacket = (MatchMakingPacket) o;
@@ -102,11 +115,17 @@ public class KServer extends Server
 			
 		}
 		
+		/**
+		 * 
+		 */
 		else if (o.getClass().isAssignableFrom(UpdateKangarooPacket.class))
 		{
 			// TODO:
 		}
 		
+		/**
+		 * 
+		 */
 		else if (o.getClass().isAssignableFrom(ClientReadyPacket.class))
 		{
 			ClientReadyPacket packet = (ClientReadyPacket) o;
@@ -121,6 +140,11 @@ public class KServer extends Server
 			{
 				o2 = o;
 			}
+		}
+		
+		else
+		{
+			System.err.println("This packet isn't handled by Server side: " + o.getClass());
 		}
 			
 	}
@@ -142,10 +166,12 @@ public class KServer extends Server
 		}
 	}
 	
-	/* Methods
+	/*
+	 * Methods
 	 * Here, we'll put all the methods who will be used onReceive or onDisconnection
 	 * Those methods threats packets
 	 */
+	
 	/**
 	 * Check if the client pseudo is already taken
 	 * @param packet the login packet
@@ -200,7 +226,7 @@ public class KServer extends Server
 				foundPacket.ip = game.getK2().getClient().remote.getAddress().getHostAddress();
 				send(game.getK2().getClient(), foundPacket);
 				
-				// Send kangaroo's informations 
+				// Launch game
 				game.init();
 				
 				break;

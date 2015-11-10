@@ -3,7 +3,7 @@ package Packets;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class ClientReadyPacket implements Serializable
+public class GameFoundPacket implements Serializable
 {
 	public String ip;
 	
@@ -14,5 +14,5 @@ public class ClientReadyPacket implements Serializable
 				+ "\n"
 				+ "- [IP]: " + ip + "\n";
 				
-	}	
+	}
 }

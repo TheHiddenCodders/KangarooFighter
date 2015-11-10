@@ -3,7 +3,7 @@ package Packets;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class ClientReadyPacket implements Serializable
+public class HeartBeatPacket implements Serializable
 {
 	public String ip;
 	
@@ -12,7 +12,6 @@ public class ClientReadyPacket implements Serializable
 	{
 		return super.toString() 
 				+ "\n"
-				+ "- [IP]: " + ip + "\n";
-				
-	}	
+				+ "[ip]: " + ip + "\n";
+	}
 }

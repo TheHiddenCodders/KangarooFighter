@@ -18,7 +18,9 @@ public class Main
 		inputReader = new BufferedInputStream(System.in);
 		
 		while (!msg.equals("exit"))
-		{
+		{		
+			//server.disconnectInactives();
+			
 			int stream;
 			byte[] b = new byte[4096];
 				
