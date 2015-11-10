@@ -1,6 +1,9 @@
 package Packets;
 
-public class ClientReadyPacket
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class ClientReadyPacket implements Serializable
 {
 	public String ip;
 	

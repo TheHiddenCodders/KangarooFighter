@@ -55,13 +55,13 @@ public abstract class Client extends Socket implements Runnable
             input = new ObjectInputStream(this.getInputStream());
             output = new ObjectOutputStream(this.getOutputStream());
             
-            // While null object havn't been passed
+            // While -1 object havn't been passed
             while (!o.equals(-1))
             {     
 	            // Receive from server
 	            Object receivedObject = receiveFromServer();
-	            
-	            onReceived(receivedObject);
+	    		
+	    		onReceived(receivedObject);
             }
             
         } 

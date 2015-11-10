@@ -9,6 +9,7 @@ import com.genesys.kclient.Main;
 
 import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
+import Packets.UpdateKangarooPacket;
 
 public class HomeStage extends Stage
 {
@@ -18,6 +19,7 @@ public class HomeStage extends Stage
 	/** Used as a wire between stage to access client for example */
 	public Main main;
 	private ServerInfoPacket updateServerInfoPacket;
+	private UpdateKangarooPacket pPlayer, pOpponent;
 	private boolean seekingGame = false, gameFound = false;
 	
 	// Components
@@ -91,8 +93,8 @@ public class HomeStage extends Stage
 		if (updateServerInfoPacket != null)
 			updateUIServerInfos(updateServerInfoPacket);
 			
-		if (gameFound)
-			main.setStage(new GameStage(main));
+		if (gameFound && pPlayer != null && pOpponent != null)
+			main.setStage(new GameStage(main, pPlayer, pOpponent));
 		
 		// Input update
 		if (Gdx.input.justTouched())
@@ -196,5 +198,10 @@ public class HomeStage extends Stage
 		gameFound = true;
 	}
 	
+	public void setKangaroosInit(UpdateKangarooPacket pPlayer, UpdateKangarooPacket pOpponent)
+	{
+		this.pPlayer = pPlayer;
+		this.pOpponent = pOpponent;
+	}
 	
 }

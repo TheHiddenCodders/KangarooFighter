@@ -3,6 +3,7 @@ package com.genesys.stages;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.genesys.kclient.Kangaroo;
 import com.genesys.kclient.Main;
 
@@ -33,15 +34,26 @@ public class GameStage extends Stage
 	private boolean clientReady = false; // client have load the stage
 	private boolean gameReady = false; // Both client have load the stage
 	
+	private Label playerName, opponentName;
+	
 	/*
 	 * Constructors
 	 */
-	public GameStage(Main main)
+	public GameStage(Main main, UpdateKangarooPacket pPlayer, UpdateKangarooPacket pOpponent)
 	{
 		super();
 		this.main = main;
 		
 		background = new Texture(Gdx.files.internal("sprites/dojo.png"));
+		initKangaroos(pPlayer, pOpponent);
+		
+		playerName = new Label(player.getName(), main.skin);
+		playerName.setPosition(5, this.getHeight() - playerName.getHeight() - 5);
+		opponentName = new Label(opponent.getName(), main.skin);
+		opponentName.setPosition(this.getWidth() - opponentName.getWidth() - 5, this.getHeight() - opponentName.getHeight() - 5);
+		
+		this.addActor(playerName);
+		this.addActor(opponentName);
 	}
 	
 	@Override
@@ -54,7 +66,7 @@ public class GameStage extends Stage
 		// If both clients are ready, the game is ready
 		if (gameReady)
 		{
-			
+			// TODO
 		}
 	}
 
@@ -70,13 +82,19 @@ public class GameStage extends Stage
 	 * Methods
 	 */
 	/**
-	 * Called by network, will set the kangaroos at game init
+	 * Kangaroos init
 	 * @param p
 	 */
-	public void initKangaroos(UpdateKangarooPacket pPlayer, UpdateKangarooPacket pOpponent)
+	private void initKangaroos(UpdateKangarooPacket pPlayer, UpdateKangarooPacket pOpponent)
 	{
 		player = new Kangaroo(pPlayer);
 		opponent = new Kangaroo(pOpponent);
+		
+		// Determine which one need to be flipped
+		if (player.getSprite().getX() > opponent.getSprite().getX())
+			player.flip();
+		else
+			opponent.flip();
 		
 		this.addActor(player);
 		this.addActor(opponent);
@@ -85,6 +103,7 @@ public class GameStage extends Stage
 	/*
 	 * Getters & Setters
 	 */
+	
 	private void setClientReady()
 	{
 		clientReady = true;
@@ -99,7 +118,5 @@ public class GameStage extends Stage
 	{
 		gameReady = true;
 		System.out.println("Game start!");
-	}
-	
-	
+	}	
 }

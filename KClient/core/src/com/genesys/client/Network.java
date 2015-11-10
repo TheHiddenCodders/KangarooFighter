@@ -9,6 +9,8 @@ import com.genesys.stages.HomeStage;
 import com.genesys.stages.InscriptionStage;
 
 import Packets.GameFoundPacket;
+import Packets.GameReadyPacket;
+import Packets.HeartBeatPacket;
 import Packets.LoginPacket;
 import Packets.ServerInfoPacket;
 import Packets.UpdateKangarooPacket;
@@ -26,8 +28,9 @@ public class Network extends Client
 	 * Attributes
 	 */
 	private Stage currentStage;
+	private Object o2; // Buffer object
+
 	private static final boolean debug = true;
-	private Object o2;
 	
 	/*
 	 * Constructor
@@ -49,79 +52,152 @@ public class Network extends Client
 			System.out.println("Received : " + o.toString());
 		}
 		
-		if (currentStage.getClass().getSimpleName().equals("InscriptionStage"))
-			doInscriptionStageStuff(o);
-		else if (currentStage.getClass().getSimpleName().equals("HomeStage"))
-			doHomeStageStuff(o);
-		else if (currentStage.getClass().getSimpleName().equals("GameStage") && !currentStage.getClass().getSimpleName().equals("InscriptionStage"));
-			doGameStageStuff(o);
+		/**
+		 * Answer to the heartbeat
+		 */
+		if (o.getClass().isAssignableFrom(HeartBeatPacket.class))
+			answerHeartBeat(o);
 		
+		/**
+		 * Received a login packet
+		 * 1. Check if pseudo is available on server
+		 * 2. If it is, log the client
+		 */
+		else if (o.getClass().isAssignableFrom(LoginPacket.class))
+		{
+			if (currentStage.getClass().isAssignableFrom(InscriptionStage.class))
+			{
+				InscriptionStage stage = (InscriptionStage) currentStage;
+				
+				// Get login ask answer
+				if (o.getClass().isAssignableFrom(LoginPacket.class))
+				{
+					LoginPacket packet = (LoginPacket) o;
+					
+					// If the packet accepted the request
+					if (packet.accepted)
+						stage.loggedIn(); // Log in
+				}
+			}
+			else
+			{
+				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on InscriptionStage.");
+			}
+		}
+		
+		/**
+		 * Received a server info packet (this is a question --> answer packet, the same packet is used to ask and answer)
+		 * 1. Transmit the info to the stage
+		 */
+		else if (o.getClass().isAssignableFrom(ServerInfoPacket.class))
+		{
+			if (currentStage.getClass().isAssignableFrom(HomeStage.class))
+			{
+				HomeStage stage = (HomeStage) currentStage;
+				
+				// Get server infos
+				if (o.getClass().isAssignableFrom(ServerInfoPacket.class))
+				{
+					ServerInfoPacket packet = (ServerInfoPacket) o;
+					
+					// Update the server info for the stage
+					stage.updateServerInfos(packet);
+				}
+			}
+			else
+			{
+				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage");
+			}
+		}
+		
+		/**
+		 * Received a game found packet
+		 * 1. Set GameStage
+		 */
+		else if (o.getClass().isAssignableFrom(GameFoundPacket.class))
+		{
+			if (currentStage.getClass().isAssignableFrom(HomeStage.class))
+			{
+				HomeStage stage = (HomeStage) currentStage;
+				stage.setGameFound();
+			}
+			else
+			{
+				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage");
+			}
+		}
+		
+		/**
+		 * Received an update kangaroo packet
+		 * 1. Receive first kangaroo
+		 * 2. Receive second kangaroo
+		 * 3.a) If the game hasn't start
+		 * -> Init kangaroos
+		 * 3.b) Else
+		 * -> Update kangaroos 
+		 */
+		else if (o.getClass().isAssignableFrom(UpdateKangarooPacket.class))
+		{
+			if (currentStage.getClass().isAssignableFrom(HomeStage.class))
+			{
+				HomeStage stage = (HomeStage) currentStage;
+				UpdateKangarooPacket packet = (UpdateKangarooPacket) o;
+				
+				if (o2 != null)
+				{
+					UpdateKangarooPacket packet2 = (UpdateKangarooPacket) o2;
+					
+					stage.setKangaroosInit(packet2, packet);
+					o2 = null;
+				}
+				else
+				{
+					o2 = packet;
+				}
+			}
+			else
+			{
+				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
+			}
+		}
+		
+		/**
+		 * Received a GameReady packet
+		 * 1. Set GameReady on game stage
+		 */
+		else if (o.getClass().isAssignableFrom(GameReadyPacket.class))
+		{
+			if (currentStage.getClass().isAssignableFrom(GameStage.class))
+			{
+				GameStage stage = (GameStage) currentStage;
+				stage.setGameReady();
+			}
+			else
+			{
+				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
+			}
+		}
+		
+		else
+		{
+			System.err.println("This packet isn't handled by Client side: " + o.getClass());
+		}		
 	}
 	
 	/*
 	 * Inherited methods
 	 */
-	private void doInscriptionStageStuff(Object o)
+	
+	/**
+	 * This method send a heartbeatpacket to the server to answer if it's not deconnected
+	 */
+	public void answerHeartBeat(Object o)
 	{
-		InscriptionStage stage = (InscriptionStage) currentStage;
-		
-		// Get login ask answer
-		if (o.getClass().isAssignableFrom(LoginPacket.class))
-		{
-			LoginPacket packet = (LoginPacket) o;
-			
-			// If the packet accepted the request
-			if (packet.accepted)
-				stage.loggedIn(); // Log in
-		}
+		HeartBeatPacket hb = (HeartBeatPacket) o;
+		hb.ip = getIp();
+		send(hb);
 	}
 	
-	private void doHomeStageStuff(Object o)
-	{
-		HomeStage stage = (HomeStage) currentStage;
-		
-		// Get server infos
-		if (o.getClass().isAssignableFrom(ServerInfoPacket.class))
-		{
-			ServerInfoPacket packet = (ServerInfoPacket) o;
-			
-			// Update the server info for the stage
-			stage.updateServerInfos(packet);
-		}
-		
-		if (o.getClass().isAssignableFrom(GameFoundPacket.class))
-		{			
-			stage.setGameFound();
-		}
-	}
-	
-	private void doGameStageStuff(Object o)
-	{
-		// Update characters (or build them if first packets)
-		if (o.getClass().isAssignableFrom(UpdateKangarooPacket.class))
-		{
-			UpdateKangarooPacket packet = (UpdateKangarooPacket) o;
-			
-			if (o2 != null)
-			{
-				UpdateKangarooPacket packet2 = (UpdateKangarooPacket) o2;
-				GameStage stage = (GameStage) currentStage;
-				stage.initKangaroos(packet2, packet);
-				o2 = null;
-			}
-			else
-			{
-				o2 = packet;
-			}
-		}
-		
-		// Tell game ready
-		if (o.getClass().isAssignableFrom(UpdateKangarooPacket.class))
-		{
-			GameStage stage = (GameStage) currentStage;
-			stage.setGameReady();
-		}
-	}
 	/*
 	 * Getters & Setters
 	 */

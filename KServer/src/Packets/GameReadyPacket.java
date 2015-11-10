@@ -1,6 +1,9 @@
 package Packets;
 
-public class GameReadyPacket 
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class GameReadyPacket implements Serializable
 {
 	@Override
 	public String toString()

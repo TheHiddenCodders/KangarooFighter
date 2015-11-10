@@ -28,6 +28,7 @@ public class ClientProcessor implements Runnable
 	protected ObjectInputStream input;
 	protected ObjectOutputStream output;
 	protected InetSocketAddress remote;
+	private float lastHeartBeatAnswerTime;
 	
 	protected Server server;
 	
@@ -60,7 +61,7 @@ public class ClientProcessor implements Runnable
 	{		
 		// While connection is active, treat asks
 		while (!client.isClosed())
-		{			
+		{						
 			// Waiting for client reception
 			Object receivedObject = receiveFromClient();			
 			
@@ -124,5 +125,21 @@ public class ClientProcessor implements Runnable
 	public Socket getClient()
 	{
 		return client;
+	}
+	
+	/** 
+	 * Set the last heartbeat answer time
+	 */
+	public void setLastHeartBeatAnswer(float t)
+	{
+		lastHeartBeatAnswerTime = t;
+	}
+	
+	/** 
+	 * Get the last heartbeat answer time
+	 */
+	public float getLastHeartBeatAnswer()
+	{
+		return lastHeartBeatAnswerTime;
 	}
 }
