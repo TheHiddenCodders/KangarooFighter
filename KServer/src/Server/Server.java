@@ -117,6 +117,7 @@ public abstract class Server
 	      t.start();
 	      
 	      // TODO: MAKE IT WORK (Usefull for disconnection during game)
+	      @SuppressWarnings("unused")
 	      Thread t2 = new Thread(new Runnable()
 	      {
 			
@@ -137,8 +138,6 @@ public abstract class Server
 	      //t2.start(); 
 	      
 	}
-	
-	
 	
 	public abstract void onConnection(ClientProcessor cp);
 	public abstract void onReceive(Object o, ClientProcessor cp);

@@ -46,14 +46,6 @@ public class GameStage extends Stage
 		
 		background = new Texture(Gdx.files.internal("sprites/dojo.png"));
 		initKangaroos(pPlayer, pOpponent);
-		
-		playerName = new Label(player.getName(), main.skin);
-		playerName.setPosition(5, this.getHeight() - playerName.getHeight() - 5);
-		opponentName = new Label(opponent.getName(), main.skin);
-		opponentName.setPosition(this.getWidth() - opponentName.getWidth() - 5, this.getHeight() - opponentName.getHeight() - 5);
-		
-		this.addActor(playerName);
-		this.addActor(opponentName);
 	}
 	
 	@Override
@@ -66,7 +58,11 @@ public class GameStage extends Stage
 		// If both clients are ready, the game is ready
 		if (gameReady)
 		{
-			// TODO
+			player.update();
+
+			if (!player.isSameAsNetwork())
+				updateNetwork();
+			
 		}
 	}
 
@@ -90,14 +86,36 @@ public class GameStage extends Stage
 		player = new Kangaroo(pPlayer);
 		opponent = new Kangaroo(pOpponent);
 		
+		playerName = new Label(player.getName(), main.skin);
+		opponentName = new Label(opponent.getName(), main.skin);
+		
 		// Determine which one need to be flipped
 		if (player.getSprite().getX() > opponent.getSprite().getX())
+		{
 			player.flip();
+			playerName.setPosition(this.getWidth() - playerName.getWidth() - 5, this.getHeight() - playerName.getHeight() - 5);
+			opponentName.setPosition(5, this.getHeight() - opponentName.getHeight() - 5);
+		}
 		else
+		{
 			opponent.flip();
+			playerName.setPosition(5, this.getHeight() - playerName.getHeight() - 5);
+			opponentName.setPosition(this.getWidth() - opponentName.getWidth() - 5, this.getHeight() - opponentName.getHeight() - 5);
+		}
 		
 		this.addActor(player);
 		this.addActor(opponent);
+		this.addActor(playerName);
+		this.addActor(opponentName);
+	}
+	
+	/**
+	 * This method will send the kangaroo datas to update the network
+	 */
+	private void updateNetwork()
+	{
+		main.network.send(player.getUpdatePacket());
+		player.networkImage = player.getUpdatePacket();
 	}
 	
 	/*
@@ -119,4 +137,14 @@ public class GameStage extends Stage
 		gameReady = true;
 		System.out.println("Game start!");
 	}	
+	
+	public Kangaroo getKangarooFromIp(String ip)
+	{
+		if (player.getIp().equals(ip))
+			return player;
+		else if (opponent.getIp().equals(ip))
+			return opponent;
+			
+		return null;
+	}
 }

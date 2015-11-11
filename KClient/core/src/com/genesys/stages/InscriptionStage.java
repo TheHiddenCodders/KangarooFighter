@@ -33,29 +33,32 @@ public class InscriptionStage extends Stage
 		super();
 		this.main = main;
 		
-		// Make components
-		info = new Label("Pseudonyme", main.skin);
-		other = new Label("", main.skin);
-		name = new TextField("", main.skin);
-		connect = new TextButton("Connexion", main.skin);
-		
-		// Place them
-		name.setPosition(Gdx.graphics.getWidth() / 2 - name.getWidth() / 2, Gdx.graphics.getHeight() / 2 - name.getHeight() / 2);
-		info.setPosition(Gdx.graphics.getWidth() / 2 - info.getWidth() / 2, name.getY() + name.getHeight() + 2);
-		connect.setWidth(name.getWidth());
-		connect.setPosition(name.getX(), name.getY() - name.getHeight() - 2);
-		other.setPosition(Gdx.graphics.getWidth() / 2 - info.getWidth() / 2, connect.getY() + connect.getHeight() - 2);
-		other.setColor(1, 0.2f, 0.2f, 1);
-		
-		// Add them to the stage
-		this.addActor(info);
-		this.addActor(name);
-		this.addActor(connect);
-		this.addActor(other);
-		
 		// Check if already registered, if it is, login with known pseudo
 		if (alreadyRegistered())
 			login(main.prefs.getString("[pseudo]"));
+		
+		else
+		{
+			// Make components
+			info = new Label("Pseudonyme", main.skin);
+			other = new Label("", main.skin);
+			name = new TextField("", main.skin);
+			connect = new TextButton("Connexion", main.skin);
+			
+			// Place them
+			name.setPosition(Gdx.graphics.getWidth() / 2 - name.getWidth() / 2, Gdx.graphics.getHeight() / 2 - name.getHeight() / 2);
+			info.setPosition(Gdx.graphics.getWidth() / 2 - info.getWidth() / 2, name.getY() + name.getHeight() + 2);
+			connect.setWidth(name.getWidth());
+			connect.setPosition(name.getX(), name.getY() - name.getHeight() - 2);
+			other.setPosition(Gdx.graphics.getWidth() / 2 - info.getWidth() / 2, connect.getY() + connect.getHeight() - 2);
+			other.setColor(1, 0.2f, 0.2f, 1);
+			
+			// Add them to the stage
+			this.addActor(info);
+			this.addActor(name);
+			this.addActor(connect);
+			this.addActor(other);
+		}
 	}
 	
 	@Override
@@ -70,6 +73,7 @@ public class InscriptionStage extends Stage
 				main.prefs.putString("[pseudo]", name.getText());
 				main.prefs.flush();
 			}
+			
 			main.setStage(new HomeStage(main));
 		}
 				

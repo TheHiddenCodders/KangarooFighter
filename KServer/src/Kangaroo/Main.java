@@ -19,8 +19,6 @@ public class Main
 		
 		while (!msg.equals("exit"))
 		{		
-			//server.disconnectInactives();
-			
 			int stream;
 			byte[] b = new byte[4096];
 				
@@ -28,6 +26,13 @@ public class Main
 			stream = inputReader.read(b);
 			msg = new String(b, 0, stream);
 			msg = msg.replace(System.lineSeparator(), "");
+			
+			// Commands
+			if (msg.contains("display"))
+			{
+				if (msg.split("-")[1].equals("all"))
+					server.displayAllKangaroos();
+			}
 		}
 	}
 

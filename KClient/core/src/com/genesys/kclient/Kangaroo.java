@@ -1,10 +1,12 @@
 package com.genesys.kclient;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.genesys.enums.Direction;
 
 import Packets.UpdateKangarooPacket;
 
@@ -20,8 +22,14 @@ public class Kangaroo extends Actor
 
 	private Texture kangaroo, flippedKangaroo;
 	
+	// Compare kangaroo update packet to this network image to know if server need to be updated
+	public UpdateKangarooPacket networkImage;
+	
 	/*
 	 * Constructors
+	 */
+	/**
+	 * unused
 	 */
 	public Kangaroo()
 	{
@@ -48,6 +56,8 @@ public class Kangaroo extends Actor
 		sprite.setPosition(p.x, p.y);
 		name = p.name;
 		health = p.health;
+		
+		networkImage = getUpdatePacket();
 	}
 	
 	@Override
@@ -68,6 +78,26 @@ public class Kangaroo extends Actor
 	 * Methods
 	 */
 	
+	public void update()
+	{
+		if (Gdx.input.isKeyPressed(Keys.LEFT))
+			walk(Direction.LEFT);
+		else if (Gdx.input.isKeyPressed(Keys.RIGHT))
+			walk(Direction.RIGHT);
+	}
+	
+	/**
+	 * Make the kangaroo walk to the left or to the right
+	 * @param direction
+	 */
+	public void walk(Direction direction)
+	{
+		if (direction == Direction.LEFT)
+			sprite.translateX(-1);
+		else if (direction == Direction.RIGHT)
+			sprite.translateX(1);
+	}
+	
 	/**
 	 * Update kangaroo fields by packets.
 	 * @param p the packet received
@@ -79,6 +109,8 @@ public class Kangaroo extends Actor
 		{
 			health =p.health;
 			sprite.setPosition(p.x, p.y);
+			
+			networkImage = p;
 		}
 	}
 	
@@ -93,6 +125,24 @@ public class Kangaroo extends Actor
 			sprite.setTexture(kangaroo);			
 	}
 	
+	public void setSameAsNetwork()
+	{
+		networkImage = getUpdatePacket();
+	}
+	
+	/**
+	 * Compare kangaroo and is network image to know if server needs to be updated
+	 * @return true if they match, false if they don't
+	 */
+	public boolean isSameAsNetwork()
+	{
+		if (this.sprite.getX() == networkImage.x && this.sprite.getY() == networkImage.y && this.getHealth() == networkImage.health)
+			return true;
+		
+		else
+			return false;
+	}
+
 	/*
 	 * Getters & Setters
 	 */
@@ -133,5 +183,10 @@ public class Kangaroo extends Actor
 
 	public void setHealth(int health) {
 		this.health = health;
+	}
+	
+	public String getIp()
+	{
+		return ip;
 	}
 }

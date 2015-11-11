@@ -134,4 +134,34 @@ public class Game
 	{
 		return k2;
 	}
+	
+	/**
+	 * Get kangaroo from ip
+	 * @param ip
+	 * @return k1, k2, otherwise : null
+	 */
+	public Kangaroo getKangarooFromIp(String ip)
+	{
+		if (k1.getClient().getClient().getInetAddress().getHostAddress().equals(ip))
+			return k1;
+		else if (k2.getClient().getClient().getInetAddress().getHostAddress().equals(ip))
+			return k2;
+		
+		return null;
+	}
+	
+	/**
+	 * Get kangaroo from opponent ip
+	 * @param ip
+	 * @return k1, k2, otherwise : null
+	 */
+	public Kangaroo getKangarooFromOpponentIp(String ip)
+	{
+		if (k1.getClient().getClient().getInetAddress().getHostAddress().equals(ip))
+			return k2;
+		else if (k2.getClient().getClient().getInetAddress().getHostAddress().equals(ip))
+			return k1;
+			
+		return null;
+	}
 }

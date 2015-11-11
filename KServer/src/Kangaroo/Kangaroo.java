@@ -49,6 +49,21 @@ public class Kangaroo
 	}
 	
 	/**
+	 * Update kangaroo fields by packets.
+	 * @param p the packet received
+	 */
+	public void updateFromPacket(UpdateKangarooPacket p)
+	{
+		// Check that packet correspond to the kangaroo by checking names match.
+		if (p.name.equals(name))
+		{
+			position.x = p.x;
+			position.y = p.y;
+			health = p.health;
+		}
+	}
+	
+	/**
 	 * Init the name of the kangaroo.
 	 * 
 	 * @param name

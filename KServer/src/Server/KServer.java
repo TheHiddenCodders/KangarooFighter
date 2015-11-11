@@ -67,33 +67,33 @@ public class KServer extends Server
 		if (debug)
 			System.out.println("Received: " + o.toString());
 		
-		// Receive heartbeat
+		/**
+		 * Receive heartbeat (not implemented yet)
+		 */
 		if (o.getClass().isAssignableFrom(HeartBeatPacket.class))			
 			cp.setLastHeartBeatAnswer(System.currentTimeMillis());
 		
 		/**
-		 *  If a login packet is received
+		 * Receive Login packet 
 		 */
 		else if (o.getClass().isAssignableFrom(LoginPacket.class))
 		{			
 			LoginPacket receivedPacket = (LoginPacket) o;
 			receivedPacket.accepted = !isClientPseudoAlreadyTaken(receivedPacket);
 			
-			displayAllKangaroos();
-			
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
 		}
 		
 		/**
-		 *  If a server info packet is received
+		 * Receive Server info packet
 		 */
 		else if (o.getClass().isAssignableFrom(ServerInfoPacket.class))
 		{
 			ServerInfoPacket receivedPacket = (ServerInfoPacket) o;
-			receivedPacket.nGamesOnline = games.size(); // TODO
+			receivedPacket.nGamesOnline = games.size(); 
 			receivedPacket.nGamesPlayed = 0; // TODO
-			receivedPacket.nKangaroosOnline = kangaroos.size(); // TODO
+			receivedPacket.nKangaroosOnline = kangaroos.size(); 
 			receivedPacket.nKangaroosRegistered = 0; // TODO
 			
 			// Send to the client (who sent the packet) the updated packet
@@ -101,7 +101,7 @@ public class KServer extends Server
 		}
 		
 		/**
-		 * 
+		 * Receive a Match making packet
 		 */
 		else if (o.getClass().isAssignableFrom(MatchMakingPacket.class))
 		{
@@ -116,15 +116,26 @@ public class KServer extends Server
 		}
 		
 		/**
-		 * 
+		 * Receive an update kangaroo packet
 		 */
 		else if (o.getClass().isAssignableFrom(UpdateKangarooPacket.class))
 		{
-			// TODO:
+			UpdateKangarooPacket receivedPacket = (UpdateKangarooPacket) o;
+			
+			// Update kangaroo
+			getKangarooFromIP(receivedPacket.ip).updateFromPacket(receivedPacket);
+			
+			// Send kangaroo to the opponent
+			Game game = getGameFromIP(receivedPacket.ip);
+			System.out.println("Game is null : " + (game == null));
+			Kangaroo k = game.getKangarooFromOpponentIp(receivedPacket.ip);
+			System.out.println("K is null : " + (k == null));
+			send(k.getClient(), receivedPacket);
+			
 		}
 		
 		/**
-		 * 
+		 * Receive a client ready packet
 		 */
 		else if (o.getClass().isAssignableFrom(ClientReadyPacket.class))
 		{
@@ -158,6 +169,14 @@ public class KServer extends Server
 		try
 		{
 			kangaroos.remove(getKangarooFromIP(cp.getClient().getInetAddress().getHostAddress()));
+			
+			for (Game game : games)
+			{
+				if (game.getKangarooFromIp(cp.getClient().getInetAddress().getHostAddress()) != null)
+				{
+					games.remove(game);
+				}
+			}
 			cp.getClient().close();
 		} catch (IOException e) 
 		{
@@ -177,7 +196,7 @@ public class KServer extends Server
 	 * @param packet the login packet
 	 * @return true if it's already taken, false if isn't
 	 */
-	private boolean isClientPseudoAlreadyTaken(LoginPacket packet)
+	public boolean isClientPseudoAlreadyTaken(LoginPacket packet)
 	{
 		for (int i = 0; i < kangaroos.size(); i++)
 		{
@@ -250,7 +269,7 @@ public class KServer extends Server
 	 * @param ip
 	 * @return the associated kangaroo or null if no kangaroo exist with this ip
 	 */
-	private Kangaroo getKangarooFromIP(String ip)
+	public Kangaroo getKangarooFromIP(String ip)
 	{
 		for (Kangaroo kangaroo : kangaroos)
 			if (kangaroo.getClient().remote.getAddress().getHostAddress().equals(ip))
@@ -264,20 +283,21 @@ public class KServer extends Server
 	 * @param ip
 	 * @return the associated game or null if no game exist with this ip
 	 */
-	private Game getGameFromIP(String ip)
+	public Game getGameFromIP(String ip)
 	{
 		for (Game game : games)
-			if (game.getK2() != null)
-				if (game.getK1().getClient().remote.getAddress().equals(ip) || game.getK2().getClient().remote.getAddress().equals(ip))
+		{
+			// Only game which are running
+			if (game.isRunning())
+			{
+				if (game.getK1().getClient().remote.getHostString().equals(ip) || game.getK2().getClient().remote.getHostString().equals(ip))
 					return game;
-			else
-				if (game.getK1().getClient().remote.getAddress().equals(ip))
-					return game;
-		
+			}
+		}
 		return null;
 	}
 	
-	private void displayAllKangaroos()
+	public void displayAllKangaroos()
 	{
 		System.out.println("--------------------------");
 		

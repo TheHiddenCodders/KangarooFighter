@@ -155,9 +155,16 @@ public class Network extends Client
 					o2 = packet;
 				}
 			}
+			else if (currentStage.getClass().isAssignableFrom(GameStage.class))
+			{
+				GameStage stage = (GameStage) currentStage;
+				UpdateKangarooPacket packet = (UpdateKangarooPacket) o;
+				
+				stage.getKangarooFromIp(packet.ip).updateFromPacket(packet);
+			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
+				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage or GameStage");
 			}
 		}
 		

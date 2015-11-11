@@ -44,6 +44,7 @@ public class ServerAccesStage extends Stage
 	 * Connect to the server, return true if succeed, false otherwise
 	 * @return
 	 */
+	@SuppressWarnings("static-access")
 	private boolean connect()
 	{
 		try
@@ -60,6 +61,9 @@ public class ServerAccesStage extends Stage
 			
 			Thread t = new Thread(main.network);
 			t.start();
+			
+			// This little time, let the client build himself
+			t.sleep(20);
 
 			System.out.println("Connected to the server");
 			return true;	
@@ -68,6 +72,9 @@ public class ServerAccesStage extends Stage
 			e.printStackTrace();
 		} catch (IOException e)
 		{
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
