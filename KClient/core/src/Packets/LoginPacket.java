@@ -11,7 +11,6 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class LoginPacket implements Serializable
 {
-	public String ip;
 	public String pseudo;
 	public boolean accepted;
 	
@@ -20,7 +19,6 @@ public class LoginPacket implements Serializable
 	{
 		return super.toString()
 				+ "\n"
-				+ "- [IP]: " + ip + "\n"
 				+ "- [pseudo]: " + pseudo + "\n"
 				+ "- [accepted]: " + accepted + "\n";
 	}

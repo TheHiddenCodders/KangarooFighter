@@ -160,7 +160,7 @@ public class Network extends Client
 				GameStage stage = (GameStage) currentStage;
 				UpdateKangarooPacket packet = (UpdateKangarooPacket) o;
 				
-				stage.getKangarooFromIp(packet.ip).updateFromPacket(packet);
+				stage.getKangarooFromIp( packet.ip ).updateFromPacket(packet);
 			}
 			else
 			{
@@ -201,7 +201,6 @@ public class Network extends Client
 	public void answerHeartBeat(Object o)
 	{
 		HeartBeatPacket hb = (HeartBeatPacket) o;
-		hb.ip = getIp();
 		send(hb);
 	}
 	
@@ -215,7 +214,7 @@ public class Network extends Client
 	
 	public String getIp()
 	{ 	
-		return this.getLocalSocketAddress().toString().replace("/", "").split(":")[0];
+		return this.getLocalSocketAddress().toString().replace("/", "");
 	}
 
 }

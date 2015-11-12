@@ -49,7 +49,6 @@ public class ServerAccesStage extends Stage
 	{
 		try
 		{
-			
 			String ip = "";
 			
 			if (Gdx.app.getType().equals(ApplicationType.Desktop))
@@ -67,14 +66,17 @@ public class ServerAccesStage extends Stage
 
 			System.out.println("Connected to the server");
 			return true;	
-		} catch (UnknownHostException e)
+		} 
+		catch (UnknownHostException e)
 		{
 			e.printStackTrace();
-		} catch (IOException e)
+		} 
+		catch (IOException e)
 		{
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (InterruptedException e) 
+		{
 			e.printStackTrace();
 		}
 		

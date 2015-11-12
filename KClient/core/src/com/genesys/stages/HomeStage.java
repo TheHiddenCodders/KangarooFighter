@@ -124,7 +124,6 @@ public class HomeStage extends Stage
 		seekingGame = true;
 		
 		MatchMakingPacket packet = new MatchMakingPacket();
-		packet.ip = main.network.getIp();
 		packet.search = true;
 		main.network.send(packet);
 	}
@@ -140,7 +139,6 @@ public class HomeStage extends Stage
 		seekingGame = false;
 		
 		MatchMakingPacket packet = new MatchMakingPacket();
-		packet.ip = main.network.getIp();
 		packet.search = false;
 		main.network.send(packet);
 	}
@@ -151,7 +149,6 @@ public class HomeStage extends Stage
 	private void askServerInfos()
 	{
 		ServerInfoPacket packet = new ServerInfoPacket();
-		packet.ip = main.network.getIp();
 		main.network.send(packet);
 	}
 	

@@ -15,7 +15,7 @@ public class UpdateKangarooPacket implements Serializable
 	{
 		return super.toString()
 				+ "\n"
-				+ "- [IP]: " + ip + "\n"
+				+ "- [ip]: " + ip + "\n"
 				+ "- [name]: " + name + "\n"
 				+ "- [x]: " + x + "\n"
 				+ "- [y]: " + y + "\n"

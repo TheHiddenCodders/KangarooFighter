@@ -156,12 +156,18 @@ public abstract class Server
 			for (int i = 0; i < clients.size(); i++)
 				clients.get(i).send(o);
 			
-			System.out.println("Sent : " + o.toString() + "to all \n");
+			System.out.println("Sent to " 
+			+ clients.get(clientIndex).getIp()
+			+ ": "
+			+ o.toString() + "to all \n");
 		}
 		else if ( clientIndex >= 0 && clientIndex < clients.size() )
 		{
 			clients.get(clientIndex).send(o);
-			System.out.println("Sent : " + o.toString() + "to client n°" + clientIndex + "\n");
+			System.out.println("Sent to :"
+			+ clients.get(clientIndex).getIp()
+			+ ": "		
+			+ o.toString() + "to client n°" + clientIndex + "\n");
 		}
 	}
 	

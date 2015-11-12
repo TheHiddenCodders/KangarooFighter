@@ -76,6 +76,10 @@ public class InscriptionStage extends Stage
 			
 			main.setStage(new HomeStage(main));
 		}
+		else
+		{
+			login("debug");
+		}
 				
 		// Input update
 		if (Gdx.input.justTouched())
@@ -104,7 +108,6 @@ public class InscriptionStage extends Stage
 	{
 		// Make a packet with the pseudo
 		LoginPacket logPacket = new LoginPacket();
-		logPacket.ip = main.network.getIp();
 		logPacket.pseudo = pseudo;
 		
 		// Send it
