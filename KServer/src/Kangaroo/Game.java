@@ -164,10 +164,10 @@ public class Game
 			return k2;
 		else if (k2.getClient().getClient().getInetAddress().getHostAddress().equals(ip))
 			return k1;
-			
+		
 		return null;
 	}
-
+	
 	/**
 	 * End the game properly
 	 * @param hostAddress
