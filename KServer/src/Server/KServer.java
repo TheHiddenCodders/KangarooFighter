@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import enums.EndGameType;
 import Kangaroo.Game;
 import Kangaroo.Kangaroo;
 import Packets.ClientReadyPacket;
@@ -168,12 +169,17 @@ public class KServer extends Server
 		
 		try
 		{
+			// First, remove the kangaroo
 			kangaroos.remove(getKangarooFromIP(cp.getClient().getInetAddress().getHostAddress()));
 			
+			// Check if he is in a game
 			for (Game game : games)
 			{
 				if (game.getKangarooFromIp(cp.getClient().getInetAddress().getHostAddress()) != null)
 				{
+					if (game.isRunning())
+						game.end(cp.remote.getAddress().getHostAddress(), EndGameType.Disconnection);
+					
 					games.remove(game);
 				}
 			}

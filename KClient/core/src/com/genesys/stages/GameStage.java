@@ -31,8 +31,8 @@ public class GameStage extends Stage
 	
 	private Kangaroo player, opponent;
 	private Texture background;
-	private boolean clientReady = false; // client have load the stage
 	private boolean gameReady = false; // Both client have load the stage
+	private boolean gamePaused = false;
 	
 	private Label playerName, opponentName;
 	
@@ -46,23 +46,27 @@ public class GameStage extends Stage
 		
 		background = new Texture(Gdx.files.internal("sprites/dojo.png"));
 		initKangaroos(pPlayer, pOpponent);
+		setClientReady();
 	}
 	
 	@Override
 	public void act(float delta) 
-	{			
-		// If player & opponent loaded, client is ready
-		if (player != null && opponent != null && !clientReady)
-			setClientReady();
-		
+	{					
 		// If both clients are ready, the game is ready
-		if (gameReady)
+		if (gameReady && !gamePaused)
 		{
 			player.update();
 
 			if (!player.isSameAsNetwork())
 				updateNetwork();
-			
+		}
+		
+		// On a game paused (disconnection of a client will set gamePaused at true
+		if (gamePaused)
+		{
+			// Actually, don't care, just leave the game stage since the game will not exist longer
+			gamePaused = false;
+			main.setStage(new HomeStage(main));
 		}
 	}
 
@@ -123,9 +127,7 @@ public class GameStage extends Stage
 	 */
 	
 	private void setClientReady()
-	{
-		clientReady = true;
-		
+	{	
 		ClientReadyPacket p = new ClientReadyPacket();
 		p.ip = main.network.getIp();
 		
@@ -137,6 +139,12 @@ public class GameStage extends Stage
 		gameReady = true;
 		System.out.println("Game start!");
 	}	
+	
+	public void setGamePaused()
+	{
+		gamePaused = true;
+		System.out.println("Game paused !");
+	}
 	
 	public Kangaroo getKangarooFromIp(String ip)
 	{

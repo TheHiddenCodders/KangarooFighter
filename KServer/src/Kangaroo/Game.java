@@ -1,5 +1,8 @@
 package Kangaroo;
 
+import Packets.ClientDisconnectionPacket;
+import enums.EndGameType;
+
 /**
  * The Game class manage a game on the server. 
  * The game is create when a kangaroo don't find other. Until the kangaroo is alone, the game is waiting.
@@ -163,5 +166,19 @@ public class Game
 			return k1;
 			
 		return null;
+	}
+
+	/**
+	 * End the game properly
+	 * @param hostAddress
+	 */
+	public void end(String hostAddress, EndGameType egType)
+	{
+		// Make a client disconnection packet
+		ClientDisconnectionPacket p = new ClientDisconnectionPacket();
+		p.disconnectedClientIp = hostAddress;
+		
+		// Then get the opponent of the disconnected kangaroo and send him the packet
+		getKangarooFromOpponentIp(hostAddress).getClient().send(p);
 	}
 }
