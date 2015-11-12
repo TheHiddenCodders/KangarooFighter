@@ -75,7 +75,8 @@ public class Main extends ApplicationAdapter
 		else
 			System.out.println("Network not updated");
 		
-		this.stage = stage;
 		Gdx.input.setInputProcessor(stage);
+		this.stage = stage;
+		
 	}
 }

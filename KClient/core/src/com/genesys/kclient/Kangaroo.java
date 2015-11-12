@@ -107,7 +107,7 @@ public class Kangaroo extends Actor
 		// Check that packet correspond to the kangaroo by checking names match.
 		if (p.name.equals(name))
 		{
-			health =p.health;
+			health = p.health;
 			sprite.setPosition(p.x, p.y);
 			
 			networkImage = p;

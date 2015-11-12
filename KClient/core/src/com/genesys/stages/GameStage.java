@@ -18,6 +18,7 @@ import Packets.UpdateKangarooPacket;
  * 3. Wait for both client to be ready <br>
  * 4. Let's fight <br>
  * </p>
+ * 
  * @author Nerisma
  *
  */
@@ -129,7 +130,6 @@ public class GameStage extends Stage
 	private void setClientReady()
 	{	
 		ClientReadyPacket p = new ClientReadyPacket();
-		p.ip = main.network.getIp();
 		
 		main.network.send(p);
 	}	
@@ -149,10 +149,14 @@ public class GameStage extends Stage
 	public Kangaroo getKangarooFromIp(String ip)
 	{
 		if (player.getIp().equals(ip))
+		{
 			return player;
+		}
 		else if (opponent.getIp().equals(ip))
+		{
 			return opponent;
-			
+		}
+		
 		return null;
 	}
 }

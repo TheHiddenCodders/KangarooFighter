@@ -40,7 +40,7 @@ public class ClientProcessor implements Runnable
 	{		
 		this.client = client;
 		this.server = server;
-	
+		
 		try 
 		{
             output = new ObjectOutputStream(client.getOutputStream());	
@@ -141,5 +141,10 @@ public class ClientProcessor implements Runnable
 	public float getLastHeartBeatAnswer()
 	{
 		return lastHeartBeatAnswerTime;
+	}
+	
+	public String getIp()
+	{
+		return remote.getHostString() + ":" + client.getPort();
 	}
 }

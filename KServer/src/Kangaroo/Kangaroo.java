@@ -40,7 +40,7 @@ public class Kangaroo
 	public UpdateKangarooPacket getUpdatePacket()
 	{
 		UpdateKangarooPacket p = new UpdateKangarooPacket();
-		p.ip = cp.getClient().getInetAddress().getHostAddress();
+		p.ip = cp.getIp();
 		p.name = name;
 		p.x = position.x;
 		p.y = position.y;
