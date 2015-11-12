@@ -3,17 +3,18 @@ package com.genesys.client;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.genesys.stages.GameStage;
-import com.genesys.stages.HomeStage;
-import com.genesys.stages.InscriptionStage;
-
+import Packets.ClientDisconnectionPacket;
 import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
 import Packets.LoginPacket;
 import Packets.ServerInfoPacket;
 import Packets.UpdateKangarooPacket;
+
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.genesys.stages.GameStage;
+import com.genesys.stages.HomeStage;
+import com.genesys.stages.InscriptionStage;
 
 /**
  * Network handle the data exchanges between client and server.
@@ -178,6 +179,28 @@ public class Network extends Client
 			{
 				GameStage stage = (GameStage) currentStage;
 				stage.setGameReady();
+			}
+			else
+			{
+				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
+			}
+		}
+		
+		/**
+		 * Received a Client disconnection packet
+		 * 1. Set the client on home stage
+		 */
+		else if (o.getClass().isAssignableFrom(ClientDisconnectionPacket.class))
+		{
+			ClientDisconnectionPacket packet = (ClientDisconnectionPacket) o;
+			
+			if (currentStage.getClass().isAssignableFrom(GameStage.class))
+			{
+				GameStage stage = (GameStage) currentStage;
+				stage.setGameReady();
+				
+				System.err.println(stage.getKangarooFromIp(packet.disconnectedClientIp).getName() + " [ " + packet.disconnectedClientIp + " ] " + "has left the game");
+				stage.setGamePaused();
 			}
 			else
 			{
