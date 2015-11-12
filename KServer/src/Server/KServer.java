@@ -132,9 +132,7 @@ public class KServer extends Server
 			
 			// Send kangaroo to the opponent
 			Game game = getGameFromIP(clientIp);
-			System.out.println("Game is null : " + (game == null));
 			Kangaroo k = game.getKangarooFromOpponentIp(clientIp);
-			System.out.println("K is null : " + (k == null));
 			send(k.getClient(), receivedPacket);
 			
 		}
@@ -295,6 +293,11 @@ public class KServer extends Server
 			if (game.isRunning())
 			{
 				if (game.getK1().getClient().getIp().equals(ip) || game.getK2().getClient().getIp().equals(ip))
+					return game;
+			}
+			else
+			{
+				if (game.getK1().getClient().getIp().equals(ip))
 					return game;
 			}
 		}

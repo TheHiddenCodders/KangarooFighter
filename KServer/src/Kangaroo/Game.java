@@ -145,9 +145,9 @@ public class Game
 	 */
 	public Kangaroo getKangarooFromIp(String ip)
 	{
-		if (k1.getClient().getClient().getInetAddress().getHostAddress().equals(ip))
+		if (k1.getClient().getIp().equals(ip))
 			return k1;
-		else if (k2.getClient().getClient().getInetAddress().getHostAddress().equals(ip))
+		else if (k2.getClient().getIp().equals(ip))
 			return k2;
 		
 		return null;
