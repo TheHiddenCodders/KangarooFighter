@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import enums.EndGameType;
+import enums.ServerInfoType;
 import Kangaroo.Game;
 import Kangaroo.Kangaroo;
 import Packets.ClientReadyPacket;
@@ -59,7 +60,10 @@ public class KServer extends Server
 		 * On connection, we'll build a kangaroo associated to the client.
 		 * Then we'll add it to the kangaroos holder.
 		 */
-		kangaroos.add(new Kangaroo(cp));		 
+		kangaroos.add(new Kangaroo(cp));		
+		
+		// Update serverInfo for clients
+		serverInfoUpdated(cp, ServerInfoType.ExceptMe);
 	}
 
 	@Override
@@ -262,6 +266,9 @@ public class KServer extends Server
 			games.add( newGame );
 			gameLinker.put(k.getClient(), newGame);
 			
+			// Update serverInfo for clients
+			serverInfoUpdated(k.getClient(), ServerInfoType.ALL);
+			
 			System.out.println("Kangaroo : " + k.getName() + " created a game and wait : " + games.indexOf(newGame));
 		}
 	}
@@ -314,5 +321,28 @@ public class KServer extends Server
 		}
 		
 		System.out.println("--------------------------");
+	}
+	
+	/**
+	 * serverInfoUpdated need to be called every time the serverInfos change to send it to clients
+	 */
+	public void serverInfoUpdated(ClientProcessor client, ServerInfoType requestType)
+	{
+		// Prepare the packet to send
+		ServerInfoPacket infoPacket = new ServerInfoPacket();
+		
+		infoPacket.nGamesOnline = games.size(); 
+		infoPacket.nGamesPlayed = 0; // TODO
+		infoPacket.nKangaroosOnline = kangaroos.size(); 
+		infoPacket.nKangaroosRegistered = 0; // TODO
+		
+		// Send the packet
+		
+		if (requestType == ServerInfoType.ALL)
+			this.send(-1,  infoPacket);
+		else if (requestType == ServerInfoType.ExceptMe)
+			this.sendExcept(client, infoPacket);
+		else if (requestType == ServerInfoType.JustMe)
+			this.send(client, infoPacket);
 	}
 }

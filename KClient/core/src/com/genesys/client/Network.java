@@ -76,8 +76,11 @@ public class Network extends Client
 					LoginPacket packet = (LoginPacket) o;
 					
 					// If the packet accepted the request
+					System.err.println("accepted : " + packet.accepted);
 					if (packet.accepted)
 						stage.loggedIn(); // Log in
+					else
+						stage.notLoggedIn(); // LogIn fail
 				}
 			}
 			else

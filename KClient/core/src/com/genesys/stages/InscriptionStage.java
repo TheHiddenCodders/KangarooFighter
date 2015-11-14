@@ -24,6 +24,7 @@ public class InscriptionStage extends Stage
 	
 	// Triggers
 	private boolean loggedIn;
+	private boolean serverAnswered;
 
 	/*
 	 * Constructors
@@ -32,6 +33,8 @@ public class InscriptionStage extends Stage
 	{
 		super();
 		this.main = main;
+		this.loggedIn = false;
+		this.serverAnswered = false;
 		
 		// Check if already registered, if it is, login with known pseudo
 		if (alreadyRegistered())
@@ -76,8 +79,10 @@ public class InscriptionStage extends Stage
 			
 			main.setStage(new HomeStage(main));
 		}
-		else
+		else if (serverAnswered)
 		{
+			// Made a new request of login
+			serverAnswered = false;
 			login("debug");
 		}
 				
@@ -132,6 +137,13 @@ public class InscriptionStage extends Stage
 	public void loggedIn()
 	{
 		loggedIn = true;
+		serverAnswered = true;
+	}
+	
+	public void notLoggedIn()
+	{
+		loggedIn = false;
+		serverAnswered = true;
 	}
 
 }
