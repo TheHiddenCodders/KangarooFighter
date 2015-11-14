@@ -120,7 +120,10 @@ public class KServer extends Server
 				putOnMatchMaking(clientIp);
 			
 			else if (!receivedPacket.search && getGameFromIP(clientIp) != null)
+			{
 				games.remove(getGameFromIP(clientIp));
+				serverInfoUpdated(cp, ServerInfoType.ALL);
+			}
 			
 		}
 		
