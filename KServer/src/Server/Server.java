@@ -156,10 +156,8 @@ public abstract class Server
 			for (int i = 0; i < clients.size(); i++)
 				clients.get(i).send(o);
 			
-			System.out.println("Sent to " 
-			+ clients.get(clientIndex).getIp()
-			+ ": "
-			+ o.toString() + "to all \n");
+			System.out.println("Sent to ALL:"
+			+ o.toString() + "\n");
 		}
 		else if ( clientIndex >= 0 && clientIndex < clients.size() )
 		{
@@ -182,6 +180,18 @@ public abstract class Server
 		for (int i = 0; i < clients.size(); i++)
 		{
 			if (clients.get(i) == cp)
+			{
+				send(i, o);
+				break;
+			}
+		}
+	}
+	
+	public void sendExcept(ClientProcessor cp, Object o)
+	{
+		for (int i = 0; i < clients.size(); i++)
+		{
+			if (clients.get(i) != cp)
 			{
 				send(i, o);
 				break;
