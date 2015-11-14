@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.genesys.kclient.AnimatedProgressBar;
 import com.genesys.kclient.Kangaroo;
 import com.genesys.kclient.Main;
 
@@ -32,6 +33,7 @@ public class GameStage extends Stage
 	
 	private Kangaroo player, opponent;
 	private Texture background;
+	private AnimatedProgressBar playerBar, opponentBar;
 	private boolean gameReady = false; // Both client have load the stage
 	private boolean gamePaused = false;
 	
@@ -52,7 +54,10 @@ public class GameStage extends Stage
 	
 	@Override
 	public void act(float delta) 
-	{					
+	{		
+		playerBar.setValue(player.getHealth());
+		opponentBar.setValue(opponent.getHealth());
+		
 		// If both clients are ready, the game is ready
 		if (gameReady && !gamePaused)
 		{
@@ -60,6 +65,9 @@ public class GameStage extends Stage
 
 			if (!player.isSameAsNetwork())
 				updateNetwork();
+			
+			if (Gdx.input.justTouched())
+				player.setHealth(player.getHealth() - 5);
 		}
 		
 		// On a game paused (disconnection of a client will set gamePaused at true
@@ -69,6 +77,8 @@ public class GameStage extends Stage
 			gamePaused = false;
 			main.setStage(new HomeStage(main));
 		}
+		
+		super.act(delta);
 	}
 
 	@Override
@@ -94,20 +104,31 @@ public class GameStage extends Stage
 		playerName = new Label(player.getName(), main.skin);
 		opponentName = new Label(opponent.getName(), main.skin);
 		
+		playerBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 4, 0, 100, player.getHealth());
+		opponentBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 4, 0, 100, opponent.getHealth());
+		
 		// Determine which one need to be flipped
 		if (player.getSprite().getX() > opponent.getSprite().getX())
 		{
 			player.flip();
 			playerName.setPosition(this.getWidth() - playerName.getWidth() - 5, this.getHeight() - playerName.getHeight() - 5);
 			opponentName.setPosition(5, this.getHeight() - opponentName.getHeight() - 5);
+			
+			playerBar.setPosition(this.getWidth() - playerBar.getWidth() - 5, playerName.getY() - playerName.getHeight() - 10);
+			opponentBar.setPosition(opponentName.getX(), opponentName.getY() - opponentName.getHeight() - 10);
 		}
 		else
 		{
 			opponent.flip();
 			playerName.setPosition(5, this.getHeight() - playerName.getHeight() - 5);
 			opponentName.setPosition(this.getWidth() - opponentName.getWidth() - 5, this.getHeight() - opponentName.getHeight() - 5);
+			
+			playerBar.setPosition(playerName.getX(), playerName.getY() - playerName.getHeight() - 10);
+			opponentBar.setPosition(this.getWidth() - opponentBar.getWidth() - 5, opponentName.getY() - opponentName.getHeight() - 10);
 		}
 		
+		this.addActor(playerBar);
+		this.addActor(opponentBar);
 		this.addActor(player);
 		this.addActor(opponent);
 		this.addActor(playerName);
