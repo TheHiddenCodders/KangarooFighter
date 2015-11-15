@@ -21,6 +21,8 @@ public class Kangaroo
 	
 	private boolean ready = false;
 	
+	private UpdateKangarooPacket networkImage;
+	
 	/**
 	 * Create the kangaroo with the client.
 	 * 
@@ -62,6 +64,9 @@ public class Kangaroo
 			position.x = p.x;
 			position.y = p.y;
 			health = p.health;
+			damage = p.damage;
+			
+			networkImage = p;
 		}
 	}
 	
@@ -129,5 +134,12 @@ public class Kangaroo
 		this.position = new Vector2(x, y);
 	}
 	
-	
+	public boolean isSameAsNetwork()
+	{
+		if (this.position.x == networkImage.x && this.position.y == networkImage.y && this.getHealth() == networkImage.health && this.damage == networkImage.damage)
+			return true;
+		
+		else
+			return false;
+	}
 }

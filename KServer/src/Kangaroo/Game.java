@@ -1,6 +1,7 @@
 package Kangaroo;
 
 import Packets.ClientDisconnectionPacket;
+import Utils.Vector2;
 import enums.EndGameType;
 
 /**
@@ -21,6 +22,8 @@ public class Game
 	public final static int player2X = 538; 
 	/** The start positionY for player 2 */
 	public final static int player2Y = 0; 
+	/** */
+	public final static int arenaSize = 800;
 	
 	
 	/*
@@ -180,5 +183,29 @@ public class Game
 		
 		// Then get the opponent of the disconnected kangaroo and send him the packet
 		getKangarooFromOpponentIp(hostAddress).getClient().send(p);
+	}
+	
+	/**
+	 * 
+	 */
+	public void checkCollision()
+	{
+		// Check if k1 is in the arena
+		if (k1 != null)
+		{
+			if (k1.getPosition().x < 0)
+				k1.setPosition( new Vector2(0, k1.getPosition().y) );
+			else if (k1.getPosition().y > arenaSize)
+				k1.setPosition( new Vector2(arenaSize, k1.getPosition().y) );
+		}
+		
+		// Check if k2 is in the arena
+		if (k2 != null)
+		{
+			if (k2.getPosition().x < 0)
+				k2.setPosition( new Vector2(0, k2.getPosition().y) );
+			else if (k2.getPosition().y > arenaSize)
+				k2.setPosition( new Vector2(arenaSize, k2.getPosition().y) );
+		}
 	}
 }
