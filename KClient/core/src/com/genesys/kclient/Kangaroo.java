@@ -19,6 +19,7 @@ public class Kangaroo extends Actor
 	private Sprite sprite;
 	private String name;
 	private int health;
+	private int damage = 5;
 
 	private Texture kangaroo, flippedKangaroo;
 	
@@ -56,6 +57,7 @@ public class Kangaroo extends Actor
 		sprite.setPosition(p.x, p.y);
 		name = p.name;
 		health = p.health;
+		damage = p.damage;
 		
 		networkImage = getUpdatePacket();
 	}
@@ -158,6 +160,7 @@ public class Kangaroo extends Actor
 		p.x = sprite.getX();
 		p.y = sprite.getY();
 		p.health = health;
+		p.damage = damage;
 		return p;
 	}
 	

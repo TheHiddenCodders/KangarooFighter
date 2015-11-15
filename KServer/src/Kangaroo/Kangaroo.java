@@ -16,6 +16,7 @@ public class Kangaroo
 	private ClientProcessor cp;
 	private String name = "";
 	private int health;
+	private int damage = 5;
 	private Vector2 position;
 	
 	private boolean ready = false;
@@ -45,6 +46,7 @@ public class Kangaroo
 		p.x = position.x;
 		p.y = position.y;
 		p.health = health;
+		p.damage = damage;
 		return p;
 	}
 	
@@ -78,10 +80,10 @@ public class Kangaroo
 		return name;
 	}
 	
-	
 	/*
 	 * Getter - Setter
 	 */
+	
 	public boolean isReady()
 	{
 		return ready;

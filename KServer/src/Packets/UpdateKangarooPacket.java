@@ -9,6 +9,7 @@ public class UpdateKangarooPacket implements Serializable
 	public String name;
 	public float x, y;
 	public int health;
+	public int damage;
 
 	@Override
 	public String toString()
@@ -19,6 +20,7 @@ public class UpdateKangarooPacket implements Serializable
 				+ "- [name]: " + name + "\n"
 				+ "- [x]: " + x + "\n"
 				+ "- [y]: " + y + "\n"
-				+ "- [health]: " + health + "\n";
+				+ "- [health]: " + health + "\n"
+				+ "- [damage]: " + damage + "\n";
 	}
 }
