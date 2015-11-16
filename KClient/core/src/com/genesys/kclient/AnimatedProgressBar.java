@@ -17,6 +17,7 @@ public class AnimatedProgressBar extends Actor
 	private TextureRegion currentFrame;
 	private TextureRegion hitBar;
 	private boolean valueChanged;
+	private int borderSize;
 	private float min, max, hitBarMax;
 	private float value, hitBarValue;
 	private float hitBarBaseWidth;
@@ -36,15 +37,16 @@ public class AnimatedProgressBar extends Actor
 	 * @param max
 	 * @param value
 	 */
-	public AnimatedProgressBar(Texture barSheet, int frames, float min, float max, float value)
+	public AnimatedProgressBar(Texture barSheet, int borderSize, int frames, float min, float max, float value)
 	{
 		super();
 		
-		background = new TextureRegion(barSheet, 0, 0, barSheet.getWidth() / (frames), barSheet.getHeight() / 3);
+		background = new TextureRegion(barSheet, 0, 0, barSheet.getWidth() / (frames + 2 * borderSize), barSheet.getHeight() / 3);
 		hitBar = new TextureRegion(barSheet, 0, background.getRegionHeight() * 2, barSheet.getWidth() / (frames), barSheet.getHeight() / 3);
 		normalAnimation = new Animation(frameDuration, getAnimationFrames(barSheet, frames));
 		normalAnimation.setPlayMode(PlayMode.LOOP_PINGPONG);
 		
+		this.borderSize = borderSize;
 		this.min = min;
 		this.max = max;
 		this.value = value;
@@ -73,7 +75,7 @@ public class AnimatedProgressBar extends Actor
 	public void draw(Batch batch, float parentAlpha)
 	{
 		batch.draw(background, this.getX(), this.getY());
-		batch.draw(currentFrame, this.getX(), this.getY(), getProgressWidth(currentFrame.getRegionWidth(), value, min, max), currentFrame.getRegionHeight());		
+		batch.draw(currentFrame, this.getX() + borderSize, this.getY(), getProgressWidth(currentFrame.getRegionWidth(), value, min, max), currentFrame.getRegionHeight());		
 		
 		if (valueChanged)
 			batch.draw(hitBar, this.getX() + getProgressWidth(currentFrame.getRegionWidth(), value, min, max), this.getY(), getProgressWidth(hitBarBaseWidth, hitBarValue, value, hitBarMax), hitBar.getRegionHeight());
@@ -89,10 +91,11 @@ public class AnimatedProgressBar extends Actor
 	 * Calculate the width of the progress
 	 * @return the animation frame * percentage
 	 */
-	private int getProgressWidth(float barWidth, float value, float min, float max)
+	private float getProgressWidth(float barWidth, float value, float min, float max)
 	{
 		float percentage = (value - min) / (max - min);
-		return (int) (barWidth * percentage);
+		System.out.println(barWidth * percentage + " |" + (int) (barWidth * percentage));
+		return (barWidth * percentage);
 	}
 	
 	/**
