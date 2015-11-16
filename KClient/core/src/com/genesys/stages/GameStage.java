@@ -67,7 +67,10 @@ public class GameStage extends Stage
 				updateNetwork();
 			
 			if (Gdx.input.justTouched())
+			{
 				player.setHealth(player.getHealth() - 5);
+				player.flip();
+			}
 		}
 		
 		// On a game paused (disconnection of a client will set gamePaused at true
@@ -104,11 +107,11 @@ public class GameStage extends Stage
 		playerName = new Label(player.getName(), main.skin);
 		opponentName = new Label(opponent.getName(), main.skin);
 		
-		playerBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 4, 4, 0, 100, player.getHealth());
-		opponentBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 4, 4, 0, 100, opponent.getHealth());
+		playerBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 2, 4, 0, 100, player.getHealth());
+		opponentBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 2, 4, 0, 100, opponent.getHealth());
 		
 		// Determine which one need to be flipped
-		if (player.getSprite().getX() > opponent.getSprite().getX())
+		if (player.getX() > opponent.getX())
 		{
 			player.flip();
 			playerName.setPosition(this.getWidth() - playerName.getWidth() - 5, this.getHeight() - playerName.getHeight() - 5);
