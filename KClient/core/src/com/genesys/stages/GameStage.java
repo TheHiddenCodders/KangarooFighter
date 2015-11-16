@@ -104,8 +104,8 @@ public class GameStage extends Stage
 		playerName = new Label(player.getName(), main.skin);
 		opponentName = new Label(opponent.getName(), main.skin);
 		
-		playerBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 4, 0, 100, player.getHealth());
-		opponentBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 4, 0, 100, opponent.getHealth());
+		playerBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 4, 4, 0, 100, player.getHealth());
+		opponentBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 4, 4, 0, 100, opponent.getHealth());
 		
 		// Determine which one need to be flipped
 		if (player.getSprite().getX() > opponent.getSprite().getX())
