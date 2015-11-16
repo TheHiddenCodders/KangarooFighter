@@ -1,27 +1,25 @@
 package com.genesys.kclient;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.math.Rectangle;
 import com.genesys.enums.Direction;
 
 import Packets.UpdateKangarooPacket;
 
-public class Kangaroo extends Actor
+public class Kangaroo extends AnimatedSprite
 {
 	/*
 	 * Attributes
 	 */
 	private String ip;
-	private Sprite sprite;
 	private String name;
 	private int health;
 	private int damage = 5;
-
-	private Texture kangaroo, flippedKangaroo;
 	
 	// Compare kangaroo update packet to this network image to know if server need to be updated
 	public UpdateKangarooPacket networkImage;
@@ -29,16 +27,11 @@ public class Kangaroo extends Actor
 	/*
 	 * Constructors
 	 */
-	/**
-	 * unused
-	 */
 	public Kangaroo()
 	{
 		super();
 		
-		kangaroo = new Texture(Gdx.files.internal("sprites/kangourou.png"));
-		flippedKangaroo = new Texture(Gdx.files.internal("sprites/kangourouflipped.png"));
-		sprite = new Sprite(kangaroo);
+		initAnim();
 	}
 	
 	/**
@@ -49,30 +42,26 @@ public class Kangaroo extends Actor
 	{
 		super();
 		
-		kangaroo = new Texture(Gdx.files.internal("sprites/kangourou.png"));
-		flippedKangaroo = new Texture(Gdx.files.internal("sprites/kangourouflipped.png"));
-		
 		ip = p.ip;
-		sprite = new Sprite(kangaroo);
-		sprite.setPosition(p.x, p.y);
+		this.setPosition(p.x, p.y);
 		name = p.name;
 		health = p.health;
 		damage = p.damage;
 		
 		networkImage = getUpdatePacket();
+		
+		initAnim();
 	}
 	
 	@Override
 	public void act(float delta)
 	{
-		
 		super.act(delta);
 	}
 	
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{
-		sprite.draw(batch);
 		super.draw(batch, parentAlpha);
 	}
 	
@@ -95,9 +84,9 @@ public class Kangaroo extends Actor
 	public void walk(Direction direction)
 	{
 		if (direction == Direction.LEFT)
-			sprite.translateX(-1);
+			moveBy(-1, 0);
 		else if (direction == Direction.RIGHT)
-			sprite.translateX(1);
+			moveBy(1, 0);
 	}
 	
 	/**
@@ -110,23 +99,15 @@ public class Kangaroo extends Actor
 		if (p.name.equals(name))
 		{
 			health = p.health;
-			sprite.setPosition(p.x, p.y);
+			setPosition(p.x, p.y);
 			
 			networkImage = p;
 		}
 	}
 	
 	/**
-	 * Flip the kangaroo texture
+	 * Copy the kangaroo into the network image of it
 	 */
-	public void flip()
-	{
-		if (sprite.getTexture().equals(kangaroo))
-			sprite.setTexture(flippedKangaroo);
-		else if (sprite.getTexture().equals(flippedKangaroo))
-			sprite.setTexture(kangaroo);			
-	}
-	
 	public void setSameAsNetwork()
 	{
 		networkImage = getUpdatePacket();
@@ -138,13 +119,54 @@ public class Kangaroo extends Actor
 	 */
 	public boolean isSameAsNetwork()
 	{
-		if (this.sprite.getX() == networkImage.x && this.sprite.getY() == networkImage.y && this.getHealth() == networkImage.health)
+		if (this.getX() == networkImage.x && this.getY() == networkImage.y && this.getHealth() == networkImage.health)
 			return true;
 		
 		else
 			return false;
 	}
 
+	/**
+	 * Init the kangaroo animation
+	 */
+	public void initAnim()
+	{
+		// Add idle animation (they are all the same, but it's an example)
+		// FRAME 0
+		HitBox hitBox0 = new HitBox();
+		hitBox0.addBox(new Rectangle(131, 139, 51, 63)); // HEAD
+		hitBox0.addBox(new Rectangle(174, 69, 39, 33)); // LEFT PUNCH
+		hitBox0.addBox(new Rectangle(165, 60, 39, 33)); // RIGHT PUNCH
+		hitBox0.addBox(new Rectangle(83, 0, 80, 139)); // BODY
+		// FRAME 1
+		HitBox hitBox1 = new HitBox();
+		hitBox1.addBox(new Rectangle(131, 139, 51, 63)); // HEAD
+		hitBox1.addBox(new Rectangle(174, 69, 39, 33)); // LEFT PUNCH
+		hitBox1.addBox(new Rectangle(165, 60, 39, 33)); // RIGHT PUNCH
+		hitBox1.addBox(new Rectangle(83, 0, 80, 139)); // BODY
+		// FRAME 2
+		HitBox hitBox2 = new HitBox();
+		hitBox2.addBox(new Rectangle(131, 139, 51, 63)); // HEAD
+		hitBox2.addBox(new Rectangle(174, 69, 39, 33)); // LEFT PUNCH
+		hitBox2.addBox(new Rectangle(165, 60, 39, 33)); // RIGHT PUNCH
+		hitBox2.addBox(new Rectangle(83, 0, 80, 139)); // BODY
+		// FRAME 3
+		HitBox hitBox3 = new HitBox();
+		hitBox3.addBox(new Rectangle(131, 139, 51, 63)); // HEAD
+		hitBox3.addBox(new Rectangle(174, 69, 39, 33)); // LEFT PUNCH
+		hitBox3.addBox(new Rectangle(165, 60, 39, 33)); // RIGHT PUNCH
+		hitBox3.addBox(new Rectangle(83, 0, 80, 139)); // BODY
+		// Put them together
+		ArrayList<HitBox> hitBoxes = new ArrayList<HitBox>();
+		hitBoxes.add(hitBox0);
+		hitBoxes.add(hitBox1);
+		hitBoxes.add(hitBox2);
+		hitBoxes.add(hitBox3);
+		// Add to the sprite
+		addAHB(new Animation("IDLE", 1, new Texture(Gdx.files.internal("sprites/kangourousheet.png")), new Rectangle(0, 0, 213, 202)), hitBoxes);
+		anims.get(0).start();
+	}
+	
 	/*
 	 * Getters & Setters
 	 */
@@ -157,19 +179,11 @@ public class Kangaroo extends Actor
 		UpdateKangarooPacket p = new UpdateKangarooPacket();
 		p.ip = ip;
 		p.name = name;
-		p.x = sprite.getX();
-		p.y = sprite.getY();
+		p.x = this.getX();
+		p.y = this.getY();
 		p.health = health;
 		p.damage = damage;
 		return p;
-	}
-	
-	public Sprite getSprite() {
-		return sprite;
-	}
-
-	public void setSprite(Sprite sprite) {
-		this.sprite = sprite;
 	}
 
 	public String getName() {
