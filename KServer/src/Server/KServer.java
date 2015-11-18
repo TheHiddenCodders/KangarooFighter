@@ -177,19 +177,19 @@ public class KServer extends Server
 		
 		try
 		{
-			kangaroos.remove(getKangarooFromIP(cp.getIp()));
-			
 			// Check if he is in a game
-			for (Game game : games)
+			for (int i = 0; i < games.size(); i++)
 			{
-				if (game.getKangarooFromIp(cp.getIp()) != null)
+				if (games.get(i).getKangarooFromIp(cp.getIp()) != null)
 				{
-					if (game.isRunning())
-						game.end(cp.getIp(), EndGameType.Disconnection);
+					if (games.get(i).isRunning())
+						games.get(i).end(cp.getIp(), EndGameType.Disconnection);
 					
-					games.remove(game);
+					games.remove(games.get(i));
 				}
 			}
+			
+			kangaroos.remove(getKangarooFromIP(cp.getIp()));
 			cp.getClient().close();
 		} catch (IOException e) 
 		{
