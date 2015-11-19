@@ -13,6 +13,9 @@ import Packets.UpdateKangarooPacket;
 
 public class Kangaroo extends AnimatedSprite
 {
+	private final static int punchKey = Keys.SPACE;
+	
+	
 	/*
 	 * Attributes
 	 */
@@ -20,6 +23,8 @@ public class Kangaroo extends AnimatedSprite
 	private String name;
 	private int health;
 	private int damage = 5;
+	private boolean punch;
+	private boolean guard;
 	
 	// Compare kangaroo update packet to this network image to know if server need to be updated
 	public UpdateKangarooPacket networkImage;
@@ -73,8 +78,14 @@ public class Kangaroo extends AnimatedSprite
 	{
 		if (Gdx.input.isKeyPressed(Keys.LEFT))
 			walk(Direction.LEFT);
-		else if (Gdx.input.isKeyPressed(Keys.RIGHT))
+		
+		if (Gdx.input.isKeyPressed(Keys.RIGHT))
 			walk(Direction.RIGHT);
+		
+		if (Gdx.input.isKeyPressed(punchKey))
+			punch = true;
+		else 
+			punch = false;
 	}
 	
 	/**
@@ -119,7 +130,7 @@ public class Kangaroo extends AnimatedSprite
 	 */
 	public boolean isSameAsNetwork()
 	{
-		if (this.getX() == networkImage.x && this.getY() == networkImage.y && this.getHealth() == networkImage.health)
+		if (this.getX() == networkImage.x && this.getY() == networkImage.y && this.punch == networkImage.punch)
 			return true;
 		
 		else
@@ -183,6 +194,7 @@ public class Kangaroo extends AnimatedSprite
 		p.y = this.getY();
 		p.health = health;
 		p.damage = damage;
+		p.punch = punch;
 		return p;
 	}
 

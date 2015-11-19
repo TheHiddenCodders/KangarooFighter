@@ -142,6 +142,7 @@ public class KServer extends Server
 			Kangaroo k = game.getKangarooFromOpponentIp(clientIp);
 			send(k.getClient(), receivedPacket);
 			
+			System.out.println(cp.getIp() + " : punch = " + receivedPacket.punch);
 		}
 		
 		/**
