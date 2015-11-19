@@ -161,6 +161,8 @@ public class Game
 				}
 			}
 		}
+		
+		k.setNetworkImage(receivedPacket);
 	}
 	
 	/*

@@ -1,6 +1,8 @@
 package Kangaroo;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import Utils.Vector2;
 
@@ -15,11 +17,19 @@ public class States
 	private int currentState;
 	private Vector2 position;
 	
-	public States()
+	private Timer timer;
+	private Kangaroo k;
+	
+	public States(Kangaroo k)
 	{
 		setState(idle);
 		setPosition(new Vector2(0, 0));
+		this.k = k;
+		
+		timer = new Timer();
 	}
+	
+
 
 	public int getState() 
 	{
@@ -29,6 +39,20 @@ public class States
 	public void setState(int currentState) 
 	{
 		this.currentState = currentState;
+		
+		if (this.currentState == punch)
+		{
+			timer.schedule(new TimerTask(){
+
+				@Override
+				public void run() 
+				{
+					setState(idle);
+					k.getClient().send(k.getUpdatePacket());
+				}
+				
+			}, 1000);
+		}
 	}
 
 	public Vector2 getPosition() 

@@ -22,6 +22,8 @@ public class Kangaroo
 	
 	private boolean ready = false;
 	
+	private UpdateKangarooPacket networkImage;
+	
 	/**
 	 * Create the kangaroo with the client.
 	 * 
@@ -30,7 +32,7 @@ public class Kangaroo
 	public Kangaroo(ClientProcessor cp)
 	{
 		this.cp = cp;
-		this.setState(new States());
+		this.setState(new States(this));
 	}
 	
 	/*
@@ -136,6 +138,16 @@ public class Kangaroo
 
 	public void setState(States state) {
 		this.state = state;
+	}
+
+	public UpdateKangarooPacket getNetworkImage() 
+	{
+		return networkImage;
+	}
+
+	public void setNetworkImage(UpdateKangarooPacket networkImage) 
+	{
+		this.networkImage = networkImage;
 	}
 	
 	
