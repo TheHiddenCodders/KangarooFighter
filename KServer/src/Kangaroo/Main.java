@@ -33,6 +33,8 @@ public class Main
 				if (msg.split("-")[1].equals("all"))
 					server.displayAllKangaroos();
 			}
+			
+			
 		}
 	}
 

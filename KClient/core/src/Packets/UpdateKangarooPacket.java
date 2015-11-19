@@ -12,6 +12,7 @@ public class UpdateKangarooPacket implements Serializable
 	public int damage;
 	public boolean punch;
 	public boolean guard;
+	public int state;
 
 	@Override
 	public String toString()
@@ -25,6 +26,7 @@ public class UpdateKangarooPacket implements Serializable
 				+ "- [health]: " + health + "\n"
 				+ "- [damage]: " + damage + "\n"
 				+ "- [punch]: " + punch + "\n"
-				+ "- [guard]: " + guard + "\n";
+				+ "- [guard]: " + guard + "\n"
+				+ "- [state]: " + state + "\n";
 	}
 }

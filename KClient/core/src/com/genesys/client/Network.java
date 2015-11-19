@@ -165,6 +165,11 @@ public class Network extends Client
 				UpdateKangarooPacket packet = (UpdateKangarooPacket) o;
 				
 				stage.getKangarooFromIp( packet.ip ).updateFromPacket(packet);
+				
+				if (packet.state == 1)
+					System.out.println(packet.name + " punching");
+				else if (packet.state == 0)
+					System.out.println(packet.name + " idling");
 			}
 			else
 			{

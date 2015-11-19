@@ -17,7 +17,8 @@ public class Kangaroo
 	private String name = "";
 	private int health;
 	private int damage = 5;
-	private Vector2 position;
+	//private Vector2 position;
+	private States state;
 	
 	private boolean ready = false;
 	
@@ -29,7 +30,7 @@ public class Kangaroo
 	public Kangaroo(ClientProcessor cp)
 	{
 		this.cp = cp;
-		position = new Vector2(0, 0);
+		this.setState(new States());
 	}
 	
 	/*
@@ -43,10 +44,11 @@ public class Kangaroo
 		UpdateKangarooPacket p = new UpdateKangarooPacket();
 		p.ip = cp.getIp();
 		p.name = name;
-		p.x = position.x;
-		p.y = position.y;
+		p.x = state.getPosition().x;
+		p.y = state.getPosition().y;
 		p.health = health;
 		p.damage = damage;
+		p.state = state.getState();
 		return p;
 	}
 	
@@ -59,8 +61,7 @@ public class Kangaroo
 		// Check that packet correspond to the kangaroo by checking names match.
 		if (p.name.equals(name))
 		{
-			position.x = p.x;
-			position.y = p.y;
+			state.setPosition(new Vector2(p.x, p.y));
 			health = p.health;
 		}
 	}
@@ -116,17 +117,25 @@ public class Kangaroo
 
 	public Vector2 getPosition() 
 	{
-		return position;
+		return state.getPosition();
 	}
 
 	public void setPosition(Vector2 position) 
 	{
-		this.position = position;
+		state.setPosition(position);
 	}
 	
 	public void setPosition(int x, int y) 
 	{
-		this.position = new Vector2(x, y);
+		state.setPosition( new Vector2(x, y) );
+	}
+
+	public States getState() {
+		return state;
+	}
+
+	public void setState(States state) {
+		this.state = state;
 	}
 	
 	
