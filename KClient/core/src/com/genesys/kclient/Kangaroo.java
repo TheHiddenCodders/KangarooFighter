@@ -132,38 +132,69 @@ public class Kangaroo extends AnimatedSprite
 	public void initAnim()
 	{
 		// Add idle animation (they are all the same, but it's an example)
-		// FRAME 0
-		HitBox hitBox0 = new HitBox();
-		hitBox0.addBox(new Rectangle(131, 139, 51, 63)); // HEAD
-		hitBox0.addBox(new Rectangle(174, 69, 39, 33)); // LEFT PUNCH
-		hitBox0.addBox(new Rectangle(165, 60, 39, 33)); // RIGHT PUNCH
-		hitBox0.addBox(new Rectangle(83, 0, 80, 139)); // BODY
 		// FRAME 1
-		HitBox hitBox1 = new HitBox();
-		hitBox1.addBox(new Rectangle(131, 139, 51, 63)); // HEAD
-		hitBox1.addBox(new Rectangle(174, 69, 39, 33)); // LEFT PUNCH
-		hitBox1.addBox(new Rectangle(165, 60, 39, 33)); // RIGHT PUNCH
-		hitBox1.addBox(new Rectangle(83, 0, 80, 139)); // BODY
+		Hitbox hitBox0 = new Hitbox();
+		hitBox0.addBox(new Rectangle(130, 202 - 64, 52, 64)); // HEAD
+		hitBox0.addBox(new Rectangle(172, 202 - 100 - 34, 40, 34)); // LEFT PUNCH
+		hitBox0.addBox(new Rectangle(164, 202 - 108 - 34, 40, 34)); // RIGHT PUNCH
+		hitBox0.addBox(new Rectangle(82, 0, 81, 140)); // BODY
 		// FRAME 2
-		HitBox hitBox2 = new HitBox();
-		hitBox2.addBox(new Rectangle(131, 139, 51, 63)); // HEAD
-		hitBox2.addBox(new Rectangle(174, 69, 39, 33)); // LEFT PUNCH
-		hitBox2.addBox(new Rectangle(165, 60, 39, 33)); // RIGHT PUNCH
-		hitBox2.addBox(new Rectangle(83, 0, 80, 139)); // BODY
+		Hitbox hitBox1 = new Hitbox();
+		hitBox1.addBox(new Rectangle(132, 202 - 64, 52, 64)); // HEAD
+		hitBox1.addBox(new Rectangle(168, 202 - 100 - 34, 40, 34)); // LEFT PUNCH
+		hitBox1.addBox(new Rectangle(168, 202 - 108 - 34, 40, 34)); // RIGHT PUNCH
+		hitBox1.addBox(new Rectangle(82, 0, 81, 140)); // BODY
 		// FRAME 3
-		HitBox hitBox3 = new HitBox();
-		hitBox3.addBox(new Rectangle(131, 139, 51, 63)); // HEAD
-		hitBox3.addBox(new Rectangle(174, 69, 39, 33)); // LEFT PUNCH
-		hitBox3.addBox(new Rectangle(165, 60, 39, 33)); // RIGHT PUNCH
-		hitBox3.addBox(new Rectangle(83, 0, 80, 139)); // BODY
+		Hitbox hitBox2 = new Hitbox();
+		hitBox2.addBox(new Rectangle(134, 202 - 64, 52, 64)); // HEAD
+		hitBox2.addBox(new Rectangle(164, 202 - 100 - 34, 40, 34)); // LEFT PUNCH
+		hitBox2.addBox(new Rectangle(172, 202 - 108 - 34, 40, 34)); // RIGHT PUNCH
+		hitBox2.addBox(new Rectangle(82, 0, 81, 140)); // BODY
+		// FRAME 4
+		Hitbox hitBox3 = new Hitbox();
+		hitBox3.addBox(new Rectangle(136, 202 - 64, 52, 64)); // HEAD
+		hitBox3.addBox(new Rectangle(164, 202 - 104 - 34, 40, 34)); // LEFT PUNCH
+		hitBox3.addBox(new Rectangle(172, 202 - 104 - 34, 40, 34)); // RIGHT PUNCH
+		hitBox3.addBox(new Rectangle(82, 0, 81, 140)); // BODY
+		// FRAME 5
+		Hitbox hitBox4 = new Hitbox();
+		hitBox4.addBox(new Rectangle(136, 202 - 64, 52, 64)); // HEAD
+		hitBox4.addBox(new Rectangle(164, 202 - 108 - 34, 40, 34)); // LEFT PUNCH
+		hitBox4.addBox(new Rectangle(172, 202 - 100 - 34, 40, 34)); // RIGHT PUNCH
+		hitBox4.addBox(new Rectangle(82, 0, 81, 140)); // BODY
+		// FRAME 6
+		Hitbox hitBox5 = new Hitbox();
+		hitBox5.addBox(new Rectangle(134, 202 - 64, 52, 64)); // HEAD
+		hitBox5.addBox(new Rectangle(168, 202 - 108 - 34, 40, 34)); // LEFT PUNCH
+		hitBox5.addBox(new Rectangle(168, 202 - 100 - 34, 40, 34)); // RIGHT PUNCH
+		hitBox5.addBox(new Rectangle(82, 0, 81, 140)); // BODY
+		// FRAME 7
+		Hitbox hitBox6 = new Hitbox();
+		hitBox6.addBox(new Rectangle(132, 202 - 64, 52, 64)); // HEAD
+		hitBox6.addBox(new Rectangle(172, 202 - 108 - 34, 40, 34)); // LEFT PUNCH
+		hitBox6.addBox(new Rectangle(164, 202 - 100 - 34, 40, 34)); // RIGHT PUNCH
+		hitBox6.addBox(new Rectangle(82, 0, 81, 140)); // BODY		
+		// FRAME 8
+		Hitbox hitBox7 = new Hitbox();
+		hitBox7.addBox(new Rectangle(130, 202 - 64, 52, 64)); // HEAD
+		hitBox7.addBox(new Rectangle(172, 202 - 104 - 34, 40, 34)); // LEFT PUNCH
+		hitBox7.addBox(new Rectangle(164, 202 - 104 - 34, 40, 34)); // RIGHT PUNCH
+		hitBox7.addBox(new Rectangle(82, 0, 81, 140)); // BODY
+		
 		// Put them together
-		ArrayList<HitBox> hitBoxes = new ArrayList<HitBox>();
-		hitBoxes.add(hitBox0);
-		hitBoxes.add(hitBox1);
-		hitBoxes.add(hitBox2);
-		hitBoxes.add(hitBox3);
-		// Add to the sprite
-		addAHB(new Animation("IDLE", 1, new Texture(Gdx.files.internal("sprites/kangourousheet.png")), new Rectangle(0, 0, 213, 202)), hitBoxes);
+		ArrayList<Hitbox> idleHitboxes = new ArrayList<Hitbox>();
+		idleHitboxes.add(hitBox0);
+		idleHitboxes.add(hitBox1);
+		idleHitboxes.add(hitBox2);
+		idleHitboxes.add(hitBox3);
+		idleHitboxes.add(hitBox4);
+		idleHitboxes.add(hitBox5);
+		idleHitboxes.add(hitBox6);
+		idleHitboxes.add(hitBox7);
+		
+		// Add the animation & hitboxes
+		Animation idle = new Animation("IDLE", 8, new Texture(Gdx.files.internal("sprites/kangourousheet.png")), new Rectangle(0, 0, 213, 202), idleHitboxes);
+		addAnim(idle);
 		anims.get(0).start();
 	}
 	
