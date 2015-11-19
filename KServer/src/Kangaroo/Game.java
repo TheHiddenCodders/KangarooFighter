@@ -1,6 +1,7 @@
 package Kangaroo;
 
 import Packets.ClientDisconnectionPacket;
+import Packets.UpdateKangarooPacket;
 import enums.EndGameType;
 
 /**
@@ -99,6 +100,70 @@ public class Game
 		k2.getClient().send(k1.getUpdatePacket());
 	}
 	
+	/**
+	 * The state machine is called when a kangaroo is update. 
+	 * It checks if the kangaroos need to change their state
+	 */
+	public void stateMachine(UpdateKangarooPacket receivedPacket)
+	{
+		Kangaroo k = getKangarooFromIp(receivedPacket.ip);
+
+		// If the kangaroo is currently idle 
+		if (k.getState().getState() == States.idle)
+		{
+			/*
+			 *  If the player press the punch key
+			 *  Launch the punch state
+			 */
+			if (receivedPacket.punch)
+			{
+				k.getState().setState(States.punch);
+				
+			}
+			else
+			{
+				/*
+				 * If the player have moved and don't press the punch key
+				 * launch movemnt state
+				 */
+				if (receivedPacket.x != k.getPosition().x)
+				{
+					k.getState().setState(States.movement);
+					k.setPosition( (int)receivedPacket.x, (int)receivedPacket.y );
+				}
+			}	
+		}
+		
+		// If the kangaroo is currently move 
+		if (k.getState().getState() == States.movement)
+		{
+			/*
+			 *  If the player press the punch key
+			 *  Launch the punch state
+			 */
+			if (receivedPacket.punch)
+			{
+				k.getState().setState(States.punch);
+			}
+			else
+			{
+				/*
+				 * If the player have moved and don't press the punch key
+				 * launch movemnt state
+				 */
+				if (receivedPacket.x == k.getPosition().x)
+				{
+					k.getState().setState(States.idle);
+				}
+				else
+				{
+					k.setPosition( (int)receivedPacket.x, (int)receivedPacket.y );
+				}
+			}
+		}
+		
+		k.setNetworkImage(receivedPacket);
+	}
 	
 	/*
 	 * Getters and Setters
