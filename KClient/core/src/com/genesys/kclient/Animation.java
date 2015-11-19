@@ -14,6 +14,7 @@ public class Animation
 	private String name;
 	private int nFrames, fps, currentFrame = 0;
 	protected ArrayList<TextureRegion> frames;
+	protected ArrayList<Hitbox> hitboxes;
 	private float timer = 0;
 	private boolean resume = true;
 	
@@ -21,16 +22,17 @@ public class Animation
 	 * Constructors
 	 */	
 	
-	public Animation(String name, int fps, final Texture sheet, final Rectangle frameSize, ArrayList<HitBox> hitBoxes)
+	public Animation(String name, int fps, final Texture sheet, final Rectangle frameSize, ArrayList<Hitbox> hitboxes)
 	{
 		this.name = name;
 		this.fps = fps;
 		nFrames = (int) (sheet.getWidth() / frameSize.width);
-		
 		frames = new ArrayList<TextureRegion>();
 		
 		for (int i = 0; i < nFrames; i++)
 			frames.add(new TextureRegion(sheet, (int) (frameSize.x + frameSize.width * i), (int) frameSize.y, (int) frameSize.width, (int) frameSize.height));
+	
+		this.hitboxes = hitboxes;
 	}
 	
 	public Animation(String name, int fps, final Texture sheet, final Rectangle frameSize)
@@ -45,11 +47,12 @@ public class Animation
 			frames.add(new TextureRegion(sheet, (int) (frameSize.x + frameSize.width * i), (int) frameSize.y, (int) frameSize.width, (int) frameSize.height));
 	}
 
-	public Animation(String name, int fps, ArrayList<TextureRegion> frames, ArrayList<HitBox> hitBoxes)
+	public Animation(String name, int fps, ArrayList<TextureRegion> frames, ArrayList<Hitbox> hitboxes)
 	{
 		this.name = name;
 		this.setFps(fps);
 		this.frames = frames;
+		this.hitboxes = hitboxes;
 	}
 	
 	/*
@@ -61,7 +64,7 @@ public class Animation
 		
 		if (!resume)
 		{
-			if (timer > 1 / fps)
+			if (timer > 1f / (float) fps)
 			{
 				if (currentFrame < nFrames - 1)
 					currentFrame++;
@@ -84,6 +87,12 @@ public class Animation
 		timer = 0;
 	}
 
+	public void setFramesAndHitboxes(ArrayList<TextureRegion> frames, ArrayList<Hitbox> hitboxes)
+	{
+		setFrames(frames);
+		setHitboxes(hitboxes);
+	}
+	
 	/*
 	 * Getters & Setters
 	 */
@@ -101,5 +110,25 @@ public class Animation
 	public TextureRegion getKeyFrame()
 	{
 		return frames.get(currentFrame);
+	}
+	
+	public void setFrames(ArrayList<TextureRegion> frames)
+	{
+		this.frames = frames;
+	}
+	
+	public void setHitboxes(ArrayList<Hitbox> hitboxes)
+	{
+		this.hitboxes = hitboxes;
+	}
+	
+	public int getKeyFrameIndex()
+	{
+		return currentFrame;
+	}
+	
+	public Hitbox getKeyHitbox()
+	{
+		return hitboxes.get(currentFrame);
 	}
 }

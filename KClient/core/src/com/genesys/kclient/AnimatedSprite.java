@@ -15,7 +15,6 @@ public class AnimatedSprite extends Actor
 	
 	private int currentAnim = 0;
 	protected ArrayList<Animation> anims;
-	protected ArrayList<ArrayList<HitBox>> boxes;
 	protected TextureRegion currentFrame;
 	protected boolean flipped = false;
 	
@@ -29,7 +28,6 @@ public class AnimatedSprite extends Actor
 	public AnimatedSprite()
 	{
 		anims = new ArrayList<Animation>();
-		boxes = new ArrayList<ArrayList<HitBox>>();
 		
 		if (debug)
 			renderer = new ShapeRenderer();
@@ -50,9 +48,9 @@ public class AnimatedSprite extends Actor
 		else if (currentFrame.isFlipX() && !flipped)
 			currentFrame.flip(true, false);
 		
-		for (ArrayList<HitBox> hbs : boxes)
+		for (Animation anim : anims)
 		{
-			for (HitBox hb : hbs)
+			for (Hitbox hb : anim.hitboxes)
 			{
 				if (hb.x != this.getX())
 					hb.translateX(this.getX() - hb.x);
@@ -71,32 +69,30 @@ public class AnimatedSprite extends Actor
 		if (debug)
 		{		
 			batch.end();
-			for (HitBox boxes : boxes.get(currentAnim))
-				boxes.drawDebug();
+			anims.get(currentAnim).getKeyHitbox().drawDebug();
 			batch.begin();
 		}
 		super.draw(batch, parentAlpha);
-	}
-
-	public void addAHB(Animation anim, ArrayList<HitBox> boxs)
-	{
-		anims.add(anim);
-		
-		for (HitBox hb : boxs)
-		{
-			hb.translateX(this.getX());
-			hb.translateY(this.getY());
-		}
-			
-		boxes.add(boxs);
 	}
 	
 	public void flip()
 	{			
 		flipped = !flipped;
 		
-		for (HitBox hb : boxes.get(currentAnim))
+		for (Hitbox hb : anims.get(currentAnim).hitboxes)
 			hb.flip(anims.get(currentAnim).getKeyFrame().getRegionWidth(), this.getX());
+	}
+	
+	public void addAnim(Animation anim)
+	{
+		// Translate boxes to match actor position
+		for (Hitbox hb : anim.hitboxes)
+		{
+			hb.translateX(this.getX());
+			hb.translateY(this.getY());
+		}
+		
+		anims.add(anim);
 	}
 	
 	/*
