@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
-public class HitBox
+public class Hitbox
 {
 	/*
 	 * Attributes
@@ -21,13 +21,13 @@ public class HitBox
 	 * Constructors
 	 */
 	
-	public HitBox()
+	public Hitbox()
 	{
 		boxes = new ArrayList<Rectangle>();
 		render = new ShapeRenderer();
 		render.setAutoShapeType(true);
 	}
-
+	
 	/*
 	 * Methods
 	 */
@@ -46,7 +46,7 @@ public class HitBox
 			a.y = a.y + value;
 	}
 	
-	public boolean collidWith(HitBox boxes2)
+	public boolean collidWith(Hitbox boxes2)
 	{
 		int indexA = 0;
 		int indexB = 0;
@@ -82,15 +82,8 @@ public class HitBox
 	
 	public void flip(float fullWidth, float axeX)
 	{	
-		System.out.println("Width : " + fullWidth);
-		System.out.println("AxeX : " + axeX);
 		for (Rectangle a : boxes)
-		{
-			System.out.println("Before : " + a.x);
-			System.out.println("(" + axeX + " + " + fullWidth / 2 + ") - (" + a.x + " - (" + axeX + " + " + fullWidth / 2 + ")) - " + a.width);
 			a.x = (axeX + fullWidth / 2) - (a.x - (axeX + fullWidth / 2)) - a.width;
-			System.out.println("After : " + a.x);
-		}
 	}
 	
 	/*
