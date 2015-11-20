@@ -24,7 +24,7 @@ public class Kangaroo extends AnimatedSprite
 	private int health;
 	private int damage = 5;
 	private boolean punch;
-	private boolean guard;
+	//private boolean guard;
 	
 	// Compare kangaroo update packet to this network image to know if server need to be updated
 	public UpdateKangarooPacket networkImage;
