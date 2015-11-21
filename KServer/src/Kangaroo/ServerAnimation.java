@@ -6,10 +6,14 @@ import java.util.TimerTask;
 
 public class ServerAnimation 
 {
+	public static final int foreverPlay = 0;
+	public static final int onePlay = 1;
+	
 	private ArrayList<Hitbox> hitboxes;
 	private Timer timer;
 	private int nFrames, fps, currentFrame = 0;
 	private boolean resume;
+	private int mode;
 	
 	public ServerAnimation()
 	{
@@ -36,6 +40,16 @@ public class ServerAnimation
 				
 			}, 1/fps);
 		}
+		
+		// Change the cuurent frame
+		if (currentFrame < nFrames - 1)
+		{
+			currentFrame++;
+		}
+		else
+		{
+			currentFrame = 0;
+		}
 	}
 	
 	public void start()
@@ -57,5 +71,10 @@ public class ServerAnimation
 	public void stop()
 	{
 		resume = false;
+	}
+	
+	public Hitbox getCurrentFrame()
+	{
+		return hitboxes.get(currentFrame);
 	}
 }
