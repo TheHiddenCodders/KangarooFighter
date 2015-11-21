@@ -14,10 +14,11 @@ public class ServerAnimation
 	private int nFrames, fps, currentFrame = 0;
 	private boolean resume;
 	private int mode;
+	private States callingState;
 	
 	public ServerAnimation()
 	{
-		
+		mode = foreverPlay;
 	}
 	
 	public ServerAnimation(String animationPath)
@@ -39,21 +40,30 @@ public class ServerAnimation
 				}
 				
 			}, 1/fps);
-		}
 		
-		// Change the cuurent frame
-		if (currentFrame < nFrames - 1)
-		{
-			currentFrame++;
-		}
-		else
-		{
-			currentFrame = 0;
+			// Change the current frame
+			if (currentFrame < nFrames - 1)
+			{
+				currentFrame++;
+			}
+			else
+			{
+				if (mode == foreverPlay)
+					currentFrame = 0;
+				else
+				{
+					callingState.setState(States.idle);
+					currentFrame = 0;
+					resume = false;
+				}
+			}
+		
 		}
 	}
 	
-	public void start()
+	public void start(States state)
 	{
+		callingState = state;
 		resume = true;
 		
 		timer.schedule(new TimerTask()
@@ -76,5 +86,10 @@ public class ServerAnimation
 	public Hitbox getCurrentFrame()
 	{
 		return hitboxes.get(currentFrame);
+	}
+	
+	public void setHitboxes(ArrayList<Hitbox> hitboxes)
+	{
+		this.hitboxes = hitboxes;
 	}
 }
