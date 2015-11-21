@@ -99,6 +99,7 @@ public class States
 		// add the idle anim to the punch for testing
 		anims.add ( new ServerAnimation() );
 		anims.get(1).setHitboxes(hitboxes);
+		anims.get(1).setMode(ServerAnimation.onePlay);
 	}
 	
 

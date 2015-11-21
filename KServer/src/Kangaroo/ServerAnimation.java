@@ -92,4 +92,9 @@ public class ServerAnimation
 	{
 		this.hitboxes = hitboxes;
 	}
+	
+	public void setMode (int mode)
+	{
+		this.mode = mode;
+	}
 }
