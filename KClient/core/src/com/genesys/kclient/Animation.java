@@ -137,6 +137,11 @@ public class Animation
 	/*
 	 * Methods
 	 */
+	
+	/**
+	 * Update time and handle frame skipping
+	 * @param delta
+	 */
 	public void update(float delta)
 	{
 		timer = timer + delta;
@@ -155,15 +160,31 @@ public class Animation
 		}
 	}
 	
+	/**
+	 * Start or resume the animation
+	 */
 	public void start()
 	{
 		resume = false;
 	}
 	
+	/**
+	 * Resume the animation
+	 */
+	public void resume()
+	{
+		resume = true;
+		timer = 0;
+	}
+	
+	/**
+	 * Stop the animation
+	 */
 	public void stop()
 	{
 		resume = true;
 		timer = 0;
+		currentFrame = 0;
 	}
 
 	public void setFramesAndHitboxes(ArrayList<TextureRegion> frames, ArrayList<Hitbox> hitboxes)

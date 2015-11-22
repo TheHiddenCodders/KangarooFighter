@@ -21,6 +21,9 @@ public class Hitbox
 	 * Constructors
 	 */
 	
+	/**
+	 * Make an empty Hitbox (no boxes in)
+	 */
 	public Hitbox()
 	{
 		boxes = new ArrayList<Rectangle>();
@@ -32,6 +35,10 @@ public class Hitbox
 	 * Methods
 	 */
 	
+	/**
+	 * Translate X all the boxes by value
+	 * @param value
+	 */
 	public void translateX(float value)
 	{
 		x += value;
@@ -39,6 +46,10 @@ public class Hitbox
 			a.x = a.x + value;
 	}
 	
+	/**
+	 * Translate Y all the boxes by value
+	 * @param value
+	 */
 	public void translateY(float value)
 	{
 		y += value;
@@ -46,6 +57,13 @@ public class Hitbox
 			a.y = a.y + value;
 	}
 	
+	/**
+	 * Check if Hitbox is colliding with another Hitbox
+	 * The collid test will check for every boxes of the hitboxes
+	 * The colliding boxes are stored in the colliderIndex of each hitboxes
+	 * @param boxes2
+	 * @return true or false
+	 */
 	public boolean collidWith(Hitbox boxes2)
 	{
 		int indexA = 0;
@@ -69,6 +87,9 @@ public class Hitbox
 		return false;
 	}
 	
+	/**
+	 * Use for debug, draw the boxes
+	 */
 	public void drawDebug()
 	{
 		render.begin();
@@ -80,10 +101,15 @@ public class Hitbox
 		render.end();
 	}
 	
-	public void flip(float fullWidth, float axeX)
+	/**
+	 * Flip all the boxes by the axe containerX + fullWidth / 2
+	 * @param fullWidth
+	 * @param containerX
+	 */
+	public void flip(float fullWidth, float containerX)
 	{	
 		for (Rectangle a : boxes)
-			a.x = (axeX + fullWidth / 2) - (a.x - (axeX + fullWidth / 2)) - a.width;
+			a.x = (containerX + fullWidth / 2) - (a.x - (containerX + fullWidth / 2)) - a.width;
 	}
 	
 	/*
