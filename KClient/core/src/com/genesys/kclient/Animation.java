@@ -27,37 +27,37 @@ public class Animation
 	 */	
 	
 	/**
-	 * Make an animation by cutting the texture sheet by the frameSize dimensions. Also add hitboxes to the frames
+	 * Make an animation by cutting the texture sheet by the frame dimensions. Also add hitboxes to the frames
 	 * @param name
 	 * @param fps
 	 * @param sheet
-	 * @param frameSize
+	 * @param frame
 	 * @param hitboxes
 	 */
-	public Animation(String name, int fps, final Texture sheet, final Rectangle frameSize, ArrayList<Hitbox> hitboxes)
+	public Animation(String name, int fps, final Texture sheet, final Rectangle frame, ArrayList<Hitbox> hitboxes)
 	{
-		this(name, fps, sheet, frameSize);
+		this(name, fps, sheet, frame);
 	
 		this.hitboxes = hitboxes;
 	}
 	
 	/**
-	 * Make an animation by cutting the texture sheet by the frameSize dimensions. 
+	 * Make an animation by cutting the texture sheet by the frame dimensions. 
 	 * @param name
 	 * @param fps
 	 * @param sheet
-	 * @param frameSize
+	 * @param frame
 	 */
-	public Animation(String name, int fps, final Texture sheet, final Rectangle frameSize)
+	public Animation(String name, int fps, final Texture sheet, final Rectangle frame)
 	{
 		this.name = name;
 		this.fps = fps;
-		nFrames = (int) (sheet.getWidth() / frameSize.width);
+		nFrames = (int) (sheet.getWidth() / frame.width);
 		
 		frames = new ArrayList<TextureRegion>();
 		
 		for (int i = 0; i < nFrames; i++)
-			frames.add(new TextureRegion(sheet, (int) (frameSize.x + frameSize.width * i), (int) frameSize.y, (int) frameSize.width, (int) frameSize.height));
+			frames.add(new TextureRegion(sheet, (int) (frame.x + frame.width * i), (int) frame.y, (int) frame.width, (int) frame.height));
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class Animation
 			
 			// Parse it
 			Texture sheet = new Texture(Gdx.files.internal(lines.get(0)));
-			Rectangle frameSize = new Rectangle(0, 0, Integer.parseInt(lines.get(1).split(",")[0]), Integer.parseInt(lines.get(1).split(",")[1]));
+			Rectangle frame = new Rectangle(0, 0, Integer.parseInt(lines.get(1).split(",")[0]), Integer.parseInt(lines.get(1).split(",")[1]));
 			nFrames = Integer.parseInt(lines.get(2));
 			int nBoxPerHitbox = Integer.parseInt(lines.get(3));
 			fps = Integer.parseInt(lines.get(4)); 
@@ -108,7 +108,7 @@ public class Animation
 			// Cut sheet
 			frames = new ArrayList<TextureRegion>();
 			for (int i = 0; i < nFrames; i++)
-				frames.add(new TextureRegion(sheet, (int) (frameSize.x + frameSize.width * i), (int) frameSize.y, (int) frameSize.width, (int) frameSize.height));	
+				frames.add(new TextureRegion(sheet, (int) (frame.x + frame.width * i), (int) frame.y, (int) frame.width, (int) frame.height));	
 			
 			// Load hitboxes
 			hitboxes = new ArrayList<Hitbox>();
