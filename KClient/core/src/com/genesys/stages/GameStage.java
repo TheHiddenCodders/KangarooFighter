@@ -1,15 +1,17 @@
 package com.genesys.stages;
 
+import Packets.ClientReadyPacket;
+import Packets.UpdateKangarooPacket;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.genesys.kclient.AnimatedProgressBar;
 import com.genesys.kclient.Kangaroo;
 import com.genesys.kclient.Main;
-
-import Packets.ClientReadyPacket;
-import Packets.UpdateKangarooPacket;
 
 /**
  * Game stage, where the fight take place
@@ -39,6 +41,9 @@ public class GameStage extends Stage
 	
 	private Label playerName, opponentName;
 	
+	/** Debug */
+	private ShapeRenderer renderer;
+	
 	/*
 	 * Constructors
 	 */
@@ -49,6 +54,12 @@ public class GameStage extends Stage
 		
 		background = new Texture(Gdx.files.internal("sprites/dojo.png"));
 		initKangaroos(pPlayer, pOpponent);
+		
+		// Debug
+		renderer = new ShapeRenderer();
+		renderer.setAutoShapeType(true);
+		renderer.setColor(Color.WHITE);
+		
 		setClientReady();
 	}
 	
@@ -90,7 +101,13 @@ public class GameStage extends Stage
 		this.getBatch().begin();
 		this.getBatch().draw(background, 0, 0);
 		this.getBatch().end();
+		
 		super.draw();
+		
+		renderer.begin();
+		player.drawDebug(renderer);
+		opponent.drawDebug(renderer);
+		renderer.end();
 	}
 	/*
 	 * Methods
