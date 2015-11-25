@@ -16,10 +16,7 @@ public class AnimatedSprite extends Actor
 	private int currentAnim = 0;
 	protected ArrayList<Animation> anims;
 	protected TextureRegion currentFrame;
-	protected boolean flipped = false;
-	
-	static final boolean debug = true;
-	ShapeRenderer renderer;
+	private boolean flipped = false;
 	
 	/*
 	 * Constructors
@@ -28,9 +25,6 @@ public class AnimatedSprite extends Actor
 	public AnimatedSprite()
 	{
 		anims = new ArrayList<Animation>();
-		
-		if (debug)
-			renderer = new ShapeRenderer();
 	}
 
 	/*
@@ -39,7 +33,7 @@ public class AnimatedSprite extends Actor
 	
 	@Override
 	public void act(float delta)
-	{
+	{		
 		anims.get(currentAnim).update(delta);
 		currentFrame = anims.get(currentAnim).getKeyFrame();
 		
@@ -47,13 +41,19 @@ public class AnimatedSprite extends Actor
 			currentFrame.flip(true, false);
 		else if (currentFrame.isFlipX() && !flipped)
 			currentFrame.flip(true, false);
-		
+			
 		for (Animation anim : anims)
 		{
-			for (Hitbox hb : anim.hitboxes)
+			if (anim.hitboxes != null)
 			{
-				if (hb.x != this.getX())
-					hb.translateX(this.getX() - hb.x);
+				for (Hitbox hb : anim.hitboxes)
+				{
+					if (hb.x != this.getX())
+						hb.translateX(this.getX() - hb.x);
+					
+					if (hb.y != this.getY())
+						hb.translateY(this.getY() - hb.y);
+				}
 			}
 		}
 		
@@ -64,40 +64,55 @@ public class AnimatedSprite extends Actor
 	public void draw(Batch batch, float parentAlpha)
 	{		
 		if (currentFrame != null)
-			batch.draw(currentFrame, this.getX(), this.getY());		
+			batch.draw(currentFrame, this.getX(), this.getY(), 0, 0, this.getWidth(), this.getHeight(), this.getScaleX(), this.getScaleY(), this.getRotation());		
 		
-		if (debug)
-		{		
-			batch.end();
-			anims.get(currentAnim).getKeyHitbox().drawDebug();
-			batch.begin();
-		}
 		super.draw(batch, parentAlpha);
 	}
 	
+	/**
+	 * Used for debug, draw the hitbox
+	 * @param render 
+	 */
+	public void drawDebug(ShapeRenderer render)
+	{
+		getCurrentAnim().getKeyHitbox().drawDebug(render);
+	}
+	
+	/**
+	 * Flip all the sprites & hitboxes 
+	 */
 	public void flip()
 	{			
 		flipped = !flipped;
 		
 		for (Hitbox hb : anims.get(currentAnim).hitboxes)
-			hb.flip(anims.get(currentAnim).getKeyFrame().getRegionWidth(), this.getX());
-	}
-	
-	public void addAnim(Animation anim)
-	{
-		// Translate boxes to match actor position
-		for (Hitbox hb : anim.hitboxes)
-		{
-			hb.translateX(this.getX());
-			hb.translateY(this.getY());
-		}
-		
-		anims.add(anim);
+			hb.flip(this.getWidth());
 	}
 	
 	/*
 	 * Getters & Setters
 	 */
+	
+	public void addAnimation(Animation anim)
+	{
+		if (anim.hitboxes != null)
+		{
+			// Translate boxes to match actor position
+			for (Hitbox hb : anim.hitboxes)
+			{
+				hb.translateX(this.getX());
+				hb.translateY(this.getY());
+			}
+		}
+		
+		anims.add(anim);
+		
+		if (this.getWidth() != anims.get(currentAnim).getKeyFrame().getRegionWidth())
+			this.setWidth(anims.get(currentAnim).getKeyFrame().getRegionWidth());
+		
+		if (this.getHeight() != anims.get(currentAnim).getKeyFrame().getRegionHeight())
+			this.setHeight(anims.get(currentAnim).getKeyFrame().getRegionHeight());
+	}
 	
 	public void setCurrentAnim(int index)
 	{
@@ -113,5 +128,10 @@ public class AnimatedSprite extends Actor
 			if (anims.get(i).getName().equals(name))
 				setCurrentAnim(i);
 		}
+	}
+	
+	public Animation getCurrentAnim()
+	{
+		return anims.get(currentAnim);
 	}
 }

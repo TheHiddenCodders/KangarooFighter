@@ -2,8 +2,9 @@ package com.genesys.kclient;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Hitbox
@@ -12,55 +13,94 @@ public class Hitbox
 	 * Attributes
 	 */
 	
-	public ArrayList<Rectangle> boxes;
+	public ArrayList<Polygon> polygons;
 	public int colliderIndex = -1;
 	public float x = 0, y = 0;
-	ShapeRenderer render;
 	
 	/*
 	 * Constructors
 	 */
 	
+	/**
+	 * Make an empty Hitbox (no polygons in)
+	 */
 	public Hitbox()
 	{
-		boxes = new ArrayList<Rectangle>();
-		render = new ShapeRenderer();
-		render.setAutoShapeType(true);
+		polygons = new ArrayList<Polygon>();
+	}
+	
+	/**
+	 * Copy constructor
+	 * @param hitbox
+	 */
+	public Hitbox(Hitbox hitbox)
+	{
+		this();
+		x = hitbox.x;
+		y = hitbox.y;
+		colliderIndex = hitbox.colliderIndex;
+		
+		for (int i = 0; i < hitbox.polygons.size(); i++)
+		{
+			Polygon temp = new Polygon();
+			float[] vertices = new float[hitbox.polygons.get(i).getVertices().length];
+			
+			for (int j = 0; j < hitbox.polygons.get(i).getVertices().length; j++)
+				vertices[j] = new Float(hitbox.polygons.get(i).getVertices()[j]);
+			
+			temp.setVertices(vertices);
+			addPoly(temp);
+		}
 	}
 	
 	/*
 	 * Methods
 	 */
 	
+	/**
+	 * Translate X all the polygons by value
+	 * @param value
+	 */
 	public void translateX(float value)
 	{
 		x += value;
-		for (Rectangle a : boxes)
-			a.x = a.x + value;
+		for (Polygon a : polygons)
+			a.translate(value, 0);
 	}
 	
+	/**
+	 * Translate Y all the polygons by value
+	 * @param value
+	 */
 	public void translateY(float value)
 	{
 		y += value;
-		for (Rectangle a : boxes)
-			a.y = a.y + value;
+		for (Polygon a : polygons)
+			a.translate(0, value);
 	}
 	
-	public boolean collidWith(Hitbox boxes2)
+	/**
+	 * Check if Hitbox is colliding with another Hitbox
+	 * The collid test will check for every polygons of the hitpolygons
+	 * The colliding polygons are stored in the colliderIndex of each hitpolygons
+	 * @param polygons2
+	 * @return true or false
+	 */
+	public boolean collidWith(Hitbox polygons2)
 	{
 		int indexA = 0;
 		int indexB = 0;
 		
-		for(Rectangle a : boxes)
+		for(Polygon a : polygons)
 		{
 			indexA++;
-			for(Rectangle b : boxes2.boxes)
+			for(Polygon b : polygons2.polygons)
 			{
 				indexB++;
-				if (a.overlaps(b) || b.overlaps(a))
+				if (Intersector.overlapConvexPolygons(a, b))
 				{
 					colliderIndex = indexA;
-					boxes2.colliderIndex = indexB;
+					polygons2.colliderIndex = indexB;
 					return true;					
 				}
 			}
@@ -69,21 +109,83 @@ public class Hitbox
 		return false;
 	}
 	
-	public void drawDebug()
+	/**
+	 * Use for debug, draw the polygons
+	 */
+	public void drawDebug(ShapeRenderer render)
 	{
-		render.begin();
-		render.setColor(Color.BLUE);
+		for (Polygon a : polygons)
+			render.polygon(a.getTransformedVertices());
 		
-		for (Rectangle a : boxes)
-			render.rect(a.x, a.y, a.width, a.height);
-		
-		render.end();
+	//	for (Polygon a : polygons)
+	//		render.polygon(a.getVertices());
 	}
 	
-	public void flip(float fullWidth, float axeX)
-	{	
-		for (Rectangle a : boxes)
-			a.x = (axeX + fullWidth / 2) - (a.x - (axeX + fullWidth / 2)) - a.width;
+	/**
+	 * Flip all the polygons
+	 * @param fullWidth
+	 */
+	public void flip(float fullWidth)
+	{			
+		for (Polygon a : polygons)
+			polyFlip(a, fullWidth);
+	}
+	
+	/**
+	 * Add polygon.size * value to the polygon (ONLY WORK ON RECTANGLES)
+	 * @param value the multiplicator
+	 */
+	public void sizeBy(float value)
+	{
+		for (Polygon a : polygons)
+		{
+			float x = a.getVertices()[0];
+			float y = a.getVertices()[1];
+			float width = a.getVertices()[2] - a.getVertices()[0]; // x2 - x1 = w
+			float height = a.getVertices()[5] - a.getVertices()[1]; // y2 - y1 = h
+			
+			x *= value;
+			y *= value;
+			width *= value;
+			height *= value;
+			
+			a.getVertices()[0] = x;
+			a.getVertices()[1] = y;
+			a.getVertices()[2] = x + width;
+			a.getVertices()[3] = y;
+			a.getVertices()[4] = x + width;
+			a.getVertices()[5] = y + height;
+			a.getVertices()[6] = x;
+			a.getVertices()[7] = y + height;			
+		}
+	}
+	
+	/**
+	 * Flip a single polygon (ONLY TESTED ON RECTANGLES)
+	 * @param poly to flip
+	 */
+	private void polyFlip(Polygon poly, float fullWidth)
+	{		
+		for (int i = 0; i < poly.getVertices().length; i+=2)
+			poly.getVertices()[i] = fullWidth / 2 - poly.getVertices()[i] + fullWidth / 2;
+		
+		// Update transformed vertices according to untransformed vertice
+		poly.translate(0, 0);
+	}
+	
+	@Override
+	public String toString() 
+	{
+		String temp = "";
+		for (Polygon poly : polygons)
+		{
+			for (float vertice : poly.getVertices())
+			{
+				temp = temp.concat(vertice + ",");
+			}
+			temp = temp.concat("\n");
+		}
+		return temp;
 	}
 	
 	/*
@@ -92,11 +194,34 @@ public class Hitbox
 	
 	public void addBox(Rectangle box)
 	{
-		boxes.add(box);
+		Polygon temp = PolygonUtils.rectangleToPolygon(box);			
+		addPoly(temp);
 	}
 	
-	public void removeBox(Rectangle box)
+	public void addBoxWithoutTransform(Rectangle box)
 	{
-		boxes.remove(box);
+		Polygon temp = PolygonUtils.rectangleToPolygon(box);			
+		addPolyWithoutTransform(temp);
+	}
+	
+	public void addPoly(Polygon poly)
+	{
+		poly.translate(x, y);
+		polygons.add(poly);
+	}
+	
+	public void addPolyWithoutTransform(Polygon poly)
+	{
+		polygons.add(poly);
+	}
+	
+	public void addPoly(float... vertices)
+	{
+		addPoly(new Polygon(vertices));
+	}
+	
+	public void removePoly(Polygon poly)
+	{
+		polygons.remove(poly);
 	}
 }

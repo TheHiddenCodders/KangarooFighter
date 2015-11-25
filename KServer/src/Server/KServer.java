@@ -134,14 +134,6 @@ public class KServer extends Server
 		{
 			UpdateKangarooPacket receivedPacket = (UpdateKangarooPacket) o;
 			
-			// Update kangaroo
-			/*getKangarooFromIP(clientIp).updateFromPacket(receivedPacket);
-			
-			// Send kangaroo to the opponent
-			Game game = getGameFromIP(clientIp);
-			Kangaroo k = game.getKangarooFromOpponentIp(clientIp);
-			send(k.getClient(), receivedPacket);*/
-			
 			// Get the game where this kangaroo is
 			Game game = getGameFromIP(clientIp);
 			
