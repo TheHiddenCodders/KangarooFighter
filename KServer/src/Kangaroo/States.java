@@ -131,7 +131,7 @@ public class States
 		}
 		if (currentState == idle)
 		{
-			k.getClient().send(k.getUpdatePacket());
+			//k.getClient().send(k.getUpdatePacket());
 		}
 	}
 
