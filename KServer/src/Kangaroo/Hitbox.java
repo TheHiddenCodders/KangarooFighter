@@ -2,6 +2,10 @@ package Kangaroo;
 
 import java.util.ArrayList;
 
+
+
+import Utils.Polygon;
+import Utils.PolygonUtils;
 import Utils.Rectangle;
 
 public class Hitbox
@@ -10,7 +14,8 @@ public class Hitbox
 	 * Attributes
 	 */
 	
-	public ArrayList<Rectangle> boxes;
+	public ArrayList<Polygon> polygons;
+	//public ArrayList<Rectangle> boxes;
 	public int colliderIndex = -1;
 	public float x = 0, y = 0;
 	
@@ -20,7 +25,7 @@ public class Hitbox
 	
 	public Hitbox()
 	{
-		boxes = new ArrayList<Rectangle>();
+		polygons = new ArrayList<Polygon>();
 	}
 	
 	/*
@@ -30,15 +35,15 @@ public class Hitbox
 	public void translateX(float value)
 	{
 		x += value;
-		for (Rectangle a : boxes)
-			a.x = a.x + value;
+		for (Polygon a : polygons)
+			a.translate(value, 0);
 	}
 	
 	public void translateY(float value)
 	{
 		y += value;
-		for (Rectangle a : boxes)
-			a.y = a.y + value;
+		for (Polygon a : polygons)
+			a.translate(0, value);
 	}
 	
 	public boolean collidWith(Hitbox boxes2)
@@ -46,13 +51,13 @@ public class Hitbox
 		int indexA = 0;
 		int indexB = 0;
 		
-		for(Rectangle a : boxes)
+		for(Polygon a : polygons)
 		{
 			indexA++;
-			for(Rectangle b : boxes2.boxes)
+			for(Polygon b : boxes2.polygons)
 			{
 				indexB++;
-				if (a.overlaps(b) || b.overlaps(a))
+				if (a.overlap(b) || b.overlap(a))
 				{
 					colliderIndex = indexA;
 					boxes2.colliderIndex = indexB;
@@ -66,9 +71,29 @@ public class Hitbox
 	
 	public void flip(float fullWidth, float axeX)
 	{	
-		for (Rectangle a : boxes)
-			a.x = (axeX + fullWidth / 2) - (a.x - (axeX + fullWidth / 2)) - a.width;
+		for (Polygon a : polygons)
+			polyFlip(a, fullWidth);
 	}
+	
+	public void addPoly(Polygon poly)
+	{
+		poly.translate(x, y);
+		polygons.add(poly);
+	}
+	
+	/**
+	 * Flip a single polygon (ONLY TESTED ON RECTANGLES)
+	 * @param poly to flip
+	 */
+	private void polyFlip(Polygon poly, float fullWidth)
+	{		
+		for (int i = 0; i < poly.getVertices().length; i+=2)
+			poly.getVertices()[i] = fullWidth / 2 - poly.getVertices()[i] + fullWidth / 2;
+		
+		// Update transformed vertices according to untransformed vertice
+		poly.translate(0, 0);
+	}
+	
 	
 	/*
 	 * Getters & Setters
@@ -76,11 +101,17 @@ public class Hitbox
 	
 	public void addBox(Rectangle box)
 	{
-		boxes.add(box);
+		Polygon temp = PolygonUtils.rectangleToPolygon(box);			
+		addPoly(temp);
 	}
 	
-	public void removeBox(Rectangle box)
+	public void addPoly(float... vertices)
 	{
-		boxes.remove(box);
+		addPoly(new Polygon(vertices));
+	}
+	
+	public void removePoly(Polygon poly)
+	{
+		polygons.remove(poly);
 	}
 }

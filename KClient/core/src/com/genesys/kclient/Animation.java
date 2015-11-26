@@ -219,7 +219,9 @@ public class Animation
 			}
 			
 			// Parse it
-			Texture sheet = new Texture(Gdx.files.absolute(lines.get(0)));
+			System.out.println(lines.get(0));
+			
+			Texture sheet = new Texture(Gdx.files.internal(lines.get(0)));
 			Rectangle frame = new Rectangle(0, 0, Integer.parseInt(lines.get(1).split(",")[0]), Integer.parseInt(lines.get(1).split(",")[1]));
 			fps = Integer.parseInt(lines.get(2)); 
 			int nBoxPerHitbox = Integer.parseInt(lines.get(3));
