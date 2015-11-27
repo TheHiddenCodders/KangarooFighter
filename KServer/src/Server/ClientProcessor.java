@@ -96,6 +96,8 @@ public class ClientProcessor implements Runnable
 		{
 			output.writeObject(o);
 			output.flush();
+			
+			System.out.println("Sent to ALL:" + o.toString() + "\n");
 		} catch (IOException e)
 		{
 			e.printStackTrace();

@@ -140,8 +140,8 @@ public class KServer extends Server
 			// Update the game
 			game.stateMachine( receivedPacket, cp.getIp() );
 			
+			// Send the new kangaroos states
 			Kangaroo sender = getKangarooFromIP(clientIp), senderOpponent = game.getKangarooFromOpponentIp(clientIp);
-			
 			send( cp, sender.getUpdatePacket() );
 			send( senderOpponent.getClient(), sender.getUpdatePacket() );
 		}

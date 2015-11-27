@@ -156,8 +156,7 @@ public abstract class Server
 			for (int i = 0; i < clients.size(); i++)
 				clients.get(i).send(o);
 			
-			System.out.println("Sent to ALL:"
-			+ o.toString() + "\n");
+			System.out.println("Sent to ALL:" + o.toString() + "\n");
 		}
 		else if ( clientIndex >= 0 && clientIndex < clients.size() )
 		{

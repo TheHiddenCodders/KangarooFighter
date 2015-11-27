@@ -112,6 +112,7 @@ public class Kangaroo extends AnimatedSprite
 	{
 		health = p.health;
 		setPosition(p.x, p.y);
+		setState(p.state);
 	}
 	
 	/**
@@ -181,8 +182,13 @@ public class Kangaroo extends AnimatedSprite
 		return state;
 	}
 
-	public void setState(int state) {
-		this.state = state;
+	public void setState(int state)
+	{
+		if (this.state != state)
+		{
+			this.state = state;
+			setCurrentAnim(state);
+		}
 	}
 
 	public int getDamage() {

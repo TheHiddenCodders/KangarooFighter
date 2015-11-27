@@ -25,14 +25,10 @@ public class ServerAnimation
 	private int mode;
 	private States callingState;
 	
-	public ServerAnimation()
-	{
-		mode = foreverPlay;
-	}
-	
 	public ServerAnimation(String animationPath)
 	{
 		load(animationPath);
+		timer = new Timer();
 	}
 	
 	public void changeFrame()
@@ -117,9 +113,7 @@ public class ServerAnimation
 			reader.close();
 			
 			// Parse it
-			System.out.println(lines.get(0));
-			
-			BufferedImage sheet = ImageIO.read(new File(lines.get(0)));
+			BufferedImage sheet = ImageIO.read(new File("assets/" + lines.get(0)));
 			Rectangle frame = new Rectangle(0, 0, Integer.parseInt(lines.get(1).split(",")[0]), Integer.parseInt(lines.get(1).split(",")[1]));
 			fps = Integer.parseInt(lines.get(2)); 
 			int nBoxPerHitbox = Integer.parseInt(lines.get(3));
@@ -156,6 +150,10 @@ public class ServerAnimation
 		}		
 	}
 	
+	public float getTotalDuration()
+	{
+		return hitboxes.size() / fps;
+	}
 	
 	public Hitbox getKeyFrame()
 	{

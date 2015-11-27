@@ -112,12 +112,20 @@ public class Game
 		if (k.getState().getState() == States.idle)
 		{
 			/*
-			 *  If the player press the punch key
-			 *  Launch the punch state
+			 *  If the player press the left punch key
+			 *  Launch the left punch state
 			 */
-			if (receivedPacket.leftPunchKey || receivedPacket.rightPunchKey)
+			if (receivedPacket.leftPunchKey)
 			{
-				k.getState().setState(States.punch);
+				k.getState().setState(States.leftPunch);
+			}
+			/*
+			 *  If the player press the right punch key
+			 *  Launch the right punch state
+			 */
+			else if (receivedPacket.rightPunchKey)
+			{
+				k.getState().setState(States.rightPunch);
 			}
 			/*
 			 *  If the player press the left arrow key
@@ -128,6 +136,10 @@ public class Game
 				k.getState().setState(States.movement);
 				k.setPosition( (int) k.getPosition().x - 1, (int) k.getPosition().y );
 			}
+			/*
+			 *  If the player press the right arrow key
+			 *  Launch the movement state
+			 */
 			else if (receivedPacket.rightArrowKey)
 			{
 				k.getState().setState(States.movement);
@@ -147,12 +159,20 @@ public class Game
 		else if (k.getState().getState() == States.movement)
 		{
 			/*
-			 *  If the player press the punch key
-			 *  Launch the punch state
+			 *  If the player press the left punch key
+			 *  Launch the left punch state
 			 */
-			if (receivedPacket.leftPunchKey || receivedPacket.rightPunchKey)
+			if (receivedPacket.leftPunchKey)
 			{
-				k.getState().setState(States.punch);
+				k.getState().setState(States.leftPunch);
+			}
+			/*
+			 *  If the player press the right punch key
+			 *  Launch the right punch state
+			 */
+			else if (receivedPacket.rightPunchKey)
+			{
+				k.getState().setState(States.rightPunch);
 			}
 			/*
 			 *  If the player press the left arrow key
