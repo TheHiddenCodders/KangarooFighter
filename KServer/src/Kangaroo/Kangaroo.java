@@ -1,6 +1,7 @@
 package Kangaroo;
 
-import Packets.UpdateKangarooPacket;
+import Packets.KangarooClientPacket;
+import Packets.KangarooServerPacket;
 import Server.ClientProcessor;
 import Utils.Vector2;
 
@@ -17,12 +18,12 @@ public class Kangaroo
 	private String name = "";
 	private int health;
 	private int damage = 5;
-	//private Vector2 position;
+	private Vector2 position = new Vector2(0, 0);
 	private States state;
 	
 	private boolean ready = false;
 	
-	private UpdateKangarooPacket networkImage;
+	private KangarooServerPacket networkImage;
 	
 	/**
 	 * Create the kangaroo with the client.
@@ -31,8 +32,9 @@ public class Kangaroo
 	 */
 	public Kangaroo(ClientProcessor cp)
 	{
+		networkImage = new KangarooServerPacket();
 		this.cp = cp;
-		this.setState(new States(this));
+		state = new States();
 	}
 	
 	/*
@@ -41,13 +43,13 @@ public class Kangaroo
 	/**
 	 * @return an updatekangaroopacket with this kangaroo data
 	 */
-	public UpdateKangarooPacket getUpdatePacket()
+	public KangarooServerPacket getUpdatePacket()
 	{
-		UpdateKangarooPacket p = new UpdateKangarooPacket();
+		KangarooServerPacket p = new KangarooServerPacket();
 		p.ip = cp.getIp();
 		p.name = name;
-		p.x = state.getPosition().x;
-		p.y = state.getPosition().y;
+		p.x = position.x;
+		p.y = position.y;
 		p.health = health;
 		p.damage = damage;
 		p.state = state.getState();
@@ -58,19 +60,14 @@ public class Kangaroo
 	 * Update kangaroo fields by packets.
 	 * @param p the packet received
 	 */
-	public void updateFromPacket(UpdateKangarooPacket p)
+	public void updateFromPacket(KangarooClientPacket p)
 	{
-		// Check that packet correspond to the kangaroo by checking names match.
-		if (p.name.equals(name))
-		{
-			state.setPosition(new Vector2(p.x, p.y));
-			health = p.health;
-		}
+		// Make the state machine here
 	}
 	
 	/**
 	 * Init the name of the kangaroo.
-	 * 
+//	 * 
 	 * @param name
 	 */
 	public void setName(String name)
@@ -117,21 +114,6 @@ public class Kangaroo
 		this.health = health;
 	}
 
-	public Vector2 getPosition() 
-	{
-		return state.getPosition();
-	}
-
-	public void setPosition(Vector2 position) 
-	{
-		state.setPosition(position);
-	}
-	
-	public void setPosition(int x, int y) 
-	{
-		state.setPosition( new Vector2(x, y) );
-	}
-
 	public States getState() {
 		return state;
 	}
@@ -139,16 +121,40 @@ public class Kangaroo
 	public void setState(States state) {
 		this.state = state;
 	}
+	
+	public boolean isSameAsNetwork()
+	{
+		return (networkImage.damage == this.damage && networkImage.health == this.health && networkImage.state == this.state.getState() && networkImage.x == this.getPosition().x && networkImage.y == this.getPosition().y);
+	}
 
-	public UpdateKangarooPacket getNetworkImage() 
+	public KangarooServerPacket getNetworkImage() 
 	{
 		return networkImage;
 	}
 
-	public void setNetworkImage(UpdateKangarooPacket networkImage) 
+	public void updateNetworkImage() 
 	{
-		this.networkImage = networkImage;
+		this.networkImage.damage = this.damage;
+		this.networkImage.health = this.health;
+		this.networkImage.state = this.state.getState();
+		this.networkImage.x = this.getPosition().x;
+		this.networkImage.y = this.getPosition().y;
 	}
 	
+	public Vector2 getPosition() 
+	{
+		return position;
+	}
+
+	public void setPosition(Vector2 position) 
+	{
+		this.position = position;
+	}
+	
+	public void setPosition(float x, float y)
+	{
+		this.position.x = x;
+		this.position.y = y;
+	}
 	
 }

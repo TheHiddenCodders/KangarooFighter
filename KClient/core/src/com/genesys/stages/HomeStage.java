@@ -1,15 +1,15 @@
 package com.genesys.stages;
 
+import Packets.KangarooServerPacket;
+import Packets.MatchMakingPacket;
+import Packets.ServerInfoPacket;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.genesys.kclient.Main;
-
-import Packets.MatchMakingPacket;
-import Packets.ServerInfoPacket;
-import Packets.UpdateKangarooPacket;
 
 public class HomeStage extends Stage
 {
@@ -19,7 +19,7 @@ public class HomeStage extends Stage
 	/** Used as a wire between stage to access client for example */
 	public Main main;
 	private ServerInfoPacket updateServerInfoPacket;
-	private UpdateKangarooPacket pPlayer, pOpponent;
+	private KangarooServerPacket pPlayer, pOpponent;
 	private boolean seekingGame = false, gameFound = false;
 	
 	// Components
@@ -195,7 +195,7 @@ public class HomeStage extends Stage
 		gameFound = true;
 	}
 	
-	public void setKangaroosInit(UpdateKangarooPacket pPlayer, UpdateKangarooPacket pOpponent)
+	public void setKangaroosInit(KangarooServerPacket pPlayer, KangarooServerPacket pOpponent)
 	{
 		this.pPlayer = pPlayer;
 		this.pOpponent = pOpponent;

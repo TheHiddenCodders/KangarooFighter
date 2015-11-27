@@ -4,18 +4,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import enums.EndGameType;
-import enums.ServerInfoType;
 import Kangaroo.Game;
 import Kangaroo.Kangaroo;
 import Packets.ClientReadyPacket;
 import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
+import Packets.KangarooClientPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
-import Packets.UpdateKangarooPacket;
+import enums.EndGameType;
+import enums.ServerInfoType;
 
 /**
  * Server class, contain everything need to interact with clients.
@@ -130,15 +130,15 @@ public class KServer extends Server
 		/**
 		 * Receive an update kangaroo packet
 		 */
-		else if (o.getClass().isAssignableFrom(UpdateKangarooPacket.class))
+		else if (o.getClass().isAssignableFrom(KangarooClientPacket.class))
 		{
-			UpdateKangarooPacket receivedPacket = (UpdateKangarooPacket) o;
+			KangarooClientPacket receivedPacket = (KangarooClientPacket) o;
 			
 			// Get the game where this kangaroo is
 			Game game = getGameFromIP(clientIp);
 			
 			// Update the game
-			game.stateMachine(receivedPacket);
+			game.stateMachine( receivedPacket, cp.getIp() );
 			
 			Kangaroo sender = getKangarooFromIP(clientIp), senderOpponent = game.getKangarooFromOpponentIp(clientIp);
 			

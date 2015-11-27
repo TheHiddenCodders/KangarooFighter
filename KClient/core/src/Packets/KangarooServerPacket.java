@@ -3,15 +3,13 @@ package Packets;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class UpdateKangarooPacket implements Serializable
+public class KangarooServerPacket implements Serializable
 {
 	public String ip;
 	public String name;
 	public float x, y;
 	public int health;
 	public int damage;
-	public boolean punch;
-	public boolean guard;
 	public int state;
 
 	@Override
@@ -25,8 +23,6 @@ public class UpdateKangarooPacket implements Serializable
 				+ "- [y]: " + y + "\n"
 				+ "- [health]: " + health + "\n"
 				+ "- [damage]: " + damage + "\n"
-				+ "- [punch]: " + punch + "\n"
-				+ "- [guard]: " + guard + "\n"
 				+ "- [state]: " + state + "\n";
 	}
 }

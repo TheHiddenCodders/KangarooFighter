@@ -7,9 +7,9 @@ import Packets.ClientDisconnectionPacket;
 import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
+import Packets.KangarooServerPacket;
 import Packets.LoginPacket;
 import Packets.ServerInfoPacket;
-import Packets.UpdateKangarooPacket;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.genesys.stages.GameStage;
@@ -140,16 +140,16 @@ public class Network extends Client
 		 * 3.b) Else
 		 * -> Update kangaroos 
 		 */
-		else if (o.getClass().isAssignableFrom(UpdateKangarooPacket.class))
+		else if (o.getClass().isAssignableFrom(KangarooServerPacket.class))
 		{
 			if (currentStage.getClass().isAssignableFrom(HomeStage.class))
 			{
 				HomeStage stage = (HomeStage) currentStage;
-				UpdateKangarooPacket packet = (UpdateKangarooPacket) o;
+				KangarooServerPacket packet = (KangarooServerPacket) o;
 				
 				if (o2 != null)
 				{
-					UpdateKangarooPacket packet2 = (UpdateKangarooPacket) o2;
+					KangarooServerPacket packet2 = (KangarooServerPacket) o2;
 					
 					stage.setKangaroosInit(packet2, packet);
 					o2 = null;
@@ -162,7 +162,7 @@ public class Network extends Client
 			else if (currentStage.getClass().isAssignableFrom(GameStage.class))
 			{
 				GameStage stage = (GameStage) currentStage;
-				UpdateKangarooPacket packet = (UpdateKangarooPacket) o;
+				KangarooServerPacket packet = (KangarooServerPacket) o;
 				
 				stage.getKangarooFromIp( packet.ip ).updateFromPacket(packet);
 				

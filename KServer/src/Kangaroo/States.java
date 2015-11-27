@@ -5,7 +5,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import Utils.Rectangle;
-import Utils.Vector2;
 
 public class States 
 {
@@ -17,16 +16,15 @@ public class States
 	//private ArrayList<Hitbox> hitboxes;
 	private ArrayList<ServerAnimation> anims;
 	private int currentState;
-	private Vector2 position;
 	
 	private Timer timer;
-	private Kangaroo k;
+	//private Kangaroo k;
 	
-	public States(Kangaroo k)
+	public States(/*Kangaroo k*/)
 	{
+		
+		//this.k = k;
 		setState(idle);
-		setPosition(new Vector2(0, 0));
-		this.k = k;
 		
 		timer = new Timer();
 		anims = new ArrayList<ServerAnimation>();
@@ -109,7 +107,7 @@ public class States
 		return currentState;
 	}
 
-	public void setState(int currentState) 
+	public boolean setState(int currentState) 
 	{
 		this.currentState = currentState;
 		
@@ -124,26 +122,20 @@ public class States
 					anims.get(1).start(States.this);
 					
 					//setState(idle);
-					k.getClient().send(k.getUpdatePacket());
+					//k.getClient().send(k.getUpdatePacket());
 				}
 				
 			}, 0);
+			
+			return true;
 		}
-		if (currentState == idle)
+		else if (currentState == idle)
 		{
 			//k.getClient().send(k.getUpdatePacket());
+			return true;
 		}
+		
+		return false;
 	}
-
-	public Vector2 getPosition() 
-	{
-		return position;
-	}
-
-	public void setPosition(Vector2 position) 
-	{
-		this.position = position;
-	}
-	
 	
 } 

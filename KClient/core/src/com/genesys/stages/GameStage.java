@@ -1,7 +1,7 @@
 package com.genesys.stages;
 
 import Packets.ClientReadyPacket;
-import Packets.UpdateKangarooPacket;
+import Packets.KangarooServerPacket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -47,7 +47,7 @@ public class GameStage extends Stage
 	/*
 	 * Constructors
 	 */
-	public GameStage(Main main, UpdateKangarooPacket pPlayer, UpdateKangarooPacket pOpponent)
+	public GameStage(Main main, KangarooServerPacket pPlayer, KangarooServerPacket pOpponent)
 	{
 		super();
 		this.main = main;
@@ -74,7 +74,7 @@ public class GameStage extends Stage
 		{
 			player.update();
 
-			if (!player.isSameAsNetwork())
+			if (player.needUpdate())
 				updateNetwork();
 			
 			if (Gdx.input.justTouched())
@@ -116,7 +116,7 @@ public class GameStage extends Stage
 	 * Kangaroos init
 	 * @param p
 	 */
-	private void initKangaroos(UpdateKangarooPacket pPlayer, UpdateKangarooPacket pOpponent)
+	private void initKangaroos(KangarooServerPacket pPlayer, KangarooServerPacket pOpponent)
 	{
 		player = new Kangaroo(pPlayer);
 		opponent = new Kangaroo(pOpponent);
@@ -160,8 +160,8 @@ public class GameStage extends Stage
 	 */
 	private void updateNetwork()
 	{
-		main.network.send(player.getUpdatePacket());
-		player.networkImage = player.getUpdatePacket();
+		main.network.send(player.getClientPacket());
+		player.networkImage = player.getClientPacket();
 	}
 	
 	/*

@@ -1,33 +1,43 @@
 package com.genesys.kclient;
 
-import Packets.UpdateKangarooPacket;
+import Packets.KangarooClientPacket;
+import Packets.KangarooServerPacket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.genesys.enums.Direction;
 
 public class Kangaroo extends AnimatedSprite
 {
-	private final static int punchKey = Keys.SPACE;
+	/*
+	 * Controls
+	 */
 	
+	private static final int leftPunchKey = Keys.A;
+	private static final int rightPunchKey = Keys.Z;
 	
 	/*
 	 * Attributes
 	 */
+	
 	private String ip;
 	private String name;
 	private int health;
-	private int damage = 5;
-	private boolean punch;
-	//private boolean guard;
+	private int damage;
+	private int state;
+	
+	private boolean leftArrow = false;
+	private boolean rightArrow = false;
+	private boolean leftPunch = false;
+	private boolean rightPunch = false;
 	
 	// Compare kangaroo update packet to this network image to know if server need to be updated
-	public UpdateKangarooPacket networkImage;
+	public KangarooClientPacket networkImage;
 	
 	/*
 	 * Constructors
 	 */
+	
 	public Kangaroo()
 	{
 		super();
@@ -39,7 +49,7 @@ public class Kangaroo extends AnimatedSprite
 	 * Make a kangaroo from an update kangaroo packet.
 	 * @param p
 	 */
-	public Kangaroo(UpdateKangarooPacket p)
+	public Kangaroo(KangarooServerPacket p)
 	{
 		super();
 		
@@ -48,8 +58,9 @@ public class Kangaroo extends AnimatedSprite
 		name = p.name;
 		health = p.health;
 		damage = p.damage;
+		state = p.state;
 		
-		networkImage = getUpdatePacket();
+		networkImage = getClientPacket();
 		
 		initAnim();
 	}
@@ -73,60 +84,43 @@ public class Kangaroo extends AnimatedSprite
 	public void update()
 	{
 		if (Gdx.input.isKeyPressed(Keys.LEFT))
-			walk(Direction.LEFT);
+			leftArrow = true;
+		else
+			leftArrow = false;
 		
 		if (Gdx.input.isKeyPressed(Keys.RIGHT))
-			walk(Direction.RIGHT);
+			rightArrow = true;
+		else
+			rightArrow = false;
 		
-		if (Gdx.input.isKeyPressed(punchKey))
-			punch = true;
-		else 
-			punch = false;
-	}
-	
-	/**
-	 * Make the kangaroo walk to the left or to the right
-	 * @param direction
-	 */
-	public void walk(Direction direction)
-	{
-		if (direction == Direction.LEFT)
-			moveBy(-1, 0);
-		else if (direction == Direction.RIGHT)
-			moveBy(1, 0);
+		if (Gdx.input.isKeyPressed(leftPunchKey))
+			leftPunch = true;
+		else
+			leftPunch = false;
+		
+		if (Gdx.input.isKeyPressed(rightPunchKey))
+			rightPunch = true;
+		else
+			rightPunch = false;
 	}
 	
 	/**
 	 * Update kangaroo fields by packets.
 	 * @param p the packet received
 	 */
-	public void updateFromPacket(UpdateKangarooPacket p)
+	public void updateFromPacket(KangarooServerPacket p)
 	{
-		// Check that packet correspond to the kangaroo by checking names match.
-		if (p.name.equals(name))
-		{
-			health = p.health;
-			setPosition(p.x, p.y);
-			
-			networkImage = p;
-		}
-	}
-	
-	/**
-	 * Copy the kangaroo into the network image of it
-	 */
-	public void setSameAsNetwork()
-	{
-		networkImage = getUpdatePacket();
+		health = p.health;
+		setPosition(p.x, p.y);
 	}
 	
 	/**
 	 * Compare kangaroo and is network image to know if server needs to be updated
 	 * @return true if they match, false if they don't
 	 */
-	public boolean isSameAsNetwork()
+	public boolean needUpdate()
 	{
-		if (this.getX() == networkImage.x && this.getY() == networkImage.y && this.punch == networkImage.punch)
+		if (leftArrow != networkImage.leftArrowKey || rightArrow != networkImage.rightArrowKey || leftPunch != networkImage.leftPunchKey || rightPunch != networkImage.rightPunchKey)
 			return true;
 		
 		else
@@ -152,16 +146,13 @@ public class Kangaroo extends AnimatedSprite
 	/**
 	 * @return an updatekangaroopacket with this kangaroo datas
 	 */
-	public UpdateKangarooPacket getUpdatePacket()
+	public KangarooClientPacket getClientPacket()
 	{
-		UpdateKangarooPacket p = new UpdateKangarooPacket();
-		p.ip = ip;
-		p.name = name;
-		p.x = this.getX();
-		p.y = this.getY();
-		p.health = health;
-		p.damage = damage;
-		p.punch = punch;
+		KangarooClientPacket p = new KangarooClientPacket();
+		p.leftArrowKey = leftArrow;
+		p.rightArrowKey = rightArrow;
+		p.leftPunchKey = leftPunch;
+		p.rightPunchKey = rightPunch;
 		return p;
 	}
 
@@ -184,5 +175,21 @@ public class Kangaroo extends AnimatedSprite
 	public String getIp()
 	{
 		return ip;
+	}
+	
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
 	}
 }

@@ -1,7 +1,7 @@
 package Kangaroo;
 
 import Packets.ClientDisconnectionPacket;
-import Packets.UpdateKangarooPacket;
+import Packets.KangarooClientPacket;
 import enums.EndGameType;
 
 /**
@@ -104,9 +104,9 @@ public class Game
 	 * The state machine is called when a kangaroo is update. 
 	 * It checks if the kangaroos need to change their state
 	 */
-	public void stateMachine(UpdateKangarooPacket receivedPacket)
+	public void stateMachine(KangarooClientPacket receivedPacket, String ip)
 	{
-		Kangaroo k = getKangarooFromIp(receivedPacket.ip);
+		Kangaroo k = getKangarooFromIp(ip);
 
 		// If the kangaroo is currently idle 
 		if (k.getState().getState() == States.idle)
@@ -115,54 +115,72 @@ public class Game
 			 *  If the player press the punch key
 			 *  Launch the punch state
 			 */
-			if (receivedPacket.punch)
+			if (receivedPacket.leftPunchKey || receivedPacket.rightPunchKey)
 			{
 				k.getState().setState(States.punch);
-				
 			}
-			else
+			/*
+			 *  If the player press the left arrow key
+			 *  Launch the movement state
+			 */
+			else if (receivedPacket.leftArrowKey)
 			{
-				/*
-				 * If the player have moved and don't press the punch key
-				 * launch movemnt state
-				 */
+				k.getState().setState(States.movement);
+				k.setPosition( (int) k.getPosition().x - 1, (int) k.getPosition().y );
+			}
+			else if (receivedPacket.rightArrowKey)
+			{
+				k.getState().setState(States.movement);
+				k.setPosition( (int) k.getPosition().x + 1, (int) k.getPosition().y );
+			}
+			/*else
+			{
 				if (receivedPacket.x != k.getPosition().x)
 				{
 					k.getState().setState(States.movement);
 					k.setPosition( (int)receivedPacket.x, (int)receivedPacket.y );
 				}
-			}	
+			}*/	
 		}
 		
 		// If the kangaroo is currently move 
-		if (k.getState().getState() == States.movement)
+		else if (k.getState().getState() == States.movement)
 		{
 			/*
 			 *  If the player press the punch key
 			 *  Launch the punch state
 			 */
-			if (receivedPacket.punch)
+			if (receivedPacket.leftPunchKey || receivedPacket.rightPunchKey)
 			{
 				k.getState().setState(States.punch);
 			}
-			else
+			/*
+			 *  If the player press the left arrow key
+			 *  Move him to the left
+			 */
+			else if (receivedPacket.leftArrowKey)
 			{
-				/*
-				 * If the player have moved and don't press the punch key
-				 * launch movemnt state
-				 */
-				if (receivedPacket.x == k.getPosition().x)
-				{
-					k.getState().setState(States.idle);
-				}
-				else
-				{
-					k.setPosition( (int)receivedPacket.x, (int)receivedPacket.y );
-				}
+				k.setPosition( (int) k.getPosition().x - 1, (int) k.getPosition().y ); 
+			}
+			/*
+			 *  If the player press the right arrow key
+			 *  Move him to the right
+			 */
+			else if (receivedPacket.rightArrowKey)
+			{
+				k.setPosition( (int) k.getPosition().x + 1, (int) k.getPosition().y ); 
+			}
+			/*
+			 *  If the player don't press the left arrow key
+			 *  Launch the idle state
+			 */
+			else if (!receivedPacket.leftArrowKey && !receivedPacket.rightArrowKey)
+			{
+				k.getState().setState(States.idle);
 			}
 		}
 		
-		k.setNetworkImage(receivedPacket);
+		k.updateNetworkImage();
 	}
 	
 	/*
