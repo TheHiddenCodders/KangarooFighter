@@ -1,11 +1,15 @@
 package Kangaroo;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.imageio.ImageIO;
 
 import Utils.Rectangle;
 
@@ -94,15 +98,13 @@ public class ServerAnimation
 	 */
 	public void load(String path)
 	{
-		//FileHandle file = Gdx.files.internal(path);
-		// "C:/Users/Chaly/KangourouFighters/Git/KangarooFighter/KClient/android/assets/anims"
+		File file = new File(path);
 		ArrayList<String> lines = new ArrayList<String>();
 
 		String line;
 		try
 		{
-			
-			BufferedReader reader = new BufferedReader( new FileReader(path) );
+			BufferedReader reader = new BufferedReader(new FileReader(file));
 			line = reader.readLine();
 			
 			// Read the file
@@ -112,21 +114,19 @@ public class ServerAnimation
 				line = reader.readLine();
 			}
 			
+			reader.close();
+			
 			// Parse it
 			System.out.println(lines.get(0));
 			
-			//Texture sheet = new Texture(Gdx.files.internal(lines.get(0)));
+			BufferedImage sheet = ImageIO.read(new File(lines.get(0)));
 			Rectangle frame = new Rectangle(0, 0, Integer.parseInt(lines.get(1).split(",")[0]), Integer.parseInt(lines.get(1).split(",")[1]));
 			fps = Integer.parseInt(lines.get(2)); 
 			int nBoxPerHitbox = Integer.parseInt(lines.get(3));
 			int nHitboxes = (lines.size() - 4) / nBoxPerHitbox;
 			
 			// Cut sheet
-			//nFrames = (int) (sheet.getWidth() / frame.width);
-			//frames = new ArrayList<TextureRegion>();
-			//for (int i = 0; i < nFrames; i++)
-				//frames.add(new TextureRegion(sheet, (int) (frame.x + frame.width * i), (int) frame.y, (int) frame.width, (int) frame.height));	
-			
+			nFrames = (int) (sheet.getWidth() / frame.width);
 			
 			// Load hitboxes
 			hitboxes = new ArrayList<Hitbox>();
@@ -153,12 +153,11 @@ public class ServerAnimation
 		} catch (IOException e)
 		{
 			e.printStackTrace();
-		}
-			
+		}		
 	}
 	
 	
-	public Hitbox getCurrentFrame()
+	public Hitbox getKeyFrame()
 	{
 		return hitboxes.get(currentFrame);
 	}
@@ -168,7 +167,7 @@ public class ServerAnimation
 		this.hitboxes = hitboxes;
 	}
 	
-	public void setMode (int mode)
+	public void setMode(int mode)
 	{
 		this.mode = mode;
 	}
