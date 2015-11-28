@@ -1,7 +1,6 @@
 package Kangaroo;
 
 import Packets.ClientDisconnectionPacket;
-import Packets.KangarooClientPacket;
 import enums.EndGameType;
 
 /**
