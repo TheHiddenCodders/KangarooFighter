@@ -24,6 +24,7 @@ public class Kangaroo
 	private boolean ready = false;
 	
 	private KangarooServerPacket networkImage;
+	private KangarooClientPacket lastPacket;
 	
 	/**
 	 * Create the kangaroo with the client.
@@ -33,6 +34,8 @@ public class Kangaroo
 	public Kangaroo(ClientProcessor cp)
 	{
 		networkImage = new KangarooServerPacket();
+		this.lastPacket = new KangarooClientPacket();
+		
 		this.cp = cp;
 		state = new States();
 	}
@@ -56,13 +59,109 @@ public class Kangaroo
 		return p;
 	}
 	
+	public void updateFromPacket(KangarooClientPacket p)
+	{
+		this.lastPacket = p;
+	}
+	
 	/**
 	 * Update kangaroo fields by packets.
 	 * @param p the packet received
 	 */
-	public void updateFromPacket(KangarooClientPacket p)
+	public void stateMachine()
 	{
+		
 		// Make the state machine here
+		if (this.getState().getState() == States.idle)
+		{
+			/*
+			 *  If the player press the left punch key
+			 *  Launch the left punch state
+			 */
+			if (lastPacket.leftPunchKey)
+			{
+				this.getState().setState(States.leftPunch);
+			}
+			/*
+			 *  If the player press the right punch key
+			 *  Launch the right punch state
+			 */
+			else if (lastPacket.rightPunchKey)
+			{
+				this.getState().setState(States.rightPunch);
+			}
+			/*
+			 *  If the player press the left arrow key
+			 *  Launch the movement state
+			 */
+			else if (lastPacket.leftArrowKey)
+			{
+				this.getState().setState(States.movement);
+				this.setPosition( (int) this.getPosition().x - 1, (int) this.getPosition().y );
+			}
+			/*
+			 *  If the player press the right arrow key
+			 *  Launch the movement state
+			 */
+			else if (lastPacket.rightArrowKey)
+			{
+				this.getState().setState(States.movement);
+				this.setPosition( (int) this.getPosition().x + 1, (int) this.getPosition().y );
+			}
+			/*else
+			{
+				if (receivedPacket.x != k.getPosition().x)
+				{
+					k.getState().setState(States.movement);
+					k.setPosition( (int)receivedPacket.x, (int)receivedPacket.y );
+				}
+			}*/	
+		}
+		
+		// If the kangaroo is currently move 
+		else if (this.getState().getState() == States.movement)
+		{
+			/*
+			 *  If the player press the left punch key
+			 *  Launch the left punch state
+			 */
+			if (lastPacket.leftPunchKey)
+			{
+				this.getState().setState(States.leftPunch);
+			}
+			/*
+			 *  If the player press the right punch key
+			 *  Launch the right punch state
+			 */
+			else if (lastPacket.rightPunchKey)
+			{
+				this.getState().setState(States.rightPunch);
+			}
+			/*
+			 *  If the player press the left arrow key
+			 *  Move him to the left
+			 */
+			else if (lastPacket.leftArrowKey)
+			{
+				this.setPosition( (int) this.getPosition().x - 1, (int) this.getPosition().y ); 
+			}
+			/*
+			 *  If the player press the right arrow key
+			 *  Move him to the right
+			 */
+			else if (lastPacket.rightArrowKey)
+			{
+				this.setPosition( (int) this.getPosition().x + 1, (int) this.getPosition().y ); 
+			}
+			/*
+			 *  If the player don't press the left arrow key
+			 *  Launch the idle state
+			 */
+			else if (!lastPacket.leftArrowKey && !lastPacket.rightArrowKey)
+			{
+				this.getState().setState(States.idle);
+			}
+		}
 	}
 	
 	/**

@@ -104,103 +104,27 @@ public class Game
 	 * The state machine is called when a kangaroo is update. 
 	 * It checks if the kangaroos need to change their state
 	 */
-	public void stateMachine(KangarooClientPacket receivedPacket, String ip)
+	public void stateMachine()
 	{
-		Kangaroo k = getKangarooFromIp(ip);
-
-		// If the kangaroo is currently idle 
-		if (k.getState().getState() == States.idle)
+		k1.stateMachine();
+		k2.stateMachine();
+		
+		// Check if k1 was modified, then send modification to kangaroos
+		if ( !k1.isSameAsNetwork() )
 		{
-			/*
-			 *  If the player press the left punch key
-			 *  Launch the left punch state
-			 */
-			if (receivedPacket.leftPunchKey)
-			{
-				k.getState().setState(States.leftPunch);
-			}
-			/*
-			 *  If the player press the right punch key
-			 *  Launch the right punch state
-			 */
-			else if (receivedPacket.rightPunchKey)
-			{
-				k.getState().setState(States.rightPunch);
-			}
-			/*
-			 *  If the player press the left arrow key
-			 *  Launch the movement state
-			 */
-			else if (receivedPacket.leftArrowKey)
-			{
-				k.getState().setState(States.movement);
-				k.setPosition( (int) k.getPosition().x - 1, (int) k.getPosition().y );
-			}
-			/*
-			 *  If the player press the right arrow key
-			 *  Launch the movement state
-			 */
-			else if (receivedPacket.rightArrowKey)
-			{
-				k.getState().setState(States.movement);
-				k.setPosition( (int) k.getPosition().x + 1, (int) k.getPosition().y );
-			}
-			/*else
-			{
-				if (receivedPacket.x != k.getPosition().x)
-				{
-					k.getState().setState(States.movement);
-					k.setPosition( (int)receivedPacket.x, (int)receivedPacket.y );
-				}
-			}*/	
+			k1.getClient().send( k1.getUpdatePacket() );
+			k2.getClient().send( k1.getUpdatePacket() );
 		}
 		
-		// If the kangaroo is currently move 
-		else if (k.getState().getState() == States.movement)
+		// Check if k2 was modified, then send modification to kangaroos
+		if ( !k2.isSameAsNetwork() )
 		{
-			/*
-			 *  If the player press the left punch key
-			 *  Launch the left punch state
-			 */
-			if (receivedPacket.leftPunchKey)
-			{
-				k.getState().setState(States.leftPunch);
-			}
-			/*
-			 *  If the player press the right punch key
-			 *  Launch the right punch state
-			 */
-			else if (receivedPacket.rightPunchKey)
-			{
-				k.getState().setState(States.rightPunch);
-			}
-			/*
-			 *  If the player press the left arrow key
-			 *  Move him to the left
-			 */
-			else if (receivedPacket.leftArrowKey)
-			{
-				k.setPosition( (int) k.getPosition().x - 1, (int) k.getPosition().y ); 
-			}
-			/*
-			 *  If the player press the right arrow key
-			 *  Move him to the right
-			 */
-			else if (receivedPacket.rightArrowKey)
-			{
-				k.setPosition( (int) k.getPosition().x + 1, (int) k.getPosition().y ); 
-			}
-			/*
-			 *  If the player don't press the left arrow key
-			 *  Launch the idle state
-			 */
-			else if (!receivedPacket.leftArrowKey && !receivedPacket.rightArrowKey)
-			{
-				k.getState().setState(States.idle);
-			}
+			k1.getClient().send( k2.getUpdatePacket() );
+			k2.getClient().send( k2.getUpdatePacket() );
 		}
 		
-		k.updateNetworkImage();
+		k1.updateNetworkImage();
+		k2.updateNetworkImage();
 	}
 	
 	/*

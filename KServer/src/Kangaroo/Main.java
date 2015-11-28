@@ -15,6 +15,28 @@ public class Main
 		KServer server = new KServer();
 		server.open();
 		
+		// Create a thread that update all the games
+		Thread t1 = new Thread(new Runnable(){
+
+			@Override
+			public void run() 
+			{
+				while (true)
+				{
+					// Update running games
+					for(Game game : server.getAllGames())
+					{
+						if ( game.isRunning() )
+						{
+							game.stateMachine();
+						}
+					}
+				}
+			}
+			
+		});
+		t1.start();
+		
 		inputReader = new BufferedInputStream(System.in);
 		
 		while (!msg.equals("exit"))
@@ -33,8 +55,6 @@ public class Main
 				if (msg.split("-")[1].equals("all"))
 					server.displayAllKangaroos();
 			}
-			
-			
 		}
 	}
 
