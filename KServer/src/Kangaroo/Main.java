@@ -36,27 +36,6 @@ public class Main
 			
 		}, 0, 30);
 		
-		/*{
-
-			@Override
-			public void run() 
-			{
-				while (true)
-				{
-					// Update running games
-					for(Game game : server.getAllGames())
-					{
-						if ( game.isRunning() )
-						{
-							game.stateMachine();
-						}
-					}
-				}
-			}
-			
-		});
-		t1.start();*/
-		
 		inputReader = new BufferedInputStream(System.in);
 		
 		while (!msg.equals("exit"))
