@@ -1,5 +1,6 @@
 package com.genesys.stages;
 
+import Packets.ClientDataPacket;
 import Packets.KangarooServerPacket;
 import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
@@ -34,12 +35,12 @@ public class HomeStage extends Stage
 	/*
 	 * Constructors
 	 */
-	public HomeStage(Main main)
+	public HomeStage(Main main, ClientDataPacket data)
 	{
 		super();
 		this.main = main;	
 		
-		name = new Label(main.prefs.getString("[pseudo]"), main.skin);
+		name = new Label(data.name, main.skin);
 		name.setColor(Color.ORANGE);
 		name.setPosition(5, this.getHeight() - name.getHeight() - 5);
 		this.addActor(name);

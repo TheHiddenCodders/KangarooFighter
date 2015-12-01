@@ -12,6 +12,9 @@ import java.io.Serializable;
 public class LoginPacket implements Serializable
 {
 	public String pseudo;
+	public String pwd;
+	public boolean pwdMatch;
+	public boolean pseudoExists;
 	public boolean accepted;
 	
 	@Override
@@ -20,6 +23,9 @@ public class LoginPacket implements Serializable
 		return super.toString()
 				+ "\n"
 				+ "- [pseudo]: " + pseudo + "\n"
+				+ "- [pwd]: " + pwd + "\n"
+				+ "- [pwdMatch]: " + pwdMatch + "\n"
+				+ "- [pseudoExists]: " + pseudoExists + "\n"
 				+ "- [accepted]: " + accepted + "\n";
 	}
 }

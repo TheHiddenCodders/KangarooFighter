@@ -33,7 +33,7 @@ public class ServerAccesStage extends Stage
 	public void act(float delta)
 	{
 		if (connected)
-			main.setStage(new InscriptionStage(main));
+			main.setStage(new ConnexionStage(main));
 		else
 			Gdx.app.exit();	
 		

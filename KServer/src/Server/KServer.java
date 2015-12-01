@@ -1,11 +1,13 @@
 package Server;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import Kangaroo.Game;
 import Kangaroo.Kangaroo;
+import Packets.ClientDataPacket;
 import Packets.ClientReadyPacket;
 import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
@@ -14,6 +16,8 @@ import Packets.KangarooClientPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
+import Packets.SignOutPacket;
+import Utils.FileUtils;
 import enums.EndGameType;
 import enums.ServerInfoType;
 
@@ -88,10 +92,46 @@ public class KServer extends Server
 		else if (o.getClass().isAssignableFrom(LoginPacket.class))
 		{			
 			LoginPacket receivedPacket = (LoginPacket) o;
-			receivedPacket.accepted = !isClientPseudoAlreadyTaken(receivedPacket, clientIp);
+			attemptToLogin(receivedPacket, clientIp);
 			
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
+			
+			// If server accepted the request, send client data
+			if (receivedPacket.accepted)
+			{
+				ClientDataPacket dataPacket = new ClientDataPacket();
+				dataPacket.name = receivedPacket.pseudo;
+				dataPacket.games = 0;
+				dataPacket.looses = 0;
+				dataPacket.wins = 0;
+				
+				this.send(cp, dataPacket);
+			}
+		}
+		
+		/**
+		 * Receive Login packet 
+		 */
+		else if (o.getClass().isAssignableFrom(SignOutPacket.class))
+		{			
+			SignOutPacket receivedPacket = (SignOutPacket) o;
+			attemptToSignOut(receivedPacket, clientIp);
+			
+			// Send to the client (who sent the packet) the updated packet
+			this.send(cp, receivedPacket);
+			
+			// If server accepted the request, send client data
+			if (receivedPacket.accepted)
+			{
+				ClientDataPacket dataPacket = new ClientDataPacket();
+				dataPacket.name = receivedPacket.pseudo;
+				dataPacket.games = 0;
+				dataPacket.looses = 0;
+				dataPacket.wins = 0;
+				
+				this.send(cp, dataPacket);
+			}
 		}
 		
 		/**
@@ -193,6 +233,8 @@ public class KServer extends Server
 			
 			kangaroos.remove(getKangarooFromIP(cp.getIp()));
 			cp.getClient().close();
+			serverInfoUpdated(cp, ServerInfoType.ALL);
+			
 		} catch (IOException e) 
 		{
 			e.printStackTrace();
@@ -206,25 +248,71 @@ public class KServer extends Server
 	 */
 	
 	/**
-	 * Check if the client pseudo is already taken
+	 * Check if the client pseudo exists, if it exists, it check the password match with the pseudo
 	 * @param packet the login packet
-	 * @return true if it's already taken, false if isn't
+	 * @return true if it's exists and pwd match, false if isn't
 	 */
-	public boolean isClientPseudoAlreadyTaken(LoginPacket packet, String ip)
+	public void attemptToLogin(LoginPacket packet, String ip)
 	{
+		// If already log, unlog him
 		for (int i = 0; i < kangaroos.size(); i++)
 		{
 			if (kangaroos.get(i).getName().equals(packet.pseudo))
 			{
-				if (debug)
-					System.err.println("Pseudo \"" + packet.pseudo + "\" already taken.");
-				
-				return true;
+				packet.accepted = false;
+				return;
 			}
 		}
 		
-		getKangarooFromIP(ip).setName(packet.pseudo);
-		return false;
+		// Check fields
+		for (File file : FileUtils.getPlayersFiles())
+		{
+			// If pseudo exists
+			if (file.getName().equals(packet.pseudo))
+			{
+				packet.pseudoExists = true;
+				if (FileUtils.readString(new File(file.getAbsolutePath().concat("/pwd"))).get(0).equals(packet.pwd))
+				{
+					packet.pwdMatch = true;
+					packet.accepted = true;				
+					getKangarooFromIP(ip).setName(packet.pseudo);
+					break;
+				}
+				else
+				{
+					packet.pwdMatch = false;
+				}
+				break;
+			}
+			else
+			{
+				packet.pseudoExists = false;
+			}
+		}		
+	}	
+	
+	/**
+	 * Check if the client pseudo exists, if it's not, it 
+	 * @param packet the login packet
+	 * @return true if it's already taken, false if isn't
+	 */
+	public void attemptToSignOut(SignOutPacket packet, String ip)
+	{
+		// Check fields
+		for (File file : FileUtils.getPlayersFiles())
+		{
+			// If pseudo exists
+			if (file.getName().equals(packet.pseudo))
+			{
+				packet.pseudoExists = true;
+			}
+		}	
+		
+		if (!packet.pseudoExists)
+		{
+			packet.accepted = true;
+			FileUtils.newPlayer(packet.pseudo, packet.pwd);
+		}
 	}	
 	
 	/**
