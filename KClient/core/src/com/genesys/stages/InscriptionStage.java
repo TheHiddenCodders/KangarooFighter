@@ -109,8 +109,8 @@ public class InscriptionStage extends Stage
 			// If isn't already registered, make prefs
 			if (!alreadyRegisteredOnPhone())
 			{
-				main.prefs.putString("[pseudo]", ConversionUtils.sha1(name.getText()));
-				main.prefs.putString("[pwd]", pwd.getText());
+				main.prefs.putString("[pseudo]", name.getText());
+				main.prefs.putString("[pwd]", ConversionUtils.sha1(pwd.getText()));
 				main.prefs.flush();
 			}
 			
