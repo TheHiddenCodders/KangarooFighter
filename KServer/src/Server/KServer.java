@@ -18,6 +18,7 @@ import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
 import Packets.SignOutPacket;
 import Utils.FileUtils;
+import Utils.ServerUtils;
 import enums.EndGameType;
 import enums.ServerInfoType;
 
@@ -265,7 +266,7 @@ public class KServer extends Server
 		}
 		
 		// Check fields
-		for (File file : FileUtils.getPlayersFiles())
+		for (File file : ServerUtils.getPlayersFiles())
 		{
 			// If pseudo exists
 			if (file.getName().equals(packet.pseudo))
@@ -299,7 +300,7 @@ public class KServer extends Server
 	public void attemptToSignOut(SignOutPacket packet, String ip)
 	{
 		// Check fields
-		for (File file : FileUtils.getPlayersFiles())
+		for (File file : ServerUtils.getPlayersFiles())
 		{
 			// If pseudo exists
 			if (file.getName().equals(packet.pseudo))
@@ -311,7 +312,7 @@ public class KServer extends Server
 		if (!packet.pseudoExists)
 		{
 			packet.accepted = true;
-			FileUtils.newPlayer(packet.pseudo, packet.pwd);
+			ServerUtils.newPlayer(packet.pseudo, packet.pwd);
 		}
 	}	
 	

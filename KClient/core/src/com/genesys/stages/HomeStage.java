@@ -7,7 +7,9 @@ import Packets.ServerInfoPacket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.genesys.kclient.Main;
@@ -32,6 +34,7 @@ public class HomeStage extends Stage
 	private Label nGamesPlayedText, nGamesPlayedValue;
 	private Label nGamesOnlineText, nGamesOnlineValue;
 	
+	private Image background;
 	/*
 	 * Constructors
 	 */
@@ -39,6 +42,9 @@ public class HomeStage extends Stage
 	{
 		super();
 		this.main = main;	
+		
+		background = new Image(new Texture(Gdx.files.internal("sprites/homestage.png")));
+		this.addActor(background);
 		
 		name = new Label(data.name, main.skin);
 		name.setColor(Color.ORANGE);
