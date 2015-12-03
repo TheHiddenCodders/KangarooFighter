@@ -2,9 +2,14 @@ package Packets;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
+
 public class KangarooServerPacket implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3276163525805452816L;
+	
 	public String ip;
 	public String name;
 	public float x, y;

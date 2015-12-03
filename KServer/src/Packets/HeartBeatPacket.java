@@ -2,9 +2,13 @@ package Packets;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class HeartBeatPacket implements Serializable
 {	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6345349219419770391L;
+
 	@Override
 	public String toString()
 	{
