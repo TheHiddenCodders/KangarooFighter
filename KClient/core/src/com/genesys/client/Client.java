@@ -56,22 +56,14 @@ public abstract class Client extends Socket implements Runnable
 	@Override
 	public void run()
 	{
-		try
-		{
-            // While -1 object havn't been passed
-            while (!o.equals(-1))
-            {     
-	            // Receive from server
-	            Object receivedObject = receiveFromServer();
-	    		
-	    		onReceived(receivedObject);
-            }
-            
-        } 
-		catch (IOException e1)
-		{
-            e1.printStackTrace();
-		}		
+        // While -1 object havn't been passed
+        while (!o.equals(-1))
+        {     
+            // Receive from server
+            Object receivedObject = receiveFromServer();
+    		
+    		onReceived(receivedObject);
+        }	
 	}
 
 	/**
