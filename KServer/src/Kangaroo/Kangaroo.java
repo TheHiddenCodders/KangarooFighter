@@ -33,7 +33,6 @@ public class Kangaroo
 	private Timer speedTimer;
 	private float speed = 200; // In pixel per s
 	private boolean ready = false;
-	private boolean positiveEdgeArrow = false;
 	private KangarooServerPacket networkImage;
 	private KangarooClientPacket lastPacket;
 	
@@ -83,16 +82,6 @@ public class Kangaroo
 	public void stateMachine()
 	{
 		getCurrentAnimation().update();
-		
-		// Check for arrow edge
-		/*if ((lastPacket.leftArrowKey || lastPacket.rightArrowKey) && !positiveEdgeArrow)
-		{
-			positiveEdgeArrow = true;
-		}
-		else if (!(lastPacket.leftArrowKey || lastPacket.rightArrowKey))
-		{
-			positiveEdgeArrow = false;
-		}*/
 		
 		if (this.getState().getState() != States.movement)
 		{

@@ -153,6 +153,11 @@ public class ServerAnimation
 		return hitboxes.get(currentFrame);
 	}
 	
+	public int getNFrames()
+	{
+		return nFrames;
+	}
+	
 	public void setHitboxes(ArrayList<Hitbox> hitboxes)
 	{
 		this.hitboxes = hitboxes;
