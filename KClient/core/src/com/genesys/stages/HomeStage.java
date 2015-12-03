@@ -34,7 +34,7 @@ public class HomeStage extends Stage
 	private Label nGamesPlayedText, nGamesPlayedValue;
 	private Label nGamesOnlineText, nGamesOnlineValue;
 	
-	private Image background;
+	private Image background, bottomRibbon;
 	/*
 	 * Constructors
 	 */
@@ -88,6 +88,9 @@ public class HomeStage extends Stage
 		nGamesOnlineValue.setPosition(nGamesOnlineText.getX() + nGamesOnlineText.getWidth(), 0);
 		this.addActor(nGamesOnlineText);
 		this.addActor(nGamesOnlineValue);
+		
+		bottomRibbon = new Image(new Texture(Gdx.files.internal("sprites/botribbon.png")));
+		this.addActor(bottomRibbon);
 		
 		// Ask for server info
 		askServerInfos();
