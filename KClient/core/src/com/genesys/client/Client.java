@@ -30,6 +30,9 @@ public abstract class Client extends Socket implements Runnable
 	public Client() throws UnknownHostException, IOException
 	{
 		this(defaultIp, defaultPort);
+		
+		input = new ObjectInputStream(this.getInputStream());
+        output = new ObjectOutputStream(this.getOutputStream());
 	}
 	
 	/**
@@ -42,6 +45,9 @@ public abstract class Client extends Socket implements Runnable
 	public Client(String ip, int port) throws UnknownHostException, IOException
 	{		
 		super(ip, port);
+		
+		input = new ObjectInputStream(this.getInputStream());
+        output = new ObjectOutputStream(this.getOutputStream());
 	}
 	
 	/**
@@ -52,9 +58,6 @@ public abstract class Client extends Socket implements Runnable
 	{
 		try
 		{
-            input = new ObjectInputStream(this.getInputStream());
-            output = new ObjectOutputStream(this.getOutputStream());
-            
             // While -1 object havn't been passed
             while (!o.equals(-1))
             {     
