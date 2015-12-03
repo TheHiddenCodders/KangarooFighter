@@ -1,5 +1,7 @@
 package Kangaroo;
 
+import java.util.ArrayList;
+
 import Packets.KangarooClientPacket;
 import Packets.KangarooServerPacket;
 import Server.ClientProcessor;
@@ -19,6 +21,8 @@ public class Kangaroo
 	private int health;
 	private int damage = 5;
 	private Vector2 position = new Vector2(0, 0);
+	private int currentAnimation = 0;
+	private ArrayList<ServerAnimation> animations;
 	private States state;
 	
 	private boolean ready = false;
@@ -35,9 +39,10 @@ public class Kangaroo
 	{
 		networkImage = new KangarooServerPacket();
 		this.lastPacket = new KangarooClientPacket();
-		
 		this.cp = cp;
 		state = new States();
+		
+		initAnim();
 	}
 	
 	/*
@@ -70,7 +75,6 @@ public class Kangaroo
 	 */
 	public void stateMachine()
 	{
-		
 		// Make the state machine here
 		if (this.getState().getState() == States.idle)
 		{
@@ -81,6 +85,7 @@ public class Kangaroo
 			if (lastPacket.leftPunchKey)
 			{
 				this.getState().setState(States.leftPunch);
+				this.launchAnimation(States.leftPunch);
 			}
 			/*
 			 *  If the player press the right punch key
@@ -162,11 +167,52 @@ public class Kangaroo
 				this.getState().setState(States.idle);
 			}
 		}
+		
+		// If the kangaroo is currently left punching
+		else if (this.getState().getState() == States.leftPunch)
+		{
+			if (this.getCurrentAnimation().isOver())
+			{
+				this.getState().setState(States.idle);
+				this.launchAnimation(States.idle);
+			}
+		}
 	}
 	
 	/**
-	 * Init the name of the kangaroo.
-//	 * 
+	 * Load animations
+	 */
+	private void initAnim()
+	{
+		animations = new ArrayList<ServerAnimation>();
+		
+		animations.add(new ServerAnimation("assets/anims/idle.hba"));
+		animations.add(new ServerAnimation("assets/anims/hit.hba"));
+		animations.add(new ServerAnimation("assets/anims/leftpunch.hba"));
+		animations.add(new ServerAnimation("assets/anims/rightpunch.hba"));
+		
+		animations.get(0).setMode(ServerAnimation.foreverPlay);
+		animations.get(1).setMode(ServerAnimation.onePlay);
+		animations.get(2).setMode(ServerAnimation.onePlay);
+		animations.get(3).setMode(ServerAnimation.onePlay);
+	}
+	
+	/**
+	 * Launch specified animation
+	 * @param index of the animation to launch
+	 */
+	private void launchAnimation(int index)
+	{
+		currentAnimation = index;
+		animations.get(index).start(state);
+	}
+	
+	/*
+	 * Getters - Setters
+	 */
+	
+	/**
+	 * Init the name of the kangaroo.	 * 
 	 * @param name
 	 */
 	public void setName(String name)
@@ -178,10 +224,6 @@ public class Kangaroo
 	{
 		return name;
 	}
-	
-	/*
-	 * Getter - Setter
-	 */
 	
 	public boolean isReady()
 	{
@@ -219,6 +261,11 @@ public class Kangaroo
 
 	public void setState(States state) {
 		this.state = state;
+	}
+	
+	public ServerAnimation getCurrentAnimation()
+	{
+		return animations.get(currentAnimation);
 	}
 	
 	public boolean isSameAsNetwork()

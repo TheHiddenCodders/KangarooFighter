@@ -1,8 +1,6 @@
 package Kangaroo;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class States 
 {
@@ -15,14 +13,11 @@ public class States
 	//private ArrayList<Hitbox> hitboxes;
 	private ArrayList<ServerAnimation> anims;
 	private int currentState;
-	
-	private Timer timer;
 
 	public States()
 	{
 		setState(idle);
 		
-		timer = new Timer();
 		anims = new ArrayList<ServerAnimation>();
 		
 		anims.add(new ServerAnimation("assets/anims/idle.hba"));
@@ -42,27 +37,9 @@ public class States
 		return currentState;
 	}
 
-	public boolean setState(int currentState) 
+	public void setState(int currentState) 
 	{
 		this.currentState = currentState;
-		
-		if (currentState != idle)
-		{
-			anims.get(currentState).start(this);
-			
-			timer = new Timer();
-			timer.schedule(new TimerTask()
-			{
-				@Override
-				public void run()
-				{
-					setState(idle);	
-				}
-				
-			}, (long) anims.get(currentState).getTotalDuration());
-		}
-		
-		return false;
 	}
 	
 } 

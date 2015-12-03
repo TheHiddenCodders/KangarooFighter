@@ -22,6 +22,7 @@ public class ServerAnimation
 	private Timer timer;
 	private int nFrames, fps, currentFrame = 0;
 	private boolean resume;
+	private boolean over = false;
 	private int mode;
 	private States callingState;
 	
@@ -34,18 +35,7 @@ public class ServerAnimation
 	public void changeFrame()
 	{
 		if (resume)
-		{
-			timer.schedule(new TimerTask()
-			{
-	
-				@Override
-				public void run() 
-				{
-					changeFrame();
-				}
-				
-			}, 1/fps);
-		
+		{		
 			// Change the current frame
 			if (currentFrame < nFrames - 1)
 			{
@@ -58,8 +48,7 @@ public class ServerAnimation
 				else
 				{
 					callingState.setState(States.idle);
-					currentFrame = 0;
-					resume = false;
+					this.stop();
 				}
 			}
 		
@@ -70,6 +59,7 @@ public class ServerAnimation
 	{
 		callingState = state;
 		resume = true;
+		over = false;
 		
 		timer.schedule(new TimerTask()
 		{
@@ -80,12 +70,14 @@ public class ServerAnimation
 				changeFrame();
 			}
 			
-		}, 0);
+		}, 0, (long) (1f/fps * 1000));
 	}
 	
 	public void stop()
 	{
+		currentFrame = 0;
 		resume = false;
+		over = true;	
 	}
 	
 	/**
@@ -148,6 +140,15 @@ public class ServerAnimation
 		{
 			e.printStackTrace();
 		}		
+	}
+	
+	/*
+	 * Getters - Setters
+	 */
+	
+	public boolean isOver()
+	{
+		return over;
 	}
 	
 	public float getTotalDuration()
