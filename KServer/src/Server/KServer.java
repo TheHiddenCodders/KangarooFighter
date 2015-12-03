@@ -159,6 +159,7 @@ public class KServer extends Server
 			{
 				send(getKangarooFromIP((String) o2).getClient(), new GameReadyPacket());
 				send(getKangarooFromIP(clientIp).getClient(), new GameReadyPacket());
+				getGameFromIP(clientIp).run();
 			}
 			// If the first client is ready - wait for the second
 			else
@@ -187,7 +188,7 @@ public class KServer extends Server
 			{
 				if (games.get(i).getKangarooFromIp(cp.getIp()) != null)
 				{
-					if (games.get(i).isRunning())
+					if (games.get(i).isPrepared())
 						games.get(i).end(cp.getIp(), EndGameType.Disconnection);
 					
 					games.remove(games.get(i));
@@ -304,8 +305,8 @@ public class KServer extends Server
 	{
 		for (Game game : games)
 		{
-			// Only game which are running
-			if (game.isRunning())
+			// Only game which are at least prepared
+			if (game.isPrepared() || game.isRunning())
 			{
 				if (game.getK1().getClient().getIp().equals(ip) || game.getK2().getClient().getIp().equals(ip))
 					return game;

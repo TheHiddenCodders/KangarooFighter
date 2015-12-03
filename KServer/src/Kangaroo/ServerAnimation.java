@@ -6,12 +6,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 
 import Utils.Rectangle;
+import Utils.Timer;
 
 public class ServerAnimation 
 {
@@ -24,7 +23,6 @@ public class ServerAnimation
 	private boolean resume;
 	private boolean over = false;
 	private int mode;
-	private States callingState;
 	
 	public ServerAnimation(String animationPath)
 	{
@@ -32,45 +30,39 @@ public class ServerAnimation
 		timer = new Timer();
 	}
 	
-	public void changeFrame()
-	{
+	public void update()
+	{		
 		if (resume)
 		{		
-			// Change the current frame
-			if (currentFrame < nFrames - 1)
+			if (timer.getElapsedTime() > 1f / fps)
 			{
-				currentFrame++;
-			}
-			else
-			{
-				if (mode == foreverPlay)
-					currentFrame = 0;
+				// Change the current frame
+				if (currentFrame < nFrames - 1)
+				{
+					currentFrame++;
+				}
 				else
 				{
-					callingState.setState(States.idle);
-					this.stop();
+					if (mode == foreverPlay)
+					{
+						currentFrame = 0;
+					}
+					else
+					{
+						stop();
+					}
 				}
+				
+				timer.restart();
 			}
-		
 		}
 	}
 	
 	public void start(States state)
 	{
-		callingState = state;
 		resume = true;
 		over = false;
-		
-		timer.schedule(new TimerTask()
-		{
-
-			@Override
-			public void run() 
-			{
-				changeFrame();
-			}
-			
-		}, 0, (long) (1f/fps * 1000));
+		timer.restart();
 	}
 	
 	public void stop()
@@ -169,5 +161,10 @@ public class ServerAnimation
 	public void setMode(int mode)
 	{
 		this.mode = mode;
+	}
+
+	public int getMode()
+	{
+		return mode;
 	}
 }

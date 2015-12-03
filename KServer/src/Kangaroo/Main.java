@@ -2,8 +2,6 @@ package Kangaroo;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import Server.KServer;
 
@@ -18,23 +16,25 @@ public class Main
 		server.open();
 		
 		// Create a timer that update all games
-		Timer t1 = new Timer();
-		t1.schedule(new TimerTask(){
-
+		Thread gameThread = new Thread(new Runnable()
+		{
 			@Override
 			public void run() 
 			{
-				// Update running games
-				for(Game game : server.getAllGames())
+				while(true)
 				{
-					if ( game.isRunning() )
+					// Update running games
+					for(Game game : server.getAllGames())
 					{
-						game.stateMachine();
+						if ( game.isRunning() )
+						{
+							game.stateMachine();
+						}
 					}
 				}
 			}
-			
-		}, 0, 30);
+		});
+		gameThread.start();
 		
 		inputReader = new BufferedInputStream(System.in);
 		

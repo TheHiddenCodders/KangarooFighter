@@ -28,8 +28,9 @@ public class Game
 	 */
 	private Kangaroo k1 = null, k2 = null;
 	
-	private boolean running;
 	private boolean waiting;
+	private boolean prepared;
+	private boolean running;
 	
 	
 	/*
@@ -46,6 +47,8 @@ public class Game
 	{
 		this.k1 = k1;
 		waiting = true;
+		running = false;
+		prepared = false;
 	}
 	
 	/**
@@ -75,7 +78,8 @@ public class Game
 	{
 		this.k2 = k2;
 		waiting = false;
-		running = true;
+		running = false;
+		prepared = true;
 	}
 	
 	/**
@@ -97,6 +101,8 @@ public class Game
 		
 		k2.getClient().send(k2.getUpdatePacket());
 		k2.getClient().send(k1.getUpdatePacket());
+		
+		prepared();
 	}
 	
 	/**
@@ -139,11 +145,29 @@ public class Game
 	}
 	
 	/**
-	 * @return true if the game is played, false otherwise
+	 * @return true if the game is full but clients not ready
+	 */
+	public boolean isPrepared()
+	{
+		return prepared;
+	}
+	
+	public void prepared()
+	{
+		prepared = true;
+	}
+	
+	/**
+	 * @return true if both playersare ready, false otherwise
 	 */
 	public boolean isRunning()
 	{
 		return running;
+	}
+	
+	public void run()
+	{
+		running = true;
 	}
 	
 	/**
