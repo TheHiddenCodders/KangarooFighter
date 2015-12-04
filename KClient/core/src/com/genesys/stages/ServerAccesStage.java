@@ -52,7 +52,7 @@ public class ServerAccesStage extends Stage
 			String ip = "";
 			
 			if (Gdx.app.getType().equals(ApplicationType.Desktop))
-				ip =  "192.168.0.12";
+				ip =  "127.0.0.1";
 			else
 				ip = "192.168.0.14";
 			

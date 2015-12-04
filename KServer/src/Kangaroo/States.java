@@ -5,9 +5,10 @@ public class States
 {
 	public final static int idle = 0;
 	public final static int movement = 1;
-	public final static int leftPunch = 2;
-	public final static int rightPunch = 3;
-	public final static int hit = 4; // When kangaroo get hit
+	public final static int hit = 2; // When kangaroo get hit
+	public final static int leftPunch = 3;
+	public final static int rightPunch = 4;
+
 	
 	private int currentState;
 

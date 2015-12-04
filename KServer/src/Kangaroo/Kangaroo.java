@@ -228,6 +228,7 @@ public class Kangaroo
 			animations.get(currentAnimation).stop();
 		
 		currentAnimation = index;
+	
 		animations.get(index).start(state);
 	}
 	
@@ -307,6 +308,11 @@ public class Kangaroo
 	public ServerAnimation getCurrentAnimation()
 	{
 		return animations.get(currentAnimation);
+	}
+	
+	public ServerAnimation getAnimation(int index)
+	{
+		return animations.get(index);
 	}
 	
 	public boolean isSameAsNetwork()

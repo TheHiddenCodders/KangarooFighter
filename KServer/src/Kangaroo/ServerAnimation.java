@@ -31,7 +31,7 @@ public class ServerAnimation
 	}
 	
 	public void update()
-	{		
+	{	
 		if (resume)
 		{		
 			if (timer.getElapsedTime() > 1f / fps)
@@ -60,6 +60,7 @@ public class ServerAnimation
 	
 	public void start(States state)
 	{
+		System.err.println("Launched animation has " + nFrames + " frames");
 		resume = true;
 		over = false;
 		timer.restart();
@@ -125,13 +126,16 @@ public class ServerAnimation
 				hitboxes.add(temp);
 			}
 			
-			for (int i = nHitboxes - 1; i < nFrames; i++)
+			// If no boxes, add empty hitboxes
+			for (int i = nHitboxes; i < nFrames; i++)
 				hitboxes.add(new Hitbox());
 			
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}		
+		
+		System.err.println("Loaded animation has " + nFrames + " frames");
 	}
 	
 	/*
