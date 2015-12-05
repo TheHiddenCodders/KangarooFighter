@@ -6,12 +6,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 
 import Utils.Rectangle;
+import Utils.Timer;
 
 public class ServerAnimation 
 {
@@ -22,8 +21,8 @@ public class ServerAnimation
 	private Timer timer;
 	private int nFrames, fps, currentFrame = 0;
 	private boolean resume;
+	private boolean over = false;
 	private int mode;
-	private States callingState;
 	
 	public ServerAnimation(String animationPath)
 	{
@@ -31,61 +30,47 @@ public class ServerAnimation
 		timer = new Timer();
 	}
 	
-	public void changeFrame()
-	{
+	public void update()
+	{	
 		if (resume)
-		{
-			timer.schedule(new TimerTask()
+		{		
+			if (timer.getElapsedTime() > 1f / fps)
 			{
-	
-				@Override
-				public void run() 
+				// Change the current frame
+				if (currentFrame < nFrames - 1)
 				{
-					changeFrame();
+					currentFrame++;
 				}
-				
-			}, 1/fps);
-		
-			// Change the current frame
-			if (currentFrame < nFrames - 1)
-			{
-				currentFrame++;
-			}
-			else
-			{
-				if (mode == foreverPlay)
-					currentFrame = 0;
 				else
 				{
-					callingState.setState(States.idle);
-					currentFrame = 0;
-					resume = false;
+					if (mode == foreverPlay)
+					{
+						currentFrame = 0;
+					}
+					else
+					{
+						stop();
+					}
 				}
+				
+				timer.restart();
 			}
-		
 		}
 	}
 	
 	public void start(States state)
 	{
-		callingState = state;
+		System.err.println("Launched animation has " + nFrames + " frames");
 		resume = true;
-		
-		timer.schedule(new TimerTask()
-		{
-
-			@Override
-			public void run() 
-			{
-				changeFrame();
-			}
-			
-		}, 0);
+		over = false;
+		timer.restart();
 	}
 	
 	public void stop()
 	{
+		currentFrame = 0;
 		resume = false;
+		over = true;	
 	}
 	
 	/**
@@ -141,13 +126,25 @@ public class ServerAnimation
 				hitboxes.add(temp);
 			}
 			
-			for (int i = nHitboxes - 1; i < nFrames; i++)
+			// If no boxes, add empty hitboxes
+			for (int i = nHitboxes; i < nFrames; i++)
 				hitboxes.add(new Hitbox());
 			
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}		
+		
+		System.err.println("Loaded animation has " + nFrames + " frames");
+	}
+	
+	/*
+	 * Getters - Setters
+	 */
+	
+	public boolean isOver()
+	{
+		return over;
 	}
 	
 	public float getTotalDuration()
@@ -160,6 +157,11 @@ public class ServerAnimation
 		return hitboxes.get(currentFrame);
 	}
 	
+	public int getNFrames()
+	{
+		return nFrames;
+	}
+	
 	public void setHitboxes(ArrayList<Hitbox> hitboxes)
 	{
 		this.hitboxes = hitboxes;
@@ -168,5 +170,10 @@ public class ServerAnimation
 	public void setMode(int mode)
 	{
 		this.mode = mode;
+	}
+
+	public int getMode()
+	{
+		return mode;
 	}
 }

@@ -2,9 +2,13 @@ package Packets;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class GameReadyPacket implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1988963014347509043L;
+
 	@Override
 	public String toString()
 	{

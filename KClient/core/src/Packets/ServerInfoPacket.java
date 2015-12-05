@@ -2,9 +2,13 @@ package Packets;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class ServerInfoPacket implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3840328519507893947L;
+	
 	public int nKangaroosRegistered;
 	public int nGamesPlayed;
 	public int nKangaroosOnline;
