@@ -52,9 +52,9 @@ public class HomeStage extends Stage
 		this.addActor(name);
 		
 		matchMakingLaunch = new TextButton("Jouer", main.skin);
-		matchMakingLaunch.setSize(100, 40);
-		matchMakingLaunch.setColor(Color.ORANGE);
-		matchMakingLaunch.setPosition(this.getWidth() / 2 - matchMakingLaunch.getWidth() / 2, this.getHeight() - matchMakingLaunch.getHeight() - 10);
+		matchMakingLaunch.setSize(150, 40);
+		matchMakingLaunch.setColor(Color.TAN);
+		matchMakingLaunch.setPosition(this.getWidth() / 2 - matchMakingLaunch.getWidth() / 2, this.getHeight() - matchMakingLaunch.getHeight() - 5);
 		this.addActor(matchMakingLaunch);
 		
 		nKangaroosRegisteredText = new Label("Kangourous: ", main.skin);
@@ -129,7 +129,7 @@ public class HomeStage extends Stage
 	private void launchMatchMaking()
 	{
 		// UI change
-		matchMakingLaunch.setColor(Color.RED);
+		matchMakingLaunch.setColor(Color.WHITE);
 		matchMakingLaunch.setText("Recherche..");
 		seekingGame = true;
 		
@@ -144,7 +144,7 @@ public class HomeStage extends Stage
 	private void cancelMatchMaking()
 	{
 		// UI change
-		matchMakingLaunch.setColor(Color.ORANGE);
+		matchMakingLaunch.setColor(Color.TAN);
 		matchMakingLaunch.setText("Jouer");
 		seekingGame = false;
 		
