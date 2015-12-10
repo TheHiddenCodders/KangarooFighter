@@ -1,5 +1,6 @@
 package Kangaroo;
 
+import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -120,12 +121,20 @@ public class ServerAnimation
 				
 				for (int j = 0; j < nBoxPerHitbox; j++)
 				{
-					float[] vertices = new float[lines.get(4 + (nBoxPerHitbox * i) + j).split(",").length];
-					for (int k = 0; k < vertices.length; k++)
+					int[] xpoints = new int[lines.get(4 + (nBoxPerHitbox * i) + j).split(",").length / 2];
+					int[] ypoints = new int[lines.get(4 + (nBoxPerHitbox * i) + j).split(",").length / 2];
+					
+					for (int k = 0; k < xpoints.length * 2; k += 2)
 					{
-						vertices[k] = Float.valueOf(lines.get(4 + (nBoxPerHitbox * i) + j).split(",")[k]);
+						float x = Float.valueOf(lines.get(4 + (nBoxPerHitbox * i) + j).split(",")[k]);
+						float y = Float.valueOf(lines.get(4 + (nBoxPerHitbox * i) + j).split(",")[k+1]);
+						xpoints[k / 2] = (int) x;
+						ypoints[k / 2] = (int) y;
+						
+						System.out.println(xpoints[k / 2] + ":" + ypoints[k / 2]);
 					}
-					temp.addPoly(vertices);
+					
+					temp.addPoly(new Polygon(xpoints, ypoints, xpoints.length));
 				}
 				
 				hitboxes.add(temp);
@@ -181,16 +190,16 @@ public class ServerAnimation
 		this.mode = mode;
 	}
 
-	public void setPosition(float x, float y)
+	public void setPosition(int x, int y)
 	{
 		for (int i = 0; i < hitboxes.size(); i++)
 		{
-			hitboxes.get(i).translateX(x - hitboxes.get(i).x);
-			hitboxes.get(i).translateY(y - hitboxes.get(i).y);
+			hitboxes.get(i).translateX((int) (x - hitboxes.get(i).x));
+			hitboxes.get(i).translateY((int) (y - hitboxes.get(i).y));
 		}
 	}
 	
-	public void translate(float x, float y)
+	public void translate(int x, int y)
 	{
 		for (int i = 0; i < hitboxes.size(); i++)
 		{

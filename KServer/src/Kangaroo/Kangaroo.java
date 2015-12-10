@@ -399,10 +399,10 @@ public class Kangaroo
 		this.position = position;
 		
 		for (int i = 0; i < animations.size(); i++)
-			animations.get(i).setPosition(position.x, position.y);
+			animations.get(i).setPosition((int) position.x, (int) position.y);
 	}
 	
-	public void translate(float x, float y)
+	public void translate(int x, int y)
 	{
 		this.position.x += x;
 		this.position.y += y;

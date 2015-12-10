@@ -104,7 +104,7 @@ public class Game
 		k2.getClient().send(k2.getUpdatePacket());
 		k2.getClient().send(k1.getUpdatePacket());
 		
-		k2.flip();
+		//k2.flip(); TODO: remake flip function
 		
 		prepared();
 	}

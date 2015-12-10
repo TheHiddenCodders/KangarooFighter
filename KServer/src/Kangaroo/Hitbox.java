@@ -1,10 +1,9 @@
 package Kangaroo;
 
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.util.ArrayList;
-
-import Utils.Polygon;
-import Utils.PolygonUtils;
-import Utils.Rectangle;
 
 public class Hitbox
 {
@@ -41,13 +40,7 @@ public class Hitbox
 		
 		for (int i = 0; i < hitbox.polygons.size(); i++)
 		{
-			Polygon temp = new Polygon();
-			float[] vertices = new float[hitbox.polygons.get(i).getVertices().length];
-			
-			for (int j = 0; j < hitbox.polygons.get(i).getVertices().length; j++)
-				vertices[j] = new Float(hitbox.polygons.get(i).getVertices()[j]);
-			
-			temp.setVertices(vertices);
+			Polygon temp = new Polygon(hitbox.polygons.get(i).xpoints, hitbox.polygons.get(i).ypoints, hitbox.polygons.get(i).npoints);
 			addPoly(temp);
 		}
 	}
@@ -60,7 +53,7 @@ public class Hitbox
 	 * Translate X all the polygons by value
 	 * @param value
 	 */
-	public void translateX(float value)
+	public void translateX(int value)
 	{
 		x += value;
 		for (Polygon a : polygons)
@@ -71,7 +64,7 @@ public class Hitbox
 	 * Translate Y all the polygons by value
 	 * @param value
 	 */
-	public void translateY(float value)
+	public void translateY(int value)
 	{
 		y += value;
 		for (Polygon a : polygons)
@@ -96,7 +89,7 @@ public class Hitbox
 			for(Polygon b : polygons2.polygons)
 			{
 				indexB++;
-				if (a.getBoundingRectangle().overlaps(b.getBoundingRectangle()) | b.getBoundingRectangle().overlaps(a.getBoundingRectangle()))
+				if (polygonIntersectPolygon(a, b))
 				{
 					colliderIndex = indexA;
 					polygons2.colliderIndex = indexB;
@@ -105,6 +98,26 @@ public class Hitbox
 			}
 		}
 		
+		return false;
+	}
+	
+	/**
+	 * Determines if the two polygons supplied intersect each other, by checking if either polygon has points which are contained in the other. 
+	 * (It doesn't detect body-only intersections, but is sufficient in most cases.) 
+	*/ 
+	public static boolean polygonIntersectPolygon(Polygon p1, Polygon p2)
+	{
+		Point p; 
+		for(int i = 0; i < p2.npoints;i++)
+		{
+			p = new Point(p2.xpoints[i],p2.ypoints[i]); if(p1.contains(p)) return true; 
+			System.out.println(p.x + ":" + p.y);
+		} 
+		
+		for(int i = 0; i < p1.npoints;i++) 
+		{
+			p = new Point(p1.xpoints[i],p1.ypoints[i]); if(p2.contains(p)) return true;
+		}
 		return false;
 	}
 	
@@ -119,42 +132,13 @@ public class Hitbox
 	}
 	
 	/**
-	 * Add polygon.size * value to the polygon (ONLY WORK ON RECTANGLES)
-	 * @param value the multiplicator
-	 */
-	public void sizeBy(float value)
-	{
-		for (Polygon a : polygons)
-		{
-			float x = a.getVertices()[0];
-			float y = a.getVertices()[1];
-			float width = a.getVertices()[2] - a.getVertices()[0]; // x2 - x1 = w
-			float height = a.getVertices()[5] - a.getVertices()[1]; // y2 - y1 = h
-			
-			x *= value;
-			y *= value;
-			width *= value;
-			height *= value;
-			
-			a.getVertices()[0] = x;
-			a.getVertices()[1] = y;
-			a.getVertices()[2] = x + width;
-			a.getVertices()[3] = y;
-			a.getVertices()[4] = x + width;
-			a.getVertices()[5] = y + height;
-			a.getVertices()[6] = x;
-			a.getVertices()[7] = y + height;			
-		}
-	}
-	
-	/**
 	 * Flip a single polygon (ONLY TESTED ON RECTANGLES)
 	 * @param poly to flip
 	 */
 	private void polyFlip(Polygon poly, float fullWidth)
 	{		
-		for (int i = 0; i < poly.getVertices().length; i+=2)
-			poly.getVertices()[i] = fullWidth / 2 - poly.getVertices()[i] + fullWidth / 2;
+		for (int i = 0; i < poly.xpoints.length; i++)
+			poly.xpoints[i] = (int) (fullWidth / 2 - poly.xpoints[i] + fullWidth / 2);
 		
 		// Update transformed vertices according to untransformed vertice
 		poly.translate(0, 0);
@@ -166,10 +150,7 @@ public class Hitbox
 		String temp = "";
 		for (Polygon poly : polygons)
 		{
-			for (float vertice : poly.getVertices())
-			{
-				temp = temp.concat(vertice + ",");
-			}
+			temp.concat(poly.toString());
 			temp = temp.concat("\n");
 		}
 		return temp;
@@ -181,30 +162,23 @@ public class Hitbox
 	
 	public void addBox(Rectangle box)
 	{
-		Polygon temp = PolygonUtils.rectangleToPolygon(box);			
+		Polygon temp = new Polygon();
+		temp.addPoint(box.x, box.y);
+		temp.addPoint(box.x + box.width, box.y);
+		temp.addPoint(box.x + box.width, box.y + box.height);
+		temp.addPoint(box.x, box.y + box.height);
 		addPoly(temp);
-	}
-	
-	public void addBoxWithoutTransform(Rectangle box)
-	{
-		Polygon temp = PolygonUtils.rectangleToPolygon(box);			
-		addPolyWithoutTransform(temp);
 	}
 	
 	public void addPoly(Polygon poly)
 	{
-		poly.translate(x, y);
+		poly.translate((int) x, (int) y);
 		polygons.add(poly);
 	}
 	
 	public void addPolyWithoutTransform(Polygon poly)
 	{
 		polygons.add(poly);
-	}
-	
-	public void addPoly(float... vertices)
-	{
-		addPoly(new Polygon(vertices));
 	}
 	
 	public void removePoly(Polygon poly)
