@@ -25,10 +25,8 @@ public class Main
 				{
 					// Update running games
 					//for (Game game : server.getAllGames())
-					System.err.println("");
 					for (int i = 0; i < server.getAllGames().size(); i++)
 					{
-						System.err.println("NOP");
 						if (server.getAllGames().get(i).isEnded())
 						{
 							server.getAllGames().remove(server.getAllGames().get(i));

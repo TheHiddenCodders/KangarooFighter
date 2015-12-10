@@ -111,7 +111,6 @@ public class Hitbox
 		for(int i = 0; i < p2.npoints;i++)
 		{
 			p = new Point(p2.xpoints[i],p2.ypoints[i]); if(p1.contains(p)) return true; 
-			System.out.println(p.x + ":" + p.y);
 		} 
 		
 		for(int i = 0; i < p1.npoints;i++) 
