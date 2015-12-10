@@ -22,6 +22,7 @@ public class ServerAnimation
 	private int nFrames, fps, currentFrame = 0;
 	private boolean resume;
 	private boolean over = false;
+	private float width, height;
 	private int mode;
 	
 	public ServerAnimation(String animationPath)
@@ -107,6 +108,10 @@ public class ServerAnimation
 			// Cut sheet
 			nFrames = (int) (sheet.getWidth() / frame.width);
 			
+			// Set size of a frame
+			width = frame.width;
+			height = frame.height;
+			
 			// Load hitboxes
 			hitboxes = new ArrayList<Hitbox>();
 			for (int i = 0; i < nHitboxes; i++)
@@ -136,6 +141,12 @@ public class ServerAnimation
 		}		
 		
 		System.err.println("Loaded animation has " + nFrames + " frames");
+	}
+	
+	public void flip()
+	{
+		for (int i = 0; i < hitboxes.size(); i++)
+			hitboxes.get(i).flip(width);
 	}
 	
 	/*
@@ -172,6 +183,24 @@ public class ServerAnimation
 		this.mode = mode;
 	}
 
+	public void setPosition(float x, float y)
+	{
+		for (int i = 0; i < hitboxes.size(); i++)
+		{
+			hitboxes.get(i).translateX(x - hitboxes.get(i).x);
+			hitboxes.get(i).translateY(y - hitboxes.get(i).y);
+		}
+	}
+	
+	public void translate(float x, float y)
+	{
+		for (int i = 0; i < hitboxes.size(); i++)
+		{
+			hitboxes.get(i).translateX(x);
+			hitboxes.get(i).translateY(y);
+		}
+	}
+	
 	public int getMode()
 	{
 		return mode;

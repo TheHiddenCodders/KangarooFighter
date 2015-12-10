@@ -254,6 +254,12 @@ public class Kangaroo
 		}
 	}
 	
+	public void flip()
+	{
+		for (int i = 0; i < animations.size(); i++)
+			animations.get(i).flip();
+	}
+	
 	/*
 	 * Getters - Setters
 	 */
@@ -357,12 +363,23 @@ public class Kangaroo
 	public void setPosition(Vector2 position) 
 	{
 		this.position = position;
+		
+		for (int i = 0; i < animations.size(); i++)
+			animations.get(i).setPosition(position.x, position.y);
+	}
+	
+	public void translate(float x, float y)
+	{
+		this.position.x += x;
+		this.position.y += y;
+		
+		for (int i = 0; i < animations.size(); i++)
+			animations.get(i).translate(x, y);
 	}
 	
 	public void setPosition(float x, float y)
 	{
-		this.position.x = x;
-		this.position.y = y;
+		setPosition(new Vector2(x, y));
 	}
 	
 }

@@ -103,6 +103,8 @@ public class Game
 		k2.getClient().send(k2.getUpdatePacket());
 		k2.getClient().send(k1.getUpdatePacket());
 		
+		k2.flip();
+		
 		prepared();
 	}
 	
@@ -131,6 +133,9 @@ public class Game
 		
 		k1.updateNetworkImage();
 		k2.updateNetworkImage();
+		
+		if (k1.getCurrentAnimation().getKeyFrame().collidWith(k2.getCurrentAnimation().getKeyFrame()))
+			System.err.println("On est des génies !");
 	}
 	
 	/*
