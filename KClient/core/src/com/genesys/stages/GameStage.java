@@ -40,6 +40,7 @@ public class GameStage extends Stage
 	private AnimatedProgressBar playerBar, opponentBar;
 	private boolean gameReady = false; // Both client have load the stage
 	private boolean gamePaused = false;
+	private boolean gameEnded = false;
 	
 	private Label playerName, opponentName;
 	
@@ -85,6 +86,14 @@ public class GameStage extends Stage
 		{
 			// Actually, don't care, just leave the game stage since the game will not exist longer
 			gamePaused = false;
+			main.setStage(new HomeStage(main, data));
+		}
+		
+		// When the game is ended
+		if (gameEnded && data != null)
+		{
+			// Actually, don't care, just leave the game stage since the game will not exist longer
+			gameEnded = false;
 			main.setStage(new HomeStage(main, data));
 		}
 		
@@ -184,6 +193,12 @@ public class GameStage extends Stage
 	{
 		gamePaused = true;
 		System.out.println("Game paused !");
+	}
+	
+	public void setGameEnded()
+	{
+		gameEnded = true;
+		System.out.println("Game ended !");
 	}
 	
 	public Kangaroo getKangarooFromIp(String ip)

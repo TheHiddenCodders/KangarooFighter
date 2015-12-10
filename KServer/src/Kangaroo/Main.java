@@ -24,8 +24,16 @@ public class Main
 				while(true)
 				{
 					// Update running games
-					for(int i = 0; i < server.getAllGames().size(); i++)
+					//for (Game game : server.getAllGames())
+					System.err.println("");
+					for (int i = 0; i < server.getAllGames().size(); i++)
 					{
+						System.err.println("NOP");
+						if (server.getAllGames().get(i).isEnded())
+						{
+							server.getAllGames().remove(server.getAllGames().get(i));
+						}
+						
 						if ( server.getAllGames().get(i).isRunning() )
 						{
 							server.getAllGames().get(i).stateMachine();
