@@ -1,8 +1,10 @@
 package Kangaroo;
 
+import Packets.ClientDataPacket;
 import Packets.KangarooClientPacket;
 import Packets.KangarooServerPacket;
 import Server.ClientProcessor;
+import Utils.ServerUtils;
 import Utils.Vector2;
 
 /**
@@ -139,6 +141,12 @@ public class Kangaroo
 		this.networkImage.state = this.state.getState();
 		this.networkImage.x = this.getPosition().x;
 		this.networkImage.y = this.getPosition().y;
+	}
+	
+	public ClientDataPacket getClientDataPacket()
+	{
+		ClientDataPacket packet = ServerUtils.getPlayerDatas(this);
+		return packet;
 	}
 	
 	public Vector2 getPosition() 

@@ -27,7 +27,9 @@ public class Main extends ApplicationAdapter
 		skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 		
 		BitmapFont koreanFont = new BitmapFont(Gdx.files.internal("ui/korean.fnt"));
-		skin.add("korean-font", koreanFont, BitmapFont.class);
+		BitmapFont arialFont = new BitmapFont(Gdx.files.internal("ui/arial.fnt"));
+		skin.add("korean", koreanFont, BitmapFont.class);
+		skin.add("arial", arialFont, BitmapFont.class);
 		prefs = Gdx.app.getPreferences("data");
 		setStage(new ServerAccesStage(this));
 	}

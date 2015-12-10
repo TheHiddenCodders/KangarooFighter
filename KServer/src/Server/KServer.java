@@ -100,14 +100,8 @@ public class KServer extends Server
 			
 			// If server accepted the request, send client data
 			if (receivedPacket.accepted)
-			{
-				ClientDataPacket dataPacket = new ClientDataPacket();
-				dataPacket.name = receivedPacket.pseudo;
-				dataPacket.games = 0;
-				dataPacket.looses = 0;
-				dataPacket.wins = 0;
-				
-				this.send(cp, dataPacket);
+			{				
+				this.send(cp, ServerUtils.getPlayerDatas(getKangarooFromIP(clientIp)));
 			}
 		}
 		
@@ -124,14 +118,8 @@ public class KServer extends Server
 			
 			// If server accepted the request, send client data
 			if (receivedPacket.accepted)
-			{
-				ClientDataPacket dataPacket = new ClientDataPacket();
-				dataPacket.name = receivedPacket.pseudo;
-				dataPacket.games = 0;
-				dataPacket.looses = 0;
-				dataPacket.wins = 0;
-				
-				this.send(cp, dataPacket);
+			{				
+				this.send(cp, ServerUtils.getPlayerDatas(getKangarooFromIP(clientIp)));
 			}
 		}
 		
@@ -144,7 +132,7 @@ public class KServer extends Server
 			receivedPacket.nGamesOnline = games.size(); 
 			receivedPacket.nGamesPlayed = 0; // TODO
 			receivedPacket.nKangaroosOnline = kangaroos.size(); 
-			receivedPacket.nKangaroosRegistered = 0; // TODO
+			receivedPacket.nKangaroosRegistered = ServerUtils.getPlayersFiles().size(); // TODO
 			
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
@@ -197,6 +185,7 @@ public class KServer extends Server
 			{
 				send(getKangarooFromIP((String) o2).getClient(), new GameReadyPacket());
 				send(getKangarooFromIP(clientIp).getClient(), new GameReadyPacket());
+				o2 = null;
 			}
 			// If the first client is ready - wait for the second
 			else
@@ -234,7 +223,8 @@ public class KServer extends Server
 			
 			kangaroos.remove(getKangarooFromIP(cp.getIp()));
 			cp.getClient().close();
-			serverInfoUpdated(cp, ServerInfoType.ALL);
+			clients.remove(cp);
+			serverInfoUpdated(cp, ServerInfoType.ExceptMe);
 			
 		} catch (IOException e) 
 		{

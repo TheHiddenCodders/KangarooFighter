@@ -83,7 +83,7 @@ public class Network extends Client
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on InscriptionStage.");
+				System.err.println("The LOGINPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on InscriptionStage.");
 			}
 		}
 		
@@ -108,7 +108,7 @@ public class Network extends Client
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on InscriptionStage.");
+				System.err.println("The SIGNOUTPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on InscriptionStage.");
 			}
 		}
 		
@@ -143,7 +143,7 @@ public class Network extends Client
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on InscriptionStage.");
+				System.err.println("The CLIENTDATAPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on InscriptionStage.");
 			}
 		}
 		
@@ -164,7 +164,7 @@ public class Network extends Client
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage");
+				System.err.println("The SERVERINFOPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage");
 			}
 		}
 		
@@ -181,7 +181,7 @@ public class Network extends Client
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage");
+				System.err.println("The GAMEFOUNDPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage");
 			}
 		}
 		
@@ -222,7 +222,7 @@ public class Network extends Client
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage or GameStage");
+				System.err.println("The KANGAROOSERVERPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage or GameStage");
 			}
 		}
 		
@@ -239,7 +239,7 @@ public class Network extends Client
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
+				System.err.println("The GAMEREADYPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
 			}
 		}
 		
@@ -256,12 +256,12 @@ public class Network extends Client
 				GameStage stage = (GameStage) currentStage;
 				stage.setGameReady();
 				
-				System.err.println(stage.getKangarooFromIp(packet.disconnectedClientIp).getName() + " [ " + packet.disconnectedClientIp + " ] " + "has left the game");
+				System.err.println(stage.getKangarooFromIp(packet.disconnectedClientIp).getName() + " [" + packet.disconnectedClientIp + "] " + "has left the game");
 				stage.setGamePaused();
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
+				System.err.println("The CLIENTDISCONNECTIONPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
 			}
 		}
 		

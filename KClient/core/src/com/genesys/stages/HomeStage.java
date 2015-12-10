@@ -1,5 +1,7 @@
 package com.genesys.stages;
 
+import java.util.ArrayList;
+
 import Packets.ClientDataPacket;
 import Packets.KangarooServerPacket;
 import Packets.MatchMakingPacket;
@@ -9,10 +11,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.genesys.kclient.Main;
+import com.genesys.kclient.PersoBloc;
 
 public class HomeStage extends Stage
 {
@@ -24,20 +28,20 @@ public class HomeStage extends Stage
 	private ServerInfoPacket updateServerInfoPacket;
 	private KangarooServerPacket pPlayer, pOpponent;
 	private boolean seekingGame = false, gameFound = false;
+	private ArrayList<String> bottomInfos;
+	private int bottomInfosIndex = 0;
 	
 	// Components
-	private Label name;
 	private TextButton matchMakingLaunch;
+	private Label bottomText;	
+	private Image background;
 	
-	private Label nKangaroosRegisteredText, nKangaroosRegisteredValue;
-	private Label nKangaroosOnlineText, nKangaroosOnlineValue;
-	private Label nGamesPlayedText, nGamesPlayedValue;
-	private Label nGamesOnlineText, nGamesOnlineValue;
+	private PersoBloc persoBloc;
 	
-	private Image background, bottomRibbon;
 	/*
 	 * Constructors
 	 */
+	
 	public HomeStage(Main main, ClientDataPacket data)
 	{
 		super();
@@ -46,51 +50,22 @@ public class HomeStage extends Stage
 		background = new Image(new Texture(Gdx.files.internal("sprites/homestage.png")));
 		this.addActor(background);
 		
-		name = new Label(data.name, main.skin);
-		name.setColor(Color.ORANGE);
-		name.setPosition(5, this.getHeight() - name.getHeight() - 5);
-		this.addActor(name);
-		
-		matchMakingLaunch = new TextButton("Jouer", main.skin);
+		matchMakingLaunch = new TextButton("JOUER", main.skin);
 		matchMakingLaunch.setSize(150, 40);
 		matchMakingLaunch.setColor(Color.TAN);
 		matchMakingLaunch.setPosition(this.getWidth() / 2 - matchMakingLaunch.getWidth() / 2, this.getHeight() - matchMakingLaunch.getHeight() - 5);
 		this.addActor(matchMakingLaunch);
 		
-		nKangaroosRegisteredText = new Label("Kangourous: ", main.skin);
-		nKangaroosRegisteredText.setPosition(0, 0);
-		nKangaroosRegisteredValue = new Label("", main.skin);
-		nKangaroosRegisteredValue.setColor(Color.ORANGE);
-		nKangaroosRegisteredValue.setPosition(nKangaroosRegisteredText.getWidth(), 0);
-		this.addActor(nKangaroosRegisteredText);
-		this.addActor(nKangaroosRegisteredValue);
+		bottomText = new Label("", main.skin);
+		bottomText.setPosition(this.getWidth(), 2);
+		bottomText.setColor(Color.WHITE);
+		this.addActor(bottomText);		
 		
-		nKangaroosOnlineText = new Label(" | En ligne: ", main.skin);
-		nKangaroosOnlineText.setPosition(nKangaroosRegisteredValue.getX() + nKangaroosRegisteredValue.getWidth(), 0);
-		nKangaroosOnlineValue = new Label("", main.skin);
-		nKangaroosOnlineValue.setColor(Color.ORANGE);
-		nKangaroosOnlineValue.setPosition(nKangaroosOnlineText.getX() + nKangaroosOnlineText.getWidth(), 0);
-		this.addActor(nKangaroosOnlineText);
-		this.addActor(nKangaroosOnlineValue);
+		persoBloc = new PersoBloc(data, main.skin);
+		persoBloc.setPosition(this.getWidth() / 2 - persoBloc.getWidth() / 2, this.getHeight() / 2 - persoBloc.getHeight() / 2 - 10);
+		this.addActor(persoBloc);
 		
-		nGamesPlayedText = new Label(" | Parties: ", main.skin);
-		nGamesPlayedText.setPosition(nKangaroosOnlineValue.getX() + nKangaroosOnlineValue.getWidth(), 0);
-		nGamesPlayedValue = new Label("", main.skin);
-		nGamesPlayedValue.setColor(Color.ORANGE);
-		nGamesPlayedValue.setPosition(nGamesPlayedText.getX() + nGamesPlayedText.getWidth(), 0);
-		this.addActor(nGamesPlayedText);
-		this.addActor(nGamesPlayedValue);
-		
-		nGamesOnlineText = new Label(" | En cours: ", main.skin);
-		nGamesOnlineText.setPosition(nGamesPlayedValue.getX() + nGamesPlayedValue.getWidth(), 0);
-		nGamesOnlineValue = new Label("", main.skin);
-		nGamesOnlineValue.setColor(Color.ORANGE);
-		nGamesOnlineValue.setPosition(nGamesOnlineText.getX() + nGamesOnlineText.getWidth(), 0);
-		this.addActor(nGamesOnlineText);
-		this.addActor(nGamesOnlineValue);
-		
-		bottomRibbon = new Image(new Texture(Gdx.files.internal("sprites/botribbon.png")));
-		this.addActor(bottomRibbon);
+		bottomInfos = new ArrayList<String>();
 		
 		// Ask for server info
 		askServerInfos();
@@ -100,11 +75,30 @@ public class HomeStage extends Stage
 	@Override
 	public void act(float delta)
 	{			
+		// Update server info if the have been changed
 		if (updateServerInfoPacket != null)
 			updateUIServerInfos(updateServerInfoPacket);
 			
+		// If game found, go to game stage
 		if (gameFound && pPlayer != null && pOpponent != null)
 			main.setStage(new GameStage(main, pPlayer, pOpponent));
+		
+		// Make bottom text translate and update
+		if (bottomText.getX() + bottomText.getWidth() > -50)
+		{
+			bottomText.moveBy(-1, 0);
+		}
+		else
+		{
+			bottomText.setX(this.getWidth());
+			
+			if (bottomInfosIndex < bottomInfos.size() - 1)
+				bottomInfosIndex++;
+			else 
+				bottomInfosIndex = 0;
+			
+			bottomText.setText(bottomInfos.get(bottomInfosIndex));
+		}
 		
 		// Input update
 		if (Gdx.input.justTouched())
@@ -129,7 +123,7 @@ public class HomeStage extends Stage
 	private void launchMatchMaking()
 	{
 		// UI change
-		matchMakingLaunch.setColor(Color.WHITE);
+		matchMakingLaunch.setColor(Color.RED);
 		matchMakingLaunch.setText("Recherche..");
 		seekingGame = true;
 		
@@ -167,24 +161,15 @@ public class HomeStage extends Stage
 	 * @param p the server info packet
 	 */
 	private void updateUIServerInfos(ServerInfoPacket p)
-	{
-		nGamesOnlineValue.setText(String.valueOf(p.nGamesOnline));
-		nGamesOnlineValue.pack();
-		nGamesPlayedValue.setText(String.valueOf(p.nGamesPlayed));
-		nGamesPlayedValue.pack();
-		nKangaroosRegisteredValue.setText(String.valueOf(p.nKangaroosRegistered));
-		nKangaroosRegisteredValue.pack();
-		nKangaroosOnlineValue.setText(String.valueOf(p.nKangaroosOnline));
-		nKangaroosOnlineValue.pack();
+	{		
+		bottomInfos.clear();
+		bottomInfos.add("Vous avez en tout joues " + p.nGamesPlayed + " parties de KangarooFighters. Pas mal.");
+		bottomInfos.add("En cet instant " + p.nGamesOnline + " parties de KangarooFighters se jouent.");
+		bottomInfos.add("Vous etes en tout " + p.nKangaroosRegistered + " combattants Kangourous.");
+		bottomInfos.add("Vous etes actuellement " + p.nKangaroosOnline + " combattants Kangourous connectes.");
 		
-		nKangaroosRegisteredValue.setX(nKangaroosRegisteredText.getWidth());
-		nKangaroosOnlineText.setX(nKangaroosRegisteredValue.getX() + nKangaroosRegisteredValue.getWidth());
-		nKangaroosOnlineValue.setX(nKangaroosOnlineText.getX() + nKangaroosOnlineText.getWidth());
-		nGamesPlayedText.setX(nKangaroosOnlineValue.getX() + nKangaroosOnlineValue.getWidth());
-		nGamesPlayedValue.setX(nGamesPlayedText.getX() + nGamesPlayedText.getWidth());
-		nGamesOnlineText.setX(nGamesPlayedValue.getX() + nGamesPlayedValue.getWidth());
-		nGamesOnlineValue.setX(nGamesOnlineText.getX() + nGamesOnlineText.getWidth());
-		
+		bottomText.setText(bottomInfos.get(bottomInfosIndex));
+		bottomText.pack();
 		
 		// To avoid build ui again and again
 		p = null;

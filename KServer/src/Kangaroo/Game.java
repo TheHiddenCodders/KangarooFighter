@@ -281,6 +281,7 @@ public class Game
 		ClientDisconnectionPacket p = new ClientDisconnectionPacket();
 		p.disconnectedClientIp = hostAddress;
 		
+		
 		// Then get the opponent of the disconnected kangaroo and send him the packet
 		getKangarooFromOpponentIp(hostAddress).getClient().send(p);
 	}
