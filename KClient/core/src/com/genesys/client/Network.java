@@ -3,6 +3,7 @@ package com.genesys.client;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import Packets.ClientDataPacket;
 import Packets.ClientDisconnectionPacket;
 import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
@@ -10,8 +11,10 @@ import Packets.HeartBeatPacket;
 import Packets.KangarooServerPacket;
 import Packets.LoginPacket;
 import Packets.ServerInfoPacket;
+import Packets.SignOutPacket;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.genesys.stages.ConnexionStage;
 import com.genesys.stages.GameStage;
 import com.genesys.stages.HomeStage;
 import com.genesys.stages.InscriptionStage;
@@ -66,26 +69,81 @@ public class Network extends Client
 		 */
 		else if (o.getClass().isAssignableFrom(LoginPacket.class))
 		{
+			if (currentStage.getClass().isAssignableFrom(ConnexionStage.class))
+			{
+				ConnexionStage stage = (ConnexionStage) currentStage;
+				
+				LoginPacket packet = (LoginPacket) o;
+				
+				// If the server accepted the request
+				if (packet.accepted)
+					stage.loggedIn(); // Log in
+				else
+					stage.notLoggedIn(packet.pwdMatch, packet.pseudoExists); // LogIn fail
+			}
+			else
+			{
+				System.err.println("The LOGINPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on InscriptionStage.");
+			}
+		}
+		
+		/**
+		 * Received a signout packet
+		 * 1. Check if pseudo is available on server
+		 * 2. If it is, log the client
+		 */
+		else if (o.getClass().isAssignableFrom(SignOutPacket.class))
+		{
 			if (currentStage.getClass().isAssignableFrom(InscriptionStage.class))
 			{
 				InscriptionStage stage = (InscriptionStage) currentStage;
 				
-				// Get login ask answer
-				if (o.getClass().isAssignableFrom(LoginPacket.class))
-				{
-					LoginPacket packet = (LoginPacket) o;
-					
-					// If the packet accepted the request
-					System.err.println("accepted : " + packet.accepted);
-					if (packet.accepted)
-						stage.loggedIn(); // Log in
-					else
-						stage.notLoggedIn(); // LogIn fail
-				}
+				SignOutPacket packet = (SignOutPacket) o;
+				
+				// If the server accepted the request
+				if (packet.accepted)
+					stage.signedOut(); // Signed out
+				else
+					stage.notSignedOut(packet.pseudoExists); // SignOut failed
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on InscriptionStage.");
+				System.err.println("The SIGNOUTPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on InscriptionStage.");
+			}
+		}
+		
+		/**
+		 * Received a ClientData packet
+		 */
+		else if (o.getClass().isAssignableFrom(ClientDataPacket.class))
+		{
+			if (currentStage.getClass().isAssignableFrom(InscriptionStage.class))
+			{
+				InscriptionStage stage = (InscriptionStage) currentStage;
+				
+				ClientDataPacket packet = (ClientDataPacket) o;
+				
+				stage.setClientData(packet);				
+			}
+			else if (currentStage.getClass().isAssignableFrom(ConnexionStage.class))
+			{
+				ConnexionStage stage = (ConnexionStage) currentStage;
+				
+				ClientDataPacket packet = (ClientDataPacket) o;
+				
+				stage.setClientData(packet);				
+			}
+			else if (currentStage.getClass().isAssignableFrom(GameStage.class))
+			{
+				GameStage stage = (GameStage) currentStage;
+				
+				ClientDataPacket packet = (ClientDataPacket) o;
+				
+				stage.setClientData(packet);				
+			}
+			else
+			{
+				System.err.println("The CLIENTDATAPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on InscriptionStage.");
 			}
 		}
 		
@@ -99,18 +157,14 @@ public class Network extends Client
 			{
 				HomeStage stage = (HomeStage) currentStage;
 				
-				// Get server infos
-				if (o.getClass().isAssignableFrom(ServerInfoPacket.class))
-				{
-					ServerInfoPacket packet = (ServerInfoPacket) o;
-					
-					// Update the server info for the stage
-					stage.updateServerInfos(packet);
-				}
+				ServerInfoPacket packet = (ServerInfoPacket) o;
+				
+				// Update the server info for the stage
+				stage.updateServerInfos(packet);
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage");
+				System.err.println("The SERVERINFOPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage");
 			}
 		}
 		
@@ -127,7 +181,7 @@ public class Network extends Client
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage");
+				System.err.println("The GAMEFOUNDPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage");
 			}
 		}
 		
@@ -168,7 +222,7 @@ public class Network extends Client
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage or GameStage");
+				System.err.println("The KANGAROOSERVERPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage or GameStage");
 			}
 		}
 		
@@ -185,7 +239,7 @@ public class Network extends Client
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
+				System.err.println("The GAMEREADYPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
 			}
 		}
 		
@@ -202,12 +256,12 @@ public class Network extends Client
 				GameStage stage = (GameStage) currentStage;
 				stage.setGameReady();
 				
-				System.err.println(stage.getKangarooFromIp(packet.disconnectedClientIp).getName() + " [ " + packet.disconnectedClientIp + " ] " + "has left the game");
+				System.err.println(stage.getKangarooFromIp(packet.disconnectedClientIp).getName() + " [" + packet.disconnectedClientIp + "] " + "has left the game");
 				stage.setGamePaused();
 			}
 			else
 			{
-				System.err.println("This packet isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
+				System.err.println("The CLIENTDISCONNECTIONPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
 			}
 		}
 		

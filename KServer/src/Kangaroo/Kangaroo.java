@@ -2,12 +2,14 @@ package Kangaroo;
 
 import java.util.ArrayList;
 
-import enums.Direction;
+import Packets.ClientDataPacket;
 import Packets.KangarooClientPacket;
 import Packets.KangarooServerPacket;
 import Server.ClientProcessor;
+import Utils.ServerUtils;
 import Utils.Timer;
 import Utils.Vector2;
+import enums.Direction;
 
 /**
  * The Kangaroo class manage one client. A Kangaroo is create when a client is connecting on the server. 
@@ -33,6 +35,7 @@ public class Kangaroo
 	private Timer speedTimer;
 	private float speed = 200; // In pixel per s
 	private boolean ready = false;
+	
 	private KangarooServerPacket networkImage;
 	private KangarooClientPacket lastPacket;
 	
@@ -70,15 +73,15 @@ public class Kangaroo
 		return p;
 	}
 	
+	/**
+	 * Update kangaroo fields by packets.
+	 * @param p the packet received
+	 */
 	public void updateFromPacket(KangarooClientPacket p)
 	{
 		this.lastPacket = p;
 	}
 	
-	/**
-	 * Update kangaroo fields by packets.
-	 * @param p the packet received
-	 */
 	public void stateMachine()
 	{
 		getCurrentAnimation().update();
@@ -199,6 +202,8 @@ public class Kangaroo
 	}
 	
 	/**
+	 * Init the name of the kangaroo.
+//	 * 
 	 * Load animations
 	 */
 	private void initAnim()
@@ -267,6 +272,10 @@ public class Kangaroo
 		return name;
 	}
 	
+	/*
+	 * Getter - Setter
+	 */
+	
 	public boolean isReady()
 	{
 		return ready;
@@ -332,6 +341,12 @@ public class Kangaroo
 		this.networkImage.state = this.state.getState();
 		this.networkImage.x = this.getPosition().x;
 		this.networkImage.y = this.getPosition().y;
+	}
+	
+	public ClientDataPacket getClientDataPacket()
+	{
+		ClientDataPacket packet = ServerUtils.getPlayerDatas(this);
+		return packet;
 	}
 	
 	public Vector2 getPosition() 

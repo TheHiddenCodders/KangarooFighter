@@ -5,6 +5,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.genesys.client.Network;
@@ -24,6 +25,11 @@ public class Main extends ApplicationAdapter
 	public void create () 
 	{
 		skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
+		
+		BitmapFont koreanFont = new BitmapFont(Gdx.files.internal("ui/korean.fnt"));
+		BitmapFont arialFont = new BitmapFont(Gdx.files.internal("ui/arial.fnt"));
+		skin.add("korean", koreanFont, BitmapFont.class);
+		skin.add("arial", arialFont, BitmapFont.class);
 		prefs = Gdx.app.getPreferences("data");
 		setStage(new ServerAccesStage(this));
 	}

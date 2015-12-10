@@ -1,5 +1,6 @@
 package Server;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,9 @@ import Packets.KangarooClientPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
+import Packets.SignOutPacket;
+import Utils.FileUtils;
+import Utils.ServerUtils;
 import enums.EndGameType;
 import enums.ServerInfoType;
 
@@ -88,10 +92,34 @@ public class KServer extends Server
 		else if (o.getClass().isAssignableFrom(LoginPacket.class))
 		{			
 			LoginPacket receivedPacket = (LoginPacket) o;
-			receivedPacket.accepted = !isClientPseudoAlreadyTaken(receivedPacket, clientIp);
+			attemptToLogin(receivedPacket, clientIp);
 			
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
+			
+			// If server accepted the request, send client data
+			if (receivedPacket.accepted)
+			{				
+				this.send(cp, ServerUtils.getPlayerDatas(getKangarooFromIP(clientIp)));
+			}
+		}
+		
+		/**
+		 * Receive Login packet 
+		 */
+		else if (o.getClass().isAssignableFrom(SignOutPacket.class))
+		{			
+			SignOutPacket receivedPacket = (SignOutPacket) o;
+			attemptToSignOut(receivedPacket, clientIp);
+			
+			// Send to the client (who sent the packet) the updated packet
+			this.send(cp, receivedPacket);
+			
+			// If server accepted the request, send client data
+			if (receivedPacket.accepted)
+			{				
+				this.send(cp, ServerUtils.getPlayerDatas(getKangarooFromIP(clientIp)));
+			}
 		}
 		
 		/**
@@ -103,7 +131,7 @@ public class KServer extends Server
 			receivedPacket.nGamesOnline = games.size(); 
 			receivedPacket.nGamesPlayed = 0; // TODO
 			receivedPacket.nKangaroosOnline = kangaroos.size(); 
-			receivedPacket.nKangaroosRegistered = 0; // TODO
+			receivedPacket.nKangaroosRegistered = ServerUtils.getPlayersFiles().size();
 			
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
@@ -149,6 +177,8 @@ public class KServer extends Server
 			{
 				send(getKangarooFromIP((String) o2).getClient(), new GameReadyPacket());
 				send(getKangarooFromIP(clientIp).getClient(), new GameReadyPacket());
+				
+				o2 = null;
 				getGameFromIP(clientIp).run();
 			}
 			// If the first client is ready - wait for the second
@@ -187,6 +217,9 @@ public class KServer extends Server
 			
 			kangaroos.remove(getKangarooFromIP(cp.getIp()));
 			cp.getClient().close();
+			clients.remove(cp);
+			serverInfoUpdated(cp, ServerInfoType.ExceptMe);
+			
 		} catch (IOException e) 
 		{
 			e.printStackTrace();
@@ -200,25 +233,71 @@ public class KServer extends Server
 	 */
 	
 	/**
-	 * Check if the client pseudo is already taken
+	 * Check if the client pseudo exists, if it exists, it check the password match with the pseudo
 	 * @param packet the login packet
-	 * @return true if it's already taken, false if isn't
+	 * @return true if it's exists and pwd match, false if isn't
 	 */
-	public boolean isClientPseudoAlreadyTaken(LoginPacket packet, String ip)
+	public void attemptToLogin(LoginPacket packet, String ip)
 	{
+		// If already log, unlog him
 		for (int i = 0; i < kangaroos.size(); i++)
 		{
 			if (kangaroos.get(i).getName().equals(packet.pseudo))
 			{
-				if (debug)
-					System.err.println("Pseudo \"" + packet.pseudo + "\" already taken.");
-				
-				return true;
+				packet.accepted = false;
+				return;
 			}
 		}
 		
-		getKangarooFromIP(ip).setName(packet.pseudo);
-		return false;
+		// Check fields
+		for (File file : ServerUtils.getPlayersFiles())
+		{
+			// If pseudo exists
+			if (file.getName().equals(packet.pseudo))
+			{
+				packet.pseudoExists = true;
+				if (FileUtils.readString(new File(file.getAbsolutePath().concat("/pwd"))).get(0).equals(packet.pwd))
+				{
+					packet.pwdMatch = true;
+					packet.accepted = true;				
+					getKangarooFromIP(ip).setName(packet.pseudo);
+					break;
+				}
+				else
+				{
+					packet.pwdMatch = false;
+				}
+				break;
+			}
+			else
+			{
+				packet.pseudoExists = false;
+			}
+		}		
+	}	
+	
+	/**
+	 * Check if the client pseudo exists, if it's not, it 
+	 * @param packet the login packet
+	 * @return true if it's already taken, false if isn't
+	 */
+	public void attemptToSignOut(SignOutPacket packet, String ip)
+	{
+		// Check fields
+		for (File file : ServerUtils.getPlayersFiles())
+		{
+			// If pseudo exists
+			if (file.getName().equals(packet.pseudo))
+			{
+				packet.pseudoExists = true;
+			}
+		}	
+		
+		if (!packet.pseudoExists)
+		{
+			packet.accepted = true;
+			ServerUtils.newPlayer(packet.pseudo, packet.pwd);
+		}
 	}	
 	
 	/**

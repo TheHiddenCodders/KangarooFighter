@@ -33,7 +33,7 @@ public class ServerAccesStage extends Stage
 	public void act(float delta)
 	{
 		if (connected)
-			main.setStage(new InscriptionStage(main));
+			main.setStage(new ConnexionStage(main));
 		else
 			Gdx.app.exit();	
 		
@@ -54,7 +54,7 @@ public class ServerAccesStage extends Stage
 			if (Gdx.app.getType().equals(ApplicationType.Desktop))
 				ip =  "127.0.0.1";
 			else
-				ip = "192.168.0.14";
+				ip = "192.168.0.8";
 			
 			main.network = new Network(ip, 9999);
 			

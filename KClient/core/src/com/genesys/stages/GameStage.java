@@ -1,5 +1,6 @@
 package com.genesys.stages;
 
+import Packets.ClientDataPacket;
 import Packets.ClientReadyPacket;
 import Packets.KangarooServerPacket;
 
@@ -32,6 +33,7 @@ public class GameStage extends Stage
 	 */
 	/** Used as a wire between stage to access client for example */
 	public Main main;
+	private ClientDataPacket data;
 	
 	private Kangaroo player, opponent;
 	private Texture background;
@@ -52,7 +54,7 @@ public class GameStage extends Stage
 		super();
 		this.main = main;
 		
-		background = new Texture(Gdx.files.internal("sprites/dojo.png"));
+		background = new Texture(Gdx.files.internal("sprites/ponton.png"));
 		initKangaroos(pPlayer, pOpponent);
 		
 		// Debug
@@ -84,12 +86,12 @@ public class GameStage extends Stage
 			}
 		}
 		
-		// On a game paused (disconnection of a client will set gamePaused at true
-		if (gamePaused)
+		// On a game paused (disconnection of a client will set gamePaused at true)
+		if (gamePaused && data != null)
 		{
 			// Actually, don't care, just leave the game stage since the game will not exist longer
 			gamePaused = false;
-			main.setStage(new HomeStage(main));
+			main.setStage(new HomeStage(main, data));
 		}
 		
 		super.act(delta);
@@ -147,6 +149,9 @@ public class GameStage extends Stage
 			opponentBar.setPosition(this.getWidth() - opponentBar.getWidth() - 5, opponentName.getY() - opponentName.getHeight() - 10);
 		}
 		
+		opponentName.getStyle().font = main.skin.getFont("korean");
+		playerName.getStyle().font = main.skin.getFont("korean");
+		
 		this.addActor(playerBar);
 		this.addActor(opponentBar);
 		this.addActor(player);
@@ -199,5 +204,10 @@ public class GameStage extends Stage
 		}
 		
 		return null;
+	}
+	
+	public void setClientData(ClientDataPacket packet)
+	{
+		data = packet;
 	}
 }
