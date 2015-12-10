@@ -8,9 +8,13 @@ import java.io.Serializable;
  * @author Nerisma
  *
  */
-@SuppressWarnings("serial")
 public class LoginPacket implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -861319294637171380L;
+	
 	public String pseudo;
 	public String pwd;
 	public boolean pwdMatch;

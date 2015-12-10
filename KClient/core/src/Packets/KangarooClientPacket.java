@@ -2,9 +2,13 @@ package Packets;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class KangarooClientPacket implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4448845967749323548L;
+	
 	public boolean leftArrowKey;
 	public boolean rightArrowKey;
 	public boolean leftPunchKey;
