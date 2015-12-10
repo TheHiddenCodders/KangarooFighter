@@ -78,12 +78,6 @@ public class GameStage extends Stage
 
 			if (player.needUpdate())
 				updateNetwork();
-			
-			if (Gdx.input.justTouched())
-			{
-				player.setHealth(player.getHealth() - 5);
-				player.flip();
-			}
 		}
 		
 		// On a game paused (disconnection of a client will set gamePaused at true)

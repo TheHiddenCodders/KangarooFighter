@@ -22,6 +22,7 @@ public class ServerAnimation
 	private int nFrames, fps, currentFrame = 0;
 	private boolean resume;
 	private boolean over = false;
+	@SuppressWarnings("unused")
 	private float width, height;
 	private int mode;
 	
@@ -59,9 +60,8 @@ public class ServerAnimation
 		}
 	}
 	
-	public void start(States state)
+	public void start()
 	{
-		System.err.println("Launched animation has " + nFrames + " frames");
 		resume = true;
 		over = false;
 		timer.restart();
@@ -139,8 +139,6 @@ public class ServerAnimation
 		{
 			e.printStackTrace();
 		}		
-		
-		System.err.println("Loaded animation has " + nFrames + " frames");
 	}
 	
 	public void flip()

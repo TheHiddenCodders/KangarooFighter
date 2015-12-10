@@ -311,4 +311,10 @@ public class Animation
 	{
 		return !resume;
 	}
+
+	public void flip(float width)
+	{
+		for (Hitbox hb : hitboxes)
+			hb.flip(width);
+	}
 }

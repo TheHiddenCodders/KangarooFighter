@@ -10,6 +10,7 @@ import Utils.ServerUtils;
 import Utils.Timer;
 import Utils.Vector2;
 import enums.Direction;
+import enums.States;
 
 /**
  * The Kangaroo class manage one client. A Kangaroo is create when a client is connecting on the server. 
@@ -29,7 +30,7 @@ public class Kangaroo
 	private Vector2 position = new Vector2(0, 0);
 	private int currentAnimation = 0;
 	private ArrayList<ServerAnimation> animations;
-	private States state;
+	private States state = States.idle;
 	
 	// For server only
 	private Timer speedTimer;
@@ -49,7 +50,6 @@ public class Kangaroo
 		networkImage = new KangarooServerPacket();
 		lastPacket = new KangarooClientPacket();
 		this.cp = cp;
-		state = new States();
 		speedTimer = new Timer();
 		initAnim();
 	}
@@ -69,7 +69,7 @@ public class Kangaroo
 		p.y = position.y;
 		p.health = health;
 		p.damage = damage;
-		p.state = state.getState();
+		p.state = state.ordinal();
 		return p;
 	}
 	
@@ -86,14 +86,14 @@ public class Kangaroo
 	{
 		getCurrentAnimation().update();
 		
-		if (this.getState().getState() != States.movement)
+		if (this.getState() != States.movement)
 		{
-			animations.get(States.movement).stop();
+			animations.get(States.movement.ordinal()).stop();
 			speedTimer.restart();
 		}
 		
 		// Make the state machine here
-		if (this.getState().getState() == States.idle)
+		if (this.getState() == States.idle)
 		{
 			/*
 			 *  If the player press the left punch key
@@ -101,8 +101,8 @@ public class Kangaroo
 			 */
 			if (lastPacket.leftPunchKey)
 			{
-				this.getState().setState(States.leftPunch);
-				this.launchAnimation(States.leftPunch);
+				this.setState(States.leftPunch);
+				this.launchAnimation(States.leftPunch.ordinal());
 			}
 			/*
 			 *  If the player press the right punch key
@@ -110,7 +110,7 @@ public class Kangaroo
 			 */
 			else if (lastPacket.rightPunchKey)
 			{
-				this.getState().setState(States.rightPunch);
+				this.setState(States.rightPunch);
 				this.launchAnimation(States.rightPunch);
 			}
 			/*
@@ -119,7 +119,7 @@ public class Kangaroo
 			 */
 			else if (lastPacket.leftArrowKey)
 			{
-				this.getState().setState(States.movement);
+				this.setState(States.movement);
 				move(Direction.LEFT); 
 			}
 			/*
@@ -128,13 +128,13 @@ public class Kangaroo
 			 */
 			else if (lastPacket.rightArrowKey)
 			{
-				this.getState().setState(States.movement);
+				this.setState(States.movement);
 				move(Direction.RIGHT); 
 			}
 		}
 		
 		// If the kangaroo is currently move 
-		else if (this.getState().getState() == States.movement)
+		else if (this.getState() == States.movement)
 		{
 			/*
 			 *  If the player press the left punch key
@@ -142,7 +142,7 @@ public class Kangaroo
 			 */
 			if (lastPacket.leftPunchKey)
 			{
-				this.getState().setState(States.leftPunch);
+				this.setState(States.leftPunch);
 				this.launchAnimation(States.leftPunch);
 			}
 			/*
@@ -151,7 +151,7 @@ public class Kangaroo
 			 */
 			else if (lastPacket.rightPunchKey)
 			{
-				this.getState().setState(States.rightPunch);
+				this.setState(States.rightPunch);
 				this.launchAnimation(States.rightPunch);
 			}
 			/*
@@ -176,26 +176,38 @@ public class Kangaroo
 			 */
 			else if (!lastPacket.leftArrowKey && !lastPacket.rightArrowKey)
 			{
-				this.getState().setState(States.idle);
+				this.setState(States.idle);
 			}
 		}
 		
 		// If the kangaroo is currently left punching
-		else if (this.getState().getState() == States.leftPunch)
+		else if (this.getState() == States.leftPunch)
 		{
 			if (this.getCurrentAnimation().isOver())
 			{
-				this.getState().setState(States.idle);
+				this.setState(States.idle);
 				this.launchAnimation(States.idle);
 			}
 		}
 		
 		// If the kangaroo is currently right punching
-		else if (this.getState().getState() == States.rightPunch)
+		else if (this.getState() == States.rightPunch)
 		{
 			if (this.getCurrentAnimation().isOver())
 			{
-				this.getState().setState(States.idle);
+				this.setState(States.idle);
+				this.launchAnimation(States.idle);
+			}
+		}
+		
+		// If the kangaroo is currently hit
+		else if (this.getState() == States.hit)
+		{
+			System.err.println("Im hitten");
+			if (this.getCurrentAnimation().isOver())
+			{
+				System.out.println("Go for idle");
+				this.setState(States.idle);
 				this.launchAnimation(States.idle);
 			}
 		}
@@ -227,14 +239,28 @@ public class Kangaroo
 	 * Launch specified animation
 	 * @param index of the animation to launch
 	 */
-	private void launchAnimation(int index)
+	public void launchAnimation(int index)
 	{
 		if (animations.get(currentAnimation).getMode() == ServerAnimation.foreverPlay)
 			animations.get(currentAnimation).stop();
 		
 		currentAnimation = index;
+		
+		animations.get(index).start();
+	}
 	
-		animations.get(index).start(state);
+	/**
+	 * Launch specified animation
+	 * @param state of the animation to launch
+	 */
+	public void launchAnimation(States state)
+	{
+		if (animations.get(currentAnimation).getMode() == ServerAnimation.foreverPlay)
+			animations.get(currentAnimation).stop();
+		
+		currentAnimation = state.ordinal();
+	
+		animations.get(state.ordinal()).start();
 	}
 	
 	/**
@@ -312,6 +338,14 @@ public class Kangaroo
 		this.health = health;
 	}
 
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
 	public States getState() {
 		return state;
 	}
@@ -332,7 +366,7 @@ public class Kangaroo
 	
 	public boolean isSameAsNetwork()
 	{
-		return (networkImage.damage == this.damage && networkImage.health == this.health && networkImage.state == this.state.getState() && networkImage.x == this.getPosition().x && networkImage.y == this.getPosition().y);
+		return (networkImage.damage == this.damage && networkImage.health == this.health && networkImage.state == this.state.ordinal() && networkImage.x == this.getPosition().x && networkImage.y == this.getPosition().y);
 	}
 
 	public KangarooServerPacket getNetworkImage() 
@@ -344,7 +378,7 @@ public class Kangaroo
 	{
 		this.networkImage.damage = this.damage;
 		this.networkImage.health = this.health;
-		this.networkImage.state = this.state.getState();
+		this.networkImage.state = this.state.ordinal();
 		this.networkImage.x = this.getPosition().x;
 		this.networkImage.y = this.getPosition().y;
 	}
