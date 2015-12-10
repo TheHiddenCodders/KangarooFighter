@@ -1,6 +1,7 @@
 package Kangaroo;
 
 import Packets.ClientDisconnectionPacket;
+import Packets.EndGamePacket;
 import Utils.ServerUtils;
 import enums.EndGameType;
 import enums.States;
@@ -33,6 +34,7 @@ public class Game
 	private boolean waiting;
 	private boolean prepared;
 	private boolean running;
+	private boolean ended;
 	
 	
 	/*
@@ -51,6 +53,7 @@ public class Game
 		waiting = true;
 		running = false;
 		prepared = false;
+		ended = false;
 	}
 	
 	/**
@@ -82,6 +85,7 @@ public class Game
 		waiting = false;
 		running = false;
 		prepared = true;
+		ended = false;
 	}
 	
 	/**
@@ -116,7 +120,7 @@ public class Game
 	public void stateMachine()
 	{
 		/*
-		 *  Collid tests
+		 *  Collide tests
 		 */
 		
 		// k1 hits k2
@@ -145,6 +149,13 @@ public class Game
 		{
 			k1.getClient().send( k1.getUpdatePacket() );
 			k2.getClient().send( k1.getUpdatePacket() );
+			
+			// If K1 is dead
+			if (k1.getHealth() <= 0)
+			{
+				this.end(k1.getClient().getIp(), EndGameType.Legit);
+				System.out.println("k1 loose the game");
+			}
 		}
 		
 		// Check if k2 was modified, then send modification to kangaroos
@@ -152,6 +163,13 @@ public class Game
 		{
 			k1.getClient().send( k2.getUpdatePacket() );
 			k2.getClient().send( k2.getUpdatePacket() );
+			
+			// If K2 is dead
+			if (k2.getHealth() <= 0)
+			{
+				this.end(k2.getClient().getIp(), EndGameType.Legit);
+				System.out.println("k2 loose the game");
+			}
 		}
 		
 		k1.updateNetworkImage();
@@ -194,6 +212,12 @@ public class Game
 	public void run()
 	{
 		running = true;
+	}       
+	
+	
+	public boolean isEnded()
+	{
+		return ended;
 	}
 	
 	/**
@@ -246,16 +270,38 @@ public class Game
 	
 	/**
 	 * End the game properly
-	 * @param hostAddress
+	 * @param hostAddress the address of the loosing kangaroo
+	 * @param egType how the game is ending ?
 	 */
 	public void end(String hostAddress, EndGameType egType)
 	{
-		// Make a client disconnection packet
-		ClientDisconnectionPacket p = new ClientDisconnectionPacket();
-		p.disconnectedClientIp = hostAddress;
+		if (egType == EndGameType.Disconnection)
+		{
+			// TODO : Change ClientDisconnectionPacket to EndGamePacket.
+			
+			// Make a client disconnection packet
+			ClientDisconnectionPacket p = new ClientDisconnectionPacket();
+			p.disconnectedClientIp = hostAddress;
+			
+			// Then get the opponent of the disconnected kangaroo and send him the packet
+			getKangarooFromOpponentIp(hostAddress).getClient().send(p);
+			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDatas(getKangarooFromOpponentIp(hostAddress)));
+		}
+		else
+		{
+			EndGamePacket p = new EndGamePacket();
+			p.endGameType = egType.ordinal();
+			p.looserAddress = hostAddress;
+			
+			k1.getClient().send(p);
+			k2.getClient().send(p);
+			
+			// TODO : Change elo, victory and defeat
+			k1.getClient().send(k1.getClientDataPacket());
+			k2.getClient().send(k2.getClientDataPacket());
+		}
 		
-		// Then get the opponent of the disconnected kangaroo and send him the packet
-		getKangarooFromOpponentIp(hostAddress).getClient().send(p);
-		getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDatas(getKangarooFromOpponentIp(hostAddress)));
+		ended = true;
+		running = false;
 	}
 }

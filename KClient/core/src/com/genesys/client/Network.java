@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 
 import Packets.ClientDataPacket;
 import Packets.ClientDisconnectionPacket;
+import Packets.EndGamePacket;
 import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
@@ -262,6 +263,19 @@ public class Network extends Client
 			else
 			{
 				System.err.println("The CLIENTDISCONNECTIONPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
+			}
+		}
+		
+		else if (o.getClass().isAssignableFrom(EndGamePacket.class))
+		{
+			if (currentStage.getClass().isAssignableFrom(GameStage.class))
+			{
+				GameStage stage = (GameStage) currentStage;
+				stage.setGameEnded();
+			}
+			else
+			{
+				System.err.println("The ENDGAMEPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
 			}
 		}
 		
