@@ -406,6 +406,19 @@ public class KServer extends Server
 		System.out.println("--------------------------");
 	}
 	
+	public void displayAllGames()
+	{
+		System.out.println("--------------------------");
+		
+		for (int i = 0; i < games.size(); i++)
+		{
+			System.out.println("Game n°" + i);
+			System.out.println(games.get(i).getK1().getName() + " - " + games.get(i).getK2().getName());
+		}
+		
+		System.out.println("--------------------------");
+	}
+	
 	/**
 	 * serverInfoUpdated need to be called every time the serverInfos change to send it to clients
 	 */

@@ -1,6 +1,7 @@
 package Kangaroo;
 
 import Packets.ClientDisconnectionPacket;
+import Utils.ServerUtils;
 import enums.EndGameType;
 
 /**
@@ -228,8 +229,8 @@ public class Game
 		ClientDisconnectionPacket p = new ClientDisconnectionPacket();
 		p.disconnectedClientIp = hostAddress;
 		
-		
 		// Then get the opponent of the disconnected kangaroo and send him the packet
 		getKangarooFromOpponentIp(hostAddress).getClient().send(p);
+		getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDatas(getKangarooFromOpponentIp(hostAddress)));
 	}
 }

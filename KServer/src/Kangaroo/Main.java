@@ -24,11 +24,11 @@ public class Main
 				while(true)
 				{
 					// Update running games
-					for(Game game : server.getAllGames())
+					for(int i = 0; i < server.getAllGames().size(); i++)
 					{
-						if ( game.isRunning() )
+						if ( server.getAllGames().get(i).isRunning() )
 						{
-							game.stateMachine();
+							server.getAllGames().get(i).stateMachine();
 						}
 					}
 				}
@@ -49,10 +49,16 @@ public class Main
 			msg = msg.replace(System.lineSeparator(), "");
 			
 			// Commands
-			if (msg.contains("display"))
+			if (msg.contains("display player"))
 			{
 				if (msg.split("-")[1].equals("all"))
 					server.displayAllKangaroos();
+			}
+			
+			if (msg.contains("display game"))
+			{
+				if (msg.split("-")[1].equals("all"))
+					server.displayAllGames();
 			}
 		}
 	}
