@@ -19,7 +19,7 @@ public class PersoBloc extends Table
 	
 	private Image background;
 	private Image kangaroo;
-	private Label name, elo, eloI, games, win, losses, streak;
+	private Label name, elo, eloI, games, win, losses;
 	
 	/*
 	 * Constructors
@@ -56,17 +56,17 @@ public class PersoBloc extends Table
 		this.addActor(eloI);
 		
 		games = new Label(data.games + " parties" , skin);
-		games.setColor(Color.WHITE);
+		games.setStyle(new LabelStyle(skin.getFont("default-font"), Color.WHITE));
 		games.setPosition(this.getWidth() / 2 - games.getWidth() / 2, elo.getY() - games.getHeight() - 2);
 		this.addActor(games);
 		
 		win = new Label(data.wins + "V" , skin);
-		win.setColor(Color.TAN);
+		win.setStyle(new LabelStyle(skin.getFont("default-font"), Color.WHITE));
 		win.setPosition(this.getWidth() / 2 - win.getWidth() * 2, games.getY() - win.getHeight() - 2);
 		this.addActor(win);
 		
 		losses = new Label(data.looses + "D" , skin);
-		losses.setColor(Color.DARK_GRAY);
+		losses.setStyle(new LabelStyle(skin.getFont("default-font"), Color.DARK_GRAY));
 		losses.setPosition(this.getWidth() / 2 + losses.getWidth(), games.getY() - losses.getHeight() - 2);
 		this.addActor(losses);
 		

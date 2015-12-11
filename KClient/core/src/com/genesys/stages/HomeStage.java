@@ -3,6 +3,7 @@ package com.genesys.stages;
 import java.util.ArrayList;
 
 import Packets.ClientDataPacket;
+import Packets.GameFoundPacket;
 import Packets.KangarooServerPacket;
 import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
@@ -26,6 +27,7 @@ public class HomeStage extends Stage
 	public Main main;
 	private ServerInfoPacket updateServerInfoPacket;
 	private KangarooServerPacket pPlayer, pOpponent;
+	private GameFoundPacket pGameFound;
 	private boolean seekingGame = false, gameFound = false;
 	private ArrayList<String> bottomInfos;
 	private int bottomInfosIndex = 0;
@@ -80,7 +82,7 @@ public class HomeStage extends Stage
 			
 		// If game found, go to game stage
 		if (gameFound && pPlayer != null && pOpponent != null)
-			main.setStage(new GameStage(main, pPlayer, pOpponent));
+			main.setStage(new GameStage(main, pGameFound, pPlayer, pOpponent));
 		
 		// Make bottom text translate and update
 		if (bottomText.getX() + bottomText.getWidth() > -50)
@@ -183,8 +185,9 @@ public class HomeStage extends Stage
 		updateServerInfoPacket = p;
 	}
 	
-	public void setGameFound()
+	public void setGameFound(GameFoundPacket p)
 	{
+		pGameFound = p;
 		seekingGame = false;
 		gameFound = true;
 	}

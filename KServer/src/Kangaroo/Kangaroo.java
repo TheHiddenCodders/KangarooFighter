@@ -385,8 +385,82 @@ public class Kangaroo
 	
 	public ClientDataPacket getClientDataPacket()
 	{
-		ClientDataPacket packet = ServerUtils.getPlayerDatas(this);
-		return packet;
+		return ServerUtils.getPlayerDataPacket(this);
+	}
+	
+	public int getGames()
+	{
+		return ServerUtils.getData(this, "games");
+	}
+	
+	public int getWins()
+	{
+		return ServerUtils.getData(this, "wins");
+	}
+	
+	public int getLooses()
+	{
+		return ServerUtils.getData(this, "looses");
+	}
+	
+	public int getElo()
+	{
+		return ServerUtils.getData(this, "elo");
+	}
+	
+	public int getStreak()
+	{
+		return ServerUtils.getData(this, "streak");
+	}
+	
+	public void setGames(int value)
+	{
+		ServerUtils.setData(this, "games", value);
+	}
+	
+	public void setWins(int value)
+	{
+		ServerUtils.setData(this, "wins", value);
+	}
+	
+	public void setLooses(int value)
+	{
+		ServerUtils.setData(this, "looses", value);
+	}
+	
+	public void setElo(int value)
+	{
+		ServerUtils.setData(this, "elo", value);
+	}
+	
+	public void setStreak(int value)
+	{
+		ServerUtils.setData(this, "streak", value);
+	}
+	
+	public void updateGames(int value)
+	{
+		ServerUtils.updateData(this, "games", value);
+	}
+	
+	public void updateWins(int value)
+	{
+		ServerUtils.updateData(this, "wins", value);
+	}
+	
+	public void updateLooses(int value)
+	{
+		ServerUtils.updateData(this, "looses", value);
+	}
+	
+	public void updateElo(int value)
+	{
+		ServerUtils.updateData(this, "elo", value);
+	}
+	
+	public void updateStreak(int value)
+	{
+		ServerUtils.updateData(this, "streak", value);
 	}
 	
 	public Vector2 getPosition() 

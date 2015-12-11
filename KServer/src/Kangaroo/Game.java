@@ -1,5 +1,7 @@
 package Kangaroo;
 
+import java.util.Random;
+
 import Packets.ClientDisconnectionPacket;
 import Packets.EndGamePacket;
 import Utils.ServerUtils;
@@ -17,19 +19,41 @@ import enums.States;
 public class Game 
 {
 	/** The start positionX for player 1 */
-	public final static int player1X = 50;
+	public static int[] player1X = 
+	{
+		50,
+		50
+	};
 	/** The start positionY for player 1 */
-	public final static int player1Y = 0; 
+	public static int[] player1Y = 
+	{
+		20,
+		120
+	};
 	/** The start positionX for player 2 */
-	public final static int player2X = 538; 
+	public static int[] player2X = 
+	{
+		538,
+		538
+	}; 
 	/** The start positionY for player 2 */
-	public final static int player2Y = 0; 
+	public static int[] player2Y =
+	{
+		20,
+		120
+	}; 
 	
-	
+	/** The map paths */
+	public static String[] map =
+	{
+		"dojo.png",
+		"ponton.png"
+	};
 	/*
 	 * Attributes
 	 */
 	private Kangaroo k1 = null, k2 = null;
+	private int mapIndex;
 	
 	private boolean waiting;
 	private boolean prepared;
@@ -54,6 +78,9 @@ public class Game
 		running = false;
 		prepared = false;
 		ended = false;
+		
+		Random r = new Random(System.currentTimeMillis());
+		mapIndex = r.nextInt(map.length);
 	}
 	
 	/**
@@ -96,10 +123,10 @@ public class Game
 	{
 		// Set info
 		k1.setHealth(100);
-		k1.setPosition(player1X, player1Y);
+		k1.setPosition(player1X[mapIndex], player1Y[mapIndex]);
 		
 		k2.setHealth(100);
-		k2.setPosition(player2X, player2Y);
+		k2.setPosition(player2X[mapIndex], player2Y[mapIndex]);
 		
 		// Send to both players position and health
 		k1.getClient().send(k1.getUpdatePacket());
@@ -268,6 +295,11 @@ public class Game
 		return null;
 	}
 	
+	public String getMapPath()
+	{
+		return "sprites/" + map[mapIndex];
+	}
+	
 	/**
 	 * End the game properly
 	 * @param hostAddress the address of the loosing kangaroo
@@ -285,7 +317,7 @@ public class Game
 			
 			// Then get the opponent of the disconnected kangaroo and send him the packet
 			getKangarooFromOpponentIp(hostAddress).getClient().send(p);
-			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDatas(getKangarooFromOpponentIp(hostAddress)));
+			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDataPacket(getKangarooFromOpponentIp(hostAddress)));
 		}
 		else
 		{
@@ -295,8 +327,11 @@ public class Game
 			
 			k1.getClient().send(p);
 			k2.getClient().send(p);
+		
 			
 			// TODO : Change elo, victory and defeat
+			
+			
 			k1.getClient().send(k1.getClientDataPacket());
 			k2.getClient().send(k2.getClientDataPacket());
 		}

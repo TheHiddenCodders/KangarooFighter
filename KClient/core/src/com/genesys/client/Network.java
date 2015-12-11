@@ -175,10 +175,12 @@ public class Network extends Client
 		 */
 		else if (o.getClass().isAssignableFrom(GameFoundPacket.class))
 		{
+			GameFoundPacket p = (GameFoundPacket) o;
+			
 			if (currentStage.getClass().isAssignableFrom(HomeStage.class))
 			{
 				HomeStage stage = (HomeStage) currentStage;
-				stage.setGameFound();
+				stage.setGameFound(p);
 			}
 			else
 			{

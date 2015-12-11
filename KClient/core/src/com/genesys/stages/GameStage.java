@@ -2,6 +2,7 @@ package com.genesys.stages;
 
 import Packets.ClientDataPacket;
 import Packets.ClientReadyPacket;
+import Packets.GameFoundPacket;
 import Packets.KangarooServerPacket;
 
 import com.badlogic.gdx.Gdx;
@@ -50,12 +51,12 @@ public class GameStage extends Stage
 	/*
 	 * Constructors
 	 */
-	public GameStage(Main main, KangarooServerPacket pPlayer, KangarooServerPacket pOpponent)
+	public GameStage(Main main, GameFoundPacket pGameFound, KangarooServerPacket pPlayer, KangarooServerPacket pOpponent)
 	{
 		super();
 		this.main = main;
 		
-		background = new Texture(Gdx.files.internal("sprites/ponton.png"));
+		background = new Texture(Gdx.files.internal(pGameFound.mapPath));
 		initKangaroos(pPlayer, pOpponent);
 		
 		// Debug

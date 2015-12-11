@@ -27,14 +27,17 @@ public class Main
 					//for (Game game : server.getAllGames())
 					for (int i = 0; i < server.getAllGames().size(); i++)
 					{
-						if (server.getAllGames().get(i).isEnded())
+						if ( server.getAllGames().get(i) != null )
 						{
-							server.getAllGames().remove(server.getAllGames().get(i));
-						}
-						
-						if ( server.getAllGames().get(i).isRunning() )
-						{
-							server.getAllGames().get(i).stateMachine();
+							if ( server.getAllGames().get(i).isRunning() )
+							{
+								server.getAllGames().get(i).stateMachine();
+							}
+							
+							if (server.getAllGames().get(i).isEnded())
+							{
+								server.getAllGames().remove(server.getAllGames().get(i));
+							}
 						}
 					}
 				}
