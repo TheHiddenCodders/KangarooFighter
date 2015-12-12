@@ -5,6 +5,8 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import enums.BodyPart;
+
 public class Hitbox
 {
 	/*
@@ -76,29 +78,32 @@ public class Hitbox
 	 * The collid test will check for every polygons of the hitpolygons
 	 * The colliding polygons are stored in the colliderIndex of each hitpolygons
 	 * @param polygons2
-	 * @return true or false
+	 * @return bodyPart[0] = bodyPart of this and bodyPart[1] = polygons2 bodyPart
 	 */
-	public boolean collidWith(Hitbox polygons2)
+	public BodyPart[] collidWith(Hitbox polygons2)
 	{
 		int indexA = 0;
 		int indexB = 0;
-		
+
 		for(Polygon a : polygons)
 		{
-			indexA++;
-			for(Polygon b : polygons2.polygons)
+			for(int i = 0; i < polygons2.polygons.size(); i++)
 			{
-				indexB++;
-				if (polygonIntersectPolygon(a, b))
+				if (polygonIntersectPolygon(a, polygons2.polygons.get(i)))
 				{
+					BodyPart[] parts = new BodyPart[2];
+					parts[0] = BodyPart.values()[indexA];
+					parts[1] = BodyPart.values()[i];
 					colliderIndex = indexA;
 					polygons2.colliderIndex = indexB;
-					return true;					
+					System.err.println(parts[0] + " hit " + parts[1]);
+					return parts;
 				}
 			}
+			indexA++;
 		}
 		
-		return false;
+		return null;
 	}
 	
 	/**
@@ -124,23 +129,26 @@ public class Hitbox
 	 * Flip all the polygons
 	 * @param fullWidth
 	 */
-	public void flip(float fullWidth)
+	public void flip()
 	{			
 		for (Polygon a : polygons)
-			polyFlip(a, fullWidth);
+			polyFlip(a);
 	}
 	
 	/**
 	 * Flip a single polygon (ONLY TESTED ON RECTANGLES)
 	 * @param poly to flip
 	 */
-	private void polyFlip(Polygon poly, float fullWidth)
+	private void polyFlip(Polygon poly)
 	{		
-		for (int i = 0; i < poly.xpoints.length; i++)
-			poly.xpoints[i] = (int) (fullWidth / 2 - poly.xpoints[i] + fullWidth / 2);
-		
-		// Update transformed vertices according to untransformed vertice
-		poly.translate(0, 0);
+		// Find max x value of the array
+		int maxX = 0;
+		for (int i = 0; i < poly.npoints; i++)
+			maxX = (int) Math.max(poly.xpoints[i] - x, maxX);
+
+		// Reverse 
+		for (int i = 0; i < poly.npoints; i++)
+			poly.xpoints[i] = (int) (maxX - poly.xpoints[i] + 2 * x);
 	}
 	
 	@Override

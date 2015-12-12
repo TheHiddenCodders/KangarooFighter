@@ -135,7 +135,7 @@ public class Game
 		k2.getClient().send(k2.getUpdatePacket());
 		k2.getClient().send(k1.getUpdatePacket());
 		
-		//k2.flip(); TODO: remake flip function
+		k2.flip(); 
 		
 		prepared();
 	}
@@ -151,21 +151,17 @@ public class Game
 		 */
 		
 		// k1 hits k2
-		if (k1.getCurrentAnimation().getKeyFrame().collidWith(k2.getCurrentAnimation().getKeyFrame()) && k2.getState() != States.hit && (k1.getState() == States.leftPunch || k1.getState() == States.rightPunch))
+		if (k1.punch(k2))
 		{
-			k2.setHealth(k2.getHealth() - k1.getDamage());
 			k2.setState(States.hit);
 			k2.launchAnimation(States.hit);
-			System.out.println("k1 hits k2");
 		}
 		
 		// k2 hits k1
-		if (k2.getCurrentAnimation().getKeyFrame().collidWith(k1.getCurrentAnimation().getKeyFrame()) && k1.getState() != States.hit && (k2.getState() == States.leftPunch || k2.getState() == States.rightPunch))
+		if (k2.punch(k1))
 		{
-			k1.setHealth(k1.getHealth() - k2.getDamage());
 			k1.setState(States.hit);
 			k1.launchAnimation(States.hit);
-			System.out.println("k2 hits k1");
 		}
 		
 		k1.stateMachine();

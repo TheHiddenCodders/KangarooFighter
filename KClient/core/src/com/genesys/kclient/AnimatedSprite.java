@@ -63,8 +63,8 @@ public class AnimatedSprite extends Actor
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{		
-		if (currentFrame != null)
-			batch.draw(currentFrame, this.getX(), this.getY(), 0, 0, this.getWidth(), this.getHeight(), this.getScaleX(), this.getScaleY(), this.getRotation());		
+		//if (currentFrame != null)
+		//	batch.draw(currentFrame, this.getX(), this.getY(), 0, 0, this.getWidth(), this.getHeight(), this.getScaleX(), this.getScaleY(), this.getRotation());		
 		
 		super.draw(batch, parentAlpha);
 	}

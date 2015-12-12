@@ -9,6 +9,7 @@ import Server.ClientProcessor;
 import Utils.ServerUtils;
 import Utils.Timer;
 import Utils.Vector2;
+import enums.BodyPart;
 import enums.Direction;
 import enums.States;
 
@@ -203,14 +204,14 @@ public class Kangaroo
 		// If the kangaroo is currently hit
 		else if (this.getState() == States.hit)
 		{
-			System.err.println("Im hitten");
 			if (this.getCurrentAnimation().isOver())
 			{
-				System.out.println("Go for idle");
 				this.setState(States.idle);
 				this.launchAnimation(States.idle);
 			}
 		}
+		
+		
 	}
 	
 	/**
@@ -284,6 +285,44 @@ public class Kangaroo
 	{
 		for (int i = 0; i < animations.size(); i++)
 			animations.get(i).flip();
+	}
+	
+	public boolean collidWith(Kangaroo k)
+	{
+		if (this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame()) != null)
+			return true;
+
+		return false;
+	}
+	
+	public boolean punch(Kangaroo k)
+	{
+		if (this.collidWith(k) && (this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.LEFTPUNCH || this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.RIGHTPUNCH) && k.getState() != States.hit && (this.getState() == States.leftPunch || this.getState() == States.rightPunch))
+		{
+			BodyPart touchedPart = this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[1];
+			
+			// Do something
+			switch(touchedPart)
+			{
+			case BODY:
+				k.setHealth(k.getHealth() - this.getDamage());
+				break;
+			case HEAD:
+				k.setHealth(k.getHealth() - this.getDamage() * 2);
+				break;
+			case LEFTPUNCH:
+				k.setHealth(k.getHealth() - 1);
+				break;
+			case RIGHTPUNCH:
+				k.setHealth(k.getHealth() - 1);
+				break;			
+			}
+			
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/*

@@ -130,13 +130,10 @@ public class ServerAnimation
 						float y = Float.valueOf(lines.get(4 + (nBoxPerHitbox * i) + j).split(",")[k+1]);
 						xpoints[k / 2] = (int) x;
 						ypoints[k / 2] = (int) y;
-						
-						System.out.println(xpoints[k / 2] + ":" + ypoints[k / 2]);
 					}
 					
 					temp.addPoly(new Polygon(xpoints, ypoints, xpoints.length));
-				}
-				
+				}				
 				hitboxes.add(temp);
 			}
 			
@@ -153,7 +150,7 @@ public class ServerAnimation
 	public void flip()
 	{
 		for (int i = 0; i < hitboxes.size(); i++)
-			hitboxes.get(i).flip(width);
+			hitboxes.get(i).flip();
 	}
 	
 	/*
