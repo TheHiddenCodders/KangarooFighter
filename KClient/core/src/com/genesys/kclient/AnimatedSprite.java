@@ -86,7 +86,7 @@ public class AnimatedSprite extends Actor
 		flipped = !flipped;
 		
 		for (Animation anim : anims)
-			anim.flip(this.getWidth());
+			anim.flip();
 	}
 	
 	/*

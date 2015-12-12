@@ -2,8 +2,8 @@ package enums;
 
 public enum BodyPart
 {
-	BODY,
 	HEAD,
+	BODY,
 	LEFTPUNCH,
 	RIGHTPUNCH
 }

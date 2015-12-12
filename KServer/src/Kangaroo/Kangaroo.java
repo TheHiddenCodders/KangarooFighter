@@ -311,10 +311,10 @@ public class Kangaroo
 				k.setHealth(k.getHealth() - this.getDamage() * 2);
 				break;
 			case LEFTPUNCH:
-				k.setHealth(k.getHealth() - 1);
+				k.setHealth(k.getHealth() - 10);
 				break;
 			case RIGHTPUNCH:
-				k.setHealth(k.getHealth() - 1);
+				k.setHealth(k.getHealth() - 10);
 				break;			
 			}
 			

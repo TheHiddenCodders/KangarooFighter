@@ -16,6 +16,7 @@ public class Hitbox
 	public ArrayList<Polygon> polygons;
 	public int colliderIndex = -1;
 	public float x = 0, y = 0;
+	public float w = 0, h = 0;
 	
 	/*
 	 * Constructors
@@ -125,10 +126,10 @@ public class Hitbox
 	 * Flip all the polygons
 	 * @param fullWidth
 	 */
-	public void flip(float fullWidth)
-	{			
+	public void flip()
+	{					
 		for (Polygon a : polygons)
-			polyFlip(a, fullWidth);
+			polyFlip(a);
 	}
 	
 	/**
@@ -164,12 +165,11 @@ public class Hitbox
 	 * Flip a single polygon (ONLY TESTED ON RECTANGLES)
 	 * @param poly to flip
 	 */
-	private void polyFlip(Polygon poly, float fullWidth)
-	{		
+	private void polyFlip(Polygon poly)
+	{	
 		for (int i = 0; i < poly.getVertices().length; i+=2)
-			poly.getVertices()[i] = fullWidth / 2 - poly.getVertices()[i] + fullWidth / 2;
+			poly.getVertices()[i] = (int) (w - poly.getVertices()[i]);
 		
-		// Update transformed vertices according to untransformed vertice
 		poly.translate(0, 0);
 	}
 	
@@ -206,6 +206,9 @@ public class Hitbox
 	
 	public void addPoly(Polygon poly)
 	{
+		for (int i = 0; i < poly.getVertices().length; i++)
+			w = Math.max(w, poly.getVertices()[i]);
+		
 		poly.translate(x, y);
 		polygons.add(poly);
 	}
@@ -223,5 +226,11 @@ public class Hitbox
 	public void removePoly(Polygon poly)
 	{
 		polygons.remove(poly);
+	}
+	
+	public void setSize(int w, int h)
+	{
+		this.w = w;
+		this.h = h;
 	}
 }

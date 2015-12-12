@@ -248,6 +248,7 @@ public class Animation
 					temp.addPoly(vertices);
 				}
 				
+				temp.setSize(213, 202);
 				hitboxes.add(temp);
 			}
 			
@@ -259,6 +260,12 @@ public class Animation
 			e.printStackTrace();
 		}
 			
+	}
+	
+	public void flip()
+	{
+		for (Hitbox hb : hitboxes)
+			hb.flip();
 	}
 	
 	/*
@@ -310,11 +317,5 @@ public class Animation
 	public boolean isRunning()
 	{
 		return !resume;
-	}
-
-	public void flip(float width)
-	{
-		for (Hitbox hb : hitboxes)
-			hb.flip(width);
 	}
 }

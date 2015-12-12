@@ -14,8 +14,8 @@ public class Hitbox
 	 */
 	
 	public ArrayList<Polygon> polygons;
-	public int colliderIndex = -1;
 	public float x = 0, y = 0;
+	public float w = 0, h = 0;
 	
 	/*
 	 * Constructors
@@ -38,7 +38,6 @@ public class Hitbox
 		this();
 		x = hitbox.x;
 		y = hitbox.y;
-		colliderIndex = hitbox.colliderIndex;
 		
 		for (int i = 0; i < hitbox.polygons.size(); i++)
 		{
@@ -82,25 +81,22 @@ public class Hitbox
 	 */
 	public BodyPart[] collidWith(Hitbox polygons2)
 	{
-		int indexA = 0;
-		int indexB = 0;
-
-		for(Polygon a : polygons)
+		BodyPart a, b;
+		for(int i = 0; i < polygons.size(); i++)
 		{
-			for(int i = 0; i < polygons2.polygons.size(); i++)
+			a = BodyPart.values()[i];
+			for(int j = 0; j < polygons2.polygons.size(); j++)
 			{
-				if (polygonIntersectPolygon(a, polygons2.polygons.get(i)))
+				b = BodyPart.values()[j];
+				if ((a == BodyPart.LEFTPUNCH || a == BodyPart.RIGHTPUNCH) && polygonIntersectPolygon(polygons.get(i), polygons2.polygons.get(j)))
 				{
 					BodyPart[] parts = new BodyPart[2];
-					parts[0] = BodyPart.values()[indexA];
-					parts[1] = BodyPart.values()[i];
-					colliderIndex = indexA;
-					polygons2.colliderIndex = indexB;
-					System.err.println(parts[0] + " hit " + parts[1]);
+					parts[0] = a;
+					parts[1] = b;
+					System.out.println(a + " hit " + b);
 					return parts;
 				}
 			}
-			indexA++;
 		}
 		
 		return null;
@@ -141,14 +137,13 @@ public class Hitbox
 	 */
 	private void polyFlip(Polygon poly)
 	{		
-		// Find max x value of the array
-		int maxX = 0;
-		for (int i = 0; i < poly.npoints; i++)
-			maxX = (int) Math.max(poly.xpoints[i] - x, maxX);
-
 		// Reverse 
 		for (int i = 0; i < poly.npoints; i++)
-			poly.xpoints[i] = (int) (maxX - poly.xpoints[i] + 2 * x);
+		{
+			poly.xpoints[i] -= x;
+			poly.xpoints[i] = (int) (w - poly.xpoints[i]);
+			poly.xpoints[i] += x;
+		}
 	}
 	
 	@Override
@@ -179,6 +174,12 @@ public class Hitbox
 	
 	public void addPoly(Polygon poly)
 	{
+		for (int i = 0; i < poly.npoints; i++)
+		{
+			w = Math.max(w, poly.xpoints[i]);
+			h = Math.max(h, poly.ypoints[i]);
+		}
+		
 		poly.translate((int) x, (int) y);
 		polygons.add(poly);
 	}
@@ -191,5 +192,11 @@ public class Hitbox
 	public void removePoly(Polygon poly)
 	{
 		polygons.remove(poly);
+	}
+	
+	public void setSize(int w, int h)
+	{
+		this.w = w; 
+		this.h = h;
 	}
 }

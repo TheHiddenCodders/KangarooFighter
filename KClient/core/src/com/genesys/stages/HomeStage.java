@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.genesys.kclient.Main;
 import com.genesys.kclient.PersoBloc;
 
@@ -59,7 +60,7 @@ public class HomeStage extends Stage
 		
 		bottomText = new Label("", main.skin);
 		bottomText.setPosition(this.getWidth(), 2);
-		bottomText.setColor(Color.WHITE);
+		bottomText.setStyle(new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
 		this.addActor(bottomText);		
 		
 		persoBloc = new PersoBloc(data, main.skin);
