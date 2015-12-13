@@ -164,8 +164,8 @@ public class Game
 			k1.launchAnimation(States.hit);
 		}
 		
-		k1.stateMachine();
-		k2.stateMachine();
+		k1.stateMachine(this);
+		k2.stateMachine(this);
 		
 		// Check if k1 was modified, then send modification to kangaroos
 		if ( !k1.isSameAsNetwork() )

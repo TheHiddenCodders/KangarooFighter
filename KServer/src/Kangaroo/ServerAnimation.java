@@ -127,7 +127,7 @@ public class ServerAnimation
 					for (int k = 0; k < xpoints.length * 2; k += 2)
 					{
 						float x = Float.valueOf(lines.get(4 + (nBoxPerHitbox * i) + j).split(",")[k]);
-						float y = Float.valueOf(lines.get(4 + (nBoxPerHitbox * i) + j).split(",")[k+1]);
+						float y = height - Float.valueOf(lines.get(4 + (nBoxPerHitbox * i) + j).split(",")[k+1]);
 						xpoints[k / 2] = (int) x;
 						ypoints[k / 2] = (int) y;
 					}

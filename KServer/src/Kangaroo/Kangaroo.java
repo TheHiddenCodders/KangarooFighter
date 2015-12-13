@@ -32,6 +32,7 @@ public class Kangaroo
 	private int currentAnimation = 0;
 	private ArrayList<ServerAnimation> animations;
 	private States state = States.idle;
+	private boolean flip = false;
 	
 	// For server only
 	private Timer speedTimer;
@@ -83,7 +84,7 @@ public class Kangaroo
 		this.lastPacket = p;
 	}
 	
-	public void stateMachine()
+	public void stateMachine(Game game)
 	{
 		getCurrentAnimation().update();
 		
@@ -273,9 +274,18 @@ public class Kangaroo
 		if (speedTimer.getElapsedTime() > 0.01)
 		{
 			if (direction == Direction.LEFT)
+			{
+				if (!flip)
+					flip();
+				
 				setPosition( (int) getPosition().x - (speed * speedTimer.getElapsedTime()), (int) getPosition().y ); 
+			}
 			else if (direction == Direction.RIGHT)
+			{
+				if (flip)
+					flip();
 				setPosition( (int) getPosition().x + (speed * speedTimer.getElapsedTime()), (int) getPosition().y );
+			}
 			
 			speedTimer.restart();
 		}
@@ -283,6 +293,7 @@ public class Kangaroo
 	
 	public void flip()
 	{
+		flip = !flip;
 		for (int i = 0; i < animations.size(); i++)
 			animations.get(i).flip();
 	}

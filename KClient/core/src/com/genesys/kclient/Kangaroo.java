@@ -111,6 +111,10 @@ public class Kangaroo extends AnimatedSprite
 	public void updateFromPacket(KangarooServerPacket p)
 	{
 		health = p.health;
+		
+		if ((isFlip() && p.x > getX()) || (!isFlip() && p.x < getX()))
+			flip();
+		
 		setPosition(p.x, p.y);
 		setState(p.state);
 	}

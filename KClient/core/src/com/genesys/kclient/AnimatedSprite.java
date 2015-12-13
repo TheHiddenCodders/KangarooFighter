@@ -134,4 +134,9 @@ public class AnimatedSprite extends Actor
 	{
 		return anims.get(currentAnim);
 	}
+	
+	public boolean isFlip()
+	{
+		return flipped;
+	}
 }
