@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 
 import Packets.ClientDataPacket;
 import Packets.ClientDisconnectionPacket;
+import Packets.EndGamePacket;
 import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
@@ -139,7 +140,17 @@ public class Network extends Client
 				
 				ClientDataPacket packet = (ClientDataPacket) o;
 				
-				stage.setClientData(packet);				
+				if (o2 != null)
+				{
+					ClientDataPacket packet2 = (ClientDataPacket) o2;
+					
+					stage.setClientsData(packet2, packet);
+					o2 = null;
+				}
+				else
+				{
+					o2 = packet;
+				}				
 			}
 			else
 			{
@@ -174,10 +185,12 @@ public class Network extends Client
 		 */
 		else if (o.getClass().isAssignableFrom(GameFoundPacket.class))
 		{
+			GameFoundPacket p = (GameFoundPacket) o;
+			
 			if (currentStage.getClass().isAssignableFrom(HomeStage.class))
 			{
 				HomeStage stage = (HomeStage) currentStage;
-				stage.setGameFound();
+				stage.setGameFound(p);
 			}
 			else
 			{
@@ -262,6 +275,19 @@ public class Network extends Client
 			else
 			{
 				System.err.println("The CLIENTDISCONNECTIONPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
+			}
+		}
+		
+		else if (o.getClass().isAssignableFrom(EndGamePacket.class))
+		{
+			if (currentStage.getClass().isAssignableFrom(GameStage.class))
+			{
+				GameStage stage = (GameStage) currentStage;
+				stage.setGameEnded((EndGamePacket) o);
+			}
+			else
+			{
+				System.err.println("The ENDGAMEPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
 			}
 		}
 		

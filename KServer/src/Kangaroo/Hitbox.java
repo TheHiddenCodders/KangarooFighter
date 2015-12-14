@@ -1,10 +1,11 @@
 package Kangaroo;
 
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import Utils.Polygon;
-import Utils.PolygonUtils;
-import Utils.Rectangle;
+import enums.BodyPart;
 
 public class Hitbox
 {
@@ -13,8 +14,8 @@ public class Hitbox
 	 */
 	
 	public ArrayList<Polygon> polygons;
-	public int colliderIndex = -1;
 	public float x = 0, y = 0;
+	public float w = 0, h = 0;
 	
 	/*
 	 * Constructors
@@ -37,17 +38,10 @@ public class Hitbox
 		this();
 		x = hitbox.x;
 		y = hitbox.y;
-		colliderIndex = hitbox.colliderIndex;
 		
 		for (int i = 0; i < hitbox.polygons.size(); i++)
 		{
-			Polygon temp = new Polygon();
-			float[] vertices = new float[hitbox.polygons.get(i).getVertices().length];
-			
-			for (int j = 0; j < hitbox.polygons.get(i).getVertices().length; j++)
-				vertices[j] = new Float(hitbox.polygons.get(i).getVertices()[j]);
-			
-			temp.setVertices(vertices);
+			Polygon temp = new Polygon(hitbox.polygons.get(i).xpoints, hitbox.polygons.get(i).ypoints, hitbox.polygons.get(i).npoints);
 			addPoly(temp);
 		}
 	}
@@ -60,7 +54,7 @@ public class Hitbox
 	 * Translate X all the polygons by value
 	 * @param value
 	 */
-	public void translateX(float value)
+	public void translateX(int value)
 	{
 		x += value;
 		for (Polygon a : polygons)
@@ -71,7 +65,7 @@ public class Hitbox
 	 * Translate Y all the polygons by value
 	 * @param value
 	 */
-	public void translateY(float value)
+	public void translateY(int value)
 	{
 		y += value;
 		for (Polygon a : polygons)
@@ -83,28 +77,47 @@ public class Hitbox
 	 * The collid test will check for every polygons of the hitpolygons
 	 * The colliding polygons are stored in the colliderIndex of each hitpolygons
 	 * @param polygons2
-	 * @return true or false
+	 * @return bodyPart[0] = bodyPart of this and bodyPart[1] = polygons2 bodyPart
 	 */
-	public boolean collidWith(Hitbox polygons2)
+	public BodyPart[] collidWith(Hitbox polygons2)
 	{
-		int indexA = 0;
-		int indexB = 0;
-		
-		for(Polygon a : polygons)
+		BodyPart a, b;
+		for(int i = 0; i < polygons.size(); i++)
 		{
-			indexA++;
-			for(Polygon b : polygons2.polygons)
+			a = BodyPart.values()[i];
+			for(int j = 0; j < polygons2.polygons.size(); j++)
 			{
-				indexB++;
-				if (a.getBoundingRectangle().overlaps(b.getBoundingRectangle()) | b.getBoundingRectangle().overlaps(a.getBoundingRectangle()))
+				b = BodyPart.values()[j];
+				if ((a == BodyPart.LEFTPUNCH || a == BodyPart.RIGHTPUNCH) && polygonIntersectPolygon(polygons.get(i), polygons2.polygons.get(j)))
 				{
-					colliderIndex = indexA;
-					polygons2.colliderIndex = indexB;
-					return true;					
+					BodyPart[] parts = new BodyPart[2];
+					parts[0] = a;
+					parts[1] = b;
+					System.out.println(a + " hit " + b);
+					return parts;
 				}
 			}
 		}
 		
+		return null;
+	}
+	
+	/**
+	 * Determines if the two polygons supplied intersect each other, by checking if either polygon has points which are contained in the other. 
+	 * (It doesn't detect body-only intersections, but is sufficient in most cases.) 
+	*/ 
+	public static boolean polygonIntersectPolygon(Polygon p1, Polygon p2)
+	{
+		Point p; 
+		for(int i = 0; i < p2.npoints;i++)
+		{
+			p = new Point(p2.xpoints[i],p2.ypoints[i]); if(p1.contains(p)) return true; 
+		} 
+		
+		for(int i = 0; i < p1.npoints;i++) 
+		{
+			p = new Point(p1.xpoints[i],p1.ypoints[i]); if(p2.contains(p)) return true;
+		}
 		return false;
 	}
 	
@@ -112,52 +125,25 @@ public class Hitbox
 	 * Flip all the polygons
 	 * @param fullWidth
 	 */
-	public void flip(float fullWidth)
+	public void flip()
 	{			
 		for (Polygon a : polygons)
-			polyFlip(a, fullWidth);
-	}
-	
-	/**
-	 * Add polygon.size * value to the polygon (ONLY WORK ON RECTANGLES)
-	 * @param value the multiplicator
-	 */
-	public void sizeBy(float value)
-	{
-		for (Polygon a : polygons)
-		{
-			float x = a.getVertices()[0];
-			float y = a.getVertices()[1];
-			float width = a.getVertices()[2] - a.getVertices()[0]; // x2 - x1 = w
-			float height = a.getVertices()[5] - a.getVertices()[1]; // y2 - y1 = h
-			
-			x *= value;
-			y *= value;
-			width *= value;
-			height *= value;
-			
-			a.getVertices()[0] = x;
-			a.getVertices()[1] = y;
-			a.getVertices()[2] = x + width;
-			a.getVertices()[3] = y;
-			a.getVertices()[4] = x + width;
-			a.getVertices()[5] = y + height;
-			a.getVertices()[6] = x;
-			a.getVertices()[7] = y + height;			
-		}
+			polyFlip(a);
 	}
 	
 	/**
 	 * Flip a single polygon (ONLY TESTED ON RECTANGLES)
 	 * @param poly to flip
 	 */
-	private void polyFlip(Polygon poly, float fullWidth)
+	private void polyFlip(Polygon poly)
 	{		
-		for (int i = 0; i < poly.getVertices().length; i+=2)
-			poly.getVertices()[i] = fullWidth / 2 - poly.getVertices()[i] + fullWidth / 2;
-		
-		// Update transformed vertices according to untransformed vertice
-		poly.translate(0, 0);
+		// Reverse 
+		for (int i = 0; i < poly.npoints; i++)
+		{
+			poly.xpoints[i] -= x;
+			poly.xpoints[i] = (int) (w - poly.xpoints[i]);
+			poly.xpoints[i] += x;
+		}
 	}
 	
 	@Override
@@ -166,10 +152,7 @@ public class Hitbox
 		String temp = "";
 		for (Polygon poly : polygons)
 		{
-			for (float vertice : poly.getVertices())
-			{
-				temp = temp.concat(vertice + ",");
-			}
+			temp.concat(poly.toString());
 			temp = temp.concat("\n");
 		}
 		return temp;
@@ -181,19 +164,23 @@ public class Hitbox
 	
 	public void addBox(Rectangle box)
 	{
-		Polygon temp = PolygonUtils.rectangleToPolygon(box);			
+		Polygon temp = new Polygon();
+		temp.addPoint(box.x, box.y);
+		temp.addPoint(box.x + box.width, box.y);
+		temp.addPoint(box.x + box.width, box.y + box.height);
+		temp.addPoint(box.x, box.y + box.height);
 		addPoly(temp);
-	}
-	
-	public void addBoxWithoutTransform(Rectangle box)
-	{
-		Polygon temp = PolygonUtils.rectangleToPolygon(box);			
-		addPolyWithoutTransform(temp);
 	}
 	
 	public void addPoly(Polygon poly)
 	{
-		poly.translate(x, y);
+		for (int i = 0; i < poly.npoints; i++)
+		{
+			w = Math.max(w, poly.xpoints[i]);
+			h = Math.max(h, poly.ypoints[i]);
+		}
+		
+		poly.translate((int) x, (int) y);
 		polygons.add(poly);
 	}
 	
@@ -202,13 +189,14 @@ public class Hitbox
 		polygons.add(poly);
 	}
 	
-	public void addPoly(float... vertices)
-	{
-		addPoly(new Polygon(vertices));
-	}
-	
 	public void removePoly(Polygon poly)
 	{
 		polygons.remove(poly);
+	}
+	
+	public void setSize(int w, int h)
+	{
+		this.w = w; 
+		this.h = h;
 	}
 }

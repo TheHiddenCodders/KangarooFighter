@@ -3,6 +3,7 @@ package com.genesys.stages;
 import java.util.ArrayList;
 
 import Packets.ClientDataPacket;
+import Packets.GameFoundPacket;
 import Packets.KangarooServerPacket;
 import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
@@ -11,10 +12,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.genesys.kclient.Main;
 import com.genesys.kclient.PersoBloc;
 
@@ -27,6 +28,7 @@ public class HomeStage extends Stage
 	public Main main;
 	private ServerInfoPacket updateServerInfoPacket;
 	private KangarooServerPacket pPlayer, pOpponent;
+	private GameFoundPacket pGameFound;
 	private boolean seekingGame = false, gameFound = false;
 	private ArrayList<String> bottomInfos;
 	private int bottomInfosIndex = 0;
@@ -58,7 +60,7 @@ public class HomeStage extends Stage
 		
 		bottomText = new Label("", main.skin);
 		bottomText.setPosition(this.getWidth(), 2);
-		bottomText.setColor(Color.WHITE);
+		bottomText.setStyle(new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
 		this.addActor(bottomText);		
 		
 		persoBloc = new PersoBloc(data, main.skin);
@@ -81,7 +83,7 @@ public class HomeStage extends Stage
 			
 		// If game found, go to game stage
 		if (gameFound && pPlayer != null && pOpponent != null)
-			main.setStage(new GameStage(main, pPlayer, pOpponent));
+			main.setStage(new GameStage(main, pGameFound, pPlayer, pOpponent));
 		
 		// Make bottom text translate and update
 		if (bottomText.getX() + bottomText.getWidth() > -50)
@@ -184,8 +186,9 @@ public class HomeStage extends Stage
 		updateServerInfoPacket = p;
 	}
 	
-	public void setGameFound()
+	public void setGameFound(GameFoundPacket p)
 	{
+		pGameFound = p;
 		seekingGame = false;
 		gameFound = true;
 	}

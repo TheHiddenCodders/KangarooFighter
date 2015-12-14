@@ -1,8 +1,12 @@
 package Kangaroo;
 
+import java.util.Random;
+
 import Packets.ClientDisconnectionPacket;
+import Packets.EndGamePacket;
 import Utils.ServerUtils;
 import enums.EndGameType;
+import enums.States;
 
 /**
  * The Game class manage a game on the server. 
@@ -15,24 +19,49 @@ import enums.EndGameType;
 public class Game 
 {
 	/** The start positionX for player 1 */
-	public final static int player1X = 50;
+	public static int[] player1X = 
+	{
+		50,
+		50
+	};
 	/** The start positionY for player 1 */
-	public final static int player1Y = 0; 
+	public static int[] player1Y = 
+	{
+		20,
+		120
+	};
 	/** The start positionX for player 2 */
-	public final static int player2X = 538; 
+	public static int[] player2X = 
+	{
+		538,
+		538
+	}; 
 	/** The start positionY for player 2 */
-	public final static int player2Y = 0; 
+	public static int[] player2Y =
+	{
+		20,
+		120
+	}; 
 	
-	
+	/** The map paths */
+	public static String[] map =
+	{
+		"dojo.png",
+		"ponton.png"
+	};
 	/*
 	 * Attributes
 	 */
 	private Kangaroo k1 = null, k2 = null;
+	private int[] baseElo;
+	private int mapIndex;
 	
 	private boolean waiting;
 	private boolean prepared;
 	private boolean running;
+	private boolean ended;
 	
+	private Kangaroo winner = null, looser = null;
 	
 	/*
 	 * Constructors
@@ -50,6 +79,10 @@ public class Game
 		waiting = true;
 		running = false;
 		prepared = false;
+		ended = false;
+		
+		Random r = new Random(System.currentTimeMillis());
+		mapIndex = r.nextInt(map.length);
 	}
 	
 	/**
@@ -81,6 +114,7 @@ public class Game
 		waiting = false;
 		running = false;
 		prepared = true;
+		ended = false;
 	}
 	
 	/**
@@ -89,12 +123,14 @@ public class Game
 	 */
 	public void init()
 	{
+		baseElo = new int[]{ k1.getElo(), k2.getElo() };
+		 
 		// Set info
 		k1.setHealth(100);
-		k1.setPosition(player1X, player1Y);
+		k1.setPosition(player1X[mapIndex], player1Y[mapIndex]);
 		
 		k2.setHealth(100);
-		k2.setPosition(player2X, player2Y);
+		k2.setPosition(player2X[mapIndex], player2Y[mapIndex]);
 		
 		// Send to both players position and health
 		k1.getClient().send(k1.getUpdatePacket());
@@ -103,7 +139,7 @@ public class Game
 		k2.getClient().send(k2.getUpdatePacket());
 		k2.getClient().send(k1.getUpdatePacket());
 		
-		k2.flip();
+		k2.flip(); 
 		
 		prepared();
 	}
@@ -114,14 +150,39 @@ public class Game
 	 */
 	public void stateMachine()
 	{
-		k1.stateMachine();
-		k2.stateMachine();
+		/*
+		 *  Collide tests
+		 */
+		
+		// k1 hits k2
+		if (k1.punch(k2))
+		{
+			k2.setState(States.hit);
+			k2.launchAnimation(States.hit);
+		}
+		
+		// k2 hits k1
+		if (k2.punch(k1))
+		{
+			k1.setState(States.hit);
+			k1.launchAnimation(States.hit);
+		}
+		
+		k1.stateMachine(this);
+		k2.stateMachine(this);
 		
 		// Check if k1 was modified, then send modification to kangaroos
 		if ( !k1.isSameAsNetwork() )
 		{
 			k1.getClient().send( k1.getUpdatePacket() );
 			k2.getClient().send( k1.getUpdatePacket() );
+			
+			// If K1 is dead
+			if (k1.getHealth() <= 0)
+			{
+				this.end(k1.getClient().getIp(), EndGameType.Legit);
+				System.out.println("k1 loose the game");
+			}
 		}
 		
 		// Check if k2 was modified, then send modification to kangaroos
@@ -129,13 +190,70 @@ public class Game
 		{
 			k1.getClient().send( k2.getUpdatePacket() );
 			k2.getClient().send( k2.getUpdatePacket() );
+			
+			// If K2 is dead
+			if (k2.getHealth() <= 0)
+			{
+				this.end(k2.getClient().getIp(), EndGameType.Legit);
+				System.out.println("k2 loose the game");
+			}
 		}
 		
 		k1.updateNetworkImage();
-		k2.updateNetworkImage();
+		k2.updateNetworkImage();		
+	}
+	
+	/**
+	 * End the game properly
+	 * @param hostAddress the address of the loosing kangaroo
+	 * @param egType how the game is ending ?
+	 */
+	public void end(String hostAddress, EndGameType egType)
+	{
+		if (egType == EndGameType.Disconnection)
+		{
+			// TODO : Change ClientDisconnectionPacket to EndGamePacket.
+			
+			// Make a client disconnection packet
+			ClientDisconnectionPacket p = new ClientDisconnectionPacket();
+			p.disconnectedClientIp = hostAddress;
+			
+			// Then get the opponent of the disconnected kangaroo and send him the packet
+			getKangarooFromOpponentIp(hostAddress).getClient().send(p);
+			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDataPacket(getKangarooFromOpponentIp(hostAddress)));
+		}
+		else
+		{
+			EndGamePacket p = new EndGamePacket();
+			p.endGameType = egType.ordinal();
+			p.looserAddress = hostAddress;
+			
+			k1.getClient().send(p);
+			k2.getClient().send(p);
 		
-		if (k1.getCurrentAnimation().getKeyFrame().collidWith(k2.getCurrentAnimation().getKeyFrame()))
-			System.err.println("On est des génies !");
+			winner = getKangarooFromOpponentIp(hostAddress);
+			looser = getKangarooFromIp(hostAddress);
+			
+			winner.win(this);
+			looser.lose(this);
+		
+			k1.getClient().send(k1.getClientDataPacket());
+			k1.getClient().send(k2.getClientDataPacket());
+			k2.getClient().send(k2.getClientDataPacket());
+			k2.getClient().send(k1.getClientDataPacket());
+		}
+		
+		ended = true;
+		running = false;
+	}
+	
+	public int getEloChange(Kangaroo k)
+	{
+		// Elo changes
+		int eloDiff = Math.abs(baseElo[0] - baseElo[1]);
+		double probaWin = 1f / (1f + Math.pow(10f,(-eloDiff / 400f)));
+		
+		return (int) (Math.round(k.getKCoef() * (1f - probaWin)));
 	}
 	
 	/*
@@ -174,6 +292,12 @@ public class Game
 	public void run()
 	{
 		running = true;
+	}       
+	
+	
+	public boolean isEnded()
+	{
+		return ended;
 	}
 	
 	/**
@@ -224,18 +348,18 @@ public class Game
 		return null;
 	}
 	
-	/**
-	 * End the game properly
-	 * @param hostAddress
-	 */
-	public void end(String hostAddress, EndGameType egType)
+	public String getMapPath()
 	{
-		// Make a client disconnection packet
-		ClientDisconnectionPacket p = new ClientDisconnectionPacket();
-		p.disconnectedClientIp = hostAddress;
-		
-		// Then get the opponent of the disconnected kangaroo and send him the packet
-		getKangarooFromOpponentIp(hostAddress).getClient().send(p);
-		getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDatas(getKangarooFromOpponentIp(hostAddress)));
+		return "sprites/" + map[mapIndex];
+	}
+	
+	public Kangaroo getWinner()
+	{
+		return winner;
+	}
+	
+	public Kangaroo getLooser()
+	{
+		return looser;
 	}
 }

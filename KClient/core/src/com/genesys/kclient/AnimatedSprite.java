@@ -63,8 +63,8 @@ public class AnimatedSprite extends Actor
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{		
-		if (currentFrame != null)
-			batch.draw(currentFrame, this.getX(), this.getY(), 0, 0, this.getWidth(), this.getHeight(), this.getScaleX(), this.getScaleY(), this.getRotation());		
+		//if (currentFrame != null)
+		//	batch.draw(currentFrame, this.getX(), this.getY(), 0, 0, this.getWidth(), this.getHeight(), this.getScaleX(), this.getScaleY(), this.getRotation());		
 		
 		super.draw(batch, parentAlpha);
 	}
@@ -85,8 +85,8 @@ public class AnimatedSprite extends Actor
 	{			
 		flipped = !flipped;
 		
-		for (Hitbox hb : anims.get(currentAnim).hitboxes)
-			hb.flip(this.getWidth());
+		for (Animation anim : anims)
+			anim.flip();
 	}
 	
 	/*
@@ -133,5 +133,10 @@ public class AnimatedSprite extends Actor
 	public Animation getCurrentAnim()
 	{
 		return anims.get(currentAnim);
+	}
+	
+	public boolean isFlip()
+	{
+		return flipped;
 	}
 }

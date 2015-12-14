@@ -9,7 +9,9 @@ import Server.ClientProcessor;
 import Utils.ServerUtils;
 import Utils.Timer;
 import Utils.Vector2;
+import enums.BodyPart;
 import enums.Direction;
+import enums.States;
 
 /**
  * The Kangaroo class manage one client. A Kangaroo is create when a client is connecting on the server. 
@@ -29,7 +31,8 @@ public class Kangaroo
 	private Vector2 position = new Vector2(0, 0);
 	private int currentAnimation = 0;
 	private ArrayList<ServerAnimation> animations;
-	private States state;
+	private States state = States.idle;
+	private boolean flip = false;
 	
 	// For server only
 	private Timer speedTimer;
@@ -49,7 +52,6 @@ public class Kangaroo
 		networkImage = new KangarooServerPacket();
 		lastPacket = new KangarooClientPacket();
 		this.cp = cp;
-		state = new States();
 		speedTimer = new Timer();
 		initAnim();
 	}
@@ -69,7 +71,7 @@ public class Kangaroo
 		p.y = position.y;
 		p.health = health;
 		p.damage = damage;
-		p.state = state.getState();
+		p.state = state.ordinal();
 		return p;
 	}
 	
@@ -82,18 +84,18 @@ public class Kangaroo
 		this.lastPacket = p;
 	}
 	
-	public void stateMachine()
+	public void stateMachine(Game game)
 	{
 		getCurrentAnimation().update();
 		
-		if (this.getState().getState() != States.movement)
+		if (this.getState() != States.movement)
 		{
-			animations.get(States.movement).stop();
+			animations.get(States.movement.ordinal()).stop();
 			speedTimer.restart();
 		}
 		
 		// Make the state machine here
-		if (this.getState().getState() == States.idle)
+		if (this.getState() == States.idle)
 		{
 			/*
 			 *  If the player press the left punch key
@@ -101,8 +103,8 @@ public class Kangaroo
 			 */
 			if (lastPacket.leftPunchKey)
 			{
-				this.getState().setState(States.leftPunch);
-				this.launchAnimation(States.leftPunch);
+				this.setState(States.leftPunch);
+				this.launchAnimation(States.leftPunch.ordinal());
 			}
 			/*
 			 *  If the player press the right punch key
@@ -110,7 +112,7 @@ public class Kangaroo
 			 */
 			else if (lastPacket.rightPunchKey)
 			{
-				this.getState().setState(States.rightPunch);
+				this.setState(States.rightPunch);
 				this.launchAnimation(States.rightPunch);
 			}
 			/*
@@ -119,7 +121,7 @@ public class Kangaroo
 			 */
 			else if (lastPacket.leftArrowKey)
 			{
-				this.getState().setState(States.movement);
+				this.setState(States.movement);
 				move(Direction.LEFT); 
 			}
 			/*
@@ -128,13 +130,13 @@ public class Kangaroo
 			 */
 			else if (lastPacket.rightArrowKey)
 			{
-				this.getState().setState(States.movement);
+				this.setState(States.movement);
 				move(Direction.RIGHT); 
 			}
 		}
 		
 		// If the kangaroo is currently move 
-		else if (this.getState().getState() == States.movement)
+		else if (this.getState() == States.movement)
 		{
 			/*
 			 *  If the player press the left punch key
@@ -142,7 +144,7 @@ public class Kangaroo
 			 */
 			if (lastPacket.leftPunchKey)
 			{
-				this.getState().setState(States.leftPunch);
+				this.setState(States.leftPunch);
 				this.launchAnimation(States.leftPunch);
 			}
 			/*
@@ -151,7 +153,7 @@ public class Kangaroo
 			 */
 			else if (lastPacket.rightPunchKey)
 			{
-				this.getState().setState(States.rightPunch);
+				this.setState(States.rightPunch);
 				this.launchAnimation(States.rightPunch);
 			}
 			/*
@@ -176,29 +178,41 @@ public class Kangaroo
 			 */
 			else if (!lastPacket.leftArrowKey && !lastPacket.rightArrowKey)
 			{
-				this.getState().setState(States.idle);
+				this.setState(States.idle);
 			}
 		}
 		
 		// If the kangaroo is currently left punching
-		else if (this.getState().getState() == States.leftPunch)
+		else if (this.getState() == States.leftPunch)
 		{
 			if (this.getCurrentAnimation().isOver())
 			{
-				this.getState().setState(States.idle);
+				this.setState(States.idle);
 				this.launchAnimation(States.idle);
 			}
 		}
 		
 		// If the kangaroo is currently right punching
-		else if (this.getState().getState() == States.rightPunch)
+		else if (this.getState() == States.rightPunch)
 		{
 			if (this.getCurrentAnimation().isOver())
 			{
-				this.getState().setState(States.idle);
+				this.setState(States.idle);
 				this.launchAnimation(States.idle);
 			}
 		}
+		
+		// If the kangaroo is currently hit
+		else if (this.getState() == States.hit)
+		{
+			if (this.getCurrentAnimation().isOver())
+			{
+				this.setState(States.idle);
+				this.launchAnimation(States.idle);
+			}
+		}
+		
+		
 	}
 	
 	/**
@@ -227,14 +241,28 @@ public class Kangaroo
 	 * Launch specified animation
 	 * @param index of the animation to launch
 	 */
-	private void launchAnimation(int index)
+	public void launchAnimation(int index)
 	{
 		if (animations.get(currentAnimation).getMode() == ServerAnimation.foreverPlay)
 			animations.get(currentAnimation).stop();
 		
 		currentAnimation = index;
+		
+		animations.get(index).start();
+	}
 	
-		animations.get(index).start(state);
+	/**
+	 * Launch specified animation
+	 * @param state of the animation to launch
+	 */
+	public void launchAnimation(States state)
+	{
+		if (animations.get(currentAnimation).getMode() == ServerAnimation.foreverPlay)
+			animations.get(currentAnimation).stop();
+		
+		currentAnimation = state.ordinal();
+	
+		animations.get(state.ordinal()).start();
 	}
 	
 	/**
@@ -246,9 +274,18 @@ public class Kangaroo
 		if (speedTimer.getElapsedTime() > 0.01)
 		{
 			if (direction == Direction.LEFT)
+			{
+				if (!flip)
+					flip();
+				
 				setPosition( (int) getPosition().x - (speed * speedTimer.getElapsedTime()), (int) getPosition().y ); 
+			}
 			else if (direction == Direction.RIGHT)
+			{
+				if (flip)
+					flip();
 				setPosition( (int) getPosition().x + (speed * speedTimer.getElapsedTime()), (int) getPosition().y );
+			}
 			
 			speedTimer.restart();
 		}
@@ -256,8 +293,72 @@ public class Kangaroo
 	
 	public void flip()
 	{
+		flip = !flip;
 		for (int i = 0; i < animations.size(); i++)
 			animations.get(i).flip();
+	}
+	
+	public boolean collidWith(Kangaroo k)
+	{
+		if (this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame()) != null)
+			return true;
+
+		return false;
+	}
+	
+	public boolean punch(Kangaroo k)
+	{
+		if (this.collidWith(k) && (this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.LEFTPUNCH || this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.RIGHTPUNCH) && k.getState() != States.hit && (this.getState() == States.leftPunch || this.getState() == States.rightPunch))
+		{
+			BodyPart touchedPart = this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[1];
+			
+			// Do something
+			switch(touchedPart)
+			{
+			case BODY:
+				k.setHealth(k.getHealth() - this.getDamage());
+				break;
+			case HEAD:
+				k.setHealth(k.getHealth() - this.getDamage() * 2);
+				break;
+			case LEFTPUNCH:
+				k.setHealth(k.getHealth() - 100);
+				break;
+			case RIGHTPUNCH:
+				k.setHealth(k.getHealth() - 100);
+				break;			
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public void win(Game game)
+	{
+		this.updateGames(1);
+		this.updateWins(1);
+		this.updateElo(game.getEloChange(this));
+		System.out.println(game.getEloChange(this));
+	}
+	
+	public void lose(Game game)
+	{
+		this.updateGames(1);
+		this.updateLooses(1);
+		this.updateElo((-game.getEloChange(this)));
+		System.out.println("-" + game.getEloChange(this));
+	}
+	
+	public int getKCoef()
+	{
+		if (getGames() <= 30)
+			return 40;
+		else if (getElo() <= 2900)
+			return 20;
+		else
+			return 10;
 	}
 	
 	/*
@@ -277,10 +378,6 @@ public class Kangaroo
 	{
 		return name;
 	}
-	
-	/*
-	 * Getter - Setter
-	 */
 	
 	public boolean isReady()
 	{
@@ -312,6 +409,14 @@ public class Kangaroo
 		this.health = health;
 	}
 
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
 	public States getState() {
 		return state;
 	}
@@ -332,7 +437,7 @@ public class Kangaroo
 	
 	public boolean isSameAsNetwork()
 	{
-		return (networkImage.damage == this.damage && networkImage.health == this.health && networkImage.state == this.state.getState() && networkImage.x == this.getPosition().x && networkImage.y == this.getPosition().y);
+		return (networkImage.damage == this.damage && networkImage.health == this.health && networkImage.state == this.state.ordinal() && networkImage.x == this.getPosition().x && networkImage.y == this.getPosition().y);
 	}
 
 	public KangarooServerPacket getNetworkImage() 
@@ -344,15 +449,89 @@ public class Kangaroo
 	{
 		this.networkImage.damage = this.damage;
 		this.networkImage.health = this.health;
-		this.networkImage.state = this.state.getState();
+		this.networkImage.state = this.state.ordinal();
 		this.networkImage.x = this.getPosition().x;
 		this.networkImage.y = this.getPosition().y;
 	}
 	
 	public ClientDataPacket getClientDataPacket()
 	{
-		ClientDataPacket packet = ServerUtils.getPlayerDatas(this);
-		return packet;
+		return ServerUtils.getPlayerDataPacket(this);
+	}
+	
+	public int getGames()
+	{
+		return ServerUtils.getData(this, "games");
+	}
+	
+	public int getWins()
+	{
+		return ServerUtils.getData(this, "wins");
+	}
+	
+	public int getLooses()
+	{
+		return ServerUtils.getData(this, "looses");
+	}
+	
+	public int getElo()
+	{
+		return ServerUtils.getData(this, "elo");
+	}
+	
+	public int getStreak()
+	{
+		return ServerUtils.getData(this, "streak");
+	}
+	
+	public void setGames(int value)
+	{
+		ServerUtils.setData(this, "games", value);
+	}
+	
+	public void setWins(int value)
+	{
+		ServerUtils.setData(this, "wins", value);
+	}
+	
+	public void setLooses(int value)
+	{
+		ServerUtils.setData(this, "looses", value);
+	}
+	
+	public void setElo(int value)
+	{
+		ServerUtils.setData(this, "elo", value);
+	}
+	
+	public void setStreak(int value)
+	{
+		ServerUtils.setData(this, "streak", value);
+	}
+	
+	public void updateGames(int value)
+	{
+		ServerUtils.updateData(this, "games", value);
+	}
+	
+	public void updateWins(int value)
+	{
+		ServerUtils.updateData(this, "wins", value);
+	}
+	
+	public void updateLooses(int value)
+	{
+		ServerUtils.updateData(this, "looses", value);
+	}
+	
+	public void updateElo(int value)
+	{
+		ServerUtils.updateData(this, "elo", value);
+	}
+	
+	public void updateStreak(int value)
+	{
+		ServerUtils.updateData(this, "streak", value);
 	}
 	
 	public Vector2 getPosition() 
@@ -365,10 +544,10 @@ public class Kangaroo
 		this.position = position;
 		
 		for (int i = 0; i < animations.size(); i++)
-			animations.get(i).setPosition(position.x, position.y);
+			animations.get(i).setPosition((int) position.x, (int) position.y);
 	}
 	
-	public void translate(float x, float y)
+	public void translate(int x, int y)
 	{
 		this.position.x += x;
 		this.position.y += y;

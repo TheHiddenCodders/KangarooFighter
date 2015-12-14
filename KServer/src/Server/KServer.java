@@ -100,7 +100,7 @@ public class KServer extends Server
 			// If server accepted the request, send client data
 			if (receivedPacket.accepted)
 			{				
-				this.send(cp, ServerUtils.getPlayerDatas(getKangarooFromIP(clientIp)));
+				this.send(cp, ServerUtils.getPlayerDataPacket(getKangarooFromIP(clientIp)));
 			}
 		}
 		
@@ -118,7 +118,7 @@ public class KServer extends Server
 			// If server accepted the request, send client data
 			if (receivedPacket.accepted)
 			{				
-				this.send(cp, ServerUtils.getPlayerDatas(getKangarooFromIP(clientIp)));
+				this.send(cp, ServerUtils.getPlayerDataPacket(getKangarooFromIP(clientIp)));
 			}
 		}
 		
@@ -326,6 +326,7 @@ public class KServer extends Server
 				
 				// Send to kangaroos that game have been found
 				GameFoundPacket foundPacket = new GameFoundPacket();
+				foundPacket.mapPath = game.getMapPath();
 				send(game.getK1().getClient(), foundPacket);
 				send(game.getK2().getClient(), foundPacket);
 				
@@ -430,7 +431,7 @@ public class KServer extends Server
 		infoPacket.nGamesOnline = games.size(); 
 		infoPacket.nGamesPlayed = 0; // TODO
 		infoPacket.nKangaroosOnline = kangaroos.size(); 
-		infoPacket.nKangaroosRegistered = 0; // TODO
+		infoPacket.nKangaroosRegistered = ServerUtils.getPlayersFiles().size();
 		
 		// Send the packet
 		
