@@ -71,4 +71,14 @@ public class PersoBloc extends Table
 		this.addActor(losses);
 		
 	}
+	
+	public void flipKangaroo()
+	{
+		kangaroo.setDrawable(new Image(new Texture(Gdx.files.internal("sprites/kangourouflipped.png"))).getDrawable());
+	}
+	
+	public void setBackground(Texture texture)
+	{
+		background.setDrawable(new Image(texture).getDrawable());
+	}
 }

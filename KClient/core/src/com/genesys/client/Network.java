@@ -140,7 +140,17 @@ public class Network extends Client
 				
 				ClientDataPacket packet = (ClientDataPacket) o;
 				
-				stage.setClientData(packet);				
+				if (o2 != null)
+				{
+					ClientDataPacket packet2 = (ClientDataPacket) o2;
+					
+					stage.setClientsData(packet2, packet);
+					o2 = null;
+				}
+				else
+				{
+					o2 = packet;
+				}				
 			}
 			else
 			{
@@ -273,7 +283,7 @@ public class Network extends Client
 			if (currentStage.getClass().isAssignableFrom(GameStage.class))
 			{
 				GameStage stage = (GameStage) currentStage;
-				stage.setGameEnded();
+				stage.setGameEnded((EndGamePacket) o);
 			}
 			else
 			{

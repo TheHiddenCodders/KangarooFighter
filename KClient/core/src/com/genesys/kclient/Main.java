@@ -7,8 +7,13 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.genesys.client.Network;
+import com.genesys.stages.EndGameStage;
+import com.genesys.stages.GameStage;
+import com.genesys.stages.HomeStage;
+import com.genesys.stages.PreGameStage;
 import com.genesys.stages.ServerAccesStage;
 
 public class Main extends ApplicationAdapter
@@ -27,8 +32,10 @@ public class Main extends ApplicationAdapter
 		skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 		
 		BitmapFont koreanFont = new BitmapFont(Gdx.files.internal("ui/korean.fnt"));
+		BitmapFont korean32Font = new BitmapFont(Gdx.files.internal("ui/korean-32.fnt"));
 		BitmapFont arialFont = new BitmapFont(Gdx.files.internal("ui/arial.fnt"));
 		skin.add("korean", koreanFont, BitmapFont.class);
+		skin.add("korean-32", korean32Font, BitmapFont.class);
 		skin.add("arial", arialFont, BitmapFont.class);
 		prefs = Gdx.app.getPreferences("data");
 		setStage(new ServerAccesStage(this));
@@ -80,6 +87,11 @@ public class Main extends ApplicationAdapter
 		}
 		else
 			System.out.println("Network not updated");
+		
+		if (stage.getClass().isAssignableFrom(HomeStage.class) || stage.getClass().isAssignableFrom(PreGameStage.class) || stage.getClass().isAssignableFrom(EndGameStage.class))
+			stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.7f)));
+		else if (stage.getClass().isAssignableFrom(GameStage.class))
+			stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(3)));
 		
 		Gdx.input.setInputProcessor(stage);
 		this.stage = stage;

@@ -211,17 +211,17 @@ public class ServerUtils
 			
 			// Write the file
 			BufferedWriter writer = new BufferedWriter(new FileWriter(dataFile));
-			writer.write(name);
+			writer.write("[name]:" + name);
 			writer.newLine();
-			writer.write(games);
+			writer.write("[games]:" + games);
 			writer.newLine();
-			writer.write(wins);
+			writer.write("[wins]:" + wins);
 			writer.newLine();
-			writer.write(looses);
+			writer.write("[looses]:" + looses);
 			writer.newLine();
-			writer.write(elo);
+			writer.write("[elo]:" + elo);
 			writer.newLine();
-			writer.write(streak);
+			writer.write("[streak]:" + streak);
 			writer.newLine();
 			writer.flush();
 			writer.close();
@@ -272,17 +272,17 @@ public class ServerUtils
 				
 			// Write the file
 			BufferedWriter writer = new BufferedWriter(new FileWriter(dataFile));
-			writer.write(name);
+			writer.write("[name]:" + name);
 			writer.newLine();
-			writer.write(games);
+			writer.write("[games]:" + games);
 			writer.newLine();
-			writer.write(wins);
+			writer.write("[wins]:" + wins);
 			writer.newLine();
-			writer.write(looses);
+			writer.write("[looses]:" + looses);
 			writer.newLine();
-			writer.write(elo);
+			writer.write("[elo]:" + elo);
 			writer.newLine();
-			writer.write(streak);
+			writer.write("[streak]:" + streak);
 			writer.newLine();
 			writer.flush();
 			writer.close();

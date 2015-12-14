@@ -322,18 +322,43 @@ public class Kangaroo
 				k.setHealth(k.getHealth() - this.getDamage() * 2);
 				break;
 			case LEFTPUNCH:
-				k.setHealth(k.getHealth() - 10);
+				k.setHealth(k.getHealth() - 100);
 				break;
 			case RIGHTPUNCH:
-				k.setHealth(k.getHealth() - 10);
+				k.setHealth(k.getHealth() - 100);
 				break;			
 			}
-			
 			
 			return true;
 		}
 		
 		return false;
+	}
+	
+	public void win(Game game)
+	{
+		this.updateGames(1);
+		this.updateWins(1);
+		this.updateElo(game.getEloChange(this));
+		System.out.println(game.getEloChange(this));
+	}
+	
+	public void lose(Game game)
+	{
+		this.updateGames(1);
+		this.updateLooses(1);
+		this.updateElo((-game.getEloChange(this)));
+		System.out.println("-" + game.getEloChange(this));
+	}
+	
+	public int getKCoef()
+	{
+		if (getGames() <= 30)
+			return 40;
+		else if (getElo() <= 2900)
+			return 20;
+		else
+			return 10;
 	}
 	
 	/*
@@ -353,10 +378,6 @@ public class Kangaroo
 	{
 		return name;
 	}
-	
-	/*
-	 * Getter - Setter
-	 */
 	
 	public boolean isReady()
 	{

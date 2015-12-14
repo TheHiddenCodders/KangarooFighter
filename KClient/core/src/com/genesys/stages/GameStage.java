@@ -2,15 +2,19 @@ package com.genesys.stages;
 
 import Packets.ClientDataPacket;
 import Packets.ClientReadyPacket;
+import Packets.EndGamePacket;
 import Packets.GameFoundPacket;
 import Packets.KangarooServerPacket;
+import Utils.Timer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.genesys.kclient.AnimatedProgressBar;
 import com.genesys.kclient.Kangaroo;
 import com.genesys.kclient.Main;
@@ -34,16 +38,17 @@ public class GameStage extends Stage
 	 */
 	/** Used as a wire between stage to access client for example */
 	public Main main;
-	private ClientDataPacket data;
+	private ClientDataPacket playerData, opponentData;
+	private EndGamePacket endGamePacket;
 	
 	private Kangaroo player, opponent;
-	private Texture background;
+	private Image background;
 	private AnimatedProgressBar playerBar, opponentBar;
+	private Label playerName, opponentName, time;
+	private Timer timer;
 	private boolean gameReady = false; // Both client have load the stage
 	private boolean gamePaused = false;
 	private boolean gameEnded = false;
-	
-	private Label playerName, opponentName;
 	
 	/** Debug */
 	private ShapeRenderer renderer;
@@ -56,8 +61,15 @@ public class GameStage extends Stage
 		super();
 		this.main = main;
 		
-		background = new Texture(Gdx.files.internal(pGameFound.mapPath));
+		background = new Image(new Texture(Gdx.files.internal(pGameFound.mapPath)));
+		this.addActor(background);
+		
 		initKangaroos(pPlayer, pOpponent);
+		
+		timer = new Timer();
+		time = new Label("0.0", new LabelStyle(main.skin.getFont("korean-32"), Color.TAN));
+		time.setPosition(this.getWidth() / 2 - time.getWidth() / 2, playerBar.getY());
+		this.addActor(time);
 		
 		// Debug
 		renderer = new ShapeRenderer();
@@ -76,6 +88,9 @@ public class GameStage extends Stage
 		// If both clients are ready, the game is ready
 		if (gameReady && !gamePaused)
 		{
+			time.setText(String.format("%.1f", timer.getElapsedTime()));
+			time.setX(this.getWidth() / 2 - time.getWidth() / 2);
+			
 			player.update();
 
 			if (player.needUpdate())
@@ -83,19 +98,21 @@ public class GameStage extends Stage
 		}
 		
 		// On a game paused (disconnection of a client will set gamePaused at true)
-		if (gamePaused && data != null)
+		if (gamePaused && playerData != null)
 		{
 			// Actually, don't care, just leave the game stage since the game will not exist longer
 			gamePaused = false;
-			main.setStage(new HomeStage(main, data));
+			main.setStage(new HomeStage(main, playerData));
 		}
 		
 		// When the game is ended
-		if (gameEnded && data != null)
+		if (gameEnded && playerData != null && opponentData != null)
 		{
 			// Actually, don't care, just leave the game stage since the game will not exist longer
 			gameEnded = false;
-			main.setStage(new HomeStage(main, data));
+			
+			main.setStage(new EndGameStage(main, playerData, opponentData, getKangarooFromOpponentIp(endGamePacket.looserAddress)));
+				
 		}
 		
 		super.act(delta);
@@ -103,11 +120,7 @@ public class GameStage extends Stage
 
 	@Override
 	public void draw()
-	{
-		this.getBatch().begin();
-		this.getBatch().draw(background, 0, 0);
-		this.getBatch().end();
-		
+	{		
 		super.draw();
 		
 		renderer.begin();
@@ -127,8 +140,8 @@ public class GameStage extends Stage
 		player = new Kangaroo(pPlayer);
 		opponent = new Kangaroo(pOpponent);
 		
-		playerName = new Label(player.getName(), main.skin);
-		opponentName = new Label(opponent.getName(), main.skin);
+		playerName = new Label(player.getName(), new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
+		opponentName = new Label(opponent.getName(), new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
 		
 		playerBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 2, 4, 0, 100, player.getHealth());
 		opponentBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 2, 4, 0, 100, opponent.getHealth());
@@ -187,6 +200,7 @@ public class GameStage extends Stage
 	public void setGameReady()
 	{
 		gameReady = true;
+		timer.restart();
 		System.out.println("Game start!");
 	}	
 	
@@ -196,9 +210,10 @@ public class GameStage extends Stage
 		System.out.println("Game paused !");
 	}
 	
-	public void setGameEnded()
+	public void setGameEnded(EndGamePacket packet)
 	{
 		gameEnded = true;
+		endGamePacket = packet;
 		System.out.println("Game ended !");
 	}
 	
@@ -216,8 +231,23 @@ public class GameStage extends Stage
 		return null;
 	}
 	
-	public void setClientData(ClientDataPacket packet)
+	public Kangaroo getKangarooFromOpponentIp(String ip)
 	{
-		data = packet;
+		if (player.getIp().equals(ip))
+		{
+			return opponent;
+		}
+		else if (opponent.getIp().equals(ip))
+		{
+			return player;
+		}
+		
+		return null;
+	}
+	
+	public void setClientsData(ClientDataPacket playerData, ClientDataPacket opponentData)
+	{
+		this.playerData = playerData;
+		this.opponentData = opponentData;
 	}
 }
