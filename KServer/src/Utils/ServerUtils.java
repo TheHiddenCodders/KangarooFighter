@@ -7,8 +7,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
+import Kangaroo.Game;
 import Kangaroo.Kangaroo;
 import Packets.ClientDataPacket;
 
@@ -294,5 +298,50 @@ public class ServerUtils
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public static void save(Game game)
+	{
+		File gameFile = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Games/"
+				+ (getGamesFiles().size()+1)
+				+ " - " + game.getWinner().getName()
+				+ " - " + game.getLooser().getName()));
+		try
+		{
+			gameFile.createNewFile();
+			
+			// Get date
+			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			Date date = new Date();
+			
+			// Write the file
+			BufferedWriter writer = new BufferedWriter(new FileWriter(gameFile));
+			writer.write("Partie ayant eu lieue au: " + dateFormat.format(date) + ".");
+			writer.newLine();
+			writer.write("Opposant " + game.getK1().getName() + " (" + game.getBaseElo()[0] + " elo) à " + game.getK2().getName() + " (" + game.getBaseElo()[1] + "elo).");
+			writer.newLine();
+			writer.write("Victoire de " + game.getWinner().getName() + " (" + game.getWinner().getHealth() + " HP)");
+			writer.newLine();
+			writer.write("Défaite de " + game.getLooser().getName() + " (" + game.getLooser().getHealth() + "HP)");
+			writer.newLine();
+			writer.write("La partie aura durée " + game.getDuration() + "s");
+			writer.flush();
+			writer.close();
+			
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static ArrayList<File> getGamesFiles()
+	{
+		ArrayList<File> gamesFiles = new ArrayList<File>();
+		File directory = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Games"));
+
+		for (File file : directory.listFiles())
+			gamesFiles.add(file);
+		
+		return gamesFiles;
 	}
 }

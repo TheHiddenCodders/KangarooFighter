@@ -5,6 +5,7 @@ import java.util.Random;
 import Packets.ClientDisconnectionPacket;
 import Packets.EndGamePacket;
 import Utils.ServerUtils;
+import Utils.Timer;
 import enums.EndGameType;
 import enums.States;
 
@@ -55,6 +56,8 @@ public class Game
 	private Kangaroo k1 = null, k2 = null;
 	private int[] baseElo;
 	private int mapIndex;
+	private Timer timer;
+	private float time;
 	
 	private boolean waiting;
 	private boolean prepared;
@@ -223,17 +226,21 @@ public class Game
 			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDataPacket(getKangarooFromOpponentIp(hostAddress)));
 		}
 		else
-		{
+		{			
+			time = timer.getElapsedTime();
+			
 			EndGamePacket p = new EndGamePacket();
 			p.endGameType = egType.ordinal();
 			p.looserAddress = hostAddress;
 			
-			k1.getClient().send(p);
-			k2.getClient().send(p);
-		
 			winner = getKangarooFromOpponentIp(hostAddress);
 			looser = getKangarooFromIp(hostAddress);
 			
+			ServerUtils.save(this);
+			
+			k1.getClient().send(p);
+			k2.getClient().send(p);
+		
 			winner.win(this);
 			looser.lose(this);
 		
@@ -292,6 +299,7 @@ public class Game
 	public void run()
 	{
 		running = true;
+		timer = new Timer();
 	}       
 	
 	
@@ -361,5 +369,15 @@ public class Game
 	public Kangaroo getLooser()
 	{
 		return looser;
+	}
+	
+	public int[] getBaseElo()
+	{
+		return baseElo;
+	}
+	
+	public float getDuration()
+	{
+		return time;
 	}
 }
