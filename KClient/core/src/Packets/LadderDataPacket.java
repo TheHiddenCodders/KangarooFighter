@@ -18,7 +18,7 @@ public class LadderDataPacket implements Serializable {
 	{
 		return super.toString()
 				+ "\n"
-				+ ladder.toString() + "\n"
-				+ "[playerPos]: " + playerPos + "\n";
+				+ "- [ladder]:" + ladder.toString() + "\n"
+				+ "- [playerPos]: " + playerPos + "\n";
 	}
 }

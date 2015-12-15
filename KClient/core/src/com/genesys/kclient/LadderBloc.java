@@ -66,7 +66,6 @@ public class LadderBloc extends Table
 			elo = new Label[5];
 		}
 		
-		System.err.println(beginningPos);
 		// Fill the labels with the players
 		for (int i = 0; i < pos.length; i++)
 		{
