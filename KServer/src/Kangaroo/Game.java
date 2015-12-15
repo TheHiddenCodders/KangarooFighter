@@ -238,16 +238,21 @@ public class Game
 			
 			ServerUtils.save(this);
 			
-			k1.getClient().send(p);
-			k2.getClient().send(p);
+			winner.getClient().send(p);
+			looser.getClient().send(p);
 		
 			winner.win(this);
 			looser.lose(this);
+			
+			ServerUtils.updateLadder();
 		
-			k1.getClient().send(k1.getClientDataPacket());
-			k1.getClient().send(k2.getClientDataPacket());
-			k2.getClient().send(k2.getClientDataPacket());
-			k2.getClient().send(k1.getClientDataPacket());
+			winner.getClient().send(winner.getClientDataPacket());
+			winner.getClient().send(looser.getClientDataPacket());
+			looser.getClient().send(looser.getClientDataPacket());
+			looser.getClient().send(winner.getClientDataPacket());
+			
+			winner.getClient().send(ServerUtils.getLadderDataPacket());
+			looser.getClient().send(ServerUtils.getLadderDataPacket());
 		}
 		
 		ended = true;

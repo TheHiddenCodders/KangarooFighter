@@ -10,11 +10,13 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import Kangaroo.Game;
 import Kangaroo.Kangaroo;
 import Packets.ClientDataPacket;
+import Packets.LadderDataPacket;
 
 public class ServerUtils
 {
@@ -34,14 +36,24 @@ public class ServerUtils
 	}
 	
 	/**
+	 * @param k the kangaroo 
 	 * @return the data file of the player
 	 */	
 	public static File getPlayerDataFile(Kangaroo k)
+	{		
+		return getPlayerDataFile(k.getName());
+	}
+	
+	/**
+	 * @param name the name of the kangaroo 
+	 * @return the data file of the player
+	 */	
+	public static File getPlayerDataFile(String name)
 	{
 		File dataFile = null;
 		for (File file : getPlayersFiles())
 		{
-			if (file.getName().equals(k.getName()))
+			if (file.getName().equals(name))
 			{
 				dataFile = new File(file.getPath() + "/data");
 			}
@@ -123,8 +135,8 @@ public class ServerUtils
 		} catch (FileNotFoundException e)
 		{
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (IOException e) 
+		{
 			e.printStackTrace();
 		}
 		
@@ -133,13 +145,13 @@ public class ServerUtils
 	
 	/**
 	 * This method will get a field of kangaroo data
-	 * @param k the kangaroo
+	 * @param name the name of the kangaroo
 	 * @param key the name of the field to get
 	 * @return
 	 */
-	public static int getData(Kangaroo k, String key)
+	public static int getData(String name, String key)
 	{
-		File dataFile = getPlayerDataFile(k);
+		File dataFile = getPlayerDataFile(name);
 		
 		try
 		{
@@ -175,6 +187,17 @@ public class ServerUtils
 		}
 		
 		return -1;
+	}
+	
+	/**
+	 * This method will get a field of kangaroo data
+	 * @param k the kangaroo
+	 * @param key the name of the field to get
+	 * @return
+	 */
+	public static int getData(Kangaroo k, String key)
+	{		
+		return getData(k.getName(), key);
 	}
 	
 	/**
@@ -300,6 +323,11 @@ public class ServerUtils
 		
 	}
 	
+	/**
+	 * This method save a game into the Games folder of the server.
+	 * It assume a tracker of the games
+	 * @param game
+	 */
 	public static void save(Game game)
 	{
 		File gameFile = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Games/"
@@ -316,7 +344,7 @@ public class ServerUtils
 			
 			// Write the file
 			BufferedWriter writer = new BufferedWriter(new FileWriter(gameFile));
-			writer.write("Partie ayant eu lieue au: " + dateFormat.format(date) + ".");
+			writer.write("Partie ayant eu lieue le: " + dateFormat.format(date) + ".");
 			writer.newLine();
 			writer.write("Opposant " + game.getK1().getName() + " (" + game.getBaseElo()[0] + " elo) à " + game.getK2().getName() + " (" + game.getBaseElo()[1] + "elo).");
 			writer.newLine();
@@ -334,6 +362,10 @@ public class ServerUtils
 		}
 	}
 	
+	/**
+	 * This method give access to the games directory.
+	 * @return the files contains by the directory
+	 */
 	public static ArrayList<File> getGamesFiles()
 	{
 		ArrayList<File> gamesFiles = new ArrayList<File>();
@@ -343,5 +375,82 @@ public class ServerUtils
 			gamesFiles.add(file);
 		
 		return gamesFiles;
+	}
+	
+	/**
+	 * This method update the ladder
+	 */
+	public static void updateLadder()
+	{
+		File ladderFile = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Ladder/elo"));
+		ArrayList<File> ladder = new ArrayList<File>();
+		
+		try
+		{			
+			// Get date
+			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			Date date = new Date();
+			
+			// Find make the ladder
+			for (File file : getPlayersFiles())
+				ladder.add(file);
+
+			// Sort by Elo
+			Collections.sort(ladder, new EloComparator());
+			
+			// Write the file
+			BufferedWriter writer = new BufferedWriter(new FileWriter(ladderFile));
+			
+			writer.write("Classement mis à jour le: " + dateFormat.format(date) + ".");
+			writer.newLine();
+			
+			for (int i = 0; i < ladder.size(); i++)
+			{
+				writer.write("[" + i + "]: " + ladder.get(i).getName() + " :[" + ServerUtils.getData(ladder.get(i).getName(), "elo") + "]");
+				writer.newLine();
+			}
+			
+			writer.flush();
+			writer.close();
+			
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * @return the ladder data packet
+	 */
+	public static LadderDataPacket getLadderDataPacket()
+	{
+		LadderDataPacket packet = new LadderDataPacket();
+		packet.ladder = new ArrayList<String>();
+		
+		File ladderFile = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Ladder/elo"));
+		
+		try
+		{
+			BufferedReader reader = new BufferedReader(new FileReader(ladderFile));
+			
+			String line = reader.readLine();
+			
+			while (line != null)
+			{
+				line = reader.readLine();
+				packet.ladder.add(line);
+			}
+			
+			reader.close();
+			
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		} catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		
+		return packet;
 	}
 }

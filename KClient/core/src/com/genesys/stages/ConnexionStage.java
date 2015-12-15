@@ -1,6 +1,7 @@
 package com.genesys.stages;
 
 import Packets.ClientDataPacket;
+import Packets.LadderDataPacket;
 import Packets.LoginPacket;
 import Utils.ConversionUtils;
 
@@ -23,7 +24,8 @@ public class ConnexionStage extends Stage
 	 */
 	/** Used as a wire between stage to access client for example */
 	public Main main;
-	private ClientDataPacket data;
+	private ClientDataPacket clientData;
+	private LadderDataPacket ladderData;
 	
 	// Components
 	private Label infoName, infoPwd, other;
@@ -122,7 +124,7 @@ public class ConnexionStage extends Stage
 	public void act(float delta)
 	{				
 		// If login then go to home stage
-		if (loggedIn && data != null)
+		if (loggedIn && clientData != null)
 		{
 			// If isn't already registered, make prefs
 			if (!alreadyRegisteredOnPhone())
@@ -132,7 +134,7 @@ public class ConnexionStage extends Stage
 				main.prefs.flush();
 			}
 			
-			main.setStage(new HomeStage(main, data));
+			main.setStage(new HomeStage(main, clientData, ladderData));
 		}
 		else if (serverAnswered)
 		{
@@ -209,6 +211,11 @@ public class ConnexionStage extends Stage
 
 	public void setClientData(ClientDataPacket packet)
 	{
-		data = packet;
+		clientData = packet;
+	}
+	
+	public void setLadderData(LadderDataPacket packet)
+	{
+		ladderData = packet;
 	}
 }

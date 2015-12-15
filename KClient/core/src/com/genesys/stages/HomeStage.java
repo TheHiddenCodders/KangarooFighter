@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import Packets.ClientDataPacket;
 import Packets.GameFoundPacket;
 import Packets.KangarooServerPacket;
+import Packets.LadderDataPacket;
 import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
 
@@ -14,8 +15,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.genesys.kclient.Main;
 import com.genesys.kclient.PersoBloc;
 
@@ -44,7 +45,7 @@ public class HomeStage extends Stage
 	 * Constructors
 	 */
 	
-	public HomeStage(Main main, ClientDataPacket data)
+	public HomeStage(Main main, ClientDataPacket clientData, LadderDataPacket ladderData)
 	{
 		super();
 		this.main = main;	
@@ -63,7 +64,7 @@ public class HomeStage extends Stage
 		bottomText.setStyle(new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
 		this.addActor(bottomText);		
 		
-		persoBloc = new PersoBloc(data, main.skin);
+		persoBloc = new PersoBloc(clientData, main.skin);
 		persoBloc.setPosition(this.getWidth() / 2 - persoBloc.getWidth() / 2, this.getHeight() / 2 - persoBloc.getHeight() / 2 - 10);
 		this.addActor(persoBloc);
 		

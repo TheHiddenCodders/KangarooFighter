@@ -129,7 +129,7 @@ public class KServer extends Server
 		{
 			ServerInfoPacket receivedPacket = (ServerInfoPacket) o;
 			receivedPacket.nGamesOnline = games.size(); 
-			receivedPacket.nGamesPlayed = 0; // TODO
+			receivedPacket.nGamesPlayed = ServerUtils.getGamesFiles().size();
 			receivedPacket.nKangaroosOnline = kangaroos.size(); 
 			receivedPacket.nKangaroosRegistered = ServerUtils.getPlayersFiles().size();
 			
@@ -429,7 +429,7 @@ public class KServer extends Server
 		ServerInfoPacket infoPacket = new ServerInfoPacket();
 		
 		infoPacket.nGamesOnline = games.size(); 
-		infoPacket.nGamesPlayed = 0; // TODO
+		infoPacket.nGamesPlayed = ServerUtils.getGamesFiles().size();
 		infoPacket.nKangaroosOnline = kangaroos.size(); 
 		infoPacket.nKangaroosRegistered = ServerUtils.getPlayersFiles().size();
 		
