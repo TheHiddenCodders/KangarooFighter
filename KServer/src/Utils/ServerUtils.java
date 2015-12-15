@@ -76,13 +76,12 @@ public class ServerUtils
 		File playerDirectory = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Players/" + pseudo));
 		playerDirectory.mkdirs();
 		
-		File friendsDirectory = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Players/" + pseudo + "/friends"));
-		friendsDirectory.mkdirs();
-		
+		File friendsFile = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Players/" + pseudo + "/friends"));
 		File pwdFile = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Players/" + pseudo + "/pwd"));
 		
 		try 
 		{
+			friendsFile.createNewFile();
 			pwdFile.createNewFile();
 			BufferedWriter writer = new BufferedWriter(new FileWriter(pwdFile));
 			writer.write(pwd);
@@ -367,7 +366,7 @@ public class ServerUtils
 			BufferedWriter writer = new BufferedWriter(new FileWriter(gameFile));
 			writer.write("Partie ayant eu lieue le: " + dateFormat.format(date) + ".");
 			writer.newLine();
-			writer.write("Opposant " + game.getK1().getName() + " (" + game.getBaseElo()[0] + " elo) à " + game.getK2().getName() + " (" + game.getBaseElo()[1] + "elo).");
+			writer.write("Opposant " + game.getK1().getName() + " (" + game.getBaseElo()[0] + " elo) à " + game.getK2().getName() + " (" + game.getBaseElo()[1] + " elo).");
 			writer.newLine();
 			writer.write("-----------------------------------------------------------------------------------");
 			writer.newLine();
