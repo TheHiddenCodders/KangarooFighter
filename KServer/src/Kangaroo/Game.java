@@ -4,6 +4,7 @@ import java.util.Random;
 
 import Packets.ClientDisconnectionPacket;
 import Packets.EndGamePacket;
+import Packets.LadderDataPacket;
 import Utils.ServerUtils;
 import Utils.Timer;
 import enums.EndGameType;
@@ -251,8 +252,13 @@ public class Game
 			looser.getClient().send(looser.getClientDataPacket());
 			looser.getClient().send(winner.getClientDataPacket());
 			
-			winner.getClient().send(ServerUtils.getLadderDataPacket());
-			looser.getClient().send(ServerUtils.getLadderDataPacket());
+			LadderDataPacket winnerLadderPacket = ServerUtils.getLadderDataPacket();
+			winnerLadderPacket.playerPos = ServerUtils.getLadderPosition(winner);
+			LadderDataPacket looserLadderPacket = ServerUtils.getLadderDataPacket();
+			looserLadderPacket.playerPos = ServerUtils.getLadderPosition(looser);
+
+			winner.getClient().send(winnerLadderPacket);
+			looser.getClient().send(looserLadderPacket);
 		}
 		
 		ended = true;

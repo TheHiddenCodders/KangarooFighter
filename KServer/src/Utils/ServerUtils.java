@@ -107,6 +107,8 @@ public class ServerUtils
 		{
 			e.printStackTrace();
 		}	
+		
+		updateLadder();
 	}
 	
 	/**
@@ -406,7 +408,7 @@ public class ServerUtils
 			
 			for (int i = 0; i < ladder.size(); i++)
 			{
-				writer.write("[" + i + "]: " + ladder.get(i).getName() + " :[" + ServerUtils.getData(ladder.get(i).getName(), "elo") + "]");
+				writer.write((i + 1) + " | " + ladder.get(i).getName() + " | " + ServerUtils.getData(ladder.get(i).getName(), "elo"));
 				writer.newLine();
 			}
 			
@@ -438,7 +440,9 @@ public class ServerUtils
 			while (line != null)
 			{
 				line = reader.readLine();
-				packet.ladder.add(line);
+				
+				if (line != null)
+					packet.ladder.add(line);
 			}
 			
 			reader.close();
@@ -452,5 +456,34 @@ public class ServerUtils
 		}
 		
 		return packet;
+	}
+	
+	/**
+	 * Return ladder position of the kangaroo k
+	 * @param k
+	 * @return
+	 */
+	public static int getLadderPosition(Kangaroo k)
+	{
+		return getLadderPosition(k.getName());
+	}
+	
+	/**
+	 * Return ladder position of the kangaroo named name
+	 * @param name
+	 * @return
+	 */
+	public static int getLadderPosition(String name)
+	{
+		LadderDataPacket data = getLadderDataPacket();
+		for (int i = 0; i < data.ladder.size(); i++)
+		{
+			String line = data.ladder.get(i);
+			
+			if (line.split(" | ")[2].equals(name))
+				return i + 1;
+		}
+		
+		return -1;
 	}
 }

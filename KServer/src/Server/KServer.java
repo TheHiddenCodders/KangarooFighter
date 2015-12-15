@@ -12,6 +12,7 @@ import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
 import Packets.KangarooClientPacket;
+import Packets.LadderDataPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
@@ -97,6 +98,11 @@ public class KServer extends Server
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
 			
+			// Send to the client the ladder packet with his position
+			LadderDataPacket ladderPacket = ServerUtils.getLadderDataPacket();
+			ladderPacket.playerPos = ServerUtils.getLadderPosition(getKangarooFromIP(clientIp));
+			this.send(cp, ladderPacket);
+			
 			// If server accepted the request, send client data
 			if (receivedPacket.accepted)
 			{				
@@ -114,6 +120,11 @@ public class KServer extends Server
 			
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
+			
+			// Send to the client the ladder packet with his position
+			LadderDataPacket ladderPacket = ServerUtils.getLadderDataPacket();
+			ladderPacket.playerPos = ServerUtils.getLadderPosition(getKangarooFromIP(clientIp));
+			this.send(cp, ladderPacket);
 			
 			// If server accepted the request, send client data
 			if (receivedPacket.accepted)

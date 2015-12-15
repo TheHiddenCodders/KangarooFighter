@@ -11,12 +11,14 @@ public class LadderDataPacket implements Serializable {
 	private static final long serialVersionUID = 8410335275464293843L;
 
 	public ArrayList<String> ladder;
+	public int playerPos;
 	
 	@Override
 	public String toString()
 	{
 		return super.toString()
 				+ "\n"
-				+ ladder.toString() + "\n";
+				+ ladder.toString() + "\n"
+				+ "[playerPos]: " + playerPos + "\n";
 	}
 }

@@ -124,7 +124,7 @@ public class ConnexionStage extends Stage
 	public void act(float delta)
 	{				
 		// If login then go to home stage
-		if (loggedIn && clientData != null)
+		if (loggedIn && clientData != null && ladderData != null)
 		{
 			// If isn't already registered, make prefs
 			if (!alreadyRegisteredOnPhone())

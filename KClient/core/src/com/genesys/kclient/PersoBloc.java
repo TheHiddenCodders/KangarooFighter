@@ -40,7 +40,7 @@ public class PersoBloc extends Table
 		this.addActor(kangaroo);
 		
 		name = new Label(data.name, skin);
-		name.setStyle(new LabelStyle(skin.getFont("korean"), Color.WHITE));
+		name.setStyle(new LabelStyle(skin.getFont("korean"), Color.TAN));
 		name.setPosition(this.getWidth() / 2 - name.getWidth() / 2, this.getHeight() - name.getHeight() - 10);
 		this.addActor(name);
 		

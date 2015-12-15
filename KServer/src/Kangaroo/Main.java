@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 
 import Server.KServer;
+import Utils.ServerUtils;
 
 public class Main 
 {
@@ -68,6 +69,11 @@ public class Main
 			{
 				if (msg.split("-")[1].equals("all"))
 					server.displayAllGames();
+			}
+			
+			if (msg.contains("new player"))
+			{
+				ServerUtils.newPlayer("debug" + ServerUtils.getPlayersFiles().size(), "debug");
 			}
 		}
 	}

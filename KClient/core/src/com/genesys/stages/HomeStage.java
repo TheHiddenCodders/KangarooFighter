@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.genesys.kclient.LadderBloc;
 import com.genesys.kclient.Main;
 import com.genesys.kclient.PersoBloc;
 
@@ -38,8 +39,10 @@ public class HomeStage extends Stage
 	private TextButton matchMakingLaunch;
 	private Label bottomText;	
 	private Image background;
+	private Image bottomRibbon;
 	
 	private PersoBloc persoBloc;
+	private LadderBloc ladderBloc;
 	
 	/*
 	 * Constructors
@@ -68,7 +71,14 @@ public class HomeStage extends Stage
 		persoBloc.setPosition(this.getWidth() / 2 - persoBloc.getWidth() / 2, this.getHeight() / 2 - persoBloc.getHeight() / 2 - 10);
 		this.addActor(persoBloc);
 		
+		ladderBloc = new LadderBloc(clientData, ladderData, main.skin);
+		ladderBloc.setPosition(this.getWidth() / 4 + this.getWidth() / 2 - 70, this.getHeight() / 2 - 5);
+		this.addActor(ladderBloc);
+		
 		bottomInfos = new ArrayList<String>();
+		
+		bottomRibbon = new Image(new Texture(Gdx.files.internal("sprites/botribbon.png")));
+		this.addActor(bottomRibbon);
 		
 		// Ask for server info
 		askServerInfos();

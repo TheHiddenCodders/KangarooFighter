@@ -106,7 +106,7 @@ public class InscriptionStage extends Stage
 	public void act(float delta)
 	{			
 		// If login then go to home stage
-		if (signedOut && clientData != null)
+		if (signedOut && clientData != null && ladderData != null)
 		{
 			// If isn't already registered, make prefs
 			if (!alreadyRegisteredOnPhone())
