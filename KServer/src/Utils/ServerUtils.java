@@ -20,6 +20,10 @@ import Packets.LadderDataPacket;
 
 public class ServerUtils
 {
+	/****************************************************************
+	 * PLAYERS METHODS												*
+	 ****************************************************************/
+	
 	/**
 	 * Get the list of the players directory
 	 * @return
@@ -210,7 +214,18 @@ public class ServerUtils
 	 */
 	public static void setData(Kangaroo k, String key, int value)
 	{
-		File dataFile = getPlayerDataFile(k);
+		setData(k.getName(), key, value);	
+	}
+	
+	/**
+	 * This method will set a field of kangaroo data
+	 * @param k the kangaroo
+	 * @param key the name of the field to update
+	 * @param value the transform to apply to the value
+	 */
+	public static void setData(String kName, String key, int value)
+	{
+		File dataFile = getPlayerDataFile(kName);
 		
 		try
 		{
@@ -325,6 +340,10 @@ public class ServerUtils
 		
 	}
 	
+	/****************************************************************
+	 * GAMES METHODS												*
+	 ****************************************************************/
+	
 	/**
 	 * This method save a game into the Games folder of the server.
 	 * It assume a tracker of the games
@@ -350,11 +369,21 @@ public class ServerUtils
 			writer.newLine();
 			writer.write("Opposant " + game.getK1().getName() + " (" + game.getBaseElo()[0] + " elo) à " + game.getK2().getName() + " (" + game.getBaseElo()[1] + "elo).");
 			writer.newLine();
-			writer.write("Victoire de " + game.getWinner().getName() + " (" + game.getWinner().getHealth() + " HP)");
+			writer.write("-----------------------------------------------------------------------------------");
 			writer.newLine();
-			writer.write("Défaite de " + game.getLooser().getName() + " (" + game.getLooser().getHealth() + "HP)");
+			writer.write("Victoire de " + game.getWinner().getName() + " (" + game.getWinner().getHealth() + " HP.)");
 			writer.newLine();
-			writer.write("La partie aura durée " + game.getDuration() + "s");
+			writer.write("Défaite de " + game.getLooser().getName() + " (" + game.getLooser().getHealth() + "HP.)");
+			writer.newLine();
+			writer.write("La partie aura durée " + game.getDuration() + "s.");
+			writer.newLine();
+			writer.write("-----------------------------------------------------------------------------------");
+			writer.newLine();
+			
+			writer.write(game.getWinner().getName() + " remporte " + game.getEloChange(game.getWinner()) + " points d'élo.");
+			writer.newLine();
+			writer.write(game.getLooser().getName() + " perd " + game.getEloChange(game.getLooser()) + " points d'élo.");
+			
 			writer.flush();
 			writer.close();
 			
@@ -378,6 +407,10 @@ public class ServerUtils
 		
 		return gamesFiles;
 	}
+	
+	/****************************************************************
+	 * LADDER METHODS												*
+	 ****************************************************************/
 	
 	/**
 	 * This method update the ladder
@@ -486,4 +519,64 @@ public class ServerUtils
 		
 		return -1;
 	}
+	
+	/****************************************************************
+	 * RESETING METHODS												*
+	 ****************************************************************/
+	
+	/**
+	 * This method delete all the games contained in the games folder
+	 */
+	public static void resetGames()
+	{
+		ArrayList<File> games = getGamesFiles();
+		
+		for (int i = 0; i < games.size(); i++)
+			games.get(i).delete();
+	}
+	
+	/**
+	 * This method reset player stats as he just sign out to the game
+	 * @param k
+	 */
+	public static void resetPlayer(Kangaroo k)
+	{
+		resetPlayer(k.getName());
+	}
+	
+	/**
+	 * This method reset player stats as he just sign out to the game
+	 * @param name
+	 */
+	public static void resetPlayer(String name)
+	{
+		setData(name, "games", 0);	
+		setData(name, "wins", 0);	
+		setData(name, "looses", 0);	
+		setData(name, "elo", 1000);	
+		setData(name, "streak", 0);	
+		
+		updateLadder();
+	}
+	
+	/**
+	 * This method reset all the players
+	 */
+	public static void resetPlayers()
+	{
+		ArrayList<File> players = getPlayersFiles();
+		
+		for (int i = 0; i < players.size(); i++)
+			resetPlayer(players.get(i).getName());
+	}
+	
+	/**
+	 * This method reset all the players and delete all the games contained in the games folder
+	 */
+	public static void reset()
+	{
+		resetGames();
+		resetPlayers();
+	}
+	
 }

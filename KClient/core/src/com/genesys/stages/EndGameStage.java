@@ -36,6 +36,7 @@ public class EndGameStage extends Stage
 		super();
 		this.main = main;
 		this.playerData = playerData;
+		this.ladderData = ladderData;
 		
 		player = new PersoBloc(playerData, main.skin);
 		player.setPosition(this.getWidth() / 4 - player.getWidth() / 2, this.getHeight() / 2 - player.getHeight() / 2 + 20);

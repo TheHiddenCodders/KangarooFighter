@@ -50,10 +50,8 @@ public class LadderBloc extends Table
 		}
 		else
 		{
-			if (ladderData.playerPos == 1)
+			if (ladderData.playerPos == 1 || ladderData.playerPos == 2)
 				beginningPos = 0;
-			else if (ladderData.playerPos == 2)
-				beginningPos = 1;
 			else if (ladderData.playerPos == ladderData.ladder.size())
 				beginningPos = ladderData.playerPos - 5;
 			else if (ladderData.playerPos == ladderData.ladder.size() - 1)

@@ -75,6 +75,17 @@ public class Main
 			{
 				ServerUtils.newPlayer("debug" + ServerUtils.getPlayersFiles().size(), "debug");
 			}
+			
+			if (msg.contains("reset player"))
+			{
+				if (!msg.split("-")[1].isEmpty())
+				ServerUtils.resetPlayer(msg.split("-")[1]);
+			}
+			
+			if (msg.contains("reset all"))
+			{
+				ServerUtils.reset();
+			}
 		}
 	}
 

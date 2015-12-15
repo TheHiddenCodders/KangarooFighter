@@ -242,8 +242,8 @@ public class Game
 			winner.getClient().send(p);
 			looser.getClient().send(p);
 		
-			winner.win(this);
-			looser.lose(this);
+			winner.end(this);
+			looser.end(this);
 			
 			ServerUtils.updateLadder();
 		
@@ -269,9 +269,23 @@ public class Game
 	{
 		// Elo changes
 		int eloDiff = Math.abs(baseElo[0] - baseElo[1]);
-		double probaWin = 1f / (1f + Math.pow(10f,(-eloDiff / 400f)));
+		double probaWinForBestElo = 1f / (1f + Math.pow(10f,(-eloDiff / 400f)));
+		double probaWinForLessElo = 1 - (1f / (1f + Math.pow(10f,(-eloDiff / 400f))));
 		
-		return (int) (Math.round(k.getKCoef() * (1f - probaWin)));
+		if (k.equals(winner))
+		{
+			if (k.getElo() == (int) Math.max(baseElo[0], baseElo[1]))
+				return (int) (Math.round(k.getKCoef() * (1f - probaWinForBestElo)));
+			else
+				return (int) (Math.round(k.getKCoef() * (1f - probaWinForLessElo)));
+		}
+		else
+		{
+			if (k.getElo() == (int) Math.max(baseElo[0], baseElo[1]))
+				return (int) (Math.round(k.getKCoef() * (0f - probaWinForBestElo)));
+			else
+				return (int) (Math.round(k.getKCoef() * (0f - probaWinForLessElo)));
+		}
 	}
 	
 	/*

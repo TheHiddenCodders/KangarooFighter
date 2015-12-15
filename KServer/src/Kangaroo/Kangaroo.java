@@ -335,20 +335,11 @@ public class Kangaroo
 		return false;
 	}
 	
-	public void win(Game game)
+	public void end(Game game)
 	{
 		this.updateGames(1);
 		this.updateWins(1);
 		this.updateElo(game.getEloChange(this));
-		System.out.println(game.getEloChange(this));
-	}
-	
-	public void lose(Game game)
-	{
-		this.updateGames(1);
-		this.updateLooses(1);
-		this.updateElo((-game.getEloChange(this)));
-		System.out.println("-" + game.getEloChange(this));
 	}
 	
 	public int getKCoef()
