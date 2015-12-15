@@ -10,6 +10,7 @@ import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
 import Packets.KangarooServerPacket;
+import Packets.LadderDataPacket;
 import Packets.LoginPacket;
 import Packets.ServerInfoPacket;
 import Packets.SignOutPacket;
@@ -278,6 +279,9 @@ public class Network extends Client
 			}
 		}
 		
+		/**
+		 * Received an end game packet
+		 */
 		else if (o.getClass().isAssignableFrom(EndGamePacket.class))
 		{
 			if (currentStage.getClass().isAssignableFrom(GameStage.class))
@@ -289,12 +293,43 @@ public class Network extends Client
 			{
 				System.err.println("The ENDGAMEPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
 			}
+		}	
+		
+		/**
+		 * Received a ladder data packet
+		 */
+		else if (o.getClass().isAssignableFrom(LadderDataPacket.class))
+		{
+			if (currentStage.getClass().isAssignableFrom(InscriptionStage.class))
+			{
+				InscriptionStage stage = (InscriptionStage) currentStage;
+				
+				LadderDataPacket packet = (LadderDataPacket) o;
+				
+				stage.setLadderData(packet);				
+			}
+			else if (currentStage.getClass().isAssignableFrom(ConnexionStage.class))
+			{
+				ConnexionStage stage = (ConnexionStage) currentStage;
+				
+				LadderDataPacket packet = (LadderDataPacket) o;
+				
+				stage.setLadderData(packet);				
+			}
+			else if (currentStage.getClass().isAssignableFrom(GameStage.class))
+			{
+				GameStage stage = (GameStage) currentStage;
+				
+				LadderDataPacket packet = (LadderDataPacket) o;
+				
+				stage.setLadderData(packet);				
+			}
 		}
 		
 		else
 		{
 			System.err.println("This packet isn't handled by Client side: " + o.getClass());
-		}		
+		}	
 	}
 	
 	/*

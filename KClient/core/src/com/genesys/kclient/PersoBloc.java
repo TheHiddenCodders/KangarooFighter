@@ -20,6 +20,7 @@ public class PersoBloc extends Table
 	private Image background;
 	private Image kangaroo;
 	private Label name, elo, eloI, games, win, losses;
+	private Image winIcon, loseIcon;
 	
 	/*
 	 * Constructors
@@ -39,7 +40,7 @@ public class PersoBloc extends Table
 		this.addActor(kangaroo);
 		
 		name = new Label(data.name, skin);
-		name.setStyle(new LabelStyle(skin.getFont("korean"), Color.WHITE));
+		name.setStyle(new LabelStyle(skin.getFont("korean"), Color.TAN));
 		name.setPosition(this.getWidth() / 2 - name.getWidth() / 2, this.getHeight() - name.getHeight() - 10);
 		this.addActor(name);
 		
@@ -60,14 +61,24 @@ public class PersoBloc extends Table
 		games.setPosition(this.getWidth() / 2 - games.getWidth() / 2, elo.getY() - games.getHeight() - 2);
 		this.addActor(games);
 		
-		win = new Label(data.wins + "V" , skin);
-		win.setStyle(new LabelStyle(skin.getFont("default-font"), Color.WHITE));
-		win.setPosition(this.getWidth() / 2 - win.getWidth() * 2, games.getY() - win.getHeight() - 2);
+		win = new Label(data.wins + "" , skin);
+		win.setStyle(new LabelStyle(skin.getFont("default-font"), Color.TAN));
+		win.setPosition(this.getWidth() / 4 - win.getWidth() / 2, games.getY() - win.getHeight() - 10);
 		this.addActor(win);
 		
-		losses = new Label(data.looses + "D" , skin);
-		losses.setStyle(new LabelStyle(skin.getFont("default-font"), Color.DARK_GRAY));
-		losses.setPosition(this.getWidth() / 2 + losses.getWidth(), games.getY() - losses.getHeight() - 2);
+		winIcon = new Image(new Texture(Gdx.files.internal("sprites/games.png")));
+		winIcon.setPosition(win.getX() + win.getWidth() + 5, win.getY());
+		winIcon.scaleBy(0.2f);
+		this.addActor(winIcon);
+		
+		loseIcon = new Image(new Texture(Gdx.files.internal("sprites/loses.png")));
+		loseIcon.setPosition(this.getWidth() / 2 + this.getWidth() / 4 - loseIcon.getWidth() * 1.5f, games.getY() - 33);
+		loseIcon.scaleBy(0.2f);
+		this.addActor(loseIcon);
+		
+		losses = new Label(data.looses + "" , skin);
+		losses.setStyle(new LabelStyle(skin.getFont("default-font"), new Color(200f/255f, 80f/255f, 80f/255f, 1)));
+		losses.setPosition(loseIcon.getX() + loseIcon.getWidth() + 5, win.getY());
 		this.addActor(losses);
 		
 	}

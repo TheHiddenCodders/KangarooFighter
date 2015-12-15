@@ -12,6 +12,7 @@ import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
 import Packets.KangarooClientPacket;
+import Packets.LadderDataPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
@@ -97,6 +98,11 @@ public class KServer extends Server
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
 			
+			// Send to the client the ladder packet with his position
+			LadderDataPacket ladderPacket = ServerUtils.getLadderDataPacket();
+			ladderPacket.playerPos = ServerUtils.getLadderPosition(getKangarooFromIP(clientIp));
+			this.send(cp, ladderPacket);
+			
 			// If server accepted the request, send client data
 			if (receivedPacket.accepted)
 			{				
@@ -115,6 +121,11 @@ public class KServer extends Server
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
 			
+			// Send to the client the ladder packet with his position
+			LadderDataPacket ladderPacket = ServerUtils.getLadderDataPacket();
+			ladderPacket.playerPos = ServerUtils.getLadderPosition(getKangarooFromIP(clientIp));
+			this.send(cp, ladderPacket);
+			
 			// If server accepted the request, send client data
 			if (receivedPacket.accepted)
 			{				
@@ -129,7 +140,7 @@ public class KServer extends Server
 		{
 			ServerInfoPacket receivedPacket = (ServerInfoPacket) o;
 			receivedPacket.nGamesOnline = games.size(); 
-			receivedPacket.nGamesPlayed = 0; // TODO
+			receivedPacket.nGamesPlayed = ServerUtils.getGamesFiles().size();
 			receivedPacket.nKangaroosOnline = kangaroos.size(); 
 			receivedPacket.nKangaroosRegistered = ServerUtils.getPlayersFiles().size();
 			
@@ -429,7 +440,7 @@ public class KServer extends Server
 		ServerInfoPacket infoPacket = new ServerInfoPacket();
 		
 		infoPacket.nGamesOnline = games.size(); 
-		infoPacket.nGamesPlayed = 0; // TODO
+		infoPacket.nGamesPlayed = ServerUtils.getGamesFiles().size();
 		infoPacket.nKangaroosOnline = kangaroos.size(); 
 		infoPacket.nKangaroosRegistered = ServerUtils.getPlayersFiles().size();
 		

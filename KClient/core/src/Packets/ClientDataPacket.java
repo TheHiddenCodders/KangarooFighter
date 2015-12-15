@@ -2,9 +2,13 @@ package Packets;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class ClientDataPacket implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1319262982236758754L;
+	
 	public String name;
 	public int games;
 	public int wins;

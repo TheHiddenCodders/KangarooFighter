@@ -17,7 +17,7 @@ public class Timer
 	{
 		// Get delta
 		long difTime = System.currentTimeMillis() - lastTime;
-
+	
 		// Add to elapsedTime
 		elapsedTime += difTime;
 		
@@ -30,7 +30,7 @@ public class Timer
 		elapsedTime = 0;
 		lastTime = System.currentTimeMillis();
 	}
-	
+
 	/**
 	 * @return elapsed time in seconds
 	 */

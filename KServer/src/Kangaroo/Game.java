@@ -4,7 +4,9 @@ import java.util.Random;
 
 import Packets.ClientDisconnectionPacket;
 import Packets.EndGamePacket;
+import Packets.LadderDataPacket;
 import Utils.ServerUtils;
+import Utils.Timer;
 import enums.EndGameType;
 import enums.States;
 
@@ -55,6 +57,8 @@ public class Game
 	private Kangaroo k1 = null, k2 = null;
 	private int[] baseElo;
 	private int mapIndex;
+	private Timer timer;
+	private float time;
 	
 	private boolean waiting;
 	private boolean prepared;
@@ -223,24 +227,38 @@ public class Game
 			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDataPacket(getKangarooFromOpponentIp(hostAddress)));
 		}
 		else
-		{
+		{			
+			time = timer.getElapsedTime();
+			
 			EndGamePacket p = new EndGamePacket();
 			p.endGameType = egType.ordinal();
 			p.looserAddress = hostAddress;
 			
-			k1.getClient().send(p);
-			k2.getClient().send(p);
-		
 			winner = getKangarooFromOpponentIp(hostAddress);
 			looser = getKangarooFromIp(hostAddress);
 			
+			ServerUtils.save(this);
+			
+			winner.getClient().send(p);
+			looser.getClient().send(p);
+		
 			winner.win(this);
 			looser.lose(this);
+			
+			ServerUtils.updateLadder();
 		
-			k1.getClient().send(k1.getClientDataPacket());
-			k1.getClient().send(k2.getClientDataPacket());
-			k2.getClient().send(k2.getClientDataPacket());
-			k2.getClient().send(k1.getClientDataPacket());
+			winner.getClient().send(winner.getClientDataPacket());
+			winner.getClient().send(looser.getClientDataPacket());
+			looser.getClient().send(looser.getClientDataPacket());
+			looser.getClient().send(winner.getClientDataPacket());
+			
+			LadderDataPacket winnerLadderPacket = ServerUtils.getLadderDataPacket();
+			winnerLadderPacket.playerPos = ServerUtils.getLadderPosition(winner);
+			LadderDataPacket looserLadderPacket = ServerUtils.getLadderDataPacket();
+			looserLadderPacket.playerPos = ServerUtils.getLadderPosition(looser);
+
+			winner.getClient().send(winnerLadderPacket);
+			looser.getClient().send(looserLadderPacket);
 		}
 		
 		ended = true;
@@ -292,6 +310,7 @@ public class Game
 	public void run()
 	{
 		running = true;
+		timer = new Timer();
 	}       
 	
 	
@@ -361,5 +380,15 @@ public class Game
 	public Kangaroo getLooser()
 	{
 		return looser;
+	}
+	
+	public int[] getBaseElo()
+	{
+		return baseElo;
+	}
+	
+	public float getDuration()
+	{
+		return time;
 	}
 }
