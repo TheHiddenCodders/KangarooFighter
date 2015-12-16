@@ -97,7 +97,7 @@ public class ClientProcessor implements Runnable
 			output.writeObject(o);
 			output.flush();
 			
-			System.out.println("Sent to " + this.getIp() + ":" + o.toString() + "\n");
+			System.out.println("Sent to " + this.getIp() + ": " + o.toString() + "\n");
 		} catch (IOException e)
 		{
 			e.printStackTrace();

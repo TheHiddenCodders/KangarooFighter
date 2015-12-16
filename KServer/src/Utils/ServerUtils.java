@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import Kangaroo.Game;
 import Kangaroo.Kangaroo;
 import Packets.ClientDataPacket;
 import Packets.LadderDataPacket;
+import Packets.NewsPacket;
 
 public class ServerUtils
 {
@@ -517,6 +519,77 @@ public class ServerUtils
 		}
 		
 		return -1;
+	}
+	
+	/****************************************************************
+	 * NEWS METHODS													*
+	 ****************************************************************/
+	
+	/**
+	 * @return all the news in files
+	 */
+	public static ArrayList<File> getNewsFiles()
+	{
+		ArrayList<File> newsFiles = new ArrayList<File>();
+		File directory = new File(new File("").getAbsolutePath().concat("/KangarooFighters/News"));
+
+		for (File file : directory.listFiles())
+			newsFiles.add(file);
+		
+		return newsFiles;
+	}
+	
+	/**
+	 * @param name
+	 * @return the news files of the single news named name
+	 */
+	public static ArrayList<File> getSingleNewsFiles(String name)
+	{
+		ArrayList<File> newsFiles = new ArrayList<File>();
+		File directory = new File(new File("").getAbsolutePath().concat("/KangarooFighters/News/" + name));
+
+		for (File file : directory.listFiles())
+			newsFiles.add(file);
+		
+		return newsFiles;
+	}
+	
+	/** 
+	 * @param name
+	 * @return the news packet of the news named name
+	 */
+	public static NewsPacket getNewsPacket(String name)
+	{
+		NewsPacket packet = new NewsPacket();
+		ArrayList<File> newsFiles = getSingleNewsFiles(name);
+		
+		try
+		{
+			packet.banner = Files.readAllBytes(newsFiles.get(0).toPath());
+			packet.news = Files.readAllBytes(newsFiles.get(1).toPath());
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return packet;		
+	}
+	
+	/**
+	 * @param name
+	 * @return the news files
+	 */
+	public static ArrayList<File> getLastNewsFiles()
+	{
+		ArrayList<File> newsFiles = new ArrayList<File>();
+		ArrayList<File> directory = getNewsFiles();
+		
+		Collections.sort(directory, new FileDateComparator());
+		
+		newsFiles.add(directory.get(0));
+		newsFiles.add(directory.get(1));
+		
+		return newsFiles;
 	}
 	
 	/****************************************************************

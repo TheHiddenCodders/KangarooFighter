@@ -1,6 +1,7 @@
 package com.genesys.stages;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import Packets.ClientDataPacket;
 import Packets.GameFoundPacket;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.genesys.kclient.LadderBloc;
 import com.genesys.kclient.Main;
+import com.genesys.kclient.NewsBloc;
 import com.genesys.kclient.PersoBloc;
 
 public class HomeStage extends Stage
@@ -37,12 +39,13 @@ public class HomeStage extends Stage
 	
 	// Components
 	private TextButton matchMakingLaunch;
-	private Label bottomText;	
+	private Label bottomTextBegin, bottomTextVariable, bottomTextEnd;	
 	private Image background;
 	private Image bottomRibbon;
 	
 	private PersoBloc persoBloc;
 	private LadderBloc ladderBloc;
+	private NewsBloc lastNewsBloc, beforeLastNewsBloc;
 	
 	/*
 	 * Constructors
@@ -62,10 +65,20 @@ public class HomeStage extends Stage
 		matchMakingLaunch.setPosition(this.getWidth() / 2 - matchMakingLaunch.getWidth() / 2, this.getHeight() - matchMakingLaunch.getHeight() - 5);
 		this.addActor(matchMakingLaunch);
 		
-		bottomText = new Label("", main.skin);
-		bottomText.setPosition(this.getWidth(), 2);
-		bottomText.setStyle(new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
-		this.addActor(bottomText);		
+		bottomTextBegin = new Label("", main.skin);
+		bottomTextBegin.setPosition(this.getWidth() - 30, 2);
+		bottomTextBegin.setStyle(new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
+		this.addActor(bottomTextBegin);	
+		
+		bottomTextVariable = new Label("", main.skin);
+		bottomTextVariable.setPosition(bottomTextBegin.getX() + bottomTextBegin.getWidth(), 2);
+		bottomTextVariable.setStyle(new LabelStyle(main.skin.getFont("default-font"), Color.TAN));
+		this.addActor(bottomTextVariable);		
+		
+		bottomTextEnd = new Label("", main.skin);
+		bottomTextEnd.setPosition(bottomTextVariable.getX() + bottomTextVariable.getWidth(), 2);
+		bottomTextEnd.setStyle(new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
+		this.addActor(bottomTextEnd);
 		
 		persoBloc = new PersoBloc(clientData, main.skin);
 		persoBloc.setPosition(this.getWidth() / 2 - persoBloc.getWidth() / 2, this.getHeight() / 2 - persoBloc.getHeight() / 2 - 10);
@@ -74,6 +87,10 @@ public class HomeStage extends Stage
 		ladderBloc = new LadderBloc(clientData, ladderData, main.skin);
 		ladderBloc.setPosition(this.getWidth() / 4 + this.getWidth() / 2 - 70, this.getHeight() / 2 - 5);
 		this.addActor(ladderBloc);
+		
+		lastNewsBloc = new NewsBloc(main.skin);
+		lastNewsBloc.setPosition(this.getWidth() / 2 - this.getWidth() / 4 - 181, this.getHeight() - this.getHeight() / 3 - 26);
+		this.addActor(lastNewsBloc);
 		
 		bottomInfos = new ArrayList<String>();
 		
@@ -97,20 +114,30 @@ public class HomeStage extends Stage
 			main.setStage(new GameStage(main, pGameFound, pPlayer, pOpponent));
 		
 		// Make bottom text translate and update
-		if (bottomText.getX() + bottomText.getWidth() > -50)
+		if (bottomTextEnd.getX() + bottomTextEnd.getWidth() > 30)
 		{
-			bottomText.moveBy(-1, 0);
+			bottomTextBegin.moveBy(-2, 0);
+			bottomTextVariable.moveBy(-2, 0);
+			bottomTextEnd.moveBy(-2, 0);
 		}
 		else
-		{
-			bottomText.setX(this.getWidth());
-			
+		{			
 			if (bottomInfosIndex < bottomInfos.size() - 1)
 				bottomInfosIndex++;
 			else 
 				bottomInfosIndex = 0;
 			
-			bottomText.setText(bottomInfos.get(bottomInfosIndex));
+			bottomTextBegin.setText(bottomInfos.get(bottomInfosIndex).split("-")[0]);
+			bottomTextVariable.setText(bottomInfos.get(bottomInfosIndex).split("-")[1]);
+			bottomTextEnd.setText(bottomInfos.get(bottomInfosIndex).split("-")[2]);
+			
+			bottomTextBegin.pack();
+			bottomTextVariable.pack();
+			bottomTextEnd.pack();
+			
+			bottomTextBegin.setX(this.getWidth() - 30);
+			bottomTextVariable.setX(bottomTextBegin.getX() + bottomTextBegin.getWidth());
+			bottomTextEnd.setX(bottomTextVariable.getX() + bottomTextVariable.getWidth());
 		}
 		
 		// Input update
@@ -174,15 +201,41 @@ public class HomeStage extends Stage
 	 * @param p the server info packet
 	 */
 	private void updateUIServerInfos(ServerInfoPacket p)
-	{		
-		bottomInfos.clear();
-		bottomInfos.add("Vous avez en tout joues " + p.nGamesPlayed + " parties de KangarooFighters. Pas mal.");
-		bottomInfos.add("En cet instant " + p.nGamesOnline + " parties de KangarooFighters se jouent.");
-		bottomInfos.add("Vous etes en tout " + p.nKangaroosRegistered + " combattants Kangourous.");
-		bottomInfos.add("Vous etes actuellement " + p.nKangaroosOnline + " combattants Kangourous connectes.");
-		
-		bottomText.setText(bottomInfos.get(bottomInfosIndex));
-		bottomText.pack();
+	{	
+		if (bottomInfos.size() == 0)
+		{
+			bottomInfos.add("Au total -" + p.nGamesPlayed + "- combats de Kangourous ont eu lieus. Pas mal.");
+			bottomInfos.add("En ce moment meme -" + p.nGamesOnline + "- combats de Kangourous se jouent.");
+			bottomInfos.add("Au total, vous etes -" + p.nKangaroosRegistered + "- combattants Kangourous.");
+			bottomInfos.add("En ce moment meme, vous etes -" + p.nKangaroosOnline + "- combattants Kangourous en ligne.");
+			
+			Random r = new Random(System.currentTimeMillis());
+			bottomInfosIndex = r.nextInt(bottomInfos.size());
+			
+			bottomTextBegin.setText(bottomInfos.get(bottomInfosIndex).split("-")[0]);
+			bottomTextVariable.setText(bottomInfos.get(bottomInfosIndex).split("-")[1]);
+			bottomTextEnd.setText(bottomInfos.get(bottomInfosIndex).split("-")[2]);
+			
+			bottomTextBegin.pack();
+			bottomTextVariable.pack();
+			bottomTextEnd.pack();
+			
+			bottomTextBegin.setX(this.getWidth());
+			bottomTextVariable.setX(bottomTextBegin.getX() + bottomTextBegin.getWidth());
+			bottomTextEnd.setX(bottomTextVariable.getX() + bottomTextVariable.getWidth());
+		}
+		else
+		{
+			bottomInfos.clear();
+			bottomInfos.add("Au total -" + p.nGamesPlayed + "- combats de Kangourous ont eu lieus. Pas mal.");
+			bottomInfos.add("En ce moment meme -" + p.nGamesOnline + "- combats de Kangourous se jouent.");
+			bottomInfos.add("Au total, vous etes -" + p.nKangaroosRegistered + "- combattants Kangourous.");
+			bottomInfos.add("En ce moment meme, vous etes -" + p.nKangaroosOnline + "- combattants Kangourous en ligne.");
+			
+			bottomTextBegin.setText(bottomInfos.get(bottomInfosIndex).split("-")[0]);
+			bottomTextVariable.setText(bottomInfos.get(bottomInfosIndex).split("-")[1]);
+			bottomTextEnd.setText(bottomInfos.get(bottomInfosIndex).split("-")[2]);
+		}
 		
 		// To avoid build ui again and again
 		p = null;

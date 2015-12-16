@@ -2,6 +2,7 @@ package com.genesys.client;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 
 import Packets.ClientDataPacket;
 import Packets.ClientDisconnectionPacket;
@@ -12,9 +13,12 @@ import Packets.HeartBeatPacket;
 import Packets.KangarooServerPacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
+import Packets.NewsPacket;
 import Packets.ServerInfoPacket;
 import Packets.SignOutPacket;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.genesys.stages.ConnexionStage;
 import com.genesys.stages.GameStage;
@@ -323,6 +327,27 @@ public class Network extends Client
 				LadderDataPacket packet = (LadderDataPacket) o;
 				
 				stage.setLadderData(packet);				
+			}
+		}
+		else if (o.getClass().isAssignableFrom(NewsPacket.class))
+		{
+			NewsPacket packet = (NewsPacket) o;
+	
+			// Make a new folder for the new
+			String newsDirectoryPath = "KangarooFighters/News/" + packet.name;
+			String bannerPath = newsDirectoryPath + "/banner.png";
+			String newsFilePath = newsDirectoryPath + "/content.kfn";
+			FileHandle thisNewDirectory = Gdx.files.external(newsDirectoryPath);
+			thisNewDirectory.mkdirs();
+			
+			// Transform bytes into files
+			try
+			{
+				Files.write(Gdx.files.external(bannerPath).file().toPath(), packet.banner);
+				Files.write(Gdx.files.external(newsFilePath).file().toPath(), packet.news);
+			} catch (IOException e)
+			{
+				e.printStackTrace();
 			}
 		}
 		

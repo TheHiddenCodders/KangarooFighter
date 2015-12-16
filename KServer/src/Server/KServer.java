@@ -98,6 +98,9 @@ public class KServer extends Server
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
 			
+			// Send to the client the last news
+						
+			
 			// Send to the client the ladder packet with his position
 			LadderDataPacket ladderPacket = ServerUtils.getLadderDataPacket();
 			ladderPacket.playerPos = ServerUtils.getLadderPosition(getKangarooFromIP(clientIp));
