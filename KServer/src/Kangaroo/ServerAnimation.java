@@ -137,6 +137,8 @@ public class ServerAnimation
 				hitboxes.add(temp);
 			}
 			
+			setSize((int) width, (int)height);
+			
 			// If no boxes, add empty hitboxes
 			for (int i = nHitboxes; i < nFrames; i++)
 				hitboxes.add(new Hitbox());
@@ -194,6 +196,15 @@ public class ServerAnimation
 			hitboxes.get(i).translateX((int) (x - hitboxes.get(i).x));
 			hitboxes.get(i).translateY((int) (y - hitboxes.get(i).y));
 		}
+	}
+	
+	public void setSize(int w, int h)
+	{
+		this.width = w;
+		this.height = h;
+		
+		for (int i = 0; i < hitboxes.size(); i++)
+			hitboxes.get(i).setSize(w, h);
 	}
 	
 	public void translate(int x, int y)
