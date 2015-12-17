@@ -13,8 +13,14 @@ public class Kangaroo extends AnimatedSprite
 	 * Controls
 	 */
 	
-	private static final int leftPunchKey = Keys.A;
-	private static final int rightPunchKey = Keys.Z;
+	private static int AKey = Keys.A;
+	private static int ZKey = Keys.Z;
+	private static int EKey = Keys.E;
+	private static int RKey = Keys.R;
+	private static int leftKey = Keys.LEFT;
+	private static int rightKey = Keys.RIGHT;
+	private static int upKey = Keys.UP;
+	private static int downKey = Keys.DOWN;
 	
 	/*
 	 * Attributes
@@ -28,8 +34,14 @@ public class Kangaroo extends AnimatedSprite
 	
 	private boolean leftArrow = false;
 	private boolean rightArrow = false;
-	private boolean leftPunch = false;
-	private boolean rightPunch = false;
+	private boolean topArrow = false;
+	private boolean bottomArrow = false;
+	private boolean punchLeft = false;
+	private boolean punchRight = false;
+	private boolean punchTop = false;
+	private boolean guard = false;
+	
+	private boolean ctrlPlusD = false;
 	
 	// Compare kangaroo update packet to this network image to know if server need to be updated
 	public KangarooClientPacket networkImage;
@@ -83,25 +95,50 @@ public class Kangaroo extends AnimatedSprite
 	
 	public void update()
 	{
-		if (Gdx.input.isKeyPressed(Keys.LEFT))
+		if (Gdx.input.isKeyPressed(leftKey))
 			leftArrow = true;
 		else
 			leftArrow = false;
 		
-		if (Gdx.input.isKeyPressed(Keys.RIGHT))
+		if (Gdx.input.isKeyPressed(rightKey))
 			rightArrow = true;
 		else
 			rightArrow = false;
 		
-		if (Gdx.input.isKeyPressed(leftPunchKey))
-			leftPunch = true;
+		if (Gdx.input.isKeyPressed(upKey))
+			topArrow = true;
 		else
-			leftPunch = false;
+			topArrow = false;
 		
-		if (Gdx.input.isKeyPressed(rightPunchKey))
-			rightPunch = true;
+		if (Gdx.input.isKeyPressed(downKey))
+			bottomArrow = true;
 		else
-			rightPunch = false;
+			bottomArrow = false;
+		
+		if (Gdx.input.isKeyPressed(AKey))
+			punchLeft = true;
+		else
+			punchLeft = false;
+		
+		if (Gdx.input.isKeyPressed(ZKey))
+			punchRight = true;
+		else
+			punchRight= false;
+		
+		if (Gdx.input.isKeyPressed(EKey))
+			punchTop = true;
+		else
+			punchTop = false;
+		
+		if (Gdx.input.isKeyPressed(RKey))
+			guard = true;
+		else
+			guard = false;
+		
+		if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Keys.D))
+			ctrlPlusD = true;
+		else
+			ctrlPlusD = false;
 	}
 	
 	/**
@@ -125,7 +162,10 @@ public class Kangaroo extends AnimatedSprite
 	 */
 	public boolean needUpdate()
 	{
-		if (leftArrow != networkImage.leftArrowKey || rightArrow != networkImage.rightArrowKey || leftPunch != networkImage.leftPunchKey || rightPunch != networkImage.rightPunchKey)
+		if (leftArrow != networkImage.leftArrow || rightArrow != networkImage.rightArrow ||
+			topArrow != networkImage.topArrow || bottomArrow != networkImage.bottomArrow ||
+			punchLeft != networkImage.punchLeft || punchRight != networkImage.punchRight || punchTop != networkImage.punchTop ||
+			guard != networkImage.guard || ctrlPlusD != networkImage.ctrlPlusD)
 			return true;
 		
 		else
@@ -160,10 +200,14 @@ public class Kangaroo extends AnimatedSprite
 	public KangarooClientPacket getClientPacket()
 	{
 		KangarooClientPacket p = new KangarooClientPacket();
-		p.leftArrowKey = leftArrow;
-		p.rightArrowKey = rightArrow;
-		p.leftPunchKey = leftPunch;
-		p.rightPunchKey = rightPunch;
+		p.leftArrow = leftArrow;
+		p.rightArrow = rightArrow;
+		p.topArrow = topArrow;
+		p.bottomArrow = bottomArrow;
+		p.punchLeft = punchLeft;
+		p.punchRight = punchRight;
+		p.punchTop = punchTop;
+		p.guard = guard;
 		return p;
 	}
 
