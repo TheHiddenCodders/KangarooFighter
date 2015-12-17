@@ -515,7 +515,7 @@ public class ServerUtils
 			String line = data.ladder.get(i);
 			
 			if (line.split(" | ")[2].equals(name))
-				return i + 1;
+				return i;
 		}
 		
 		return -1;

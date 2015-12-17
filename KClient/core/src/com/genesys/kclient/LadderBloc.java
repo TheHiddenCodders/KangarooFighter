@@ -50,12 +50,14 @@ public class LadderBloc extends Table
 		}
 		else
 		{
-			if (ladderData.playerPos == 1 || ladderData.playerPos == 2)
+			System.out.println(ladderData.playerPos + " | " + ladderData.ladder.size());
+			
+			if (ladderData.playerPos == 0 || ladderData.playerPos == 1)
 				beginningPos = 0;
-			else if (ladderData.playerPos == ladderData.ladder.size())
-				beginningPos = ladderData.playerPos - 5;
-			else if (ladderData.playerPos == ladderData.ladder.size() - 1)
-				beginningPos = ladderData.playerPos - 4;
+			else if (ladderData.playerPos == ladderData.ladder.size() || ladderData.playerPos == ladderData.ladder.size() - 1)
+				beginningPos = ladderData.ladder.size() - 5;
+			/*else if (ladderData.playerPos == ladderData.ladder.size() - 1)
+				beginningPos = ladderData.playerPos - 4;*/
 			else
 				beginningPos = ladderData.playerPos - 2;
 			
