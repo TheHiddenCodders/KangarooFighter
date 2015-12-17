@@ -129,14 +129,14 @@ public class Kangaroo
 			{
 				setState(States.movement);
 				launchAnimation(States.movement);
-				move(Direction.LEFT); 
+				move(Direction.LEFT, game); 
 			}
 			// If the movement key is press, change state to movement, launch the associate animation and start to move
 			else if (lastPacket.rightArrow)
 			{
 				setState(States.movement);
 				launchAnimation(States.movement);
-				move(Direction.RIGHT); 
+				move(Direction.RIGHT, game); 
 			}
 			// If the kangaroo is touched
 			else if (touched)
@@ -257,11 +257,11 @@ public class Kangaroo
 			}
 			else if (lastPacket.leftArrow)
 			{
-				move(Direction.LEFT); 
+				move(Direction.LEFT, game); 
 			}
 			else if (lastPacket.rightArrow)
 			{
-				move(Direction.RIGHT);; 
+				move(Direction.RIGHT, game); 
 			}
 		}	
 	}
@@ -329,8 +329,10 @@ public class Kangaroo
 	 * Set player position according to direction
 	 * @param direction
 	 */
-	private void move(Direction direction)
+	private void move(Direction direction, Game game)
 	{
+		Kangaroo opponent = game.getKangarooFromOpponentIp(this.getClient().getIp());
+		
 		if (speedTimer.getElapsedTime() > 0.01)
 		{
 			if (direction == Direction.LEFT)
@@ -338,7 +340,7 @@ public class Kangaroo
 				if (!flip)
 					flip();
 				
-				if (getPosition().x > 0 - getCurrentAnimation().getKeyFrame().w / 2)
+				if (getPosition().x > 0 - getCurrentAnimation().getKeyFrame().w / 2 && !this.collidWith(opponent))
 					setPosition( (int) getPosition().x - (speed * speedTimer.getElapsedTime()), (int) getPosition().y ); 
 			}
 			else if (direction == Direction.RIGHT)
@@ -346,7 +348,7 @@ public class Kangaroo
 				if (flip)
 					flip();
 				
-				if (getPosition().x < 800 - getCurrentAnimation().getKeyFrame().w / 2)
+				if (getPosition().x < 800 - getCurrentAnimation().getKeyFrame().w / 2  && !this.collidWith(opponent))
 					setPosition( (int) getPosition().x + (speed * speedTimer.getElapsedTime()), (int) getPosition().y );
 			}
 			
