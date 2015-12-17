@@ -8,7 +8,6 @@ import Packets.LadderDataPacket;
 import Utils.ServerUtils;
 import Utils.Timer;
 import enums.EndGameType;
-import enums.States;
 
 /**
  * The Game class manage a game on the server. 
@@ -161,15 +160,19 @@ public class Game
 		// k1 hits k2
 		if (k1.punch(k2))
 		{
-			k2.setState(States.hit);
-			k2.launchAnimation(States.hit);
+			//k2.setState(States.hit);
+			//k2.launchAnimation(States.hit);
+			
+			k2.setTouched(true);
 		}
 		
 		// k2 hits k1
 		if (k2.punch(k1))
 		{
-			k1.setState(States.hit);
-			k1.launchAnimation(States.hit);
+			//k1.setState(States.hit);
+			//k1.launchAnimation(States.hit);
+			
+			k1.setTouched(true);
 		}
 		
 		k1.stateMachine(this);
