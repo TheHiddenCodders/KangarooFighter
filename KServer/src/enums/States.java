@@ -9,6 +9,8 @@ public enum States {
 	guard,
 	forwardPunch,
 	topPunch,
+	upperPunch,
+	bottomPunch,
 	leftPunch,
 	rightPunch,
 	transitoryState

@@ -36,11 +36,15 @@ public class Kangaroo
 	
 	// For server only
 	private Timer speedTimer;
+	private Timer punchTimer;
 	private float speed = 200; // In pixel per s
 	private boolean ready = false;
 	
 	private KangarooServerPacket networkImage;
 	private KangarooClientPacket lastPacket;
+	
+	// State machine boolean
+	private boolean touched;
 	
 	/**
 	 * Create the kangaroo with the client.
@@ -95,124 +99,170 @@ public class Kangaroo
 		}
 		
 		// Make the state machine here
-		if (this.getState() == States.idle)
+		if (getState() == States.idle)
 		{
-			/*
-			 *  If the player press the left punch key
-			 *  Launch the left punch state
-			 */
-			if (lastPacket.leftPunchKey)
+			//Stop the movement animation
+			animations.get(States.movement.ordinal()).stop();
+			speedTimer.restart();
+			
+			// If the client press the punch key, change state to Punch
+			if (lastPacket.punch)
 			{
-				this.setState(States.leftPunch);
-				this.launchAnimation(States.leftPunch.ordinal());
+				setState(States.punch);
+				punchTimer.restart();
 			}
-			/*
-			 *  If the player press the right punch key
-			 *  Launch the right punch state
-			 */
-			else if (lastPacket.rightPunchKey)
+			// If the client press the punch top key, change state to punchTop and launch the associate animation
+			else if (lastPacket.punchTop)
 			{
-				this.setState(States.rightPunch);
-				this.launchAnimation(States.rightPunch);
+				setState(States.upperPunch);
+				launchAnimation(States.upperPunch);
 			}
-			/*
-			 *  If the player press the left arrow key
-			 *  Launch the movement state
-			 */
-			else if (lastPacket.leftArrowKey)
+			// If the guard key is press, change state to guard and launch the associate animation
+			else if (lastPacket.guard)
 			{
-				this.setState(States.movement);
+				setState(States.guard);
+				launchAnimation(States.guard);
+			}
+			// If the movement key is press, change state to movement, launch the associate animation and start to move
+			else if (lastPacket.leftArrow)
+			{
+				setState(States.movement);
+				launchAnimation(States.movement);
 				move(Direction.LEFT); 
 			}
-			/*
-			 *  If the player press the right arrow key
-			 *  Launch the movement state
-			 */
-			else if (lastPacket.rightArrowKey)
+			// If the movement key is press, change state to movement, launch the associate animation and start to move
+			else if (lastPacket.rightArrow)
 			{
-				this.setState(States.movement);
+				setState(States.movement);
+				launchAnimation(States.movement);
 				move(Direction.RIGHT); 
 			}
+			// If the kangaroo is touched
+			else if (touched)
+			{
+				setState(States.hit);
+				launchAnimation(States.hit);
+			}
 		}
-		
-		// If the kangaroo is currently move 
-		else if (this.getState() == States.movement)
+		else if (getState() == States.punch)
 		{
-			/*
-			 *  If the player press the left punch key
-			 *  Launch the left punch state
-			 */
-			if (lastPacket.leftPunchKey)
+			// If the delay is over, launch the forward punch
+			if (punchTimer.getElapsedTime() >= 0.1)
 			{
-				this.setState(States.leftPunch);
-				this.launchAnimation(States.leftPunch);
+				setState(States.forwardPunch);
+				launchAnimation(States.forwardPunch);
 			}
-			/*
-			 *  If the player press the right punch key
-			 *  Launch the right punch state
-			 */
-			else if (lastPacket.rightPunchKey)
+			// If the top arrow key is press, launch top punch
+			else if (lastPacket.topArrow)
 			{
-				this.setState(States.rightPunch);
-				this.launchAnimation(States.rightPunch);
+				setState(States.topPunch);
+				launchAnimation(States.topPunch);
 			}
-			/*
-			 *  If the player press the left arrow key
-			 *  Move him to the left
-			 */
-			else if (lastPacket.leftArrowKey)
+			// If the bottom arrow key is press, launch bottom punch
+			else if (lastPacket.bottomArrow)
+			{
+				setState(States.bottomPunch);
+				launchAnimation(States.bottomPunch);
+			}
+			// If the kangaroo is touched, the punch is canceled
+			else if (touched)
+			{
+				setState(States.transitoryState);
+				launchAnimation(States.transitoryState);
+			}
+		}
+		else if (getState() == States.topPunch)
+		{
+			// If the animation is over
+			if (this.getCurrentAnimation().isOver())
+			{
+				setState(States.idle);
+				launchAnimation(States.idle);
+			}
+			// If the kangaroo is touched, the punch is canceled
+			else if (touched)
+			{
+				setState(States.transitoryState);
+				launchAnimation(States.transitoryState);
+			}
+		}
+		else if (getState() == States.forwardPunch)
+		{
+			// If the animation is over
+			if (this.getCurrentAnimation().isOver())
+			{
+				setState(States.idle);
+				launchAnimation(States.idle);
+			}
+			// If the kangaroo is touched, the punch is canceled
+			else if (touched)
+			{
+				setState(States.transitoryState);
+				launchAnimation(States.transitoryState);
+			}
+		}
+		else if (getState() == States.bottomPunch)
+		{
+			// If the animation is over
+			if (this.getCurrentAnimation().isOver())
+			{
+				setState(States.idle);
+				launchAnimation(States.idle);
+			}
+			// If the kangaroo is touched, the punch is canceled
+			else if (touched)
+			{
+				setState(States.transitoryState);
+				launchAnimation(States.transitoryState);
+			}
+		}
+		else if (getState() == States.upperPunch)
+		{
+			// If the animation is over
+			if (this.getCurrentAnimation().isOver())
+			{
+				setState(States.idle);
+				launchAnimation(States.idle);
+			}
+			// If the kangaroo is touched, the punch is canceled
+			else if (touched)
+			{
+				setState(States.transitoryState);
+				launchAnimation(States.transitoryState);
+			}
+		}
+		else if (getState() == States.hit)
+		{
+			if (this.getCurrentAnimation().isOver())
+			{
+				setState(States.idle);
+				launchAnimation(States.idle);
+			}
+		}
+		else if (getState() == States.guard)
+		{
+			if (!lastPacket.guard)
+			{
+				setState(States.idle);
+				launchAnimation(States.idle);
+			}
+		}
+		else if (getState() == States.movement)
+		{
+			if (!lastPacket.leftArrow && !lastPacket.rightArrow)
+			{
+				setState(States.idle);
+				launchAnimation(States.idle);
+			}
+			else if (lastPacket.leftArrow)
 			{
 				move(Direction.LEFT); 
 			}
-			/*
-			 *  If the player press the right arrow key
-			 *  Move him to the right
-			 */
-			else if (lastPacket.rightArrowKey)
+			else if (lastPacket.rightArrow)
 			{
-				move(Direction.RIGHT); 
+				move(Direction.RIGHT);; 
 			}
-			/*
-			 *  If the player don't press the left arrow key
-			 *  Launch the idle state
-			 */
-			else if (!lastPacket.leftArrowKey && !lastPacket.rightArrowKey)
-			{
-				this.setState(States.idle);
-			}
-		}
-		
-		// If the kangaroo is currently left punching
-		else if (this.getState() == States.leftPunch)
-		{
-			if (this.getCurrentAnimation().isOver())
-			{
-				this.setState(States.idle);
-				this.launchAnimation(States.idle);
-			}
-		}
-		
-		// If the kangaroo is currently right punching
-		else if (this.getState() == States.rightPunch)
-		{
-			if (this.getCurrentAnimation().isOver())
-			{
-				this.setState(States.idle);
-				this.launchAnimation(States.idle);
-			}
-		}
-		
-		// If the kangaroo is currently hit
-		else if (this.getState() == States.hit)
-		{
-			if (this.getCurrentAnimation().isOver())
-			{
-				this.setState(States.idle);
-				this.launchAnimation(States.idle);
-			}
-		}
-		
-		
+		}	
 	}
 	
 	/**
@@ -564,6 +614,14 @@ public class Kangaroo
 	public void setPosition(float x, float y)
 	{
 		setPosition(new Vector2(x, y));
+	}
+
+	public boolean isTouched() {
+		return touched;
+	}
+
+	public void setTouched(boolean touched) {
+		this.touched = touched;
 	}
 	
 }
