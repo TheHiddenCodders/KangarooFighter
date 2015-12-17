@@ -47,7 +47,7 @@ public class HomeStage extends Stage
 	
 	private PersoBloc persoBloc;
 	private LadderBloc ladderBloc;
-	private NewsBloc lastNewsBloc, beforeLastNewsBloc;
+	private NewsBloc lastNewsBloc, lastBeforeNewsBloc;
 	
 	/*
 	 * Constructors
@@ -93,6 +93,10 @@ public class HomeStage extends Stage
 		lastNewsBloc = new NewsBloc(lastNewsData, main.skin);
 		lastNewsBloc.setPosition(this.getWidth() / 2 - this.getWidth() / 4 - 181, this.getHeight() - this.getHeight() / 3 - 26);
 		this.addActor(lastNewsBloc);
+		
+		lastBeforeNewsBloc = new NewsBloc(lastBeforeNewsData, main.skin);
+		lastBeforeNewsBloc.setPosition(this.getWidth() / 2 - this.getWidth() / 4 - 181, this.getHeight() / 3 - lastBeforeNewsBloc.getHeight() + 4);
+		this.addActor(lastBeforeNewsBloc);
 		
 		bottomInfos = new ArrayList<String>();
 		
