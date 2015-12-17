@@ -225,16 +225,26 @@ public class Kangaroo
 		animations = new ArrayList<ServerAnimation>();
 		
 		animations.add(new ServerAnimation("assets/anims/idle.hba"));
-		animations.add(new ServerAnimation("assets/anims/idle.hba"));
+		animations.add(new ServerAnimation("assets/anims/idle.hba")); // Movement
 		animations.add(new ServerAnimation("assets/anims/hit.hba"));
+		animations.add(new ServerAnimation("assets/anims/idle.hba")); // Punch transitory
+		animations.add(new ServerAnimation("assets/anims/idle.hba")); // Guard transitory
+		animations.add(new ServerAnimation("assets/anims/leftpunch.hba")); // Forward punch
+		animations.add(new ServerAnimation("assets/anims/leftpunch.hba")); // Top punch
 		animations.add(new ServerAnimation("assets/anims/leftpunch.hba"));
 		animations.add(new ServerAnimation("assets/anims/rightpunch.hba"));
+		animations.add(new ServerAnimation("assets/anims/idle.hba")); // Transitory state
 		
-		animations.get(0).setMode(ServerAnimation.foreverPlay);
-		animations.get(1).setMode(ServerAnimation.foreverPlay);
-		animations.get(2).setMode(ServerAnimation.onePlay);
-		animations.get(3).setMode(ServerAnimation.onePlay);
-		animations.get(4).setMode(ServerAnimation.onePlay);
+		animations.get(States.idle.ordinal()).setMode(ServerAnimation.foreverPlay);
+		animations.get(States.movement.ordinal()).setMode(ServerAnimation.foreverPlay);
+		animations.get(States.hit.ordinal()).setMode(ServerAnimation.onePlay);
+		animations.get(States.punch.ordinal()).setMode(ServerAnimation.onePlay);
+		animations.get(States.guard.ordinal()).setMode(ServerAnimation.foreverPlay);
+		animations.get(States.forwardPunch.ordinal()).setMode(ServerAnimation.onePlay);
+		animations.get(States.topPunch.ordinal()).setMode(ServerAnimation.onePlay);
+		animations.get(States.leftPunch.ordinal()).setMode(ServerAnimation.onePlay);
+		animations.get(States.rightPunch.ordinal()).setMode(ServerAnimation.onePlay);
+		animations.get(States.transitoryState.ordinal()).setMode(ServerAnimation.onePlay);
 	}
 	
 	/**
