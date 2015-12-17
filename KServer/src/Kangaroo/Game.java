@@ -216,15 +216,29 @@ public class Game
 	{
 		if (egType == EndGameType.Disconnection)
 		{
+			System.out.println("Game.end()");
 			// TODO : Change ClientDisconnectionPacket to EndGamePacket.
+			
+			// Send his data
+			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDataPacket(getKangarooFromOpponentIp(hostAddress)));
+			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDataPacket(getKangarooFromIp(hostAddress)));
+		
+			// Send ladder data
+			LadderDataPacket ladderDataPacket = ServerUtils.getLadderDataPacket();
+			ladderDataPacket.playerPos = ServerUtils.getLadderPosition(getKangarooFromOpponentIp(hostAddress));
+			getKangarooFromOpponentIp(hostAddress).getClient().send(ladderDataPacket);
+			
+			// Send news
+			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
+			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));	
 			
 			// Make a client disconnection packet
 			ClientDisconnectionPacket p = new ClientDisconnectionPacket();
 			p.disconnectedClientIp = hostAddress;
 			
 			// Then get the opponent of the disconnected kangaroo and send him the packet
-			getKangarooFromOpponentIp(hostAddress).getClient().send(p);
-			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDataPacket(getKangarooFromOpponentIp(hostAddress)));
+			getKangarooFromOpponentIp(hostAddress).getClient().send(p);	
+		
 		}
 		else
 		{			

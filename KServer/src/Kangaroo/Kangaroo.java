@@ -288,13 +288,16 @@ public class Kangaroo
 				if (!flip)
 					flip();
 				
-				setPosition( (int) getPosition().x - (speed * speedTimer.getElapsedTime()), (int) getPosition().y ); 
+				if (getPosition().x > 0 - getCurrentAnimation().getKeyFrame().w / 2)
+					setPosition( (int) getPosition().x - (speed * speedTimer.getElapsedTime()), (int) getPosition().y ); 
 			}
 			else if (direction == Direction.RIGHT)
 			{
 				if (flip)
 					flip();
-				setPosition( (int) getPosition().x + (speed * speedTimer.getElapsedTime()), (int) getPosition().y );
+				
+				if (getPosition().x < 800 - getCurrentAnimation().getKeyFrame().w / 2)
+					setPosition( (int) getPosition().x + (speed * speedTimer.getElapsedTime()), (int) getPosition().y );
 			}
 			
 			speedTimer.restart();

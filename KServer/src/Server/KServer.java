@@ -35,7 +35,7 @@ public class KServer extends Server
 	/** We'll link our kangaroos to a game with this */
 	private HashMap<ClientProcessor, Game> gameLinker;
 	/** A list of all the games currently opened */
-	private ArrayList<Game> games;
+	private volatile ArrayList<Game> games;
 	/** In case two packet are needed for an action */
 	private Object o2;
 	
