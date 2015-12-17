@@ -252,6 +252,12 @@ public class Game
 			looser.getClient().send(looser.getClientDataPacket());
 			looser.getClient().send(winner.getClientDataPacket());
 			
+			// Send to the client the last news
+			winner.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
+			winner.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));				
+			looser.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
+			looser.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));				
+			
 			LadderDataPacket winnerLadderPacket = ServerUtils.getLadderDataPacket();
 			winnerLadderPacket.playerPos = ServerUtils.getLadderPosition(winner);
 			LadderDataPacket looserLadderPacket = ServerUtils.getLadderDataPacket();

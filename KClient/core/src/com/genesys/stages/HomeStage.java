@@ -8,6 +8,7 @@ import Packets.GameFoundPacket;
 import Packets.KangarooServerPacket;
 import Packets.LadderDataPacket;
 import Packets.MatchMakingPacket;
+import Packets.NewsPacket;
 import Packets.ServerInfoPacket;
 
 import com.badlogic.gdx.Gdx;
@@ -32,6 +33,7 @@ public class HomeStage extends Stage
 	public Main main;
 	private ServerInfoPacket updateServerInfoPacket;
 	private KangarooServerPacket pPlayer, pOpponent;
+	private NewsPacket lastNews, lastBefore;
 	private GameFoundPacket pGameFound;
 	private boolean seekingGame = false, gameFound = false;
 	private ArrayList<String> bottomInfos;
@@ -51,7 +53,7 @@ public class HomeStage extends Stage
 	 * Constructors
 	 */
 	
-	public HomeStage(Main main, ClientDataPacket clientData, LadderDataPacket ladderData)
+	public HomeStage(Main main, ClientDataPacket clientData, LadderDataPacket ladderData, NewsPacket lastNewsData, NewsPacket lastBeforeNewsData)
 	{
 		super();
 		this.main = main;	
@@ -88,7 +90,7 @@ public class HomeStage extends Stage
 		ladderBloc.setPosition(this.getWidth() / 4 + this.getWidth() / 2 - 70, this.getHeight() / 2 - 5);
 		this.addActor(ladderBloc);
 		
-		lastNewsBloc = new NewsBloc(main.skin);
+		lastNewsBloc = new NewsBloc(lastNewsData, main.skin);
 		lastNewsBloc.setPosition(this.getWidth() / 2 - this.getWidth() / 4 - 181, this.getHeight() - this.getHeight() / 3 - 26);
 		this.addActor(lastNewsBloc);
 		

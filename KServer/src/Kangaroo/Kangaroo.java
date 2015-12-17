@@ -337,8 +337,12 @@ public class Kangaroo
 	
 	public void end(Game game)
 	{
+		if (this.equals(game.getWinner()))
+			this.updateWins(1);
+		else
+			this.updateLooses(1);
+		
 		this.updateGames(1);
-		this.updateWins(1);
 		this.updateElo(game.getEloChange(this));
 	}
 	

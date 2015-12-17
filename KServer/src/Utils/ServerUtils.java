@@ -561,8 +561,10 @@ public class ServerUtils
 	public static NewsPacket getNewsPacket(String name)
 	{
 		NewsPacket packet = new NewsPacket();
-		ArrayList<File> newsFiles = getSingleNewsFiles(name);
+		packet.name = name;
 		
+		ArrayList<File> newsFiles = getSingleNewsFiles(name);
+	
 		try
 		{
 			packet.banner = Files.readAllBytes(newsFiles.get(0).toPath());
@@ -579,17 +581,26 @@ public class ServerUtils
 	 * @param name
 	 * @return the news files
 	 */
-	public static ArrayList<File> getLastNewsFiles()
+	public static File getLastNewsFiles()
 	{
-		ArrayList<File> newsFiles = new ArrayList<File>();
 		ArrayList<File> directory = getNewsFiles();
 		
 		Collections.sort(directory, new FileDateComparator());
 		
-		newsFiles.add(directory.get(0));
-		newsFiles.add(directory.get(1));
+		return directory.get(0);
+	}
+	
+	/**
+	 * @param name
+	 * @return the news files
+	 */
+	public static File getLastBeforeNewsFiles()
+	{
+		ArrayList<File> directory = getNewsFiles();
 		
-		return newsFiles;
+		Collections.sort(directory, new FileDateComparator());
+		
+		return directory.get(1);
 	}
 	
 	/****************************************************************

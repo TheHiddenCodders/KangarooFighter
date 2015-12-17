@@ -6,6 +6,7 @@ import Packets.EndGamePacket;
 import Packets.GameFoundPacket;
 import Packets.KangarooServerPacket;
 import Packets.LadderDataPacket;
+import Packets.NewsPacket;
 import Utils.Timer;
 
 import com.badlogic.gdx.Gdx;
@@ -42,6 +43,7 @@ public class GameStage extends Stage
 	private ClientDataPacket playerData, opponentData;
 	private EndGamePacket endGamePacket;
 	private LadderDataPacket ladderData;
+	private NewsPacket lastNews, lastBeforeNews;
 	
 	private Kangaroo player, opponent;
 	private Image background;
@@ -104,16 +106,16 @@ public class GameStage extends Stage
 		{
 			// Actually, don't care, just leave the game stage since the game will not exist longer
 			gamePaused = false;
-			main.setStage(new HomeStage(main, playerData, ladderData));
+			main.setStage(new HomeStage(main, playerData, ladderData, lastNews, lastBeforeNews));
 		}
 		
 		// When the game is ended
-		if (gameEnded && playerData != null && opponentData != null)
+		if (gameEnded && playerData != null && opponentData != null && ladderData != null && lastNews != null && lastBeforeNews != null)
 		{
 			// Actually, don't care, just leave the game stage since the game will not exist longer
 			gameEnded = false;
 			
-			main.setStage(new EndGameStage(main, playerData, opponentData, getKangarooFromOpponentIp(endGamePacket.looserAddress), ladderData));
+			main.setStage(new EndGameStage(main, playerData, opponentData, getKangarooFromOpponentIp(endGamePacket.looserAddress), ladderData, lastNews, lastBeforeNews));
 				
 		}
 		
@@ -256,5 +258,11 @@ public class GameStage extends Stage
 	public void setLadderData(LadderDataPacket packet)
 	{
 		ladderData = packet;
+	}
+	
+	public void setNewsData(NewsPacket lastNewsData, NewsPacket lastBeforeNewsData)
+	{
+		lastNews = lastNewsData;
+		lastBeforeNews = lastBeforeNewsData;
 	}
 }

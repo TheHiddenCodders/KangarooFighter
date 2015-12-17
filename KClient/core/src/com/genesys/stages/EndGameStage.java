@@ -2,6 +2,7 @@ package com.genesys.stages;
 
 import Packets.ClientDataPacket;
 import Packets.LadderDataPacket;
+import Packets.NewsPacket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -27,16 +28,19 @@ public class EndGameStage extends Stage
 	private TextButton replay, back;
 	private ClientDataPacket playerData;
 	private LadderDataPacket ladderData;
+	private NewsPacket lastNews, lastBeforeNews;
 	
 	/*
 	 * Constructors
 	 */
-	public EndGameStage(Main main, ClientDataPacket playerData, ClientDataPacket opponentData, Kangaroo winner, LadderDataPacket ladderData)
+	public EndGameStage(Main main, ClientDataPacket playerData, ClientDataPacket opponentData, Kangaroo winner, LadderDataPacket ladderData, NewsPacket lastNews, NewsPacket lastBeforeNews)
 	{
 		super();
 		this.main = main;
 		this.playerData = playerData;
 		this.ladderData = ladderData;
+		this.lastNews = lastNews;
+		this.lastBeforeNews = lastBeforeNews;
 		
 		player = new PersoBloc(playerData, main.skin);
 		player.setPosition(this.getWidth() / 4 - player.getWidth() / 2, this.getHeight() / 2 - player.getHeight() / 2 + 20);
@@ -82,7 +86,7 @@ public class EndGameStage extends Stage
 		if (Gdx.input.justTouched())
 		{
 			if (back.isPressed())
-				main.setStage(new HomeStage(main, playerData, ladderData));
+				main.setStage(new HomeStage(main, playerData, ladderData, lastNews, lastBeforeNews));
 		}
 		super.act(delta);
 	}

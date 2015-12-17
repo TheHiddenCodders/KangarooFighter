@@ -2,7 +2,6 @@ package com.genesys.client;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.nio.file.Files;
 
 import Packets.ClientDataPacket;
 import Packets.ClientDisconnectionPacket;
@@ -17,8 +16,6 @@ import Packets.NewsPacket;
 import Packets.ServerInfoPacket;
 import Packets.SignOutPacket;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.genesys.stages.ConnexionStage;
 import com.genesys.stages.GameStage;
@@ -329,25 +326,62 @@ public class Network extends Client
 				stage.setLadderData(packet);				
 			}
 		}
+		
+		/**
+		 * Received a news packet
+		 */
 		else if (o.getClass().isAssignableFrom(NewsPacket.class))
-		{
-			NewsPacket packet = (NewsPacket) o;
-	
-			// Make a new folder for the new
-			String newsDirectoryPath = "KangarooFighters/News/" + packet.name;
-			String bannerPath = newsDirectoryPath + "/banner.png";
-			String newsFilePath = newsDirectoryPath + "/content.kfn";
-			FileHandle thisNewDirectory = Gdx.files.external(newsDirectoryPath);
-			thisNewDirectory.mkdirs();
-			
-			// Transform bytes into files
-			try
+		{			
+			if (currentStage.getClass().isAssignableFrom(ConnexionStage.class))
 			{
-				Files.write(Gdx.files.external(bannerPath).file().toPath(), packet.banner);
-				Files.write(Gdx.files.external(newsFilePath).file().toPath(), packet.news);
-			} catch (IOException e)
+				ConnexionStage stage = (ConnexionStage) currentStage;
+				NewsPacket packet = (NewsPacket) o;
+				
+				if (o2 != null)
+				{
+					NewsPacket packet2 = (NewsPacket) o2;
+					
+					stage.setNewsData(packet2, packet);
+					o2 = null;
+				}
+				else
+				{
+					o2 = packet;
+				}
+			}
+			else if (currentStage.getClass().isAssignableFrom(InscriptionStage.class))
 			{
-				e.printStackTrace();
+				InscriptionStage stage = (InscriptionStage) currentStage;
+				NewsPacket packet = (NewsPacket) o;
+				
+				if (o2 != null)
+				{
+					NewsPacket packet2 = (NewsPacket) o2;
+					
+					stage.setNewsData(packet2, packet);
+					o2 = null;
+				}
+				else
+				{
+					o2 = packet;
+				}
+			}
+			else if (currentStage.getClass().isAssignableFrom(GameStage.class))
+			{
+				GameStage stage = (GameStage) currentStage;
+				NewsPacket packet = (NewsPacket) o;
+				
+				if (o2 != null)
+				{
+					NewsPacket packet2 = (NewsPacket) o2;
+					
+					stage.setNewsData(packet2, packet);
+					o2 = null;
+				}
+				else
+				{
+					o2 = packet;
+				}
 			}
 		}
 		

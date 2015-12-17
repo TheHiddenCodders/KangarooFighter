@@ -99,7 +99,8 @@ public class KServer extends Server
 			this.send(cp, receivedPacket);
 			
 			// Send to the client the last news
-						
+			this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
+			this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));			
 			
 			// Send to the client the ladder packet with his position
 			LadderDataPacket ladderPacket = ServerUtils.getLadderDataPacket();
@@ -124,6 +125,10 @@ public class KServer extends Server
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
 			
+			// Send to the client the last news
+			this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
+			this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));	
+						
 			// Send to the client the ladder packet with his position
 			LadderDataPacket ladderPacket = ServerUtils.getLadderDataPacket();
 			ladderPacket.playerPos = ServerUtils.getLadderPosition(getKangarooFromIP(clientIp));

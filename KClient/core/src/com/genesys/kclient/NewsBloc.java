@@ -1,6 +1,9 @@
 package com.genesys.kclient;
 
+import Packets.NewsPacket;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -22,7 +25,7 @@ public class NewsBloc extends Table
 	 * Constructors
 	 */
 	
-	public NewsBloc(Skin skin)
+	public NewsBloc(NewsPacket newsData, Skin skin)
 	{
 		super();
 		
@@ -30,11 +33,17 @@ public class NewsBloc extends Table
 		background = new Image(new Texture(Gdx.files.internal("sprites/bloc news.png")));
 		this.addActor(background);
 		
+		Pixmap bannerPixmap = new Pixmap(newsData.banner, 0, newsData.banner.length);
+		banner = new Image(new Texture(bannerPixmap));
+		bannerPixmap.dispose();
+		banner.setPosition(2, 2);
+		this.addActor(banner);
+		
 		edging = new Image(new Texture(Gdx.files.internal("sprites/edging.png")));
 		edging.setPosition(2, 2);
 		this.addActor(edging);
 		
-		name = new Label("News name", skin);
+		name = new Label(newsData.name, skin);
 		name.setPosition(5, 5);
 		this.addActor(name);
 	}	

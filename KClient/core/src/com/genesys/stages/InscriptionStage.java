@@ -3,6 +3,7 @@ package com.genesys.stages;
 import Packets.ClientDataPacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
+import Packets.NewsPacket;
 import Packets.SignOutPacket;
 import Utils.ConversionUtils;
 
@@ -27,6 +28,7 @@ public class InscriptionStage extends Stage
 	public Main main;
 	private ClientDataPacket clientData;
 	private LadderDataPacket ladderData;
+	private NewsPacket lastNews, lastBeforeNews;
 	
 	// Components
 	private Label infoName, infoPwd, infoPwdConfirm, other;
@@ -106,7 +108,7 @@ public class InscriptionStage extends Stage
 	public void act(float delta)
 	{			
 		// If login then go to home stage
-		if (signedOut && clientData != null && ladderData != null)
+		if (signedOut && clientData != null && ladderData != null && lastNews != null && lastBeforeNews != null)
 		{
 			// If isn't already registered, make prefs
 			if (!alreadyRegisteredOnPhone())
@@ -117,7 +119,7 @@ public class InscriptionStage extends Stage
 			}
 			
 			login(main.prefs.getString("[pseudo]"), main.prefs.getString("[pwd]"));
-			main.setStage(new HomeStage(main, clientData, ladderData));
+			main.setStage(new HomeStage(main, clientData, ladderData, lastNews, lastBeforeNews));
 		}
 				
 		super.act(delta);
@@ -207,5 +209,11 @@ public class InscriptionStage extends Stage
 	public void setLadderData(LadderDataPacket packet)
 	{
 		ladderData = packet;
+	}
+	
+	public void setNewsData(NewsPacket lastNewsData, NewsPacket lastBeforeNewsData)
+	{
+		lastNews = lastNewsData;
+		lastBeforeNews = lastBeforeNewsData;
 	}
 }

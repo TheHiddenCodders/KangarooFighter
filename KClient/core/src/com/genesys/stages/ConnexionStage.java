@@ -3,6 +3,7 @@ package com.genesys.stages;
 import Packets.ClientDataPacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
+import Packets.NewsPacket;
 import Utils.ConversionUtils;
 
 import com.badlogic.gdx.Gdx;
@@ -26,6 +27,7 @@ public class ConnexionStage extends Stage
 	public Main main;
 	private ClientDataPacket clientData;
 	private LadderDataPacket ladderData;
+	private NewsPacket lastNews, lastBeforeNews;
 	
 	// Components
 	private Label infoName, infoPwd, other;
@@ -124,7 +126,7 @@ public class ConnexionStage extends Stage
 	public void act(float delta)
 	{				
 		// If login then go to home stage
-		if (loggedIn && clientData != null && ladderData != null)
+		if (loggedIn && clientData != null && ladderData != null && lastNews != null && lastBeforeNews != null)
 		{
 			// If isn't already registered, make prefs
 			if (!alreadyRegisteredOnPhone())
@@ -134,7 +136,7 @@ public class ConnexionStage extends Stage
 				main.prefs.flush();
 			}
 			
-			main.setStage(new HomeStage(main, clientData, ladderData));
+			main.setStage(new HomeStage(main, clientData, ladderData, lastNews, lastBeforeNews));
 		}
 		else if (serverAnswered)
 		{
@@ -217,5 +219,11 @@ public class ConnexionStage extends Stage
 	public void setLadderData(LadderDataPacket packet)
 	{
 		ladderData = packet;
+	}
+	
+	public void setNewsData(NewsPacket lastNewsData, NewsPacket lastBeforeNewsData)
+	{
+		lastNews = lastNewsData;
+		lastBeforeNews = lastBeforeNewsData;
 	}
 }
