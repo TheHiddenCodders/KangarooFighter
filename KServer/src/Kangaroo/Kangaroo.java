@@ -57,6 +57,7 @@ public class Kangaroo
 		lastPacket = new KangarooClientPacket();
 		this.cp = cp;
 		speedTimer = new Timer();
+		punchTimer = new Timer();
 		initAnim();
 	}
 	
@@ -106,7 +107,7 @@ public class Kangaroo
 			speedTimer.restart();
 			
 			// If the client press the punch key, change state to Punch
-			if (lastPacket.punch)
+			if (lastPacket.punchLeft || lastPacket.punchRight)
 			{
 				setState(States.punch);
 				punchTimer.restart();
@@ -277,24 +278,23 @@ public class Kangaroo
 		animations.add(new ServerAnimation("assets/anims/idle.hba"));
 		animations.add(new ServerAnimation("assets/anims/idle.hba")); // Movement
 		animations.add(new ServerAnimation("assets/anims/hit.hba"));
-		animations.add(new ServerAnimation("assets/anims/idle.hba")); // Punch transitory
-		animations.add(new ServerAnimation("assets/anims/idle.hba")); // Guard transitory
+		animations.add(new ServerAnimation("assets/anims/idle.hba")); // Guard 
 		animations.add(new ServerAnimation("assets/anims/leftpunch.hba")); // Forward punch
+		animations.add(new ServerAnimation("assets/anims/leftpunch.hba")); // Upper punch
 		animations.add(new ServerAnimation("assets/anims/leftpunch.hba")); // Top punch
 		animations.add(new ServerAnimation("assets/anims/leftpunch.hba"));
 		animations.add(new ServerAnimation("assets/anims/rightpunch.hba"));
-		animations.add(new ServerAnimation("assets/anims/idle.hba")); // Transitory state
 		
+		System.out.println(States.rightPunch.ordinal());
 		animations.get(States.idle.ordinal()).setMode(ServerAnimation.foreverPlay);
 		animations.get(States.movement.ordinal()).setMode(ServerAnimation.foreverPlay);
 		animations.get(States.hit.ordinal()).setMode(ServerAnimation.onePlay);
-		animations.get(States.punch.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.guard.ordinal()).setMode(ServerAnimation.foreverPlay);
 		animations.get(States.forwardPunch.ordinal()).setMode(ServerAnimation.onePlay);
+		animations.get(States.upperPunch.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.topPunch.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.leftPunch.ordinal()).setMode(ServerAnimation.onePlay);
-		animations.get(States.rightPunch.ordinal()).setMode(ServerAnimation.onePlay);
-		animations.get(States.transitoryState.ordinal()).setMode(ServerAnimation.onePlay);
+		//animations.get(States.rightPunch.ordinal()).setMode(ServerAnimation.onePlay);
 	}
 	
 	/**
@@ -371,7 +371,7 @@ public class Kangaroo
 	
 	public boolean punch(Kangaroo k)
 	{
-		if (this.collidWith(k) && (this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.LEFTPUNCH || this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.RIGHTPUNCH) && k.getState() != States.hit && (this.getState() == States.leftPunch || this.getState() == States.rightPunch))
+		if (this.collidWith(k) && (this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.LEFTPUNCH || this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.RIGHTPUNCH) && k.getState() != States.hit && (this.getState() == States.forwardPunch || this.getState() == States.bottomPunch || this.getState() == States.topPunch))
 		{
 			BodyPart touchedPart = this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[1];
 			

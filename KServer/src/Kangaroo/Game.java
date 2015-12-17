@@ -8,7 +8,6 @@ import Packets.LadderDataPacket;
 import Utils.ServerUtils;
 import Utils.Timer;
 import enums.EndGameType;
-import enums.States;
 
 /**
  * The Game class manage a game on the server. 

@@ -183,7 +183,9 @@ public class KServer extends Server
 			
 			// Get the game where this kangaroo is
 			Kangaroo sender = getKangarooFromIP(clientIp);
+			System.err.println("Before update " + sender.getState());
 			sender.updateFromPacket(receivedPacket);
+			System.err.println("After update " + sender.getState());
 		}
 		
 		/**

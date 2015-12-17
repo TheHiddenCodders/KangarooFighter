@@ -6,6 +6,7 @@ import Packets.KangarooServerPacket;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.genesys.enums.States;
 
 public class Kangaroo extends AnimatedSprite
 {
@@ -180,13 +181,12 @@ public class Kangaroo extends AnimatedSprite
 		addAnimation(new Animation("IDLE", "anims/idle.hba"));
 		addAnimation(new Animation("MOVEMENT", "anims/idle.hba"));
 		addAnimation(new Animation("HIT", "anims/hit.hba"));
-		addAnimation(new Animation("PUNCH", "anims/idle.hba"));
 		addAnimation(new Animation("GUARD", "anims/idle.hba"));
 		addAnimation(new Animation("PFORWARD", "anims/leftpunch.hba"));
+		addAnimation(new Animation("PUPPER", "anims/leftpunch.hba"));
 		addAnimation(new Animation("PTOP", "anims/leftpunch.hba"));
 		addAnimation(new Animation("LPUNCH", "anims/leftpunch.hba"));
 		addAnimation(new Animation("RPUNCH", "anims/rightpunch.hba"));
-		addAnimation(new Animation("TRANSITORY", "anims/idle.hba"));
 		anims.get(0).start();
 	}
 	
@@ -238,7 +238,7 @@ public class Kangaroo extends AnimatedSprite
 
 	public void setState(int state)
 	{
-		if (this.state != state)
+		if (this.state != state && state != States.punch.ordinal())
 		{
 			this.state = state;
 			setCurrentAnim(state);
