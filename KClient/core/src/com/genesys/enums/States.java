@@ -1,4 +1,4 @@
-package enums;
+package com.genesys.enums;
 
 public enum States {
 
