@@ -13,6 +13,7 @@ public enum States {
 	leftPunch,
 	rightPunch,
 	punch,
-	transitoryState
+	transitoryState,
+	jump
 	
 }

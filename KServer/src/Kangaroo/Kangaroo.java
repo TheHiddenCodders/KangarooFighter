@@ -29,6 +29,8 @@ public class Kangaroo
 	private int health;
 	private int damage = 5;
 	private Vector2 position = new Vector2(0, 0);
+	private Vector2 velocity = new Vector2(0, 0);
+	private float gravity = -98.1f;
 	private int currentAnimation = 0;
 	private ArrayList<ServerAnimation> animations;
 	private States state = States.idle;
@@ -105,6 +107,17 @@ public class Kangaroo
 			//Stop the movement animation
 			animations.get(States.movement.ordinal()).stop();
 			speedTimer.restart();
+			
+			/*
+			 * Jump test
+			 */
+			if (lastPacket.topArrow)
+			{
+				velocity.y = 200;
+				jump(Direction.LEFT);
+				setPosition(getPosition().x, getPosition().y + 10);
+				setState(States.jump);
+			}
 			
 			// If the client press the punch key, change state to Punch
 			if (lastPacket.punchLeft || lastPacket.punchRight)
@@ -264,6 +277,18 @@ public class Kangaroo
 				move(Direction.RIGHT);; 
 			}
 		}	
+		// Jump tets
+		else if (getState() == States.jump)
+		{
+			jump(Direction.LEFT);
+			
+			if (getPosition().y <= 0)
+			{
+				setPosition(getPosition().x, 0);
+				setState(States.idle);
+				launchAnimation(States.idle);
+			}
+		}
 	}
 	
 	/**
@@ -338,6 +363,7 @@ public class Kangaroo
 				if (!flip)
 					flip();
 				
+				// Don't go out screen
 				if (getPosition().x > 0 - getCurrentAnimation().getKeyFrame().w / 2)
 					setPosition( (int) getPosition().x - (speed * speedTimer.getElapsedTime()), (int) getPosition().y ); 
 			}
@@ -345,12 +371,45 @@ public class Kangaroo
 			{
 				if (flip)
 					flip();
-				
+			
+				// Don't go out screen
 				if (getPosition().x < 800 - getCurrentAnimation().getKeyFrame().w / 2)
 					setPosition( (int) getPosition().x + (speed * speedTimer.getElapsedTime()), (int) getPosition().y );
 			}
 			
 			speedTimer.restart();
+		}
+	}
+	
+	private void jump(Direction direction)
+	{
+		if (speedTimer.getElapsedTime() > 0.01)
+		{
+			if (direction == Direction.LEFT)
+			{
+				if (!flip)
+					flip();
+				
+				// Don't go out screen
+				if (getPosition().x > 0 - getCurrentAnimation().getKeyFrame().w / 2)
+				{
+					setPosition( (int) getPosition().x, (int) getPosition().y + (velocity.y * speedTimer.getElapsedTime()) ); 
+					velocity.y += gravity * speedTimer.getElapsedTime();
+				}
+					
+			}
+			else if (direction == Direction.RIGHT)
+			{
+				if (flip)
+					flip();
+				
+				// Don't go out screen
+				if (getPosition().x < 800 - getCurrentAnimation().getKeyFrame().w / 2)
+				{
+					setPosition( (int) getPosition().x, (int) getPosition().y + (velocity.y * speedTimer.getElapsedTime()) ); 
+					velocity.y += gravity * speedTimer.getElapsedTime();
+				}
+			}
 		}
 	}
 	

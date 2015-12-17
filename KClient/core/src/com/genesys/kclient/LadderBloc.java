@@ -56,8 +56,6 @@ public class LadderBloc extends Table
 				beginningPos = 0;
 			else if (ladderData.playerPos == ladderData.ladder.size() || ladderData.playerPos == ladderData.ladder.size() - 1)
 				beginningPos = ladderData.ladder.size() - 5;
-			/*else if (ladderData.playerPos == ladderData.ladder.size() - 1)
-				beginningPos = ladderData.playerPos - 4;*/
 			else
 				beginningPos = ladderData.playerPos - 2;
 			

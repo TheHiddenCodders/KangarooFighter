@@ -238,7 +238,7 @@ public class Kangaroo extends AnimatedSprite
 
 	public void setState(int state)
 	{
-		if (this.state != state && state != States.punch.ordinal())
+		if (this.state != state && state != States.punch.ordinal() && state != 12)
 		{
 			this.state = state;
 			setCurrentAnim(state);
