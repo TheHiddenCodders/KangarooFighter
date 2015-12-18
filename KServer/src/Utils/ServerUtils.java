@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,11 +18,14 @@ import java.util.Date;
 import Kangaroo.Game;
 import Kangaroo.Kangaroo;
 import Packets.ClientDataPacket;
+import Packets.FriendsDataPacket;
 import Packets.LadderDataPacket;
 import Packets.NewsPacket;
 
 public class ServerUtils
 {
+	public static ArrayList<Kangaroo> kangaroos;
+	
 	/****************************************************************
 	 * PLAYERS METHODS												*
 	 ****************************************************************/
@@ -66,6 +70,35 @@ public class ServerUtils
 		}
 		
 		return dataFile;
+	}
+	
+	/**
+	 * @param k the kangaroo 
+	 * @return the data file of the player
+	 */	
+	public static File getPlayerFriendsFile(Kangaroo k)
+	{		
+		return getPlayerFriendsFile(k.getName());
+	}
+	
+	/**
+	 * @param name the name of the kangaroo 
+	 * @return the data file of the player
+	 */	
+	public static File getPlayerFriendsFile(String name)
+	{
+		File friendsFile = null;
+		
+		for (File file : getPlayersFiles())
+		{
+			if (file.getName().equals(name))
+			{
+				friendsFile = new File(file.getPath() + "/friends");
+				break;
+			}
+		}
+		
+		return friendsFile;
 	}
 	
 	/**
@@ -114,6 +147,35 @@ public class ServerUtils
 		}	
 		
 		updateLadder();
+	}
+	
+	/**
+	 * Check if the player is online
+	 * @param kangaroos
+	 * @return
+	 */
+	public static boolean isPlayerOnline(Kangaroo k)
+	{
+		return isPlayerOnline(k.getName());
+	}
+	
+	/**
+	 * Check if the player is online
+	 * @param kangaroos
+	 * @return
+	 */
+	public static boolean isPlayerOnline(String name)
+	{
+		for (Kangaroo k : kangaroos)
+		{
+			System.out.println(k.getName().equals(name));
+			if (k.getName().equals(name))
+			{
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -493,6 +555,52 @@ public class ServerUtils
 	}
 	
 	/**
+	 * @return the ladder data packet
+	 */
+	public static LadderDataPacket getLadderDataPacket(Kangaroo k)
+	{		
+		return getLadderDataPacket(k.getName());
+	}
+	/**
+	 * @return the ladder data packet
+	 */
+	public static LadderDataPacket getLadderDataPacket(String name)
+	{
+		LadderDataPacket packet = new LadderDataPacket();
+		packet.ladder = new ArrayList<String>();
+		
+		File ladderFile = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Ladder/elo"));
+		
+		try
+		{
+			BufferedReader reader = new BufferedReader(new FileReader(ladderFile));
+			
+			String line = reader.readLine();
+			
+			while (line != null)
+			{
+				line = reader.readLine();
+				
+				if (line != null)
+					packet.ladder.add(line);
+			}
+			
+			reader.close();
+			
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		} catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		
+		packet.playerPos = getLadderPosition(name);
+		
+		return packet;
+	}
+	
+	/**
 	 * Return ladder position of the kangaroo k
 	 * @param k
 	 * @return
@@ -604,6 +712,107 @@ public class ServerUtils
 	}
 	
 	/****************************************************************
+	 * FRIENDS METHODS												*
+	 ****************************************************************/
+	
+	/**
+	 * @param k
+	 * @return the friend file of kangaroo k
+	 */
+	public static FriendsDataPacket getFriendsDataPacket(Kangaroo k)
+	{
+		return getFriendsDataPacket(k.getName());
+	}
+	
+	/**
+	 * @param name
+	 * @return the friend file of kangaroo named name
+	 */
+	public static FriendsDataPacket getFriendsDataPacket(String name)
+	{
+		FriendsDataPacket packet = new FriendsDataPacket();
+		packet.friendsName = new ArrayList<String>();
+		packet.friendsOnline = new ArrayList<Boolean>();
+		
+		File friendsFile = getPlayerFriendsFile(name);
+		
+		// Get friends names
+		try
+		{
+			BufferedReader reader = new BufferedReader(new FileReader(friendsFile));
+			
+			String line = reader.readLine();
+			
+			while (line != null)
+			{				
+				if (line != null)
+					packet.friendsName.add(line);
+				
+				line = reader.readLine();
+			}
+			
+			reader.close();	
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		} catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		
+		// Order packet alphabetically
+		packet.friendsName.sort(String.CASE_INSENSITIVE_ORDER);
+		
+		// Fill packet
+		for (int i = 0; i < packet.friendsName.size(); i++)
+			packet.friendsOnline.add(ServerUtils.isPlayerOnline(packet.friendsName.get(i)));
+	
+		return packet;
+	}
+	
+	/**
+	 * Add the kangaroo friend to the friend list of k
+	 * @param k
+	 * @param friend
+	 */
+	public static void addFriend(Kangaroo k, Kangaroo friend)
+	{
+		addFriend(k.getName(), friend.getName());
+	}
+	
+	/**
+	 * Add the kangaroo friend to the friend list of k
+	 * @param k
+	 * @param friend
+	 */
+	public static void addFriend(String kName, String friendName)
+	{
+		File kFriendFile = ServerUtils.getPlayerFriendsFile(kName);
+		File friendFriendFile = ServerUtils.getPlayerFriendsFile(friendName);
+		
+		// Write the name in the friends files
+		try 
+		{
+			BufferedWriter writer = new BufferedWriter(new FileWriter(kFriendFile, true));
+			
+			writer.write(friendName + "\n");
+			writer.flush();	
+			writer.close();
+			
+			writer = new BufferedWriter(new FileWriter(friendFriendFile, true));
+			
+			writer.write(kName + "\n");
+			
+			writer.flush();	
+			writer.close();
+		} catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		
+	}	
+	
+	/****************************************************************
 	 * RESETING METHODS												*
 	 ****************************************************************/
 	
@@ -654,12 +863,48 @@ public class ServerUtils
 	}
 	
 	/**
+	 * This method will reset the friens of the kangaroo k
+	 * @param k
+	 */
+	public static void resetPlayerFriends(Kangaroo k)
+	{
+		resetPlayerFriends(k.getName());
+	}
+	
+	/**
+	 * This method will reset the friens of the kangaroo k
+	 * @param k
+	 */
+	public static void resetPlayerFriends(String name)
+	{
+		try 
+		{
+			new PrintWriter(getPlayerFriendsFile(name)).close();
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Reset all the friends of all the players
+	 */
+	public static void resetPlayersFriends()
+	{
+		ArrayList<File> players = getPlayersFiles();
+		
+		for (int i = 0; i < players.size(); i++)
+			resetPlayerFriends(players.get(i).getName());
+	}
+	
+	/**
 	 * This method reset all the players and delete all the games contained in the games folder
 	 */
 	public static void reset()
 	{
 		resetGames();
 		resetPlayers();
+		resetPlayersFriends();
 	}
 	
 }

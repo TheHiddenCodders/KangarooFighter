@@ -4,7 +4,6 @@ import java.util.Random;
 
 import Packets.ClientDisconnectionPacket;
 import Packets.EndGamePacket;
-import Packets.LadderDataPacket;
 import Utils.ServerUtils;
 import Utils.Timer;
 import enums.EndGameType;
@@ -219,28 +218,30 @@ public class Game
 	{
 		if (egType == EndGameType.Disconnection)
 		{
-			System.out.println("Game.end()");
 			// TODO : Change ClientDisconnectionPacket to EndGamePacket.
 			
+			Kangaroo stayingKangaroo = getKangarooFromOpponentIp(hostAddress);
+			
 			// Send his data
-			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDataPacket(getKangarooFromOpponentIp(hostAddress)));
-			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getPlayerDataPacket(getKangarooFromIp(hostAddress)));
+			stayingKangaroo.getClient().send(stayingKangaroo.getClientDataPacket());
+			stayingKangaroo.getClient().send(getKangarooFromIp(hostAddress).getClientDataPacket());
 		
-			// Send ladder data
-			LadderDataPacket ladderDataPacket = ServerUtils.getLadderDataPacket();
-			ladderDataPacket.playerPos = ServerUtils.getLadderPosition(getKangarooFromOpponentIp(hostAddress));
-			getKangarooFromOpponentIp(hostAddress).getClient().send(ladderDataPacket);
+			// Send his friends
+			stayingKangaroo.getClient().send(stayingKangaroo.getFriendsDataPacket());
+			
+			// Send the ladder and his pos
+			stayingKangaroo.getClient().send(stayingKangaroo.getLadderDataPacket());
 			
 			// Send news
-			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
-			getKangarooFromOpponentIp(hostAddress).getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));	
+			stayingKangaroo.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
+			stayingKangaroo.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));	
 			
 			// Make a client disconnection packet
 			ClientDisconnectionPacket p = new ClientDisconnectionPacket();
 			p.disconnectedClientIp = hostAddress;
 			
 			// Then get the opponent of the disconnected kangaroo and send him the packet
-			getKangarooFromOpponentIp(hostAddress).getClient().send(p);	
+			stayingKangaroo.getClient().send(p);	
 		
 		}
 		else
@@ -264,24 +265,25 @@ public class Game
 			
 			ServerUtils.updateLadder();
 		
+			// Send players data
 			winner.getClient().send(winner.getClientDataPacket());
 			winner.getClient().send(looser.getClientDataPacket());
 			looser.getClient().send(looser.getClientDataPacket());
 			looser.getClient().send(winner.getClientDataPacket());
 			
-			// Send to the client the last news
+			// Send friends
+			winner.getClient().send(winner.getFriendsDataPacket());
+			looser.getClient().send(looser.getFriendsDataPacket());
+			
+			// Send ladder
+			winner.getClient().send(winner.getLadderDataPacket());
+			looser.getClient().send(looser.getLadderDataPacket());
+			
+			// Send last news
 			winner.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
 			winner.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));				
 			looser.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
-			looser.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));				
-			
-			LadderDataPacket winnerLadderPacket = ServerUtils.getLadderDataPacket();
-			winnerLadderPacket.playerPos = ServerUtils.getLadderPosition(winner);
-			LadderDataPacket looserLadderPacket = ServerUtils.getLadderDataPacket();
-			looserLadderPacket.playerPos = ServerUtils.getLadderPosition(looser);
-
-			winner.getClient().send(winnerLadderPacket);
-			looser.getClient().send(looserLadderPacket);
+			looser.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));			
 		}
 		
 		ended = true;

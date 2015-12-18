@@ -1,6 +1,7 @@
 package com.genesys.stages;
 
 import Packets.ClientDataPacket;
+import Packets.FriendsDataPacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
 import Packets.NewsPacket;
@@ -28,6 +29,7 @@ public class InscriptionStage extends Stage
 	public Main main;
 	private ClientDataPacket clientData;
 	private LadderDataPacket ladderData;
+	private FriendsDataPacket friendsData;
 	private NewsPacket lastNews, lastBeforeNews;
 	
 	// Components
@@ -119,7 +121,7 @@ public class InscriptionStage extends Stage
 			}
 			
 			login(main.prefs.getString("[pseudo]"), main.prefs.getString("[pwd]"));
-			main.setStage(new HomeStage(main, clientData, ladderData, lastNews, lastBeforeNews));
+			main.setStage(new HomeStage(main, clientData, friendsData, ladderData, lastNews, lastBeforeNews));
 		}
 				
 		super.act(delta);
@@ -209,6 +211,11 @@ public class InscriptionStage extends Stage
 	public void setLadderData(LadderDataPacket packet)
 	{
 		ladderData = packet;
+	}
+	
+	public void setFriendsData(FriendsDataPacket packet)
+	{
+		friendsData = packet;
 	}
 	
 	public void setNewsData(NewsPacket lastNewsData, NewsPacket lastBeforeNewsData)

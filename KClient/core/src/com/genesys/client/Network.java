@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import Packets.ClientDataPacket;
 import Packets.ClientDisconnectionPacket;
 import Packets.EndGamePacket;
+import Packets.FriendsDataPacket;
 import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
@@ -324,6 +325,39 @@ public class Network extends Client
 				LadderDataPacket packet = (LadderDataPacket) o;
 				
 				stage.setLadderData(packet);				
+			}
+		}
+		
+		/**
+		 * Received a friends data packet
+		 */
+		else if (o.getClass().isAssignableFrom(FriendsDataPacket.class))
+		{
+			FriendsDataPacket packet = (FriendsDataPacket) o;
+			
+			if (currentStage.getClass().isAssignableFrom(InscriptionStage.class))
+			{
+				InscriptionStage stage = (InscriptionStage) currentStage;
+				
+				stage.setFriendsData(packet);				
+			}
+			else if (currentStage.getClass().isAssignableFrom(ConnexionStage.class))
+			{
+				ConnexionStage stage = (ConnexionStage) currentStage;
+				
+				stage.setFriendsData(packet);				
+			}
+			else if (currentStage.getClass().isAssignableFrom(GameStage.class))
+			{
+				GameStage stage = (GameStage) currentStage;
+				
+				stage.setFriendsData(packet);				
+			}
+			else if (currentStage.getClass().isAssignableFrom(HomeStage.class))
+			{
+				HomeStage stage = (HomeStage) currentStage;
+				
+				stage.refreshFriendsBloc(packet);
 			}
 		}
 		

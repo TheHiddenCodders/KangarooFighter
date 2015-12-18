@@ -2,11 +2,11 @@ package com.genesys.kclient;
 
 import Packets.KangarooClientPacket;
 import Packets.KangarooServerPacket;
+import com.genesys.enums.States;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.genesys.enums.States;
 
 public class Kangaroo extends AnimatedSprite
 {

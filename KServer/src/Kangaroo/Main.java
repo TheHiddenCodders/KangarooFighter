@@ -76,6 +76,12 @@ public class Main
 				ServerUtils.newPlayer("debug" + ServerUtils.getPlayersFiles().size(), "debug");
 			}
 			
+			if (msg.contains("add friend"))
+			{
+				if (!msg.split("-")[1].isEmpty() && !msg.split("-")[2].isEmpty())
+					ServerUtils.addFriend(msg.split("-")[1].trim(), msg.split("-")[2].trim());
+			}
+			
 			if (msg.contains("reset player"))
 			{
 				if (!msg.split("-")[1].isEmpty())

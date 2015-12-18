@@ -1,6 +1,7 @@
 package com.genesys.kclient;
 
 import Packets.ClientDataPacket;
+import Packets.FriendsDataPacket;
 import Packets.LadderDataPacket;
 
 import com.badlogic.gdx.Gdx;
@@ -26,7 +27,7 @@ public class LadderBloc extends Table
 	 * Constructors
 	 */
 	
-	public LadderBloc(ClientDataPacket clientData, LadderDataPacket ladderData, Skin skin)
+	public LadderBloc(ClientDataPacket clientData, FriendsDataPacket friendsData, LadderDataPacket ladderData, Skin skin)
 	{
 		super();	
 		
@@ -34,7 +35,7 @@ public class LadderBloc extends Table
 		background = new Image(new Texture(Gdx.files.internal("sprites/bloc ladder.png")));
 		this.addActor(background);
 		
-		title = new Label("Classement", new LabelStyle(skin.getFont("korean"), Color.TAN));
+		title = new Label("Classement", new LabelStyle(skin.getFont("korean"), Color.WHITE));
 		title.setPosition(this.getWidth() / 2 - title.getWidth() / 2, this.getHeight() - title.getHeight() - 5);
 		this.addActor(title);
 		
@@ -86,6 +87,22 @@ public class LadderBloc extends Table
 				pos[i].setColor(Color.TAN);
 				name[i].setColor(Color.TAN);
 				elo[i].setColor(Color.TAN);
+			}
+			else
+			{
+				pos[i].setColor(Color.LIGHT_GRAY);
+				name[i].setColor(Color.GRAY);
+				elo[i].setColor(Color.WHITE);
+				
+				for (int j = 0; j < friendsData.friendsName.size(); j++)
+				{
+					if (name[i].getText().toString().equals(friendsData.friendsName.get(j)))
+					{
+						name[i].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
+						pos[i].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
+						elo[i].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
+					}
+				}
 			}
 		}
 	}

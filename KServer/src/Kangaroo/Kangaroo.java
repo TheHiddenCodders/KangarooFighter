@@ -3,8 +3,10 @@ package Kangaroo;
 import java.util.ArrayList;
 
 import Packets.ClientDataPacket;
+import Packets.FriendsDataPacket;
 import Packets.KangarooClientPacket;
 import Packets.KangarooServerPacket;
+import Packets.LadderDataPacket;
 import Server.ClientProcessor;
 import Utils.ServerUtils;
 import Utils.Timer;
@@ -571,6 +573,16 @@ public class Kangaroo
 		this.networkImage.state = this.state.ordinal();
 		this.networkImage.x = this.getPosition().x;
 		this.networkImage.y = this.getPosition().y;
+	}
+	
+	public FriendsDataPacket getFriendsDataPacket()
+	{
+		return ServerUtils.getFriendsDataPacket(this);
+	}
+	
+	public LadderDataPacket getLadderDataPacket()
+	{
+		return ServerUtils.getLadderDataPacket(this);
 	}
 	
 	public ClientDataPacket getClientDataPacket()

@@ -8,11 +8,11 @@ import java.util.HashMap;
 import Kangaroo.Game;
 import Kangaroo.Kangaroo;
 import Packets.ClientReadyPacket;
+import Packets.FriendsDataPacket;
 import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
 import Packets.KangarooClientPacket;
-import Packets.LadderDataPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.ServerInfoPacket;
@@ -67,6 +67,9 @@ public class KServer extends Server
 		 */
 		kangaroos.add(new Kangaroo(cp));		
 		
+		// Give the info to server utils
+		ServerUtils.kangaroos = kangaroos;
+		
 		// Update serverInfo for clients
 		serverInfoUpdated(cp, ServerInfoType.ExceptMe);
 	}
@@ -98,19 +101,29 @@ public class KServer extends Server
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
 			
-			// Send to the client the last news
-			this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
-			this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));			
-			
-			// Send to the client the ladder packet with his position
-			LadderDataPacket ladderPacket = ServerUtils.getLadderDataPacket();
-			ladderPacket.playerPos = ServerUtils.getLadderPosition(getKangarooFromIP(clientIp));
-			this.send(cp, ladderPacket);
-			
 			// If server accepted the request, send client data
 			if (receivedPacket.accepted)
 			{				
-				this.send(cp, ServerUtils.getPlayerDataPacket(getKangarooFromIP(clientIp)));
+				// Send to the client his data
+				this.send(cp, getKangarooFromIP(clientIp).getClientDataPacket());
+				
+				// Send to the client the last news
+				this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
+				this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));			
+
+				// Send to the client his friends
+				this.send(cp, getKangarooFromIP(clientIp).getFriendsDataPacket());
+				
+				// Send to the client the ladder and his pos
+				this.send(cp, getKangarooFromIP(clientIp).getLadderDataPacket());
+				
+				// Send to his connected friends he is connected
+				for (int i = 0; i < getKangarooFromIP(clientIp).getFriendsDataPacket().friendsName.size(); i++)
+				{
+					// If a friend is connected, send him his new friendsDataPacket
+					if (getKangarooFromIP(clientIp).getFriendsDataPacket().friendsOnline.get(i))
+						this.send(getKangarooFromName(getKangarooFromIP(clientIp).getFriendsDataPacket().friendsName.get(i)).getClient(), getKangarooFromName(getKangarooFromIP(clientIp).getFriendsDataPacket().friendsName.get(i)).getFriendsDataPacket());
+				}
 			}
 		}
 		
@@ -125,19 +138,21 @@ public class KServer extends Server
 			// Send to the client (who sent the packet) the updated packet
 			this.send(cp, receivedPacket);
 			
-			// Send to the client the last news
-			this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
-			this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));	
-						
-			// Send to the client the ladder packet with his position
-			LadderDataPacket ladderPacket = ServerUtils.getLadderDataPacket();
-			ladderPacket.playerPos = ServerUtils.getLadderPosition(getKangarooFromIP(clientIp));
-			this.send(cp, ladderPacket);
-			
 			// If server accepted the request, send client data
 			if (receivedPacket.accepted)
-			{				
-				this.send(cp, ServerUtils.getPlayerDataPacket(getKangarooFromIP(clientIp)));
+			{		
+				// Send to the client his data
+				this.send(cp, getKangarooFromIP(clientIp).getClientDataPacket());
+				
+				// Send to the client the last news
+				this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
+				this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));			
+
+				// Send to the client his friends
+				this.send(cp, getKangarooFromIP(clientIp).getFriendsDataPacket());
+				
+				// Send to the client the ladder and his pos
+				this.send(cp, getKangarooFromIP(clientIp).getLadderDataPacket());
 			}
 		}
 		
@@ -222,12 +237,14 @@ public class KServer extends Server
 		if (debug)
 			System.out.println("Client disconnected from server with ip: " + cp.getIp());
 		
+		String clientIp = cp.getIp();
+		
 		try
 		{
 			// Check if he is in a game
 			for (int i = 0; i < games.size(); i++)
 			{
-				if (games.get(i).getKangarooFromIp(cp.getIp()) != null)
+				if (games.get(i).getKangarooFromIp(clientIp) != null)
 				{
 					if (games.get(i).isPrepared())
 						games.get(i).end(cp.getIp(), EndGameType.Disconnection);
@@ -236,10 +253,23 @@ public class KServer extends Server
 				}
 			}
 			
-			kangaroos.remove(getKangarooFromIP(cp.getIp()));
+			// Store kangaroo friends packet before removing him
+			FriendsDataPacket dcFriendsDataPacket = getKangarooFromIP(clientIp).getFriendsDataPacket();
+			
+			kangaroos.remove(getKangarooFromIP(clientIp));
+						
 			cp.getClient().close();
 			clients.remove(cp);
 			serverInfoUpdated(cp, ServerInfoType.ExceptMe);
+			ServerUtils.kangaroos = kangaroos;
+			
+			// Send to his connected friends he is disconnected
+			for (int i = 0; i < dcFriendsDataPacket.friendsName.size(); i++)
+			{
+				// If a friend is connected, send him his new friendsDataPacket
+				if (dcFriendsDataPacket.friendsOnline.get(i))
+					this.send(getKangarooFromName(dcFriendsDataPacket.friendsName.get(i)).getClient(), getKangarooFromName(dcFriendsDataPacket.friendsName.get(i)).getFriendsDataPacket());
+			}
 			
 		} catch (IOException e) 
 		{
@@ -383,6 +413,25 @@ public class KServer extends Server
 		for (Kangaroo kangaroo : kangaroos)
 			if (kangaroo.getClient().getIp().equals(ip))
 				return kangaroo;
+		
+		return null;
+	}
+	
+	/**
+	 * Get kangaroo from name
+	 * @param name
+	 * @return the kangaroo or null
+	 */
+	public Kangaroo getKangarooFromName(String name)
+	{
+		for (Kangaroo k : kangaroos)
+		{
+			System.out.println(k.getName().equals(name));
+			if (k.getName().equals(name))
+			{
+				return k;
+			}
+		}
 		
 		return null;
 	}

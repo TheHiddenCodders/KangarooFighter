@@ -23,7 +23,6 @@ public class ServerAnimation
 	private int nFrames, fps, currentFrame = 0;
 	private boolean resume;
 	private boolean over = false;
-	@SuppressWarnings("unused")
 	private float width, height;
 	private int mode;
 	

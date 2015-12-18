@@ -29,7 +29,7 @@ public class NewsBloc extends Table
 	{
 		super();
 		
-		this.setSize(251, 114);
+		this.setSize(251, 148);
 		background = new Image(new Texture(Gdx.files.internal("sprites/bloc news.png")));
 		this.addActor(background);
 		

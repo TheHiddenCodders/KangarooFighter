@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import Packets.ClientDataPacket;
+import Packets.FriendsDataPacket;
 import Packets.GameFoundPacket;
 import Packets.KangarooServerPacket;
 import Packets.LadderDataPacket;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.genesys.kclient.FriendsBloc;
 import com.genesys.kclient.LadderBloc;
 import com.genesys.kclient.Main;
 import com.genesys.kclient.NewsBloc;
@@ -33,8 +35,8 @@ public class HomeStage extends Stage
 	public Main main;
 	private ServerInfoPacket updateServerInfoPacket;
 	private KangarooServerPacket pPlayer, pOpponent;
-	private NewsPacket lastNews, lastBefore;
 	private GameFoundPacket pGameFound;
+	private FriendsDataPacket friendsData;
 	private boolean seekingGame = false, gameFound = false;
 	private ArrayList<String> bottomInfos;
 	private int bottomInfosIndex = 0;
@@ -47,59 +49,72 @@ public class HomeStage extends Stage
 	
 	private PersoBloc persoBloc;
 	private LadderBloc ladderBloc;
+	private FriendsBloc friendsBloc;
 	private NewsBloc lastNewsBloc, lastBeforeNewsBloc;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public HomeStage(Main main, ClientDataPacket clientData, LadderDataPacket ladderData, NewsPacket lastNewsData, NewsPacket lastBeforeNewsData)
+	public HomeStage(Main main, ClientDataPacket clientData, FriendsDataPacket friendsData, LadderDataPacket ladderData, NewsPacket lastNewsData, NewsPacket lastBeforeNewsData)
 	{
 		super();
 		this.main = main;	
 		
+		// Background of the stage
 		background = new Image(new Texture(Gdx.files.internal("sprites/homestage.png")));
 		this.addActor(background);
 		
+		// Matchmaking button
 		matchMakingLaunch = new TextButton("JOUER", main.skin);
 		matchMakingLaunch.setSize(150, 40);
 		matchMakingLaunch.setColor(Color.TAN);
 		matchMakingLaunch.setPosition(this.getWidth() / 2 - matchMakingLaunch.getWidth() / 2, this.getHeight() - matchMakingLaunch.getHeight() - 5);
 		this.addActor(matchMakingLaunch);
 		
+		// Text translating at the bottom
 		bottomTextBegin = new Label("", main.skin);
 		bottomTextBegin.setPosition(this.getWidth() - 30, 2);
 		bottomTextBegin.setStyle(new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
 		this.addActor(bottomTextBegin);	
-		
 		bottomTextVariable = new Label("", main.skin);
 		bottomTextVariable.setPosition(bottomTextBegin.getX() + bottomTextBegin.getWidth(), 2);
 		bottomTextVariable.setStyle(new LabelStyle(main.skin.getFont("default-font"), Color.TAN));
 		this.addActor(bottomTextVariable);		
-		
 		bottomTextEnd = new Label("", main.skin);
 		bottomTextEnd.setPosition(bottomTextVariable.getX() + bottomTextVariable.getWidth(), 2);
 		bottomTextEnd.setStyle(new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
 		this.addActor(bottomTextEnd);
 		
+		// Perso bloc
 		persoBloc = new PersoBloc(clientData, main.skin);
 		persoBloc.setPosition(this.getWidth() / 2 - persoBloc.getWidth() / 2, this.getHeight() / 2 - persoBloc.getHeight() / 2 - 10);
 		this.addActor(persoBloc);
 		
-		ladderBloc = new LadderBloc(clientData, ladderData, main.skin);
-		ladderBloc.setPosition(this.getWidth() / 4 + this.getWidth() / 2 - 70, this.getHeight() / 2 - 5);
+		// Ladder bloc
+		ladderBloc = new LadderBloc(clientData, friendsData, ladderData, main.skin);
+		ladderBloc.setPosition(this.getWidth() / 4 + this.getWidth() / 2 - 70, this.getHeight() / 2 - 7);
 		this.addActor(ladderBloc);
 		
+		// Friends bloc
+		friendsBloc = new FriendsBloc(friendsData, main.skin);
+		friendsBloc.setPosition(this.getWidth() / 4 + this.getWidth() / 2 - 70, this.getHeight() / 2 - friendsBloc.getHeight() - 13);
+		this.addActor(friendsBloc);
+		
+		// Last news bloc
 		lastNewsBloc = new NewsBloc(lastNewsData, main.skin);
-		lastNewsBloc.setPosition(this.getWidth() / 2 - this.getWidth() / 4 - 181, this.getHeight() - this.getHeight() / 3 - 26);
+		lastNewsBloc.setPosition(this.getWidth() / 2 - this.getWidth() / 4 - 181, this.getHeight() - this.getHeight() / 3 - 63);
 		this.addActor(lastNewsBloc);
 		
+		// Last before news bloc
 		lastBeforeNewsBloc = new NewsBloc(lastBeforeNewsData, main.skin);
-		lastBeforeNewsBloc.setPosition(this.getWidth() / 2 - this.getWidth() / 4 - 181, this.getHeight() / 3 - lastBeforeNewsBloc.getHeight() + 4);
+		lastBeforeNewsBloc.setPosition(this.getWidth() / 2 - this.getWidth() / 4 - 181, this.getHeight() / 2 - lastBeforeNewsBloc.getHeight() / 2 - 65);
 		this.addActor(lastBeforeNewsBloc);
-		
+				
+		// Bottom infos array
 		bottomInfos = new ArrayList<String>();
 		
+		// Bottom ribbon
 		bottomRibbon = new Image(new Texture(Gdx.files.internal("sprites/botribbon.png")));
 		this.addActor(bottomRibbon);
 		
@@ -114,7 +129,14 @@ public class HomeStage extends Stage
 		// Update server info if the have been changed
 		if (updateServerInfoPacket != null)
 			updateUIServerInfos(updateServerInfoPacket);
-			
+		
+		// Update friends if they have been changed
+		if (friendsData != null)
+		{
+			friendsBloc.refresh(friendsData, main.skin);
+			friendsData = null;
+		}
+		
 		// If game found, go to game stage
 		if (gameFound && pPlayer != null && pOpponent != null)
 			main.setStage(new GameStage(main, pGameFound, pPlayer, pOpponent));
@@ -269,4 +291,8 @@ public class HomeStage extends Stage
 		this.pOpponent = pOpponent;
 	}
 	
+	public void refreshFriendsBloc(FriendsDataPacket p)
+	{
+		friendsData = p;
+	}
 }

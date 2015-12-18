@@ -3,6 +3,7 @@ package com.genesys.stages;
 import Packets.ClientDataPacket;
 import Packets.ClientReadyPacket;
 import Packets.EndGamePacket;
+import Packets.FriendsDataPacket;
 import Packets.GameFoundPacket;
 import Packets.KangarooServerPacket;
 import Packets.LadderDataPacket;
@@ -43,6 +44,7 @@ public class GameStage extends Stage
 	private ClientDataPacket playerData, opponentData;
 	private EndGamePacket endGamePacket;
 	private LadderDataPacket ladderData;
+	private FriendsDataPacket friendsData;
 	private NewsPacket lastNews, lastBeforeNews;
 	
 	private Kangaroo player, opponent;
@@ -102,21 +104,20 @@ public class GameStage extends Stage
 		}
 		
 		// On a game paused (disconnection of a client will set gamePaused at true)
-		if (gamePaused && playerData != null)
+		if (gamePaused && playerData != null && friendsData != null && ladderData != null && lastNews != null && lastBeforeNews != null)
 		{
 			// Actually, don't care, just leave the game stage since the game will not exist longer
 			gamePaused = false;
-			main.setStage(new HomeStage(main, playerData, ladderData, lastNews, lastBeforeNews));
+			main.setStage(new HomeStage(main, playerData, friendsData, ladderData, lastNews, lastBeforeNews));
 		}
 		
 		// When the game is ended
-		if (gameEnded && playerData != null && opponentData != null && ladderData != null && lastNews != null && lastBeforeNews != null)
+		if (gameEnded && playerData != null && friendsData != null && opponentData != null && ladderData != null && lastNews != null && lastBeforeNews != null)
 		{
 			// Actually, don't care, just leave the game stage since the game will not exist longer
 			gameEnded = false;
 			
-			main.setStage(new EndGameStage(main, playerData, opponentData, getKangarooFromOpponentIp(endGamePacket.looserAddress), ladderData, lastNews, lastBeforeNews));
-				
+			main.setStage(new EndGameStage(main, playerData, opponentData, getKangarooFromOpponentIp(endGamePacket.looserAddress), friendsData, ladderData, lastNews, lastBeforeNews));
 		}
 		
 		super.act(delta);
@@ -258,6 +259,11 @@ public class GameStage extends Stage
 	public void setLadderData(LadderDataPacket packet)
 	{
 		ladderData = packet;
+	}
+	
+	public void setFriendsData(FriendsDataPacket packet)
+	{
+		friendsData = packet;
 	}
 	
 	public void setNewsData(NewsPacket lastNewsData, NewsPacket lastBeforeNewsData)

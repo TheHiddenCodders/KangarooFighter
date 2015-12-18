@@ -1,6 +1,7 @@
 package com.genesys.stages;
 
 import Packets.ClientDataPacket;
+import Packets.FriendsDataPacket;
 import Packets.LadderDataPacket;
 import Packets.NewsPacket;
 
@@ -28,17 +29,19 @@ public class EndGameStage extends Stage
 	private TextButton replay, back;
 	private ClientDataPacket playerData;
 	private LadderDataPacket ladderData;
+	private FriendsDataPacket friendsData;
 	private NewsPacket lastNews, lastBeforeNews;
 	
 	/*
 	 * Constructors
 	 */
-	public EndGameStage(Main main, ClientDataPacket playerData, ClientDataPacket opponentData, Kangaroo winner, LadderDataPacket ladderData, NewsPacket lastNews, NewsPacket lastBeforeNews)
+	public EndGameStage(Main main, ClientDataPacket playerData, ClientDataPacket opponentData, Kangaroo winner, FriendsDataPacket friendsData, LadderDataPacket ladderData, NewsPacket lastNews, NewsPacket lastBeforeNews)
 	{
 		super();
 		this.main = main;
 		this.playerData = playerData;
 		this.ladderData = ladderData;
+		this.friendsData = friendsData;
 		this.lastNews = lastNews;
 		this.lastBeforeNews = lastBeforeNews;
 		
@@ -86,7 +89,7 @@ public class EndGameStage extends Stage
 		if (Gdx.input.justTouched())
 		{
 			if (back.isPressed())
-				main.setStage(new HomeStage(main, playerData, ladderData, lastNews, lastBeforeNews));
+				main.setStage(new HomeStage(main, playerData, friendsData, ladderData, lastNews, lastBeforeNews));
 		}
 		super.act(delta);
 	}
