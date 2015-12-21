@@ -142,7 +142,12 @@ public class Game
 		k2.getClient().send(k2.getUpdatePacket());
 		k2.getClient().send(k1.getUpdatePacket());
 		
-		k2.flip(); 
+		// Set the flip of kangaroos properly
+		if (k1.isFliped())
+			k1.flip();
+		
+		if (!k2.isFliped())
+			k2.flip(); 
 		
 		prepared();
 	}
@@ -247,23 +252,28 @@ public class Game
 		{			
 			time = timer.getElapsedTime();
 			
+			// Prepare the end game packet
 			EndGamePacket p = new EndGamePacket();
 			p.endGameType = egType.ordinal();
 			p.looserAddress = hostAddress;
 			
+			// get the winner and the looser of the game
 			winner = getKangarooFromOpponentIp(hostAddress);
 			looser = getKangarooFromIp(hostAddress);
 			
 			ServerUtils.save(this);
 			
+			// Send the packet to each kangaroo
 			winner.getClient().send(p);
 			looser.getClient().send(p);
-		
+			
+			// Re-initialize kangaroos for future games
 			winner.end(this);
 			looser.end(this);
 			
 			ServerUtils.updateLadder();
 		
+			// Send to each kangaroo the result of the game to prepare the end game stage
 			winner.getClient().send(winner.getClientDataPacket());
 			winner.getClient().send(looser.getClientDataPacket());
 			looser.getClient().send(looser.getClientDataPacket());
@@ -275,6 +285,7 @@ public class Game
 			looser.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
 			looser.getClient().send(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));				
 			
+			// Send the new ladder to each kangaroo
 			LadderDataPacket winnerLadderPacket = ServerUtils.getLadderDataPacket();
 			winnerLadderPacket.playerPos = ServerUtils.getLadderPosition(winner);
 			LadderDataPacket looserLadderPacket = ServerUtils.getLadderDataPacket();

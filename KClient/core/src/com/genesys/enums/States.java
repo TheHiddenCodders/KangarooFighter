@@ -1,7 +1,7 @@
 package com.genesys.enums;
 
-public enum States {
-
+public enum States 
+{
 	idle,
 	movement,
 	hit,
@@ -10,9 +10,8 @@ public enum States {
 	topPunch,
 	upperPunch,
 	bottomPunch,
-	leftPunch,
 	rightPunch,
+	transitoryState,
+	leftPunch,
 	punch,
-	transitoryState
-	
 }

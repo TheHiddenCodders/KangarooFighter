@@ -24,24 +24,30 @@ public class Kangaroo
 {
 	private ClientProcessor cp;
 	
-	// Client information
+	/** Client information */
 	private String name = "";
 	private int health;
 	private int damage = 5;
 	private Vector2 position = new Vector2(0, 0);
-	private Vector2 velocity = new Vector2(0, 0);
-	private float gravity = -98.1f;
-	private int currentAnimation = 0;
-	private ArrayList<ServerAnimation> animations;
-	private States state = States.idle;
-	private boolean flip = false;
 	
-	// For server only
+	/** State machine attributes */
+	/* Jump attributes */
+	//private Vector2 velocity = new Vector2(0, 0); // In pixel per second
+	//private float gravity = -98.1f; // In pixel per second scared
+	private States state = States.idle;
 	private Timer speedTimer;
 	private Timer punchTimer;
-	private float speed = 200; // In pixel per s
-	private boolean ready = false;
+	private float punchCD = 1.5f; // The punch cool down in second
+	private Timer punchCDTimer;
 	
+	/** Animation attributes */
+	private int currentAnimation = 0;
+	private ArrayList<ServerAnimation> animations;
+	private boolean flip = false;
+	private float speed = 200; // In pixel per s
+	
+	/** For server only */
+	private boolean ready = false;
 	private KangarooServerPacket networkImage;
 	private KangarooClientPacket lastPacket;
 	
@@ -60,6 +66,7 @@ public class Kangaroo
 		this.cp = cp;
 		speedTimer = new Timer();
 		punchTimer = new Timer();
+		punchCDTimer = new Timer();
 		initAnim();
 	}
 	
@@ -111,19 +118,20 @@ public class Kangaroo
 			/*
 			 * Jump test
 			 */
-			if (lastPacket.topArrow)
+			/*if (lastPacket.topArrow)
 			{
 				velocity.y = 200;
 				jump(Direction.LEFT);
 				setPosition(getPosition().x, getPosition().y + 10);
 				setState(States.jump);
-			}
+			}*/
 			
 			// If the client press the punch key, change state to Punch
-			if (lastPacket.punchLeft || lastPacket.punchRight)
+			if ( (lastPacket.punchLeft || lastPacket.punchRight) && punchCDTimer.getElapsedTime() >= punchCD )
 			{
 				setState(States.punch);
 				punchTimer.restart();
+				punchCDTimer.restart();
 			}
 			// If the client press the punch top key, change state to punchTop and launch the associate animation
 			else if (lastPacket.punchTop)
@@ -249,6 +257,7 @@ public class Kangaroo
 		{
 			if (this.getCurrentAnimation().isOver())
 			{
+				System.err.println("Ending hit goto idle");
 				setState(States.idle);
 				launchAnimation(States.idle);
 			}
@@ -278,7 +287,7 @@ public class Kangaroo
 			}
 		}	
 		// Jump tets
-		else if (getState() == States.jump)
+		/*else if (getState() == States.jump)
 		{
 			jump(Direction.LEFT);
 			
@@ -288,12 +297,12 @@ public class Kangaroo
 				setState(States.idle);
 				launchAnimation(States.idle);
 			}
-		}
+		}*/
 	}
 	
 	/**
 	 * Init the name of the kangaroo.
-//	 * 
+	 * 
 	 * Load animations
 	 */
 	private void initAnim()
@@ -309,6 +318,7 @@ public class Kangaroo
 		animations.add(new ServerAnimation("assets/anims/leftpunch.hba")); // Top punch
 		animations.add(new ServerAnimation("assets/anims/leftpunch.hba"));
 		animations.add(new ServerAnimation("assets/anims/rightpunch.hba"));
+		animations.add(new ServerAnimation("assets/anims/rightpunch.hba")); // Transitory
 		
 		System.out.println(States.rightPunch.ordinal());
 		animations.get(States.idle.ordinal()).setMode(ServerAnimation.foreverPlay);
@@ -318,8 +328,9 @@ public class Kangaroo
 		animations.get(States.forwardPunch.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.upperPunch.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.topPunch.ordinal()).setMode(ServerAnimation.onePlay);
-		animations.get(States.leftPunch.ordinal()).setMode(ServerAnimation.onePlay);
-		//animations.get(States.rightPunch.ordinal()).setMode(ServerAnimation.onePlay);
+		animations.get(States.bottomPunch.ordinal()).setMode(ServerAnimation.onePlay);
+		animations.get(States.rightPunch.ordinal()).setMode(ServerAnimation.onePlay);
+		animations.get(States.transitoryState.ordinal()).setMode(ServerAnimation.onePlay);
 	}
 	
 	/**
@@ -383,7 +394,12 @@ public class Kangaroo
 		}
 	}
 	
-	private void jump(Direction direction)
+	/**
+	 * Make the kangaroo jump 
+	 * 
+	 * @param direction the direction where the kangaroo need to jump.
+	 */
+	/*private void jump(Direction direction)
 	{
 		if (speedTimer.getElapsedTime() > 0.01)
 		{
@@ -413,13 +429,18 @@ public class Kangaroo
 				}
 			}
 		}
-	}
+	}*/
 	
 	public void flip()
 	{
 		flip = !flip;
 		for (int i = 0; i < animations.size(); i++)
 			animations.get(i).flip();
+	}
+	
+	public boolean isFliped()
+	{
+		return flip;
 	}
 	
 	public boolean collidWith(Kangaroo k)
@@ -461,13 +482,20 @@ public class Kangaroo
 	
 	public void end(Game game)
 	{
+		// Update wins or looses
 		if (this.equals(game.getWinner()))
 			this.updateWins(1);
 		else
 			this.updateLooses(1);
 		
+		// Update th elo 
 		this.updateGames(1);
 		this.updateElo(game.getEloChange(this));
+		
+		// Prepare the kangaroo for a future game
+		setState(States.idle);
+		launchAnimation(States.idle);
+		touched = false;
 	}
 	
 	public int getKCoef()

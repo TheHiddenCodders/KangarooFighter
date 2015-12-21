@@ -1,7 +1,7 @@
 package enums;
 
-public enum States {
-
+public enum States 
+{
 	idle,
 	movement,
 	hit,
@@ -10,10 +10,9 @@ public enum States {
 	topPunch,
 	upperPunch,
 	bottomPunch,
-	leftPunch,
 	rightPunch,
-	punch,
 	transitoryState,
+	leftPunch,
+	punch,
 	jump
-	
 }
