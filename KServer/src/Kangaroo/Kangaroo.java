@@ -202,11 +202,11 @@ public class Kangaroo
 				CDTimer.restart();
 				punchCD = true;
 			}
-			if (touched)
+			/*if (touched)
 			{
 				setState(States.transitoryState);
 				launchAnimation(States.transitoryState);
-			}
+			}*/
 		}
 		/*else if (getState() == States.topPunch)
 		{
@@ -274,6 +274,7 @@ public class Kangaroo
 			{
 				setState(States.idle);
 				launchAnimation(States.idle);
+				touched = false;
 			}
 		}
 		else if (getState() == States.guard)
@@ -365,8 +366,8 @@ public class Kangaroo
 	 */
 	public void launchAnimation(States state)
 	{
-		if (animations.get(currentAnimation).getMode() == ServerAnimation.foreverPlay)
-			animations.get(currentAnimation).stop();
+		//if (animations.get(currentAnimation).getMode() == ServerAnimation.foreverPlay)
+		animations.get(currentAnimation).stop();
 		
 		currentAnimation = state.ordinal();
 	
@@ -469,10 +470,14 @@ public class Kangaroo
 				k.setHealth(k.getHealth() - this.getDamage() * 2);
 				break;
 			case LEFTPUNCH:
-				k.setHealth(k.getHealth() - 100);
+				k.setHealth(k.getHealth() - 10);
+				k.setState(States.idle);
+				k.launchAnimation(States.idle);
 				break;
 			case RIGHTPUNCH:
-				k.setHealth(k.getHealth() - 100);
+				k.setHealth(k.getHealth() - 10);
+				k.setState(States.idle);
+				k.launchAnimation(States.idle);
 				break;			
 			}
 			
