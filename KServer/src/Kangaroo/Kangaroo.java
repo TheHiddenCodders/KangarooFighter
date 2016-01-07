@@ -503,8 +503,6 @@ public class Kangaroo
 		this.updateElo(game.getEloChange(this));
 		
 		// Reset the kangaroo
-		name = "";
-		damage = 5;
 		currentAnimation = 0;
 		state = States.idle;
 		flip = false;
