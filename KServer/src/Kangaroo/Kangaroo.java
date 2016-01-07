@@ -86,6 +86,7 @@ public class Kangaroo
 		p.health = health;
 		p.damage = damage;
 		p.state = state.ordinal();
+		p.flip = flip;
 		return p;
 	}
 	
@@ -503,8 +504,7 @@ public class Kangaroo
 		this.updateElo(game.getEloChange(this));
 		
 		// Reset the kangaroo
-		currentAnimation = 0;
-		state = States.idle;
+		setState(States.idle);
 		flip = false;
 	}
 	
@@ -607,6 +607,7 @@ public class Kangaroo
 		this.networkImage.damage = this.damage;
 		this.networkImage.health = this.health;
 		this.networkImage.state = this.state.ordinal();
+		this.networkImage.flip = this.flip;
 		this.networkImage.x = this.getPosition().x;
 		this.networkImage.y = this.getPosition().y;
 	}

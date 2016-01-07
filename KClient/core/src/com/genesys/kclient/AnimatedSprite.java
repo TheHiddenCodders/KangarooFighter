@@ -16,7 +16,7 @@ public class AnimatedSprite extends Actor
 	private int currentAnim = 0;
 	protected ArrayList<Animation> anims;
 	protected TextureRegion currentFrame;
-	private boolean flipped = false;
+	protected boolean flipped = false;
 	
 	/*
 	 * Constructors

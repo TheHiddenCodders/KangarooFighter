@@ -134,6 +134,8 @@ public class Game
 		k2.setHealth(100);
 		k2.setPosition(player2X[mapIndex], player2Y[mapIndex]);
 		
+		k2.flip(); 
+		
 		// Send to both players position and health
 		k1.getClient().send(k1.getUpdatePacket());
 		k1.getClient().send(k2.getUpdatePacket());
@@ -141,7 +143,7 @@ public class Game
 		k2.getClient().send(k2.getUpdatePacket());
 		k2.getClient().send(k1.getUpdatePacket());
 		
-		k2.flip(); 
+		
 		
 		prepared();
 	}
