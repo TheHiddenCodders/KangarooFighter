@@ -6,13 +6,8 @@ public enum States {
 	movement,
 	hit,
 	guard,
-	forwardPunch,
-	topPunch,
-	upperPunch,
-	bottomPunch,
 	leftPunch,
 	rightPunch,
-	punch,
 	transitoryState,
 	jump
 	
