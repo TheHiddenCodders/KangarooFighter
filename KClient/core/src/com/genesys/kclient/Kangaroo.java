@@ -63,7 +63,7 @@ public class Kangaroo extends AnimatedSprite
 	 */
 	public Kangaroo(KangarooServerPacket p)
 	{
-		super();
+		this();
 		
 		ip = p.ip;
 		this.setPosition(p.x, p.y);
@@ -71,6 +71,9 @@ public class Kangaroo extends AnimatedSprite
 		health = p.health;
 		damage = p.damage;
 		state = p.state;
+		
+		if (p.flip != flipped)
+			this.flip();
 		
 		networkImage = getClientPacket();
 		

@@ -113,8 +113,8 @@ public class GameStage extends Stage
 				updateNetwork();
 			
 			// Debug
-			stateLabelK1.setText("K1 state: " + States.values()[player.getState()].toString() + " (" + player.getX() + ")");
-			stateLabelK2.setText("K2 state: " + States.values()[opponent.getState()].toString() + " (" + opponent.getX() + ")");
+			stateLabelK1.setText("K1 state: " + States.values()[player.getState()].toString() + "| flip: " + player.isFlip());
+			stateLabelK2.setText("K2 state: " + States.values()[opponent.getState()].toString() + "| flip: " + opponent.isFlip());
 
 		}
 		
@@ -170,7 +170,6 @@ public class GameStage extends Stage
 		// Determine which one need to be flipped
 		if (player.getX() > opponent.getX())
 		{
-			player.flip();
 			playerName.setPosition(this.getWidth() - playerName.getWidth() - 5, this.getHeight() - playerName.getHeight() - 5);
 			opponentName.setPosition(5, this.getHeight() - opponentName.getHeight() - 5);
 			
@@ -179,7 +178,6 @@ public class GameStage extends Stage
 		}
 		else
 		{
-			opponent.flip();
 			playerName.setPosition(5, this.getHeight() - playerName.getHeight() - 5);
 			opponentName.setPosition(this.getWidth() - opponentName.getWidth() - 5, this.getHeight() - opponentName.getHeight() - 5);
 			

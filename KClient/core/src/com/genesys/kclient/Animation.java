@@ -264,6 +264,7 @@ public class Animation
 	
 	public void flip()
 	{
+		System.err.println("Flipping hitboxes");
 		for (Hitbox hb : hitboxes)
 			hb.flip();
 	}

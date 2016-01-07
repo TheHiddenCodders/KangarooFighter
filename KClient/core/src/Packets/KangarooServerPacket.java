@@ -2,7 +2,6 @@ package Packets;
 
 import java.io.Serializable;
 
-
 public class KangarooServerPacket implements Serializable
 {
 	/**
@@ -16,6 +15,7 @@ public class KangarooServerPacket implements Serializable
 	public int health;
 	public int damage;
 	public int state;
+	public boolean flip;
 
 	@Override
 	public String toString()
@@ -28,6 +28,7 @@ public class KangarooServerPacket implements Serializable
 				+ "- [y]: " + y + "\n"
 				+ "- [health]: " + health + "\n"
 				+ "- [damage]: " + damage + "\n"
-				+ "- [state]: " + state + "\n";
+				+ "- [state]: " + state + "\n"
+				+ "- [flip]: " + flip + "\n";
 	}
 }
