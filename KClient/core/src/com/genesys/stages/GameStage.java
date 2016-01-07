@@ -110,11 +110,12 @@ public class GameStage extends Stage
 			player.update();
 
 			if (player.needUpdate())
-			{
 				updateNetwork();
-				stateLabelK1.setText("K1 state: " + States.values()[player.getState()].toString() + " (" + player.getX() + ")");
-				stateLabelK2.setText("K2 state: " + States.values()[opponent.getState()].toString() + " (" + opponent.getX() + ")");
-			}
+			
+			// Debug
+			stateLabelK1.setText("K1 state: " + States.values()[player.getState()].toString() + " (" + player.getX() + ")");
+			stateLabelK2.setText("K2 state: " + States.values()[opponent.getState()].toString() + " (" + opponent.getX() + ")");
+
 		}
 		
 		// On a game paused (disconnection of a client will set gamePaused at true)
