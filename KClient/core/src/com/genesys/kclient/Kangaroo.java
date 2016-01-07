@@ -2,11 +2,11 @@ package com.genesys.kclient;
 
 import Packets.KangarooClientPacket;
 import Packets.KangarooServerPacket;
-import com.genesys.enums.States;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.genesys.enums.States;
 
 public class Kangaroo extends AnimatedSprite
 {
@@ -37,9 +37,8 @@ public class Kangaroo extends AnimatedSprite
 	private boolean rightArrow = false;
 	private boolean topArrow = false;
 	private boolean bottomArrow = false;
-	private boolean punchLeft = false;
-	private boolean punchRight = false;
-	private boolean punchTop = false;
+	private boolean leftPunch = false;
+	private boolean rightPunch = false;
 	private boolean guard = false;
 	
 	private boolean ctrlPlusD = false;
@@ -117,19 +116,14 @@ public class Kangaroo extends AnimatedSprite
 			bottomArrow = false;
 		
 		if (Gdx.input.isKeyPressed(AKey))
-			punchLeft = true;
+			leftPunch = true;
 		else
-			punchLeft = false;
+			leftPunch = false;
 		
 		if (Gdx.input.isKeyPressed(ZKey))
-			punchRight = true;
+			rightPunch = true;
 		else
-			punchRight= false;
-		
-		if (Gdx.input.isKeyPressed(EKey))
-			punchTop = true;
-		else
-			punchTop = false;
+			rightPunch= false;
 		
 		if (Gdx.input.isKeyPressed(RKey))
 			guard = true;
@@ -165,7 +159,7 @@ public class Kangaroo extends AnimatedSprite
 	{
 		if (leftArrow != networkImage.leftArrow || rightArrow != networkImage.rightArrow ||
 			topArrow != networkImage.topArrow || bottomArrow != networkImage.bottomArrow ||
-			punchLeft != networkImage.punchLeft || punchRight != networkImage.punchRight || punchTop != networkImage.punchTop ||
+			leftPunch != networkImage.leftPunch || rightPunch != networkImage.rightPunch || 
 			guard != networkImage.guard || ctrlPlusD != networkImage.ctrlPlusD)
 			return true;
 		
@@ -204,9 +198,8 @@ public class Kangaroo extends AnimatedSprite
 		p.rightArrow = rightArrow;
 		p.topArrow = topArrow;
 		p.bottomArrow = bottomArrow;
-		p.punchLeft = punchLeft;
-		p.punchRight = punchRight;
-		p.punchTop = punchTop;
+		p.leftPunch = leftPunch;
+		p.rightPunch = rightPunch;
 		p.guard = guard;
 		return p;
 	}
@@ -238,7 +231,7 @@ public class Kangaroo extends AnimatedSprite
 
 	public void setState(int state)
 	{
-		if (this.state != state && state != States.punch.ordinal() && state != 12)
+		if (this.state != state && state != States.transitoryState.ordinal())
 		{
 			this.state = state;
 			setCurrentAnim(state);

@@ -13,9 +13,8 @@ public class KangarooClientPacket implements Serializable
 	public boolean rightArrow;
 	public boolean topArrow;
 	public boolean bottomArrow;
-	public boolean punchLeft;
-	public boolean punchRight;
-	public boolean punchTop;
+	public boolean leftPunch;
+	public boolean rightPunch;
 	public boolean guard;
 	
 	public boolean ctrlPlusD;
@@ -29,9 +28,8 @@ public class KangarooClientPacket implements Serializable
 				+ "- [rightArrow]: " + rightArrow + "\n"
 				+ "- [topArrow]: " + topArrow + "\n"
 				+ "- [bottomArrow]: " + bottomArrow + "\n"
-				+ "- [punchLeft]: " + punchLeft + "\n"
-				+ "- [punchRight]: " + punchRight + "\n"
-				+ "- [punchTop]: " + punchTop + "\n"
+				+ "- [leftPunch]: " + leftPunch + "\n"
+				+ "- [rightPunch]: " + rightPunch + "\n"
 				+ "- [guard]: " + guard + "\n"
 				+ "- [ctrlPlusD]: " + ctrlPlusD + "\n";
 	}

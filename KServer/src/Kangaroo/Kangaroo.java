@@ -132,12 +132,20 @@ public class Kangaroo
 			}*/
 			
 			// If the client press the punch key, change state to Punch
-			if (lastPacket.punchLeft || lastPacket.punchRight)
+			if (lastPacket.leftPunch || lastPacket.rightPunch)
 			{
 				if (!punchCD)
 				{
-					setState(States.forwardPunch);
-					launchAnimation(States.forwardPunch);
+					if (lastPacket.leftPunch)
+					{
+						setState(States.leftPunch);
+						launchAnimation(States.leftPunch);
+					}
+					else if (lastPacket.rightPunch)
+					{
+						setState(States.rightPunch);
+						launchAnimation(States.rightPunch);
+					}
 				}
 				//punchTimer.restart();
 			}
@@ -174,7 +182,7 @@ public class Kangaroo
 				launchAnimation(States.hit);
 			}
 		}
-		else if (getState() == States.forwardPunch)
+		else if (getState() == States.leftPunch)
 		{
 			// If the delay is over, launch the forward punch
 			/*if (punchTimer.getElapsedTime() >= 0.1)
@@ -338,11 +346,8 @@ public class Kangaroo
 		animations.get(States.movement.ordinal()).setMode(ServerAnimation.foreverPlay);
 		animations.get(States.hit.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.guard.ordinal()).setMode(ServerAnimation.foreverPlay);
-		animations.get(States.forwardPunch.ordinal()).setMode(ServerAnimation.onePlay);
-		animations.get(States.upperPunch.ordinal()).setMode(ServerAnimation.onePlay);
-		animations.get(States.topPunch.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.leftPunch.ordinal()).setMode(ServerAnimation.onePlay);
-		//animations.get(States.rightPunch.ordinal()).setMode(ServerAnimation.onePlay);
+		animations.get(States.rightPunch.ordinal()).setMode(ServerAnimation.onePlay);
 	}
 	
 	/**
@@ -455,7 +460,7 @@ public class Kangaroo
 	
 	public boolean punch(Kangaroo k)
 	{
-		if (this.collidWith(k) && (this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.LEFTPUNCH || this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.RIGHTPUNCH) && k.getState() != States.hit && (this.getState() == States.forwardPunch || this.getState() == States.bottomPunch || this.getState() == States.topPunch))
+		if (this.collidWith(k) && (this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.LEFTPUNCH || this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.RIGHTPUNCH) && k.getState() != States.hit && (this.getState() == States.leftPunch || this.getState() == States.rightPunch))
 		{
 			BodyPart touchedPart = this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[1];
 			
