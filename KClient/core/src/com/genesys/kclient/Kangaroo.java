@@ -147,7 +147,7 @@ public class Kangaroo extends AnimatedSprite
 	{
 		health = p.health;
 		
-		if ((isFlip() && p.x > getX()) || (!isFlip() && p.x < getX()))
+		if (p.flip != isFlip())
 			flip();
 		
 		setPosition(p.x, p.y);
