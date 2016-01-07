@@ -202,7 +202,7 @@ public class Kangaroo
 				setState(States.bottomPunch);
 				launchAnimation(States.bottomPunch);
 			}*/
-			// If the kangaroo is touched, the punch is canceled
+			
 			if (this.getCurrentAnimation().isOver())
 			{
 				setState(States.idle);
@@ -210,6 +210,7 @@ public class Kangaroo
 				CDTimer.restart();
 				punchCD = true;
 			}
+			// If the kangaroo is touched, the punch is canceled
 			/*if (touched)
 			{
 				setState(States.transitoryState);
@@ -476,13 +477,11 @@ public class Kangaroo
 				break;
 			case LEFTPUNCH:
 				k.setHealth(k.getHealth() - 10);
-				k.setState(States.idle);
-				k.launchAnimation(States.idle);
+				this.getCurrentAnimation().stop();
 				break;
 			case RIGHTPUNCH:
 				k.setHealth(k.getHealth() - 10);
-				k.setState(States.idle);
-				k.launchAnimation(States.idle);
+				this.getCurrentAnimation().stop();
 				break;			
 			}
 			
