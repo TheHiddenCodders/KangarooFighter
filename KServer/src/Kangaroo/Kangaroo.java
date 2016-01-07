@@ -503,8 +503,11 @@ public class Kangaroo
 		this.updateElo(game.getEloChange(this));
 		
 		// Reset the kangaroo
+		currentAnimation = 0;
 		setState(States.idle);
-		flip = false;
+		
+		if (flip)
+			flip();
 	}
 	
 	public int getKCoef()
