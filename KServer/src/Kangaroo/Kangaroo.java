@@ -38,6 +38,10 @@ public class Kangaroo
 	private States state = States.idle;
 	private boolean flip = false;
 	
+	// State machine attributes
+	private boolean punchCD = false;
+	private Timer CDTimer;
+	
 	// For server only
 	private Timer speedTimer;
 	private Timer punchTimer;
@@ -62,6 +66,7 @@ public class Kangaroo
 		this.cp = cp;
 		speedTimer = new Timer();
 		punchTimer = new Timer();
+		CDTimer = new Timer();
 		initAnim();
 	}
 	
@@ -97,6 +102,11 @@ public class Kangaroo
 	{
 		getCurrentAnimation().update();
 		
+		if (CDTimer.getElapsedTime() > 0.3)
+			punchCD = false;
+		
+		
+		
 		if (this.getState() != States.movement)
 		{
 			animations.get(States.movement.ordinal()).stop();
@@ -113,26 +123,30 @@ public class Kangaroo
 			/*
 			 * Jump test
 			 */
-			if (lastPacket.topArrow)
+			/*if (lastPacket.topArrow)
 			{
 				velocity.y = 200;
 				jump(Direction.LEFT);
 				setPosition(getPosition().x, getPosition().y + 10);
 				setState(States.jump);
-			}
+			}*/
 			
 			// If the client press the punch key, change state to Punch
 			if (lastPacket.punchLeft || lastPacket.punchRight)
 			{
-				setState(States.punch);
-				punchTimer.restart();
+				if (!punchCD)
+				{
+					setState(States.forwardPunch);
+					launchAnimation(States.forwardPunch);
+				}
+				//punchTimer.restart();
 			}
 			// If the client press the punch top key, change state to punchTop and launch the associate animation
-			else if (lastPacket.punchTop)
+			/*else if (lastPacket.punchTop)
 			{
 				setState(States.upperPunch);
 				launchAnimation(States.upperPunch);
-			}
+			}*/
 			// If the guard key is press, change state to guard and launch the associate animation
 			else if (lastPacket.guard)
 			{
@@ -160,10 +174,10 @@ public class Kangaroo
 				launchAnimation(States.hit);
 			}
 		}
-		else if (getState() == States.punch)
+		else if (getState() == States.forwardPunch)
 		{
 			// If the delay is over, launch the forward punch
-			if (punchTimer.getElapsedTime() >= 0.1)
+			/*if (punchTimer.getElapsedTime() >= 0.1)
 			{
 				setState(States.forwardPunch);
 				launchAnimation(States.forwardPunch);
@@ -179,15 +193,22 @@ public class Kangaroo
 			{
 				setState(States.bottomPunch);
 				launchAnimation(States.bottomPunch);
-			}
+			}*/
 			// If the kangaroo is touched, the punch is canceled
-			else if (touched)
+			if (this.getCurrentAnimation().isOver())
+			{
+				setState(States.idle);
+				launchAnimation(States.idle);
+				CDTimer.restart();
+				punchCD = true;
+			}
+			if (touched)
 			{
 				setState(States.transitoryState);
 				launchAnimation(States.transitoryState);
 			}
 		}
-		else if (getState() == States.topPunch)
+		/*else if (getState() == States.topPunch)
 		{
 			// If the animation is over
 			if (this.getCurrentAnimation().isOver())
@@ -246,7 +267,7 @@ public class Kangaroo
 				setState(States.transitoryState);
 				launchAnimation(States.transitoryState);
 			}
-		}
+		}*/
 		else if (getState() == States.hit)
 		{
 			if (this.getCurrentAnimation().isOver())
@@ -280,7 +301,7 @@ public class Kangaroo
 			}
 		}	
 		// Jump tets
-		else if (getState() == States.jump)
+		/*else if (getState() == States.jump)
 		{
 			jump(Direction.LEFT);
 			
@@ -290,7 +311,7 @@ public class Kangaroo
 				setState(States.idle);
 				launchAnimation(States.idle);
 			}
-		}
+		}*/
 	}
 	
 	/**
