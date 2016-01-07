@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.genesys.enums.States;
 import com.genesys.kclient.AnimatedProgressBar;
 import com.genesys.kclient.Kangaroo;
 import com.genesys.kclient.Main;
@@ -58,6 +59,7 @@ public class GameStage extends Stage
 	
 	/** Debug */
 	private ShapeRenderer renderer;
+	private Label stateLabelK1, stateLabelK2;
 	
 	/*
 	 * Constructors
@@ -82,6 +84,14 @@ public class GameStage extends Stage
 		renderer.setAutoShapeType(true);
 		renderer.setColor(Color.WHITE);
 		
+		stateLabelK1 = new Label("", main.skin);
+		stateLabelK1.setPosition(5, 20);
+		stateLabelK2 = new Label("", main.skin);
+		stateLabelK2.setPosition(this.getWidth() - 200, 20);
+		
+		this.addActor(stateLabelK1);
+		this.addActor(stateLabelK2);
+		
 		setClientReady();
 	}
 	
@@ -100,7 +110,11 @@ public class GameStage extends Stage
 			player.update();
 
 			if (player.needUpdate())
+			{
 				updateNetwork();
+				stateLabelK1.setText("K1 state: " + States.values()[player.getState()].toString() + " (" + player.getX() + ")");
+				stateLabelK2.setText("K2 state: " + States.values()[opponent.getState()].toString() + " (" + opponent.getX() + ")");
+			}
 		}
 		
 		// On a game paused (disconnection of a client will set gamePaused at true)
@@ -131,6 +145,7 @@ public class GameStage extends Stage
 		renderer.begin();
 		player.drawDebug(renderer);
 		opponent.drawDebug(renderer);
+		
 		renderer.end();
 	}
 	/*
