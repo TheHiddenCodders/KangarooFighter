@@ -21,6 +21,7 @@ public class Main extends ApplicationAdapter
 	/*
 	 * Attributes
 	 */
+	
 	private Stage stage;
 	public Network network;
 	public Skin skin;

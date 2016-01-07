@@ -129,8 +129,8 @@ public class GameStage extends Stage
 		super.draw();
 		
 		renderer.begin();
-		player.drawDebug(renderer);
-		opponent.drawDebug(renderer);
+		//player.drawDebug(renderer);
+		//opponent.drawDebug(renderer);
 		renderer.end();
 	}
 	/*

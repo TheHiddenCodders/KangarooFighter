@@ -53,12 +53,12 @@ public class LadderBloc extends Table
 		{
 			System.out.println(ladderData.playerPos + " | " + ladderData.ladder.size());
 			
-			if (ladderData.playerPos == 0 || ladderData.playerPos == 1)
+			if (ladderData.playerPos == 1 || ladderData.playerPos == 2)
 				beginningPos = 0;
 			else if (ladderData.playerPos == ladderData.ladder.size() || ladderData.playerPos == ladderData.ladder.size() - 1)
 				beginningPos = ladderData.ladder.size() - 5;
 			else
-				beginningPos = ladderData.playerPos - 2;
+				beginningPos = ladderData.playerPos - 3;
 			
 			pos = new Label[5];
 			name = new Label[5];

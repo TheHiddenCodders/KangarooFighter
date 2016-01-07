@@ -347,6 +347,7 @@ public class KServer extends Server
 		if (!packet.pseudoExists)
 		{
 			packet.accepted = true;
+			getKangarooFromIP(ip).setName(packet.pseudo);
 			ServerUtils.newPlayer(packet.pseudo, packet.pwd);
 		}
 	}	

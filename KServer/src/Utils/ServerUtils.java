@@ -60,16 +60,15 @@ public class ServerUtils
 	 */	
 	public static File getPlayerDataFile(String name)
 	{
-		File dataFile = null;
 		for (File file : getPlayersFiles())
 		{
 			if (file.getName().equals(name))
 			{
-				dataFile = new File(file.getPath() + "/data");
+				return new File(file.getPath() + "/data");
 			}
 		}
 		
-		return dataFile;
+		return null;
 	}
 	
 	/**
@@ -188,7 +187,7 @@ public class ServerUtils
 		ClientDataPacket packet = new ClientDataPacket();
 		
 		File dataFile = getPlayerDataFile(k);
-		
+		System.err.println(dataFile.getAbsolutePath());
 		try
 		{
 			BufferedReader reader = new BufferedReader(new FileReader(dataFile));
