@@ -136,7 +136,7 @@ public class ServerAnimation
 				hitboxes.add(temp);
 			}
 			
-			setSize((int) width, (int)height);
+			setSize((int) width, (int) height);
 			
 			// If no boxes, add empty hitboxes
 			for (int i = nHitboxes; i < nFrames; i++)

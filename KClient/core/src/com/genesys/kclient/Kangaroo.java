@@ -16,7 +16,7 @@ public class Kangaroo extends AnimatedSprite
 	
 	private static int AKey = Keys.A;
 	private static int ZKey = Keys.Z;
-	private static int EKey = Keys.E;
+	//private static int EKey = Keys.E;
 	private static int RKey = Keys.R;
 	private static int leftKey = Keys.LEFT;
 	private static int rightKey = Keys.RIGHT;
@@ -176,12 +176,9 @@ public class Kangaroo extends AnimatedSprite
 	public void initAnim()
 	{
 		addAnimation(new Animation("IDLE", "anims/idle.hba"));
-		addAnimation(new Animation("MOVEMENT", "anims/idle.hba"));
+		addAnimation(new Animation("MOVEMENT", "anims/walk.hba"));
 		addAnimation(new Animation("HIT", "anims/hit.hba"));
 		addAnimation(new Animation("GUARD", "anims/idle.hba"));
-		addAnimation(new Animation("PFORWARD", "anims/leftpunch.hba"));
-		addAnimation(new Animation("PUPPER", "anims/leftpunch.hba"));
-		addAnimation(new Animation("PTOP", "anims/leftpunch.hba"));
 		addAnimation(new Animation("LPUNCH", "anims/leftpunch.hba"));
 		addAnimation(new Animation("RPUNCH", "anims/rightpunch.hba"));
 		anims.get(0).start();

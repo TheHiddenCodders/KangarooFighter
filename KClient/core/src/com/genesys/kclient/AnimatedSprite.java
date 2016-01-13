@@ -66,6 +66,7 @@ public class AnimatedSprite extends Actor
 		if (currentFrame != null)
 			batch.draw(currentFrame, this.getX(), this.getY(), 0, 0, this.getWidth(), this.getHeight(), this.getScaleX(), this.getScaleY(), this.getRotation());		
 		
+		System.out.println(this.getWidth());
 		super.draw(batch, parentAlpha);
 	}
 	
@@ -118,6 +119,9 @@ public class AnimatedSprite extends Actor
 	{
 		anims.get(currentAnim).stop();
 		currentAnim = index;
+		
+		this.setSize(anims.get(currentAnim).getKeyFrame().getRegionWidth(), anims.get(currentAnim).getKeyFrame().getRegionHeight());
+
 		anims.get(currentAnim).start();
 	}
 	

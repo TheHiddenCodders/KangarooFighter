@@ -205,7 +205,7 @@ public class Animation
 		FileHandle file = Gdx.files.internal(path);
 		BufferedReader reader = new BufferedReader(file.reader());
 		ArrayList<String> lines = new ArrayList<String>();
-
+		System.err.println("Anim: " + path );
 		String line;
 		try
 		{
@@ -229,8 +229,10 @@ public class Animation
 			nFrames = (int) (sheet.getWidth() / frame.width);
 			frames = new ArrayList<TextureRegion>();
 			for (int i = 0; i < nFrames; i++)
+			{
+				System.err.println("Frame " + i + ": " + "[" + (frame.x + frame.width * i) + "]");
 				frames.add(new TextureRegion(sheet, (int) (frame.x + frame.width * i), (int) frame.y, (int) frame.width, (int) frame.height));	
-			
+			}
 			
 			// Load hitboxes
 			hitboxes = new ArrayList<Hitbox>();
@@ -241,6 +243,7 @@ public class Animation
 				for (int j = 0; j < nBoxPerHitbox; j++)
 				{
 					float[] vertices = new float[lines.get(4 + (nBoxPerHitbox * i) + j).split(",").length];
+					
 					for (int k = 0; k < vertices.length; k++)
 					{
 						vertices[k] = Float.valueOf(lines.get(4 + (nBoxPerHitbox * i) + j).split(",")[k]);
@@ -248,7 +251,7 @@ public class Animation
 					temp.addPoly(vertices);
 				}
 				
-				temp.setSize(213, 202);
+				temp.setSize((int) frame.width, (int) frame.height);
 				hitboxes.add(temp);
 			}
 			
@@ -264,7 +267,6 @@ public class Animation
 	
 	public void flip()
 	{
-		System.err.println("Flipping hitboxes");
 		for (Hitbox hb : hitboxes)
 			hb.flip();
 	}
