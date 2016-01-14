@@ -9,6 +9,6 @@ public enum States {
 	leftPunch,
 	rightPunch,
 	transitoryState,
-	jump
-	
+	jump,
+	idleGuard
 }

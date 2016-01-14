@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 
 import Utils.Rectangle;
 import Utils.Timer;
+import Utils.Vector2;
 
 public class ServerAnimation 
 {
@@ -25,6 +26,7 @@ public class ServerAnimation
 	private boolean over = false;
 	private float width, height;
 	private int mode;
+	private Vector2 offset;
 	
 	public ServerAnimation(String animationPath)
 	{
@@ -52,6 +54,7 @@ public class ServerAnimation
 					else
 					{
 						stop();
+						System.out.println("amim stop");
 					}
 				}
 				
@@ -103,7 +106,10 @@ public class ServerAnimation
 			Rectangle frame = new Rectangle(0, 0, Integer.parseInt(lines.get(1).split(",")[0]), Integer.parseInt(lines.get(1).split(",")[1]));
 			fps = Integer.parseInt(lines.get(2)); 
 			int nBoxPerHitbox = Integer.parseInt(lines.get(3));
-			int nHitboxes = (lines.size() - 4) / nBoxPerHitbox;
+			offset = new Vector2(Float.parseFloat(lines.get(4).split(",")[0]), Float.parseFloat(lines.get(4).split(",")[1]));
+			int nHitboxes = (lines.size() - 5) / nBoxPerHitbox;
+			
+			System.out.println(offset.x + ", " + offset.y);
 			
 			// Cut sheet
 			nFrames = (int) (sheet.getWidth() / frame.width);
