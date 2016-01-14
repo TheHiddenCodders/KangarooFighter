@@ -16,10 +16,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.genesys.kclient.ExpandableBloc;
 import com.genesys.kclient.FriendsBloc;
 import com.genesys.kclient.LadderBloc;
 import com.genesys.kclient.Main;
@@ -31,6 +33,7 @@ public class HomeStage extends Stage
 	/*
 	 * Attributes
 	 */
+	
 	/** Used as a wire between stage to access client for example */
 	public Main main;
 	private ServerInfoPacket updateServerInfoPacket;
@@ -41,7 +44,10 @@ public class HomeStage extends Stage
 	private ArrayList<String> bottomInfos;
 	private int bottomInfosIndex = 0;
 	
-	// Components
+	/*
+	 *  Components
+	 */
+	
 	private TextButton matchMakingLaunch;
 	private Label bottomTextBegin, bottomTextVariable, bottomTextEnd;	
 	private Image background;
@@ -171,6 +177,7 @@ public class HomeStage extends Stage
 		// Input update
 		if (Gdx.input.justTouched())
 		{
+			// Match making
 			if (matchMakingLaunch.isPressed())
 			{
 				if (!seekingGame)
@@ -178,13 +185,52 @@ public class HomeStage extends Stage
 				else
 					cancelMatchMaking();
 			}
+			
+			// News
+			if (lastNewsBloc.isPressed())
+			{
+				hideBlocsExcept(lastNewsBloc);
+				lastNewsBloc.expand();
+			}
 		}
+		
 		super.act(delta);
 	}
 	
 	/*
 	 * Inherited methods
 	 */
+	
+	/**
+	 * Hide all the blocs by a fade out
+	 */
+	private void hideBlocsExcept(ExpandableBloc bloc)
+	{
+		persoBloc.addAction(Actions.fadeOut(0.3f));
+		ladderBloc.addAction(Actions.fadeOut(0.3f));
+		friendsBloc.addAction(Actions.fadeOut(0.3f));
+		
+		if (bloc != lastNewsBloc)
+			lastNewsBloc.addAction(Actions.fadeOut(0.3f));
+		
+		lastBeforeNewsBloc.addAction(Actions.fadeOut(0.3f));
+	}
+	
+	/**
+	 * Show all the blocs by a fade in
+	 */
+	private void showBlocsExcept(ExpandableBloc bloc)
+	{
+		persoBloc.addAction(Actions.fadeIn(0.3f));
+		ladderBloc.addAction(Actions.fadeIn(0.3f));
+		friendsBloc.addAction(Actions.fadeIn(0.3f));
+		
+		if (bloc != lastNewsBloc)
+			lastNewsBloc.addAction(Actions.fadeIn(0.3f));
+		
+		lastBeforeNewsBloc.addAction(Actions.fadeIn(0.3f));
+	}
+	
 	/**
 	 * Launch the matchmaking process, including UI changes
 	 */
