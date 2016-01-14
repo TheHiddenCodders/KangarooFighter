@@ -57,6 +57,7 @@ public class Game
 	private int mapIndex;
 	private Timer timer;
 	private float time;
+	private int round = 0;
 	
 	private boolean waiting;
 	private boolean prepared;
@@ -143,8 +144,6 @@ public class Game
 		k2.getClient().send(k2.getUpdatePacket());
 		k2.getClient().send(k1.getUpdatePacket());
 		
-		
-		
 		prepared();
 	}
 	
@@ -209,6 +208,14 @@ public class Game
 		
 		k1.updateNetworkImage();
 		k2.updateNetworkImage();		
+	}
+	
+	/**
+	 * Set the next round
+	 */
+	public void nextRound()
+	{
+		round++;
 	}
 	
 	/**

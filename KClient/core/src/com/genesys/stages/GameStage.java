@@ -47,6 +47,7 @@ public class GameStage extends Stage
 	private LadderDataPacket ladderData;
 	private FriendsDataPacket friendsData;
 	private NewsPacket lastNews, lastBeforeNews;
+	private KangarooServerPacket pPlayer, pOpponent;
 	
 	private Kangaroo player, opponent;
 	private Image background;
@@ -56,6 +57,8 @@ public class GameStage extends Stage
 	private boolean gameReady = false; // Both client have load the stage
 	private boolean gamePaused = false;
 	private boolean gameEnded = false;
+	private int round = 0;
+	private Kangaroo[] winner;
 	
 	/** Debug */
 	private ShapeRenderer renderer;
@@ -69,28 +72,12 @@ public class GameStage extends Stage
 		super();
 		this.main = main;
 		
-		background = new Image(new Texture(Gdx.files.internal(pGameFound.mapPath)));
-		this.addActor(background);
+		this.pPlayer = pPlayer;
+		this.pOpponent = pOpponent;
 		
-		initKangaroos(pPlayer, pOpponent);
+		winner = new Kangaroo[3];
 		
-		timer = new Timer();
-		time = new Label("0.0", new LabelStyle(main.skin.getFont("korean-32"), Color.TAN));
-		time.setPosition(this.getWidth() / 2 - time.getWidth() / 2, playerBar.getY());
-		this.addActor(time);
-		
-		// Debug
-		renderer = new ShapeRenderer();
-		renderer.setAutoShapeType(true);
-		renderer.setColor(Color.WHITE);
-		
-		stateLabelK1 = new Label("", main.skin);
-		stateLabelK1.setPosition(5, 20);
-		stateLabelK2 = new Label("", main.skin);
-		stateLabelK2.setPosition(this.getWidth() - 200, 20);
-		
-		this.addActor(stateLabelK1);
-		this.addActor(stateLabelK2);
+		initRound(pGameFound, pPlayer, pOpponent);
 		
 		setClientReady();
 	}
@@ -116,7 +103,7 @@ public class GameStage extends Stage
 			stateLabelK1.setText("K1 state: " + States.values()[player.getState()].toString() + "| flip: " + player.isFlip());
 			stateLabelK2.setText("K2 state: " + States.values()[opponent.getState()].toString() + "| flip: " + opponent.isFlip());
 
-		}
+		}			
 		
 		// On a game paused (disconnection of a client will set gamePaused at true)
 		if (gamePaused && playerData != null && friendsData != null && ladderData != null && lastNews != null && lastBeforeNews != null)
@@ -149,9 +136,43 @@ public class GameStage extends Stage
 		
 		renderer.end();
 	}
+	
 	/*
 	 * Methods
 	 */
+	
+	/**
+	 * Init the round (a new game)
+	 * @param pGameFound
+	 * @param pPlayer
+	 * @param pOpponent
+	 */
+	public void initRound(GameFoundPacket pGameFound, KangarooServerPacket pPlayer, KangarooServerPacket pOpponent)
+	{
+		background = new Image(new Texture(Gdx.files.internal(pGameFound.mapPath)));
+		this.addActor(background);
+		
+		initKangaroos(pPlayer, pOpponent);
+		
+		timer = new Timer();
+		time = new Label("0.0", new LabelStyle(main.skin.getFont("korean-32"), Color.TAN));
+		time.setPosition(this.getWidth() / 2 - time.getWidth() / 2, playerBar.getY());
+		this.addActor(time);
+		
+		// Debug
+		renderer = new ShapeRenderer();
+		renderer.setAutoShapeType(true);
+		renderer.setColor(Color.WHITE);
+		
+		stateLabelK1 = new Label("", main.skin);
+		stateLabelK1.setPosition(5, 20);
+		stateLabelK2 = new Label("", main.skin);
+		stateLabelK2.setPosition(this.getWidth() - 200, 20);
+		
+		this.addActor(stateLabelK1);
+		this.addActor(stateLabelK2);
+	}
+	
 	/**
 	 * Kangaroos init
 	 * @param p
