@@ -347,14 +347,14 @@ public class Kangaroo
 		animations.add(new ServerAnimation("assets/anims/idle.hba"));
 		animations.add(new ServerAnimation("assets/anims/walk.hba")); // Movement
 		animations.add(new ServerAnimation("assets/anims/hit.hba"));
-		animations.add(new ServerAnimation("assets/anims/idle.hba")); // Guard 
+		animations.add(new ServerAnimation("assets/anims/guard.hba")); // Guard 
 		animations.add(new ServerAnimation("assets/anims/leftpunch.hba"));
 		animations.add(new ServerAnimation("assets/anims/rightpunch.hba"));
 		
 		animations.get(States.idle.ordinal()).setMode(ServerAnimation.foreverPlay);
 		animations.get(States.movement.ordinal()).setMode(ServerAnimation.foreverPlay);
 		animations.get(States.hit.ordinal()).setMode(ServerAnimation.onePlay);
-		animations.get(States.guard.ordinal()).setMode(ServerAnimation.foreverPlay);
+		animations.get(States.guard.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.leftPunch.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.rightPunch.ordinal()).setMode(ServerAnimation.onePlay);
 	}
