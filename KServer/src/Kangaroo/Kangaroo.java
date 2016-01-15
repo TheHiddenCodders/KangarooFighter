@@ -464,8 +464,15 @@ public class Kangaroo
 		return state;
 	}
 
-	public void setState(States state) {
+	public void setState(States state)
+	{
+		// Cancel previous offset
+		setPosition(getPosition().x + getAnimation(this.state.ordinal()).getOffset().x, getPosition().y);
+		
 		this.state = state;
+		
+		// Add the offset of this new animation
+		setPosition(getPosition().x - getAnimation(state.ordinal()).getOffset().x, getPosition().y);
 	}
 	
 	public ServerAnimation getCurrentAnimation()

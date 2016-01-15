@@ -27,6 +27,7 @@ public class ServerAnimation
 	private float width, height;
 	private int mode;
 	private Vector2 offset;
+	private Vector2 realPosition;
 	
 	public ServerAnimation(String animationPath)
 	{
@@ -107,9 +108,8 @@ public class ServerAnimation
 			fps = Integer.parseInt(lines.get(2)); 
 			int nBoxPerHitbox = Integer.parseInt(lines.get(3));
 			offset = new Vector2(Float.parseFloat(lines.get(4).split(",")[0]), Float.parseFloat(lines.get(4).split(",")[1]));
+			realPosition = new Vector2(0, 0);
 			int nHitboxes = (lines.size() - 5) / nBoxPerHitbox;
-			
-			System.out.println(offset.x + ", " + offset.y);
 			
 			// Cut sheet
 			nFrames = (int) (sheet.getWidth() / frame.width);
@@ -224,5 +224,10 @@ public class ServerAnimation
 	public int getMode()
 	{
 		return mode;
+	}
+	
+	public Vector2 getOffset()
+	{
+		return offset;
 	}
 }
