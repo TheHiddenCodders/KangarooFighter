@@ -333,6 +333,7 @@ public class Kangaroo
 	public void flip()
 	{
 		flip = !flip;
+		
 		for (int i = 0; i < animations.size(); i++)
 			animations.get(i).flip();
 	}

@@ -158,6 +158,8 @@ public class ServerAnimation
 	{
 		for (int i = 0; i < hitboxes.size(); i++)
 			hitboxes.get(i).flip();
+		
+		offset.x = width - offset.x;
 	}
 	
 	/*
