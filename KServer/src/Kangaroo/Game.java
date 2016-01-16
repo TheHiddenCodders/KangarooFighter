@@ -4,6 +4,7 @@ import java.util.Random;
 
 import Packets.ClientDisconnectionPacket;
 import Packets.EndGamePacket;
+import Packets.GamePacket;
 import Utils.ServerUtils;
 import Utils.Timer;
 import enums.EndGameType;
@@ -46,8 +47,8 @@ public class Game
 	/** The map paths */
 	public static String[] map =
 	{
-		"dojo.png",
-		"ponton.png"
+		"sprites/dojo.png",
+		"sprites/ponton.png"
 	};
 	/*
 	 * Attributes
@@ -55,6 +56,9 @@ public class Game
 	private Kangaroo k1 = null, k2 = null;
 	private int[] baseElo;
 	private int mapIndex;
+	private int round;
+	private int k1Wins;
+	private int k2Wins;
 	private Timer timer;
 	private float time;
 	
@@ -113,10 +117,18 @@ public class Game
 	public void linkKangaroo(Kangaroo k2)
 	{
 		this.k2 = k2;
+		
+		// Store the base elo for calculating at the end of the game
+		baseElo = new int[]{ k1.getElo(), k2.getElo() };
+		
+		// Setting the state of the game
 		waiting = false;
 		running = false;
 		prepared = true;
 		ended = false;
+		round = 0;
+		k1Wins = 0;
+		k2Wins = 0;
 	}
 	
 	/**
@@ -124,27 +136,22 @@ public class Game
 	 * Then send these infos to each kangaroo on the game. 
 	 */
 	public void init()
-	{
-		baseElo = new int[]{ k1.getElo(), k2.getElo() };
-		 
+	{		 
 		// Set info
 		k1.setHealth(100);
 		k1.setPosition(player1X[mapIndex], player1Y[mapIndex]);
-		
 		k2.setHealth(100);
 		k2.setPosition(player2X[mapIndex], player2Y[mapIndex]);
 		
-		k2.flip(); 
+		// Flip k2 because of his side (k2 is on the right) but don't if he is already flipped
+		if (!k2.isFlipped())
+			k2.flip(); 
 		
-		// Send to both players position and health
-		k1.getClient().send(k1.getUpdatePacket());
-		k1.getClient().send(k2.getUpdatePacket());
+		// Send to both players the game datas
+		k1.getClient().send(getGamePacket(k1));
+		k2.getClient().send(getGamePacket(k2));
 		
-		k2.getClient().send(k2.getUpdatePacket());
-		k2.getClient().send(k1.getUpdatePacket());
-		
-		
-		
+		// After all of this, the game is prepared
 		prepared();
 	}
 	
@@ -185,11 +192,13 @@ public class Game
 			k1.getClient().send( k1.getUpdatePacket() );
 			k2.getClient().send( k1.getUpdatePacket() );
 			
-			// If K1 is dead
-			if (k1.getHealth() <= 0)
+			if (k1.isDead())
 			{
-				this.end(k1.getClient().getIp(), EndGameType.Legit);
-				System.out.println("k1 loose the game");
+				if (k2Wins == 1)
+					endGame(k1.getClient().getIp(), EndGameType.Legit);
+				else
+					endRound(k1);
+					
 			}
 		}
 		
@@ -199,11 +208,12 @@ public class Game
 			k1.getClient().send( k2.getUpdatePacket() );
 			k2.getClient().send( k2.getUpdatePacket() );
 			
-			// If K2 is dead
-			if (k2.getHealth() <= 0)
+			if (k2.isDead())
 			{
-				this.end(k2.getClient().getIp(), EndGameType.Legit);
-				System.out.println("k2 loose the game");
+				if (k1Wins == 1)
+					endGame(k2.getClient().getIp(), EndGameType.Legit);
+				else
+					endRound(k2);
 			}
 		}
 		
@@ -216,17 +226,17 @@ public class Game
 	 * @param hostAddress the address of the loosing kangaroo
 	 * @param egType how the game is ending ?
 	 */
-	public void end(String hostAddress, EndGameType egType)
+	public void endGame(String looserAdress, EndGameType egType)
 	{
 		if (egType == EndGameType.Disconnection)
 		{
 			// TODO : Change ClientDisconnectionPacket to EndGamePacket.
 			
-			Kangaroo stayingKangaroo = getKangarooFromOpponentIp(hostAddress);
+			Kangaroo stayingKangaroo = getKangarooFromOpponentIp(looserAdress);
 			
 			// Send his data
 			stayingKangaroo.getClient().send(stayingKangaroo.getClientDataPacket());
-			stayingKangaroo.getClient().send(getKangarooFromIp(hostAddress).getClientDataPacket());
+			stayingKangaroo.getClient().send(getKangarooFromIp(looserAdress).getClientDataPacket());
 		
 			// Send his friends
 			stayingKangaroo.getClient().send(stayingKangaroo.getFriendsDataPacket());
@@ -240,7 +250,7 @@ public class Game
 			
 			// Make a client disconnection packet
 			ClientDisconnectionPacket p = new ClientDisconnectionPacket();
-			p.disconnectedClientIp = hostAddress;
+			p.disconnectedClientIp = looserAdress;
 			
 			// Then get the opponent of the disconnected kangaroo and send him the packet
 			stayingKangaroo.getClient().send(p);	
@@ -248,23 +258,30 @@ public class Game
 		}
 		else
 		{			
+			// Get the time of the round
 			time = timer.getElapsedTime();
 			
+			// Make end game packet
 			EndGamePacket p = new EndGamePacket();
 			p.endGameType = egType.ordinal();
-			p.looserAddress = hostAddress;
+			p.looserAddress = looserAdress;
 			
-			winner = getKangarooFromOpponentIp(hostAddress);
-			looser = getKangarooFromIp(hostAddress);
+			// Store the winner and the looser
+			winner = getKangarooFromOpponentIp(looserAdress);
+			looser = getKangarooFromIp(looserAdress);
 			
+			// Save the game
 			ServerUtils.save(this);
 			
+			// Send the end game packet
 			winner.getClient().send(p);
 			looser.getClient().send(p);
 		
+			// Make the associated things of a game end
 			winner.end(this);
 			looser.end(this);
 			
+			// Update the ladder
 			ServerUtils.updateLadder();
 		
 			// Send players data
@@ -292,6 +309,34 @@ public class Game
 		running = false;
 	}
 	
+	/**
+	 * End the round properly
+	 * @param winner
+	 */
+	public void endRound(Kangaroo looser)
+	{
+		// Init the game
+		init();
+		
+		// Set next round
+		round++;
+		
+		// Up wins
+		if (k1 == looser)
+			k2Wins++;
+		else if (k2 == looser)
+			k1Wins++;
+		
+		// Send new game packet
+		k1.getClient().send(getGamePacket(k1));
+		k2.getClient().send(getGamePacket(k2));
+	}
+	
+	/**
+	 * This method calculate the elo difference to add to the kangaroo k
+	 * @param k
+	 * @return
+	 */
 	public int getEloChange(Kangaroo k)
 	{
 		// Elo changes
@@ -314,7 +359,7 @@ public class Game
 				return (int) (Math.round(k.getKCoef() * (0f - probaWinForLessElo)));
 		}
 	}
-	
+
 	/*
 	 * Getters and Setters
 	 */
@@ -406,6 +451,35 @@ public class Game
 			return k1;
 		
 		return null;
+	}
+	
+	/**
+	 * Get the game packet depending of the kangaroo k
+	 * @param k
+	 * @return game packet
+	 */
+	public GamePacket getGamePacket(Kangaroo k)
+	{
+		GamePacket p = new GamePacket();
+		p.mapPath = map[mapIndex];
+		p.round = round;
+		
+		// Player need to receive himself as first
+		if (k == k1)
+		{
+			p.player = k1.getUpdatePacket();
+			p.opponent = k2.getUpdatePacket();
+			p.playerWins = k1Wins;
+			p.opponentWins = k2Wins;
+		}
+		else if (k == k2)
+		{
+			p.player = k2.getUpdatePacket();
+			p.opponent = k1.getUpdatePacket();
+			p.opponentWins = k1Wins;
+		}
+		
+		return p;
 	}
 	
 	public String getMapPath()

@@ -7,7 +7,7 @@ import Packets.ClientDataPacket;
 import Packets.ClientDisconnectionPacket;
 import Packets.EndGamePacket;
 import Packets.FriendsDataPacket;
-import Packets.GameFoundPacket;
+import Packets.GamePacket;
 import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
 import Packets.KangarooServerPacket;
@@ -183,21 +183,31 @@ public class Network extends Client
 		}
 		
 		/**
-		 * Received a game found packet
-		 * 1. Set GameStage
+		 * Received a game packet
 		 */
-		else if (o.getClass().isAssignableFrom(GameFoundPacket.class))
+		else if (o.getClass().isAssignableFrom(GamePacket.class))
 		{
-			GameFoundPacket p = (GameFoundPacket) o;
-			
 			if (currentStage.getClass().isAssignableFrom(HomeStage.class))
 			{
 				HomeStage stage = (HomeStage) currentStage;
-				stage.setGameFound(p);
+				
+				GamePacket packet = (GamePacket) o;
+				
+				// Prevent home stage a game has been found
+				stage.setGameFound(packet);
+			}
+			else if (currentStage.getClass().isAssignableFrom(GameStage.class))
+			{
+				GameStage stage = (GameStage) currentStage;
+				
+				GamePacket packet = (GamePacket) o;
+				
+				// Prevent home stage a game has been found
+				stage.setNextRound(packet);
 			}
 			else
 			{
-				System.err.println("The GAMEFOUNDPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage");
+				System.err.println("The GAMEPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage or GameStage");
 			}
 		}
 		
@@ -212,7 +222,7 @@ public class Network extends Client
 		 */
 		else if (o.getClass().isAssignableFrom(KangarooServerPacket.class))
 		{
-			if (currentStage.getClass().isAssignableFrom(HomeStage.class))
+			/*if (currentStage.getClass().isAssignableFrom(HomeStage.class))
 			{
 				HomeStage stage = (HomeStage) currentStage;
 				KangarooServerPacket packet = (KangarooServerPacket) o;
@@ -228,8 +238,8 @@ public class Network extends Client
 				{
 					o2 = packet;
 				}
-			}
-			else if (currentStage.getClass().isAssignableFrom(GameStage.class))
+			}*/
+			if (currentStage.getClass().isAssignableFrom(GameStage.class))
 			{
 				GameStage stage = (GameStage) currentStage;
 				KangarooServerPacket packet = (KangarooServerPacket) o;
@@ -238,7 +248,7 @@ public class Network extends Client
 			}
 			else
 			{
-				System.err.println("The KANGAROOSERVERPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on HomeStage or GameStage");
+				System.err.println("The KANGAROOSERVERPACKET isn't handled on this stage: " + currentStage.getClass().getSimpleName() + " but on GameStage");
 			}
 		}
 		

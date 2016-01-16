@@ -93,7 +93,7 @@ public class Hitbox
 					BodyPart[] parts = new BodyPart[2];
 					parts[0] = a;
 					parts[1] = b;
-					System.out.println(a + " hit " + b);
+					//System.out.println(a + " hit " + b);
 					return parts;
 				}
 			}

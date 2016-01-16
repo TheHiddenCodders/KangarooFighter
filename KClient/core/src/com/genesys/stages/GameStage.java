@@ -4,7 +4,7 @@ import Packets.ClientDataPacket;
 import Packets.ClientReadyPacket;
 import Packets.EndGamePacket;
 import Packets.FriendsDataPacket;
-import Packets.GameFoundPacket;
+import Packets.GamePacket;
 import Packets.KangarooServerPacket;
 import Packets.LadderDataPacket;
 import Packets.NewsPacket;
@@ -42,20 +42,27 @@ public class GameStage extends Stage
 	 */
 	/** Used as a wire between stage to access client for example */
 	public Main main;
+	
+	// Packets
 	private ClientDataPacket playerData, opponentData;
 	private EndGamePacket endGamePacket;
 	private LadderDataPacket ladderData;
 	private FriendsDataPacket friendsData;
 	private NewsPacket lastNews, lastBeforeNews;
+	private GamePacket gamePacket;
 	
+	// Components
 	private Kangaroo player, opponent;
 	private Image background;
 	private AnimatedProgressBar playerBar, opponentBar;
 	private Label playerName, opponentName, time;
+	
+	// Variables
 	private Timer timer;
 	private boolean gameReady = false; // Both client have load the stage
 	private boolean gamePaused = false;
 	private boolean gameEnded = false;
+	private boolean nextRound = false;
 	
 	/** Debug */
 	private ShapeRenderer renderer;
@@ -64,20 +71,17 @@ public class GameStage extends Stage
 	/*
 	 * Constructors
 	 */
-	public GameStage(Main main, GameFoundPacket pGameFound, KangarooServerPacket pPlayer, KangarooServerPacket pOpponent)
+	
+	public GameStage(Main main, GamePacket gamePacket)
 	{
 		super();
 		this.main = main;
 		
-		background = new Image(new Texture(Gdx.files.internal(pGameFound.mapPath)));
+		background = new Image(new Texture(Gdx.files.internal(gamePacket.mapPath)));
 		this.addActor(background);
 		
-		initKangaroos(pPlayer, pOpponent);
-		
-		timer = new Timer();
-		time = new Label("0.0", new LabelStyle(main.skin.getFont("korean-32"), Color.TAN));
-		time.setPosition(this.getWidth() / 2 - time.getWidth() / 2, playerBar.getY());
-		this.addActor(time);
+		initKangaroos(gamePacket.player, gamePacket.opponent);
+		initHUD(gamePacket.player, gamePacket.opponent);
 		
 		// Debug
 		renderer = new ShapeRenderer();
@@ -97,31 +101,37 @@ public class GameStage extends Stage
 	
 	@Override
 	public void act(float delta) 
-	{		
+	{	
+		// Update players health
 		playerBar.setValue(player.getHealth());
 		opponentBar.setValue(opponent.getHealth());
+		
+		// Set next round if needed
+		if (nextRound)
+			main.setStage(new GameStage(main, gamePacket));
 		
 		// If both clients are ready, the game is ready
 		if (gameReady && !gamePaused)
 		{
+			// Update time
 			time.setText(String.format("%.1f", timer.getElapsedTime()));
 			time.setX(this.getWidth() / 2 - time.getWidth() / 2);
 			
+			// Update players touch
 			player.update();
 
+			// If player press a key or release a key update him
 			if (player.needUpdate())
 				updateNetwork();
 			
 			// Debug
 			stateLabelK1.setText("K1 state: " + States.values()[player.getState()].toString() + "| flip: " + player.isFlip());
 			stateLabelK2.setText("K2 state: " + States.values()[opponent.getState()].toString() + "| flip: " + opponent.isFlip());
-
 		}
 		
 		// On a game paused (disconnection of a client will set gamePaused at true)
 		if (gamePaused && playerData != null && friendsData != null && ladderData != null && lastNews != null && lastBeforeNews != null)
 		{
-			// Actually, don't care, just leave the game stage since the game will not exist longer
 			gamePaused = false;
 			main.setStage(new HomeStage(main, playerData, friendsData, ladderData, lastNews, lastBeforeNews));
 		}
@@ -129,9 +139,7 @@ public class GameStage extends Stage
 		// When the game is ended
 		if (gameEnded && playerData != null && friendsData != null && opponentData != null && ladderData != null && lastNews != null && lastBeforeNews != null)
 		{
-			// Actually, don't care, just leave the game stage since the game will not exist longer
 			gameEnded = false;
-			
 			main.setStage(new EndGameStage(main, playerData, opponentData, getKangarooFromOpponentIp(endGamePacket.looserAddress), friendsData, ladderData, lastNews, lastBeforeNews));
 		}
 		
@@ -149,9 +157,37 @@ public class GameStage extends Stage
 		
 		renderer.end();
 	}
+	
+	
 	/*
 	 * Methods
 	 */
+	
+	/**
+	 * Init a new game
+	 * @param gamePacket
+	 */
+	public void init(GamePacket gamePacket)
+	{
+		initKangaroos(gamePacket.player, gamePacket.opponent);
+		initHUD(gamePacket.player, gamePacket.opponent);
+		
+		// Debug
+		renderer = new ShapeRenderer();
+		renderer.setAutoShapeType(true);
+		renderer.setColor(Color.WHITE);
+		
+		stateLabelK1 = new Label("", main.skin);
+		stateLabelK1.setPosition(5, 20);
+		stateLabelK2 = new Label("", main.skin);
+		stateLabelK2.setPosition(this.getWidth() - 200, 20);
+		
+		this.addActor(stateLabelK1);
+		this.addActor(stateLabelK2);
+		
+		setClientReady();
+	}
+	
 	/**
 	 * Kangaroos init
 	 * @param p
@@ -160,14 +196,28 @@ public class GameStage extends Stage
 	{
 		player = new Kangaroo(pPlayer);
 		opponent = new Kangaroo(pOpponent);
-		
+	}
+	
+	/**
+	 * Init hud
+	 * @param pPlayer
+	 * @param pOpponent
+	 */
+	private void initHUD(KangarooServerPacket pPlayer, KangarooServerPacket pOpponent)
+	{		
+		// Make player label and bars
 		playerName = new Label(player.getName(), new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
 		opponentName = new Label(opponent.getName(), new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
 		
 		playerBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 2, 4, 0, 100, player.getHealth());
 		opponentBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 2, 4, 0, 100, opponent.getHealth());
-		
-		// Determine which one need to be flipped
+
+		// Setup the game timer
+		timer = new Timer();
+		time = new Label("0.0", new LabelStyle(main.skin.getFont("korean-32"), Color.TAN));
+		time.setPosition(this.getWidth() / 2 - time.getWidth() / 2, playerBar.getY());
+				
+		// Determine the side of kangaroos
 		if (player.getX() > opponent.getX())
 		{
 			playerName.setPosition(this.getWidth() - playerName.getWidth() - 5, this.getHeight() - playerName.getHeight() - 5);
@@ -185,15 +235,14 @@ public class GameStage extends Stage
 			opponentBar.setPosition(this.getWidth() - opponentBar.getWidth() - 5, opponentName.getY() - opponentName.getHeight() - 10);
 		}
 		
-		opponentName.getStyle().font = main.skin.getFont("korean");
-		playerName.getStyle().font = main.skin.getFont("korean");
-		
+		// Attach all the components to the stage
 		this.addActor(playerBar);
 		this.addActor(opponentBar);
 		this.addActor(player);
 		this.addActor(opponent);
 		this.addActor(playerName);
 		this.addActor(opponentName);
+		this.addActor(time);
 	}
 	
 	/**
@@ -227,6 +276,12 @@ public class GameStage extends Stage
 	{
 		gamePaused = true;
 		System.out.println("Game paused !");
+	}
+	
+	public void setNextRound(GamePacket packet)
+	{
+		gamePacket = packet;
+		nextRound = true;
 	}
 	
 	public void setGameEnded(EndGamePacket packet)
