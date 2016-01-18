@@ -65,6 +65,9 @@ public class HomeStage extends Stage
 		super();
 		this.main = main;	
 		
+		// Set opacity to zero
+		addAction(Actions.alpha(0));
+		
 		// Background of the stage
 		background = new Image(new Texture(Gdx.files.internal("sprites/homestage.png")));
 		this.addActor(background);
