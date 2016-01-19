@@ -905,6 +905,7 @@ public class ServerUtils
 		resetGames();
 		resetPlayers();
 		resetPlayersFriends();
+		updateLadder();
 	}
 	
 }

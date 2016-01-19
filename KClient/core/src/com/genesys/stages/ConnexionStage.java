@@ -30,6 +30,7 @@ public class ConnexionStage extends Stage
 	private LadderDataPacket ladderData;
 	private FriendsDataPacket friendsData;
 	private NewsPacket lastNews, lastBeforeNews;
+	private int debug = 0;
 	
 	// Components
 	private Label infoName, infoPwd, other;
@@ -146,7 +147,10 @@ public class ConnexionStage extends Stage
 			serverAnswered = false;
 			
 			if (!loggedIn)
-				login("debug", ConversionUtils.sha1("debug"));
+			{
+				login("debug" + debug, "debug");				
+				debug++;
+			}
 		}
 				
 		super.act(delta);
