@@ -57,13 +57,17 @@ public class GameStage extends Stage
 	private Image background;
 	private AnimatedProgressBar playerBar, opponentBar;
 	private Label playerName, opponentName, time;
+	private Image round, ready, fight;
 	
 	// Variables
+	private Timer preGameTimer;
 	private Timer timer;
 	private boolean gameReady = false; // Both client have load the stage
 	private boolean gamePaused = false;
 	private boolean gameEnded = false;
 	private boolean nextRound = false;
+	private boolean preGameIsOver = false;
+	private boolean preRound = false, preReady = false;
 	
 	/** Debug */
 	private ShapeRenderer renderer;
@@ -77,6 +81,7 @@ public class GameStage extends Stage
 	{
 		super();
 		this.main = main;
+		this.gamePacket = gamePacket;
 		
 		// Set opacity to zero
 		addAction(Actions.alpha(0));
@@ -84,23 +89,7 @@ public class GameStage extends Stage
 		background = new Image(new Texture(Gdx.files.internal(gamePacket.mapPath)));
 		this.addActor(background);
 		
-		initKangaroos(gamePacket.player, gamePacket.opponent);
-		initHUD(gamePacket.player, gamePacket.opponent);
-		
-		// Debug
-		renderer = new ShapeRenderer();
-		renderer.setAutoShapeType(true);
-		renderer.setColor(Color.WHITE);
-		
-		stateLabelK1 = new Label("", main.skin);
-		stateLabelK1.setPosition(5, 20);
-		stateLabelK2 = new Label("", main.skin);
-		stateLabelK2.setPosition(this.getWidth() - 200, 20);
-		
-		this.addActor(stateLabelK1);
-		this.addActor(stateLabelK2);
-		
-		setClientReady();
+		init(gamePacket);
 	}
 	
 	@Override
@@ -114,9 +103,41 @@ public class GameStage extends Stage
 		if (nextRound)
 			main.setStage(new GameStage(main, gamePacket));
 		
-		// If both clients are ready, the game is ready
-		if (gameReady && !gamePaused)
+		// If game ready
+		if (gameReady && !gamePaused && !preGameIsOver)
 		{
+			// Make timer and add round
+			if (preGameTimer == null)
+			{
+				preGameTimer = new Timer();
+				addActor(round);
+			}
+			
+			// Fade out round and add ready
+			if (preGameTimer.getElapsedTime() > 1.4 && !preRound)
+			{
+				round.addAction(Actions.fadeOut(0.2f));
+				addActor(ready);
+				preRound = true;
+			}
+			
+			// Fade out ready and add fight
+			if (preGameTimer.getElapsedTime() > 2.8)
+			{
+				ready.addAction(Actions.fadeOut(0.2f));
+				addActor(fight);
+				timer.restart();
+				preGameIsOver = true;	
+			}	
+		}	
+			
+		// If both clients are ready and pregame is over, the game is ready to update
+		if (gameReady && !gamePaused && preGameIsOver)
+		{	
+			// Fade out fight
+			if (preGameTimer.getElapsedTime() > 3.8)
+				fight.addAction(Actions.fadeOut(1f));
+						
 			// Update time
 			time.setText(String.format("%.1f", timer.getElapsedTime()));
 			time.setX(this.getWidth() / 2 - time.getWidth() / 2);
@@ -186,8 +207,8 @@ public class GameStage extends Stage
 		stateLabelK2 = new Label("", main.skin);
 		stateLabelK2.setPosition(this.getWidth() - 200, 20);
 		
-		this.addActor(stateLabelK1);
-		this.addActor(stateLabelK2);
+		addActor(stateLabelK1);
+		addActor(stateLabelK2);
 		
 		setClientReady();
 	}
@@ -215,11 +236,6 @@ public class GameStage extends Stage
 		
 		playerBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 2, 4, 0, 100, player.getHealth());
 		opponentBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 2, 4, 0, 100, opponent.getHealth());
-
-		// Setup the game timer
-		timer = new Timer();
-		time = new Label("0.0", new LabelStyle(main.skin.getFont("korean-32"), Color.TAN));
-		time.setPosition(this.getWidth() / 2 - time.getWidth() / 2, playerBar.getY());
 				
 		// Determine the side of kangaroos
 		if (player.getX() > opponent.getX())
@@ -239,14 +255,35 @@ public class GameStage extends Stage
 			opponentBar.setPosition(this.getWidth() - opponentBar.getWidth() - 5, opponentName.getY() - opponentName.getHeight() - 10);
 		}
 		
+		// Setup the game timer
+		timer = new Timer();
+		time = new Label("0.0", new LabelStyle(main.skin.getFont("korean-32"), Color.TAN));
+		time.setPosition(this.getWidth() / 2 - time.getWidth() / 2, playerBar.getY());
+		
+		// Make texts
+		round = new Image(new Texture(Gdx.files.internal("sprites/texts/round" + (gamePacket.round + 1) + ".png")));
+		round.setPosition(getWidth() / 2 - round.getWidth() / 2, getHeight() / 2 - round.getHeight() / 2);
+		ready = new Image(new Texture(Gdx.files.internal("sprites/texts/ready.png")));
+		ready.setPosition(getWidth() / 2 - ready.getWidth() / 2, getHeight() / 2 - ready.getHeight() / 2);
+		fight = new Image(new Texture(Gdx.files.internal("sprites/texts/fight.png")));
+		fight.setPosition(getWidth() / 2 - fight.getWidth() / 2, getHeight() / 2 - fight.getHeight() / 2);
+		
+		// Anims
+		round.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1f)));
+		round.addAction(Actions.moveBy(0, 50f, 0.5f));
+		ready.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1f)));
+		ready.addAction(Actions.moveBy(0, 50f, 0.5f));
+		fight.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.3f)));
+		fight.addAction(Actions.moveBy(0, 50f, 0.5f));
+		
 		// Attach all the components to the stage
-		this.addActor(playerBar);
-		this.addActor(opponentBar);
-		this.addActor(player);
-		this.addActor(opponent);
-		this.addActor(playerName);
-		this.addActor(opponentName);
-		this.addActor(time);
+		addActor(playerBar);
+		addActor(opponentBar);
+		addActor(player);
+		addActor(opponent);
+		addActor(playerName);
+		addActor(opponentName);
+		addActor(time);
 	}
 	
 	/**

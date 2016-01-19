@@ -8,6 +8,7 @@ import Packets.NewsPacket;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.genesys.kclient.Kangaroo;
 import com.genesys.kclient.Main;
@@ -45,6 +46,9 @@ public class EndGameStage extends Stage
 		this.lastNews = lastNews;
 		this.lastBeforeNews = lastBeforeNews;
 		
+		// Set opacity to zero
+		addAction(Actions.alpha(0));
+				
 		player = new PersoBloc(playerData, main.skin);
 		player.setPosition(this.getWidth() / 4 - player.getWidth() / 2, this.getHeight() / 2 - player.getHeight() / 2 + 20);
 		this.addActor(player);

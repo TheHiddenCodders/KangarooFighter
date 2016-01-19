@@ -469,6 +469,8 @@ public class Game
 		{
 			p.player = k1.getUpdatePacket();
 			p.opponent = k2.getUpdatePacket();
+			p.playerData = k1.getClientDataPacket();
+			p.opponentData = k2.getClientDataPacket();
 			p.playerWins = k1Wins;
 			p.opponentWins = k2Wins;
 		}
@@ -476,6 +478,9 @@ public class Game
 		{
 			p.player = k2.getUpdatePacket();
 			p.opponent = k1.getUpdatePacket();
+			p.playerData = k2.getClientDataPacket();
+			p.opponentData = k1.getClientDataPacket();
+			p.playerWins = k2Wins;
 			p.opponentWins = k1Wins;
 		}
 		

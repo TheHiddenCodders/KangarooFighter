@@ -187,7 +187,7 @@ public class ServerUtils
 		ClientDataPacket packet = new ClientDataPacket();
 		
 		File dataFile = getPlayerDataFile(k);
-		System.err.println(dataFile.getAbsolutePath());
+
 		try
 		{
 			BufferedReader reader = new BufferedReader(new FileReader(dataFile));
@@ -208,6 +208,7 @@ public class ServerUtils
 			e.printStackTrace();
 		}
 		
+		packet.pos = getLadderPosition(k);
 		return packet;
 	}
 	
