@@ -57,17 +57,18 @@ public class GameStage extends Stage
 	private Image background;
 	private AnimatedProgressBar playerBar, opponentBar;
 	private Label playerName, opponentName, time;
-	private Image round, ready, fight;
+	private Image round, ready, fight, win, lose;
 	
 	// Variables
-	private Timer preGameTimer;
+	private Timer preRoundTimer;
+	private Timer aftRoundTimer;
 	private Timer timer;
 	private boolean gameReady = false; // Both client have load the stage
 	private boolean gamePaused = false;
 	private boolean gameEnded = false;
 	private boolean nextRound = false;
 	private boolean preGameIsOver = false;
-	private boolean preRound = false, preReady = false;
+	private boolean preRound = false;
 	
 	/** Debug */
 	private ShapeRenderer renderer;
@@ -94,35 +95,58 @@ public class GameStage extends Stage
 	
 	@Override
 	public void act(float delta) 
-	{	
-		// Update players health
-		playerBar.setValue(player.getHealth());
-		opponentBar.setValue(opponent.getHealth());
-		
+	{			
 		// Set next round if needed
 		if (nextRound)
-			main.setStage(new GameStage(main, gamePacket));
+		{
+			// Make timer and lose or win
+			if (aftRoundTimer == null)
+			{
+				// Update players health
+				playerBar.setValue(player.getHealth());
+				opponentBar.setValue(opponent.getHealth());
+				
+				// Make timer
+				aftRoundTimer = new Timer();
+				
+				if (player.getHealth() <= 0)
+					addActor(lose);
+				else if (opponent.getHealth() <= 0)
+					addActor(win);
+			}
+			
+			if (aftRoundTimer.getElapsedTime() > 1)
+			{
+				if (player.getHealth() <= 0)
+					lose.addAction(Actions.fadeOut(2));
+				else if (opponent.getHealth() <= 0)
+					win.addAction(Actions.fadeOut(2));
+			}
+			
+			if (aftRoundTimer.getElapsedTime() > 3)
+				main.setStage(new GameStage(main, gamePacket));
+		}
 		
 		// If game ready
 		if (gameReady && !gamePaused && !preGameIsOver)
-		{
-			// Make timer and add round
-			if (preGameTimer == null)
+		{			
+			// Make timer and add round text
+			if (preRoundTimer == null)
 			{
-				preGameTimer = new Timer();
+				preRoundTimer = new Timer();
 				addActor(round);
 			}
 			
-			// Fade out round and add ready
-			if (preGameTimer.getElapsedTime() > 1.4 && !preRound)
+			// Fade out round and add ready text
+			if (preRoundTimer.getElapsedTime() > 1.4 && !preRound)
 			{
 				round.addAction(Actions.fadeOut(0.2f));
 				addActor(ready);
 				preRound = true;
 			}
 			
-			// Fade out ready and add fight
-			if (preGameTimer.getElapsedTime() > 2.8)
+			// Fade out ready and add fight text
+			if (preRoundTimer.getElapsedTime() > 2.8)
 			{
 				ready.addAction(Actions.fadeOut(0.2f));
 				addActor(fight);
@@ -132,11 +156,15 @@ public class GameStage extends Stage
 		}	
 			
 		// If both clients are ready and pregame is over, the game is ready to update
-		if (gameReady && !gamePaused && preGameIsOver)
+		if (gameReady && !gamePaused && preGameIsOver && aftRoundTimer == null)
 		{	
 			// Fade out fight
-			if (preGameTimer.getElapsedTime() > 3.8)
+			if (preRoundTimer.getElapsedTime() > 3.8)
 				fight.addAction(Actions.fadeOut(1f));
+			
+			// Update players health
+			playerBar.setValue(player.getHealth());
+			opponentBar.setValue(opponent.getHealth());
 						
 			// Update time
 			time.setText(String.format("%.1f", timer.getElapsedTime()));
@@ -255,6 +283,10 @@ public class GameStage extends Stage
 			opponentBar.setPosition(this.getWidth() - opponentBar.getWidth() - 5, opponentName.getY() - opponentName.getHeight() - 10);
 		}
 		
+		// Set to the bars the players health
+		playerBar.setValue(player.getHealth());
+		opponentBar.setValue(opponent.getHealth());
+		
 		// Setup the game timer
 		timer = new Timer();
 		time = new Label("0.0", new LabelStyle(main.skin.getFont("korean-32"), Color.TAN));
@@ -266,7 +298,11 @@ public class GameStage extends Stage
 		ready = new Image(new Texture(Gdx.files.internal("sprites/texts/ready.png")));
 		ready.setPosition(getWidth() / 2 - ready.getWidth() / 2, getHeight() / 2 - ready.getHeight() / 2);
 		fight = new Image(new Texture(Gdx.files.internal("sprites/texts/fight.png")));
-		fight.setPosition(getWidth() / 2 - fight.getWidth() / 2, getHeight() / 2 - fight.getHeight() / 2);
+		fight.setPosition(getWidth() / 2 - fight.getWidth() / 2, getHeight() / 2 - fight.getHeight() / 2);	
+		win = new Image(new Texture(Gdx.files.internal("sprites/texts/win.png")));
+		win.setPosition(getWidth() / 2 - win.getWidth() / 2, getHeight() / 2 - win.getHeight() / 2);	
+		lose = new Image(new Texture(Gdx.files.internal("sprites/texts/lose.png")));
+		lose.setPosition(getWidth() / 2 - lose.getWidth() / 2, getHeight() / 2 - lose.getHeight() / 2);	
 		
 		// Anims
 		round.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1f)));
@@ -275,6 +311,10 @@ public class GameStage extends Stage
 		ready.addAction(Actions.moveBy(0, 50f, 0.5f));
 		fight.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.3f)));
 		fight.addAction(Actions.moveBy(0, 50f, 0.5f));
+		win.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.3f)));
+		win.addAction(Actions.moveBy(0, 50f, 0.5f));
+		lose.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.3f)));
+		lose.addAction(Actions.moveBy(0, 50f, 0.5f));
 		
 		// Attach all the components to the stage
 		addActor(playerBar);
@@ -309,7 +349,6 @@ public class GameStage extends Stage
 	public void setGameReady()
 	{
 		gameReady = true;
-		timer.restart();
 		System.out.println("Game start!");
 	}	
 	
