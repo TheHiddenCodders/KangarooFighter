@@ -31,8 +31,6 @@ public class Kangaroo
 	private int health;
 	private int damage = 5;
 	private Vector2 position = new Vector2(0, 0);
-	private Vector2 velocity = new Vector2(0, 0);
-	private float gravity = -98.1f;
 	private int currentAnimation = 0;
 	private ArrayList<ServerAnimation> animations;
 	private States state = States.idle;
@@ -362,11 +360,11 @@ public class Kangaroo
 				k.setHealth(k.getHealth() - this.getDamage() * 2);
 				break;
 			case LEFTPUNCH:
-				k.setHealth(k.getHealth() - 10);
+				k.setHealth(k.getHealth() - 20);
 				this.getCurrentAnimation().stop();
 				break;
 			case RIGHTPUNCH:
-				k.setHealth(k.getHealth() - 10);
+				k.setHealth(k.getHealth() - 20);
 				this.getCurrentAnimation().stop();
 				break;			
 			}
@@ -623,10 +621,19 @@ public class Kangaroo
 		setPosition(new Vector2(x, y));
 	}
 
+	public boolean isDead()
+	{
+		return (health <= 0);
+	}
+	
 	public boolean isTouched() {
 		return touched;
 	}
 
+	public boolean isFlipped() {
+		return flip;
+	}
+	
 	public void setTouched(boolean touched) {
 		this.touched = touched;
 	}

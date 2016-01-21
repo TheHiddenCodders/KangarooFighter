@@ -9,7 +9,6 @@ import Kangaroo.Game;
 import Kangaroo.Kangaroo;
 import Packets.ClientReadyPacket;
 import Packets.FriendsDataPacket;
-import Packets.GameFoundPacket;
 import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
 import Packets.KangarooClientPacket;
@@ -247,7 +246,7 @@ public class KServer extends Server
 				if (games.get(i).getKangarooFromIp(clientIp) != null)
 				{
 					if (games.get(i).isPrepared())
-						games.get(i).end(cp.getIp(), EndGameType.Disconnection);
+						games.get(i).endGame(cp.getIp(), EndGameType.Disconnection);
 					
 					games.remove(games.get(i));
 				}
@@ -375,12 +374,6 @@ public class KServer extends Server
 				
 				System.out.println("Kangaroo : " + k.getName() + " found a game : " + games.indexOf(game));
 				System.out.println("Kangaroo : " + game.getK1().getName() + " found another kangaroo to play");
-				
-				// Send to kangaroos that game have been found
-				GameFoundPacket foundPacket = new GameFoundPacket();
-				foundPacket.mapPath = game.getMapPath();
-				send(game.getK1().getClient(), foundPacket);
-				send(game.getK2().getClient(), foundPacket);
 				
 				// Launch game
 				game.init();

@@ -5,8 +5,7 @@ import java.util.Random;
 
 import Packets.ClientDataPacket;
 import Packets.FriendsDataPacket;
-import Packets.GameFoundPacket;
-import Packets.KangarooServerPacket;
+import Packets.GamePacket;
 import Packets.LadderDataPacket;
 import Packets.MatchMakingPacket;
 import Packets.NewsPacket;
@@ -37,10 +36,9 @@ public class HomeStage extends Stage
 	/** Used as a wire between stage to access client for example */
 	public Main main;
 	private ServerInfoPacket updateServerInfoPacket;
-	private KangarooServerPacket pPlayer, pOpponent;
-	private GameFoundPacket pGameFound;
+	private GamePacket gamePacket;
 	private FriendsDataPacket friendsData;
-	private boolean seekingGame = false, gameFound = false;
+	private boolean seekingGame = false;
 	private ArrayList<String> bottomInfos;
 	private int bottomInfosIndex = 0;
 	
@@ -66,6 +64,9 @@ public class HomeStage extends Stage
 	{
 		super();
 		this.main = main;	
+		
+		// Set opacity to zero
+		addAction(Actions.alpha(0));
 		
 		// Background of the stage
 		background = new Image(new Texture(Gdx.files.internal("sprites/homestage.png")));
@@ -143,9 +144,9 @@ public class HomeStage extends Stage
 			friendsData = null;
 		}
 		
-		// If game found, go to game stage
-		if (gameFound && pPlayer != null && pOpponent != null)
-			main.setStage(new GameStage(main, pGameFound, pPlayer, pOpponent));
+		// If game is not null, a game has been found
+		if (gamePacket != null)
+			main.setStage(new PreGameStage(main, gamePacket));
 		
 		// Make bottom text translate and update
 		if (bottomTextEnd.getX() + bottomTextEnd.getWidth() > 30)
@@ -219,6 +220,7 @@ public class HomeStage extends Stage
 	/**
 	 * Show all the blocs by a fade in
 	 */
+	@SuppressWarnings("unused")
 	private void showBlocsExcept(ExpandableBloc bloc)
 	{
 		persoBloc.addAction(Actions.fadeIn(0.3f));
@@ -324,19 +326,20 @@ public class HomeStage extends Stage
 		updateServerInfoPacket = p;
 	}
 	
-	public void setGameFound(GameFoundPacket p)
+	/**
+	 * Function called by network, a game has been found
+	 * @param p
+	 */
+	public void setGameFound(GamePacket p)
 	{
-		pGameFound = p;
 		seekingGame = false;
-		gameFound = true;
+		gamePacket = p;
 	}
 	
-	public void setKangaroosInit(KangarooServerPacket pPlayer, KangarooServerPacket pOpponent)
-	{
-		this.pPlayer = pPlayer;
-		this.pOpponent = pOpponent;
-	}
-	
+	/**
+	 * Function called by network, update the friends bloc
+	 * @param p
+	 */
 	public void refreshFriendsBloc(FriendsDataPacket p)
 	{
 		friendsData = p;

@@ -15,6 +15,7 @@ public class ClientDataPacket implements Serializable
 	public int looses;
 	public int elo;
 	public int streak;
+	public int pos;
 
 	@Override
 	public String toString()

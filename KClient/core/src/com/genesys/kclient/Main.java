@@ -45,7 +45,7 @@ public class Main extends ApplicationAdapter
 	@Override
 	public void render ()
 	{
-		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+		Gdx.gl.glClearColor(0f, 0f, 0f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		stage.act(Gdx.graphics.getDeltaTime());
@@ -90,9 +90,9 @@ public class Main extends ApplicationAdapter
 			System.out.println("Network not updated");
 		
 		if (stage.getClass().isAssignableFrom(HomeStage.class) || stage.getClass().isAssignableFrom(PreGameStage.class) || stage.getClass().isAssignableFrom(EndGameStage.class))
-			stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.7f)));
+			stage.addAction(Actions.fadeIn(0.7f));
 		else if (stage.getClass().isAssignableFrom(GameStage.class))
-			stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(3)));
+			stage.addAction(Actions.fadeIn(2));
 		
 		Gdx.input.setInputProcessor(stage);
 		this.stage = stage;
