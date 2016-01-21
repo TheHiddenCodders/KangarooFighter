@@ -37,13 +37,18 @@ public class Kangaroo
 	private boolean flip = false;
 	
 	// State machine attributes
-	private boolean punchCD = false;
-	private Timer CDTimer;
+	private boolean leftPunchCD = false;
+	private boolean rightPunchCD = false;
+	private Timer leftPunchCDTimer, rightPunchCDTimer;
+	private final static float punchTime = 0.3f;
+	private boolean leftPunchReleased = true, rightPunchReleased = true;
 	
 	// For server only
 	private Timer speedTimer;
-	private Timer punchTimer;
-	private float speed = 200; // In pixel per s
+	private final static float forwardSpeed = 100.f; // In pixel per s
+	private final static float backwardSpeed = 100.f; // In pixel per s
+	private float speed = 0.f;
+	private float D = 0.f;
 	private boolean ready = false;
 	
 	private KangarooServerPacket networkImage;
@@ -63,8 +68,9 @@ public class Kangaroo
 		lastPacket = new KangarooClientPacket();
 		this.cp = cp;
 		speedTimer = new Timer();
-		punchTimer = new Timer();
-		CDTimer = new Timer();
+		//punchTimer = new Timer();
+		leftPunchCDTimer = new Timer();
+		rightPunchCDTimer = new Timer();
 		initAnim();
 	}
 	
@@ -101,16 +107,27 @@ public class Kangaroo
 	{
 		getCurrentAnimation().update();
 		
-		if (CDTimer.getElapsedTime() > 0.3)
-			punchCD = false;
+		// Clean the house for punch variables
+		if (leftPunchCDTimer.getElapsedTime() > punchTime)
+			leftPunchCD = false;
 		
+		if (rightPunchCDTimer.getElapsedTime() > punchTime)
+			rightPunchCD = false;
 		
+		if (!lastPacket.leftPunch)
+			leftPunchReleased = true;
 		
+		if (!lastPacket.rightPunch)
+			rightPunchReleased = true;
+		
+		// Clean the house for movement variables
 		if (this.getState() != States.movement)
 		{
 			animations.get(States.movement.ordinal()).stop();
 			speedTimer.restart();
 		}
+		
+		
 		
 		// Make the state machine here
 		if (getState() == States.idle)
@@ -120,22 +137,23 @@ public class Kangaroo
 			speedTimer.restart();
 			
 			// If the client press the punch key, change state to Punch
-			if (lastPacket.leftPunch || lastPacket.rightPunch)
+			if (lastPacket.leftPunch)
 			{
-				if (!punchCD)
+				if (leftPunchReleased && !leftPunchCD)
 				{
-					if (lastPacket.leftPunch)
-					{
-						setState(States.leftPunch);
-						launchAnimation(States.leftPunch);
-					}
-					else if (lastPacket.rightPunch)
-					{
-						setState(States.rightPunch);
-						launchAnimation(States.rightPunch);
-					}
+					setState(States.leftPunch);
+					launchAnimation(States.leftPunch);
+					leftPunchReleased = false;
 				}
-				punchTimer.restart();
+			}
+			else if (lastPacket.rightPunch)
+			{
+				if (rightPunchReleased && !rightPunchCD)
+				{
+					setState(States.rightPunch);
+					launchAnimation(States.rightPunch);
+					rightPunchReleased = false;
+				}
 			}
 			// If the guard key is press, change state to guard and launch the associate animation
 			else if (lastPacket.guard)
@@ -170,8 +188,8 @@ public class Kangaroo
 			{
 				setState(States.idle);
 				launchAnimation(States.idle);
-				CDTimer.restart();
-				punchCD = true;
+				leftPunchCDTimer.restart();
+				leftPunchCD = true;
 			}
 		}
 		else if (getState() == States.rightPunch)
@@ -180,8 +198,8 @@ public class Kangaroo
 			{
 				setState(States.idle);
 				launchAnimation(States.idle);
-				CDTimer.restart();
-				punchCD = true;
+				rightPunchCDTimer.restart();
+				rightPunchCD = true;
 			}
 		}
 		else if (getState() == States.hit)
@@ -195,7 +213,7 @@ public class Kangaroo
 		}
 		else if (getState() == States.guard)
 		{
-			/* TODO : if (lastPacket.guard)
+			if (lastPacket.guard)
 			{
 				if (this.getCurrentAnimation().isOver())
 				{
@@ -207,22 +225,16 @@ public class Kangaroo
 			{
 				setState(States.idle);
 				launchAnimation(States.idle);
-			}*/
-			
-			if (!lastPacket.guard)
-			{
-				setState(States.idle);
-				launchAnimation(States.idle);
 			}
 		}
-		/* TODO : else if (getState() == States.idleGuard)
+		else if (getState() == States.idleGuard)
 		{
 		 	if (!lastPacket.guard)
 			{
 				setState(States.idle);
 				launchAnimation(States.idle);
 			}
-		}*/
+		}
 		else if (getState() == States.movement)
 		{
 			if (!lastPacket.leftArrow && !lastPacket.rightArrow)
@@ -256,7 +268,7 @@ public class Kangaroo
 		animations.add(new ServerAnimation("assets/anims/guard.hba")); // Guard 
 		animations.add(new ServerAnimation("assets/anims/leftpunch.hba"));
 		animations.add(new ServerAnimation("assets/anims/rightpunch.hba"));
-		//animations.add(new ServerAnimation("assets/anims/idleGuard.hba"));
+		animations.add(new ServerAnimation("assets/anims/idleGuard.hba"));
 		
 		animations.get(States.idle.ordinal()).setMode(ServerAnimation.foreverPlay);
 		animations.get(States.movement.ordinal()).setMode(ServerAnimation.foreverPlay);
@@ -264,7 +276,7 @@ public class Kangaroo
 		animations.get(States.guard.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.leftPunch.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.rightPunch.ordinal()).setMode(ServerAnimation.onePlay);
-		//animations.get(States.idleGuard.ordinal()).setMode(ServerAnimation.foreverPlay);
+		animations.get(States.idleGuard.ordinal()).setMode(ServerAnimation.foreverPlay);
 	}
 	
 	/**
@@ -301,29 +313,71 @@ public class Kangaroo
 	 */
 	private void move(Direction direction, Game game)
 	{
-		Kangaroo opponent = game.getKangarooFromOpponentIp(this.getClient().getIp());
+		//Kangaroo opponent = game.getKangarooFromOpponentIp(this.getClient().getIp());
 		
 		if (speedTimer.getElapsedTime() > 0.01)
 		{
-			if (direction == Direction.LEFT)
+			// Looking to the right
+			if (flip)
 			{
-				if (!flip)
-					flip();
-				
-				// Don't go out screen
-				if (getPosition().x > 0 - getCurrentAnimation().getKeyFrame().w / 2 && !this.collidWith(opponent))
-					setPosition( (int) getPosition().x - (speed * speedTimer.getElapsedTime()), (int) getPosition().y ); 
+				// Go to the left
+				if (direction == Direction.LEFT)
+				{
+					//if (getPosition().x > 0 - getCurrentAnimation().getKeyFrame().w / 2 && !this.collidWith(opponent))
+					//{
+						speed = -forwardSpeed;
+					/*}
+					else
+					{
+						speed = 0;
+					}*/
+				}
+				// Go to the right
+				else 
+				{
+					//if (getPosition().x < 800 - getCurrentAnimation().getKeyFrame().w / 2  && !this.collidWith(opponent))
+					//{
+						speed = backwardSpeed;
+					/*}
+					else
+					{
+						speed = 0;
+					}*/
+				}
 			}
-			else if (direction == Direction.RIGHT)
+			// Look to the left
+			else
 			{
-				if (flip)
-					flip();
-
-				//Don't go out screen
-				if (getPosition().x < 800 - getCurrentAnimation().getKeyFrame().w / 2  && !this.collidWith(opponent))
-					setPosition( (int) getPosition().x + (speed * speedTimer.getElapsedTime()), (int) getPosition().y );
+				// Go to the left
+				if (direction == Direction.LEFT)
+				{
+					//if (getPosition().x > 0 - getCurrentAnimation().getKeyFrame().w / 2 && !this.collidWith(opponent))
+					//{
+						speed = -backwardSpeed;
+					/*}
+					else
+					{
+						speed = 0;
+					}*/
+				}
+				// Go to the right
+				else 
+				{
+					//if (getPosition().x < 800 - getCurrentAnimation().getKeyFrame().w / 2  && !this.collidWith(opponent))
+					//{
+						speed = forwardSpeed;
+					/*}
+					else
+					{
+						speed = 0;
+					}*/
+				}
 			}
 			
+			// Apply changes
+			System.out.println("Speed : " + speed + " | ET : " + speedTimer.getElapsedTime() + " = " + D);
+			D = speed * speedTimer.getElapsedTime();
+			setPosition( (int) getPosition().x + D, (int) getPosition().y ); 
 			speedTimer.restart();
 		}
 	}

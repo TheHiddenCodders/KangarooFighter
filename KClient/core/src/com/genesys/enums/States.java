@@ -8,6 +8,7 @@ public enum States {
 	guard,
 	leftPunch,
 	rightPunch,
+	idleGuard,
 	transitoryState,
 	jump
 	

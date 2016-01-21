@@ -8,7 +8,7 @@ public enum States {
 	guard,
 	leftPunch,
 	rightPunch,
-	transitoryState,
-	jump,
+	/*transitoryState,
+	jump,*/
 	idleGuard
 }

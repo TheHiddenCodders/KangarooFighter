@@ -181,6 +181,7 @@ public class Kangaroo extends AnimatedSprite
 		addAnimation(new Animation("GUARD", "anims/guard.hba"));
 		addAnimation(new Animation("LPUNCH", "anims/leftpunch.hba"));
 		addAnimation(new Animation("RPUNCH", "anims/rightpunch.hba"));
+		addAnimation(new Animation("IDLEGUARD", "anims/idleguard.hba"));
 		anims.get(0).start();
 	}
 	
