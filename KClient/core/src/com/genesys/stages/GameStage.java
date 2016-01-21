@@ -262,8 +262,8 @@ public class GameStage extends Stage
 		playerName = new Label(player.getName(), new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
 		opponentName = new Label(opponent.getName(), new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
 		
-		playerBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 2, 4, 0, 100, player.getHealth());
-		opponentBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/barsheet.png")), 2, 4, 0, 100, opponent.getHealth());
+		playerBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/sheetbar2.png")), 0, 1, 0, 100, player.getHealth());
+		opponentBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/sheetbar2.png")), 0, 1, 0, 100, opponent.getHealth());
 				
 		// Determine the side of kangaroos
 		if (player.getX() > opponent.getX())
@@ -271,8 +271,8 @@ public class GameStage extends Stage
 			playerName.setPosition(this.getWidth() - playerName.getWidth() - 5, this.getHeight() - playerName.getHeight() - 5);
 			opponentName.setPosition(5, this.getHeight() - opponentName.getHeight() - 5);
 			
-			playerBar.setPosition(this.getWidth() - playerBar.getWidth() - 5, playerName.getY() - playerName.getHeight() - 10);
-			opponentBar.setPosition(opponentName.getX(), opponentName.getY() - opponentName.getHeight() - 10);
+			playerBar.setPosition(this.getWidth() - playerBar.getWidth() - 5, getHeight() - playerBar.getHeight() - 10);
+			opponentBar.setPosition(opponentName.getX(), getHeight() - opponentBar.getHeight() - 10);
 		}
 		else
 		{
