@@ -65,7 +65,7 @@ public class AnimatedSprite extends Actor
 	{		
 		if (currentFrame != null)
 			batch.draw(currentFrame, this.getX(), this.getY(), 0, 0, this.getWidth(), this.getHeight(), this.getScaleX(), this.getScaleY(), this.getRotation());		
-	
+
 		super.draw(batch, parentAlpha);
 	}
 	
