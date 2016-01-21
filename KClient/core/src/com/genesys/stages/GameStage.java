@@ -20,9 +20,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.genesys.enums.States;
-import com.genesys.kclient.AnimatedProgressBar;
 import com.genesys.kclient.Kangaroo;
 import com.genesys.kclient.Main;
+import com.genesys.kclient.ProgressBar;
 
 /**
  * Game stage, where the fight take place
@@ -55,7 +55,7 @@ public class GameStage extends Stage
 	// Components
 	private Kangaroo player, opponent;
 	private Image background;
-	private AnimatedProgressBar playerBar, opponentBar;
+	private ProgressBar playerBar, opponentBar;
 	private Label playerName, opponentName, time;
 	private Image round, ready, fight, win, lose;
 	
@@ -259,28 +259,33 @@ public class GameStage extends Stage
 	private void initHUD(KangarooServerPacket pPlayer, KangarooServerPacket pOpponent)
 	{		
 		// Make player label and bars
-		playerName = new Label(player.getName(), new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
-		opponentName = new Label(opponent.getName(), new LabelStyle(main.skin.getFont("default-font"), Color.WHITE));
+		playerName = new Label(player.getName(), new LabelStyle(main.skin.getFont("default-font"), new Color(0.3f, 0.3f, 0.3f, 1)));
+		opponentName = new Label(opponent.getName(), new LabelStyle(main.skin.getFont("default-font"), new Color(0.3f, 0.3f, 0.3f, 1)));
+			
+		// Make bars
+		playerBar = new ProgressBar(new Texture(Gdx.files.internal("sprites/sheetbar.png")), 0, 100, player.getHealth());
+		opponentBar = new ProgressBar(new Texture(Gdx.files.internal("sprites/sheetbar.png")), 0, 100, opponent.getHealth());
 		
-		playerBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/sheetbar2.png")), 0, 1, 0, 100, player.getHealth());
-		opponentBar = new AnimatedProgressBar(new Texture(Gdx.files.internal("sprites/sheetbar2.png")), 0, 1, 0, 100, opponent.getHealth());
-				
 		// Determine the side of kangaroos
 		if (player.getX() > opponent.getX())
 		{
-			playerName.setPosition(this.getWidth() - playerName.getWidth() - 5, this.getHeight() - playerName.getHeight() - 5);
-			opponentName.setPosition(5, this.getHeight() - opponentName.getHeight() - 5);
+			playerBar.flip();
+			
+			playerName.setPosition(this.getWidth() - playerName.getWidth() - 82, this.getHeight() - playerName.getHeight() - 37);
+			opponentName.setPosition(80, this.getHeight() - opponentName.getHeight() - 37);
 			
 			playerBar.setPosition(this.getWidth() - playerBar.getWidth() - 5, getHeight() - playerBar.getHeight() - 10);
-			opponentBar.setPosition(opponentName.getX(), getHeight() - opponentBar.getHeight() - 10);
+			opponentBar.setPosition(5, getHeight() - opponentBar.getHeight() - 10);
 		}
 		else
 		{
-			playerName.setPosition(5, this.getHeight() - playerName.getHeight() - 5);
-			opponentName.setPosition(this.getWidth() - opponentName.getWidth() - 5, this.getHeight() - opponentName.getHeight() - 5);
+			opponentBar.flip();
 			
-			playerBar.setPosition(playerName.getX(), playerName.getY() - playerName.getHeight() - 10);
-			opponentBar.setPosition(this.getWidth() - opponentBar.getWidth() - 5, opponentName.getY() - opponentName.getHeight() - 10);
+			playerName.setPosition(80, this.getHeight() - playerName.getHeight() - 37);
+			opponentName.setPosition(this.getWidth() - opponentName.getWidth() - 82, this.getHeight() - opponentName.getHeight() - 37);
+			
+			playerBar.setPosition(5, getHeight() - playerBar.getHeight() - 10);
+			opponentBar.setPosition(this.getWidth() - opponentBar.getWidth() - 5, getHeight() - opponentBar.getHeight() - 10);
 		}
 		
 		// Set to the bars the players health

@@ -16,7 +16,7 @@ import com.genesys.kclient.Main;
 
 public class PreGameStage extends Stage 
 {
-	private static final float timeBeforeGame = 6f; // In s
+	private static final float timeBeforeGame = 1f; // In s
 	
 	/*
 	 * Attributes
