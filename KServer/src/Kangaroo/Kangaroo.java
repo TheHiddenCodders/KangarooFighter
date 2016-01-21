@@ -354,13 +354,13 @@ public class Kangaroo
 			switch(touchedPart)
 			{
 			case BODY:
-				k.setHealth(k.getHealth() - this.getDamage());
+				k.setHealth(k.getHealth() - 50);
 				break;
 			case HEAD:
-				k.setHealth(k.getHealth() - this.getDamage() * 2);
+				k.setHealth(k.getHealth() - 100);
 				break;
 			case LEFTPUNCH:
-				k.setHealth(k.getHealth() - 20);
+				k.setHealth(k.getHealth() - 10);
 				this.getCurrentAnimation().stop();
 				break;
 			case RIGHTPUNCH:

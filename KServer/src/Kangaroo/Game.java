@@ -8,6 +8,7 @@ import Packets.GamePacket;
 import Utils.ServerUtils;
 import Utils.Timer;
 import enums.EndGameType;
+import enums.States;
 
 /**
  * The Game class manage a game on the server. 
@@ -142,6 +143,9 @@ public class Game
 		k1.setPosition(player1X[mapIndex], player1Y[mapIndex]);
 		k2.setHealth(100);
 		k2.setPosition(player2X[mapIndex], player2Y[mapIndex]);
+		
+		k1.setState(States.idle);
+		k2.setState(States.idle);
 		
 		// Flip k2 because of his side (k2 is on the right) but don't if he is already flipped
 		if (!k2.isFlipped())
