@@ -24,221 +24,35 @@ import enums.States;
  */
 public class Kangaroo 
 {
-	private ClientProcessor cp;
-	
-	// Client information
-	private String name = "";
-	private int health;
+	private Player player;
+	private int health = 100;
 	private int damage = 5;
 	private Vector2 position = new Vector2(0, 0);
-	private int currentAnimation = 0;
 	private ArrayList<ServerAnimation> animations;
-	private States state = States.idle;
+	private int currentAnimation = 0;
 	private boolean flip = false;
-	
-	// State machine attributes
-	private boolean punchCD = false;
-	private Timer CDTimer;
-	
-	// For server only
-	private Timer speedTimer;
-	private Timer punchTimer;
 	private float speed = 200; // In pixel per s
+	private States state = States.idle;
+	private int	win = 0;
 	private boolean ready = false;
 	
-	private KangarooServerPacket networkImage;
-	private KangarooClientPacket lastPacket;
-	
-	// State machine boolean
-	private boolean touched;
+	private Timer speedTimer;
+
 	
 	/**
 	 * Create the kangaroo with the client.
 	 * 
 	 * @param cp
 	 */
-	public Kangaroo(ClientProcessor cp)
+	public Kangaroo(Player player, Direction position)
 	{
-		networkImage = new KangarooServerPacket();
-		lastPacket = new KangarooClientPacket();
-		this.cp = cp;
-		speedTimer = new Timer();
-		punchTimer = new Timer();
-		CDTimer = new Timer();
+		this.speedTimer = new Timer();
+		this.player = player;
+		
+		if (position == Direction.RIGHT)
+			flip();
+		
 		initAnim();
-	}
-	
-	/*
-	 * Methods
-	 */
-	/**
-	 * @return an updatekangaroopacket with this kangaroo data
-	 */
-	public KangarooServerPacket getUpdatePacket()
-	{
-		KangarooServerPacket p = new KangarooServerPacket();
-		p.ip = cp.getIp();
-		p.name = name;
-		p.x = position.x;
-		p.y = position.y;
-		p.health = health;
-		p.damage = damage;
-		p.state = state.ordinal();
-		p.flip = flip;
-		return p;
-	}
-	
-	/**
-	 * Update kangaroo fields by packets.
-	 * @param p the packet received
-	 */
-	public void updateFromPacket(KangarooClientPacket p)
-	{
-		this.lastPacket = p;
-	}
-	
-	public void stateMachine(Game game)
-	{
-		getCurrentAnimation().update();
-		
-		if (CDTimer.getElapsedTime() > 0.3)
-			punchCD = false;
-		
-		
-		
-		if (this.getState() != States.movement)
-		{
-			animations.get(States.movement.ordinal()).stop();
-			speedTimer.restart();
-		}
-		
-		// Make the state machine here
-		if (getState() == States.idle)
-		{
-			//Stop the movement animation
-			animations.get(States.movement.ordinal()).stop();
-			speedTimer.restart();
-			
-			// If the client press the punch key, change state to Punch
-			if (lastPacket.leftPunch || lastPacket.rightPunch)
-			{
-				if (!punchCD)
-				{
-					if (lastPacket.leftPunch)
-					{
-						setState(States.leftPunch);
-						launchAnimation(States.leftPunch);
-					}
-					else if (lastPacket.rightPunch)
-					{
-						setState(States.rightPunch);
-						launchAnimation(States.rightPunch);
-					}
-				}
-				punchTimer.restart();
-			}
-			// If the guard key is press, change state to guard and launch the associate animation
-			else if (lastPacket.guard)
-			{
-				setState(States.guard);
-				launchAnimation(States.guard);
-			}
-			// If the movement key is press, change state to movement, launch the associate animation and start to move
-			else if (lastPacket.leftArrow)
-			{
-				setState(States.movement);
-				launchAnimation(States.movement);
-				move(Direction.LEFT, game); 
-			}
-			// If the movement key is press, change state to movement, launch the associate animation and start to move
-			else if (lastPacket.rightArrow)
-			{
-				setState(States.movement);
-				launchAnimation(States.movement);
-				move(Direction.RIGHT, game); 
-			}
-			// If the kangaroo is touched
-			else if (touched)
-			{
-				setState(States.hit);
-				launchAnimation(States.hit);
-			}
-		}
-		else if (getState() == States.leftPunch)
-		{
-			if (this.getCurrentAnimation().isOver())
-			{
-				setState(States.idle);
-				launchAnimation(States.idle);
-				CDTimer.restart();
-				punchCD = true;
-			}
-		}
-		else if (getState() == States.rightPunch)
-		{
-			if (this.getCurrentAnimation().isOver())
-			{
-				setState(States.idle);
-				launchAnimation(States.idle);
-				CDTimer.restart();
-				punchCD = true;
-			}
-		}
-		else if (getState() == States.hit)
-		{
-			if (this.getCurrentAnimation().isOver())
-			{
-				setState(States.idle);
-				launchAnimation(States.idle);
-				touched = false;
-			}
-		}
-		else if (getState() == States.guard)
-		{
-			/* TODO : if (lastPacket.guard)
-			{
-				if (this.getCurrentAnimation().isOver())
-				{
-					setState(States.idleGuard);
-					launchAnimation(States.idleGuard);
-				}
-			}
-			else 
-			{
-				setState(States.idle);
-				launchAnimation(States.idle);
-			}*/
-			
-			if (!lastPacket.guard)
-			{
-				setState(States.idle);
-				launchAnimation(States.idle);
-			}
-		}
-		/* TODO : else if (getState() == States.idleGuard)
-		{
-		 	if (!lastPacket.guard)
-			{
-				setState(States.idle);
-				launchAnimation(States.idle);
-			}
-		}*/
-		else if (getState() == States.movement)
-		{
-			if (!lastPacket.leftArrow && !lastPacket.rightArrow)
-			{
-				setState(States.idle);
-				launchAnimation(States.idle);
-			}
-			else if (lastPacket.leftArrow)
-			{
-				move(Direction.LEFT, game); 
-			}
-			else if (lastPacket.rightArrow)
-			{
-				move(Direction.RIGHT, game); 
-			}
-		}
 	}
 	
 	/**
@@ -265,6 +79,33 @@ public class Kangaroo
 		animations.get(States.leftPunch.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.rightPunch.ordinal()).setMode(ServerAnimation.onePlay);
 		//animations.get(States.idleGuard.ordinal()).setMode(ServerAnimation.foreverPlay);
+	}
+	
+	public void flip()
+	{
+		flip = !flip;
+		
+		for (int i = 0; i < animations.size(); i++)
+			animations.get(i).flip();
+	}
+	
+	/*
+	 * Methods
+	 */
+	/**
+	 * @return an updatekangaroopacket with this kangaroo data
+	 */
+	public KangarooServerPacket getUpdatePacket()
+	{
+		KangarooServerPacket p = new KangarooServerPacket();
+		p.ip = player.getIp();
+		p.x = position.x;
+		p.y = position.y;
+		p.health = health;
+		p.damage = damage;
+		p.state = state.ordinal();
+		p.flip = flip;
+		return p;
 	}
 	
 	/**
@@ -326,14 +167,6 @@ public class Kangaroo
 			
 			speedTimer.restart();
 		}
-	}
-	
-	public void flip()
-	{
-		flip = !flip;
-		
-		for (int i = 0; i < animations.size(); i++)
-			animations.get(i).flip();
 	}
 	
 	public boolean collidWith(Kangaroo k)

@@ -11,7 +11,7 @@ import Packets.HeartBeatPacket;
 /** Encapsulate the server socket and can handle multiple clients.
  * 
  */
-public abstract class Server 
+public class Server 
 {
 	// Attributes
 	public final static int defaultPort = 9999;
@@ -21,6 +21,8 @@ public abstract class Server
 	private ServerSocket server = null;
 	protected boolean running;
 	protected ArrayList<ClientProcessor> clients;
+	public volatile BufferPacket readBuffer;
+	public volatile BufferPacket sendBuffer;
 	
 	/** Amount of time without answer to heartbeat, considered as disconnected */
 	private static final long timeout = 5000;
@@ -71,8 +73,8 @@ public abstract class Server
 	 */
 	public void open()
 	{
-		// Create the ServerClient/Communication thread (synchrone)
-		Thread t = new Thread(new Runnable()
+		// Create the ServerClient/Communication thread
+		Thread t1 = new Thread(new Runnable()
 		{
 			@Override
 			public void run()
@@ -81,7 +83,7 @@ public abstract class Server
 				{ 
 					try 
 					{
-						System.out.println("Server ready, wait for connections"); 
+						System.out.println("Acceptation thread : Server ready, wait for connections"); 
 						
 						// Waiting for a client connection
 						Socket client = server.accept();
@@ -90,9 +92,11 @@ public abstract class Server
 						clients.add( new ClientProcessor(client, Server.this) );
 
 						// Send a message to the connected client
-						onConnection( clients.get(clients.size() - 1) );
+						//onConnection( clients.get(clients.size() - 1) );
+						// TODO : Create a ConnectionPacket use by the server only
+						readBuffer.addPacket(new ConnectionPacket(clients.get(clients.size() - 1)));
 						
-						// Create a new thread to manage this client               
+						// Create a new thread to listen this client               
 						Thread t = new Thread( clients.get(clients.size() - 1) );
 						t.start();
 	               }
@@ -114,34 +118,41 @@ public abstract class Server
 	         }
 			
 	      });
-	      t.start();
+	      t1.start();
 	      
-	      // TODO: MAKE IT WORK (Usefull for disconnection during game)
-	      @SuppressWarnings("unused")
+	      // Thread which send packet when necessary
 	      Thread t2 = new Thread(new Runnable()
-	      {
-			
-			@Override
-			public void run()
-			{	
-				while (running)
-				{		
-					// Send heartbeat if it's necessary (delay handled in the function)
-					sendHeartBeat();
+			{
+				@Override
+				public void run()
+				{
+					ArrayList<Object> packets;
+					ClientProcessor cp;
 					
-					// Disconnect clients which have a last heartbeat answer time > timeout
-					disconnectInactives();
-				}
-			}
-			
-	      });
-	      //t2.start(); 
-	      
+					while(running)
+					{
+						packets = sendBuffer.getPackets();
+						
+						for (Object packet : packets)
+						{
+							// TODO : Get the cp associated to the packet ip and send it
+							cp = getCpFromIp("localhost");
+						}
+					}
+		         }
+				
+		      });
+		      t2.start();
 	}
 	
-	public abstract void onConnection(ClientProcessor cp);
-	public abstract void onReceive(Object o, ClientProcessor cp);
-	public abstract void onDisconnection(ClientProcessor cp);
+	private ClientProcessor getCpFromIp(String ip)
+	{
+		for (ClientProcessor cp : clients)
+			if (cp.getIp() == ip)
+				return cp;
+		
+		return null;
+	}
 	
 	/** Send an object to the client #clientIndex
 	 * 

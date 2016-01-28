@@ -68,12 +68,15 @@ public class ClientProcessor implements Runnable
 			// If received object equals -1, that's mean client has been quit
 			if (receivedObject.equals(-1))
 			{
-				server.onDisconnection(this);
+				//server.onDisconnection(this);
+				// TODO : Create a DisconnectionPacket use by the server only
+				server.readBuffer.addPacket(new DisconnectionPacket(this));
 				break;
 			}
 			
 			// Do things on receive
-			server.onReceive(receivedObject, this);
+			//server.onReceive(receivedObject, this);
+			server.readBuffer.addPacket(receivedObject);
 		}
 		
 		try 
@@ -97,7 +100,7 @@ public class ClientProcessor implements Runnable
 			output.writeObject(o);
 			output.flush();
 			
-			System.out.println("Sent to " + this.getIp() + ": " + o.toString() + "\n");
+			System.out.println("CP thread : Sent to " + this.getIp() + ": " + o.toString() + "\n");
 		} catch (IOException e)
 		{
 			e.printStackTrace();

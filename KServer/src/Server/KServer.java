@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import Kangaroo.Game;
 import Kangaroo.Kangaroo;
+import Kangaroo.Player;
 import Packets.ClientReadyPacket;
 import Packets.FriendsDataPacket;
 import Packets.GameReadyPacket;
@@ -30,11 +31,11 @@ public class KServer extends Server
 {
 	// Attributes
 	/** Since our server put kangaroos together, we need an array to store them. */
-	private ArrayList<Kangaroo> kangaroos;
+	private ArrayList<Player> players;
 	/** We'll link our kangaroos to a game with this */
 	private HashMap<ClientProcessor, Game> gameLinker;
 	/** A list of all the games currently opened */
-	private volatile ArrayList<Game> games;
+	private ArrayList<Game> games;
 	/** In case two packet are needed for an action */
 	private Object o2;
 	
@@ -45,7 +46,7 @@ public class KServer extends Server
 	 */
 	public KServer()
 	{
-		kangaroos = new ArrayList<Kangaroo>();
+		players = new ArrayList<Player>();
 		games = new ArrayList<Game>();
 		gameLinker = new HashMap<ClientProcessor, Game>();
 	}
@@ -64,10 +65,11 @@ public class KServer extends Server
 		 * On connection, we'll build a kangaroo associated to the client.
 		 * Then we'll add it to the kangaroos holder.
 		 */
-		kangaroos.add(new Kangaroo(cp));		
+		
+		players.add(new Player(cp));		
 		
 		// Give the info to server utils
-		ServerUtils.kangaroos = kangaroos;
+		//ServerUtils.kangaroos = kangaroos;
 		
 		// Update serverInfo for clients
 		serverInfoUpdated(cp, ServerInfoType.ExceptMe);
