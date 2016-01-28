@@ -4,35 +4,46 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import Packets.Packets;
+
 public class BufferPacket 
 {
-	private ArrayList<Object> packets;
-	private int index;
+	/** packets : packets ready to be send */
+	private ArrayList<Packets> packets;
 	
+	/** Default Constructor
+	 * 
+	 */
 	BufferPacket()
 	{
-		packets = new ArrayList<Object>();
+		packets = new ArrayList<Packets>();
 	}
 	
-	public synchronized void addPacket(Object newPacket) 
+	/** Allow a thread to send packets to on other
+	 * 
+	 * @param newPacket : the packet to send
+	 */
+	public synchronized void sendPacket(Packets newPacket) 
 	{
-        packets.add(index, newPacket);
-        index++;
+		// Add packet in the buffer
+        packets.add(newPacket);
+        
+        // Notify the other thread, the receiving of new packets
         notify();
-        //System.out.println("notify() exécuté"); 
     }
- 
-    public synchronized ArrayList<Object> getPackets() 
-    {
-    	@SuppressWarnings("unchecked")
-		ArrayList<Object> result = (ArrayList<Object>) packets.clone();
-    	
-        //tant que la liste est vide
-        while(index == 0) 
+	
+	/** Allow a thread to read packets from an other
+	 * 
+	 * @return packets send by other thread
+	 */
+    public synchronized ArrayList<Packets> readPackets() 
+    {    	
+        //While there is no packet to read
+        while(packets.size() == 0) 
         {
             try 
-            {
-                //attente passive
+            { 
+            	// Wait for the other thread receiving new packets
                 wait();
             } 
             catch(InterruptedException ie) 
@@ -41,8 +52,14 @@ public class BufferPacket
             }
         }
         
+        // Read the packets
+        @SuppressWarnings("unchecked")
+		ArrayList<Packets> result =(ArrayList<Packets>) packets.clone();
+        
+        // Delete packets for next reading
         packets.clear();
         
+        // Send the result
         return result;
     }
 }

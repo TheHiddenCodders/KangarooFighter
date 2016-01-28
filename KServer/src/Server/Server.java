@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import Packets.HeartBeatPacket;
+import Packets.Packets;
 
 /** Encapsulate the server socket and can handle multiple clients.
  * 
@@ -126,17 +127,20 @@ public class Server
 				@Override
 				public void run()
 				{
-					ArrayList<Object> packets;
+					ArrayList<Packets> packets;
 					ClientProcessor cp;
 					
 					while(running)
 					{
+						// Get packets from buffer
 						packets = sendBuffer.getPackets();
 						
-						for (Object packet : packets)
+						// Browse the packets received from the main thread
+						for (Packet packet : packets)
 						{
 							// TODO : Get the cp associated to the packet ip and send it
 							cp = getCpFromIp("localhost");
+							
 						}
 					}
 		         }
