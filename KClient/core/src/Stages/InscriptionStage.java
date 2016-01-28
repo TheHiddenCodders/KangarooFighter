@@ -40,11 +40,10 @@ public class InscriptionStage extends ConnectedStage
 	public InscriptionStage(Main main)
 	{
 		super(main);
-		
 	}
 
 	@Override
-	protected void askServerData()
+	protected void askInitData()
 	{
 		// No need to ask data on inscription stage		
 	}
@@ -102,6 +101,12 @@ public class InscriptionStage extends ConnectedStage
 	}
 
 	@Override
+	protected void initDataNeededComponents()
+	{
+		// No init data needed components		
+	}
+	
+	@Override
 	protected void addListeners()
 	{
 		connectAndSignout.addListener(new ClickListener()
@@ -109,10 +114,16 @@ public class InscriptionStage extends ConnectedStage
 			@Override
 			public void clicked(InputEvent event, float x, float y)
 			{
-				signOut(name.getText(), pwd.getText(), pwdConfirm.getText());
+				signOut(name.getText(), ConversionUtils.sha1(pwd.getText()), ConversionUtils.sha1(pwdConfirm.getText()));
 				super.clicked(event, x, y);
 			}
 		});		
+	}
+	
+	@Override
+	protected void addInitDataNeededListeners() 
+	{
+		// No init data needed components		
 	}
 
 	@Override
@@ -122,16 +133,27 @@ public class InscriptionStage extends ConnectedStage
 	}
 	
 	@Override
+	protected void addInitDataNeededAnimations() 
+	{
+		// No init data needed components		
+	}
+	
+	@Override
 	protected void addActors()
 	{
 		addActor(background);
 		addActor(table);		
 	}
+	
+	@Override
+	protected void addInitDataNeededActors() 
+	{
+		// No init data needed components
+	}
 
 	@Override
-	protected void onServerDataReceived()
+	protected void onDataReceived()
 	{
-		System.err.println("kk");
 		// If not accepted
 		if (signOutPacket.accepted)
 		{
@@ -151,13 +173,13 @@ public class InscriptionStage extends ConnectedStage
 	}
 
 	@Override
-	public void setServerData(Object... data)
+	public void setData(Object data)
 	{
 		// We can treat only one packet of type login, or signout
-		if (data[0].getClass().isAssignableFrom(SignOutPacket.class))
+		if (data.getClass().isAssignableFrom(SignOutPacket.class))
 		{
-			signOutPacket = (SignOutPacket) data[0];
-			serverAnswered();
+			signOutPacket = (SignOutPacket) data;
+			dataReceived();
 		}
 	}
 	
@@ -174,7 +196,7 @@ public class InscriptionStage extends ConnectedStage
 			// Make packet
 			SignOutPacket signOutPacket = new SignOutPacket();
 			signOutPacket.pseudo = pseudo;
-			signOutPacket.pwd = ConversionUtils.sha1(pwd);
+			signOutPacket.pwd = pwd;
 			
 			// Send it
 			main.network.send(signOutPacket);
@@ -215,5 +237,5 @@ public class InscriptionStage extends ConnectedStage
 		main.prefs.putString("[pseudo]", pseudo);
 		main.prefs.putString("[pwd]", ConversionUtils.sha1(pwd));
 		main.prefs.flush();
-	}
+	}	
 }

@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 import Class.ConnectedStage;
+import Packets.PlayerPacket;
+
+import com.genesys.kclient.Main;
 
 /**
  * Network handle the data exchanges between client and server.
@@ -16,6 +19,8 @@ public class Network extends Client
 	 * Attributes
 	 */
 	
+	private Main main;
+	
 	private ConnectedStage currentStage;
 
 	private static final boolean debug = true;
@@ -24,9 +29,10 @@ public class Network extends Client
 	 * Constructor
 	 */
 	
-	public Network(String ip, int port) throws UnknownHostException, IOException
+	public Network(Main main, String ip, int port) throws UnknownHostException, IOException
 	{
 		super(ip, port);
+		this.main = main;
 	}
 
 	/*
@@ -42,7 +48,12 @@ public class Network extends Client
 			System.out.println("Received : " + o.toString());
 		}
 		
-		currentStage.setServerData(o);
+		// If it's a player packet, update player
+		if (o.getClass().isAssignableFrom(PlayerPacket.class))
+			main.player = (PlayerPacket) o;
+
+		else
+			currentStage.setData(o);
 		
 	}
 	

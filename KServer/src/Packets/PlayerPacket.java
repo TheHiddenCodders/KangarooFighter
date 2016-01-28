@@ -2,7 +2,7 @@ package Packets;
 
 import java.io.Serializable;
 
-public class ClientDataPacket implements Serializable
+public class PlayerPacket implements Serializable
 {
 	/**
 	 * 
@@ -16,6 +16,7 @@ public class ClientDataPacket implements Serializable
 	public int elo;
 	public int streak;
 	public int pos;
+	public PlayerPacket[] friends;
 
 	@Override
 	public String toString()
@@ -27,6 +28,7 @@ public class ClientDataPacket implements Serializable
 				+ "- [wins]: " + wins + "\n"
 				+ "- [looses]: " + looses + "\n"
 				+ "- [elo]: " + elo + "\n"
-				+ "- [streak]: " + streak + "\n";
+				+ "- [streak]: " + streak + "\n"
+				+ "- [friends]: " + friends.toString() + "\n";
 	}
 }

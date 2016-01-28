@@ -7,13 +7,12 @@ import java.util.HashMap;
 
 import Kangaroo.Game;
 import Kangaroo.Kangaroo;
-import Packets.ClientReadyPacket;
 import Packets.FriendsDataPacket;
-import Packets.GameReadyPacket;
 import Packets.HeartBeatPacket;
-import Packets.KangarooClientPacket;
+import Packets.HomePacket;
 import Packets.LoginPacket;
-import Packets.MatchMakingPacket;
+import Packets.NewsPacket;
+import Packets.PlayerPacket;
 import Packets.ServerInfoPacket;
 import Packets.SignOutPacket;
 import Utils.FileUtils;
@@ -83,7 +82,7 @@ public class KServer extends Server
 			+ clientIp + ": " 
 			+ o.toString());
 		
-		/**
+		/*
 		 * Receive heartbeat (not implemented yet)
 		 */
 		if (o.getClass().isAssignableFrom(HeartBeatPacket.class))			
@@ -91,7 +90,7 @@ public class KServer extends Server
 		
 		/**
 		 * Receive Login packet 
-		 */
+		 *
 		else if (o.getClass().isAssignableFrom(LoginPacket.class))
 		{			
 			LoginPacket receivedPacket = (LoginPacket) o;
@@ -127,8 +126,8 @@ public class KServer extends Server
 		}
 		
 		/**
-		 * Receive Login packet 
-		 */
+		 * Receive SignOut packet 
+		 *
 		else if (o.getClass().isAssignableFrom(SignOutPacket.class))
 		{			
 			SignOutPacket receivedPacket = (SignOutPacket) o;
@@ -157,7 +156,7 @@ public class KServer extends Server
 		
 		/**
 		 * Receive Server info packet
-		 */
+		 *
 		else if (o.getClass().isAssignableFrom(ServerInfoPacket.class))
 		{
 			ServerInfoPacket receivedPacket = (ServerInfoPacket) o;
@@ -172,7 +171,7 @@ public class KServer extends Server
 		
 		/**
 		 * Receive a Match making packet
-		 */
+		 *
 		else if (o.getClass().isAssignableFrom(MatchMakingPacket.class))
 		{
 			MatchMakingPacket receivedPacket = (MatchMakingPacket) o;
@@ -190,7 +189,7 @@ public class KServer extends Server
 		
 		/**
 		 * Receive an update kangaroo packet
-		 */
+		 *
 		else if (o.getClass().isAssignableFrom(KangarooClientPacket.class))
 		{
 			KangarooClientPacket receivedPacket = (KangarooClientPacket) o;
@@ -204,7 +203,7 @@ public class KServer extends Server
 		
 		/**
 		 * Receive a client ready packet
-		 */
+		 *
 		else if (o.getClass().isAssignableFrom(ClientReadyPacket.class))
 		{
 			// If the second client is ready - send gameReady
@@ -221,6 +220,66 @@ public class KServer extends Server
 			{
 				o2 = clientIp;
 			}
+		}
+		*/
+		
+		/*****************************************************************************************************
+		 * 0.3
+		 *****************************************************************************************************/
+		
+		/**
+		 * Receive Login packet 
+		 */
+		else if (o.getClass().isAssignableFrom(LoginPacket.class))
+		{			
+			LoginPacket receivedPacket = (LoginPacket) o;
+			attemptToLogin(receivedPacket, clientIp);
+			
+			// Send to the client (who sent the packet) the updated packet
+			this.send(cp, receivedPacket);
+		}
+		
+		/**
+		 * Receive SignOut packet 
+		 */
+		else if (o.getClass().isAssignableFrom(SignOutPacket.class))
+		{			
+			SignOutPacket receivedPacket = (SignOutPacket) o;
+			attemptToSignOut(receivedPacket, clientIp);
+			
+			// Send to the client (who sent the packet) the updated packet
+			this.send(cp, receivedPacket);
+			
+			// If server accepted the request, send client data
+			if (receivedPacket.accepted)
+			{		
+				// Send to the client his data
+				this.send(cp, getKangarooFromIP(clientIp).getClientDataPacket());
+				
+				// Send to the client the last news
+				this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));			
+				this.send(cp, ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));			
+
+				// Send to the client his friends
+				this.send(cp, getKangarooFromIP(clientIp).getFriendsDataPacket());
+				
+				// Send to the client the ladder and his pos
+				this.send(cp, getKangarooFromIP(clientIp).getLadderDataPacket());
+			}
+		}
+		
+		/**
+		 * Receive home packet
+		 */
+		else if (o.getClass().isAssignableFrom(HomePacket.class))
+		{
+			HomePacket packet = (HomePacket) o;
+			
+			packet.news = new NewsPacket[2];
+			packet.ladderPlayers = new PlayerPacket[5];
+			packet.serverInfos = new ServerInfoPacket();
+			
+			send(cp, packet);
 		}
 		
 		else
@@ -285,20 +344,9 @@ public class KServer extends Server
 	/**
 	 * Check if the client pseudo exists, if it exists, it check the password match with the pseudo
 	 * @param packet the login packet
-	 * @return true if it's exists and pwd match, false if isn't
 	 */
 	public void attemptToLogin(LoginPacket packet, String ip)
-	{
-		// If already log, unlog him
-		for (int i = 0; i < kangaroos.size(); i++)
-		{
-			if (kangaroos.get(i).getName().equals(packet.pseudo))
-			{
-				packet.accepted = false;
-				return;
-			}
-		}
-		
+	{		
 		// Check fields
 		for (File file : ServerUtils.getPlayersFiles())
 		{
@@ -306,6 +354,7 @@ public class KServer extends Server
 			if (file.getName().equals(packet.pseudo))
 			{
 				packet.pseudoExists = true;
+				
 				if (FileUtils.readString(new File(file.getAbsolutePath().concat("/pwd"))).get(0).equals(packet.pwd))
 				{
 					packet.pwdMatch = true;
@@ -322,6 +371,17 @@ public class KServer extends Server
 			else
 			{
 				packet.pseudoExists = false;
+			}
+			
+			// If already log, disconnect the other client to log this one
+			for (Kangaroo k : kangaroos)
+			{
+				if (k.getName().equals(packet.pseudo))
+				{
+					packet.accepted = true;
+					// TODO: Disconnect other player
+					return;
+				}
 			}
 		}		
 	}	
