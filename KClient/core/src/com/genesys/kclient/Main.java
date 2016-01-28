@@ -1,20 +1,16 @@
 package com.genesys.kclient;
 
-import com.badlogic.gdx.Application.ApplicationType;
+import Class.ConnectedStage;
+import Client.Network;
+import Stages.ServerAccesStage;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.genesys.client.Network;
-import com.genesys.stages.EndGameStage;
-import com.genesys.stages.GameStage;
-import com.genesys.stages.HomeStage;
-import com.genesys.stages.PreGameStage;
-import com.genesys.stages.ServerAccesStage;
 
 public class Main extends ApplicationAdapter
 {	
@@ -32,14 +28,19 @@ public class Main extends ApplicationAdapter
 	{
 		skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 		
+		// Load fonts
 		BitmapFont koreanFont = new BitmapFont(Gdx.files.internal("ui/korean.fnt"));
 		BitmapFont korean32Font = new BitmapFont(Gdx.files.internal("ui/korean-32.fnt"));
 		BitmapFont arialFont = new BitmapFont(Gdx.files.internal("ui/arial.fnt"));
+		
+		// Add fonts 
 		skin.add("korean", koreanFont, BitmapFont.class);
 		skin.add("korean-32", korean32Font, BitmapFont.class);
 		skin.add("arial", arialFont, BitmapFont.class);
-		prefs = Gdx.app.getPreferences("data");
-		setStage(new ServerAccesStage(this));
+		
+		// Get prefs
+		prefs = Gdx.app.getPreferences("kangaroo");
+		stage = new ServerAccesStage(this);
 	}
 
 	@Override
@@ -55,9 +56,10 @@ public class Main extends ApplicationAdapter
 	@Override
 	public void pause()
 	{
+		/* If goes off app, send network deco
 		if (!Gdx.app.getType().equals(ApplicationType.Desktop))
 			if (network != null)
-				network.send(-1);
+				network.send(-1);*/
 		
 		super.pause();
 	}
@@ -74,7 +76,7 @@ public class Main extends ApplicationAdapter
 	 * Set the new stage to draw
 	 * @param stage
 	 */
-	public void setStage(Stage stage)
+	public void setStage(ConnectedStage stage)
 	{
 		if (this.stage != null)
 			System.out.println("Going to " + stage.getClass().getSimpleName() + " from " + this.stage.getClass().getSimpleName());
@@ -89,13 +91,7 @@ public class Main extends ApplicationAdapter
 		else
 			System.out.println("Network not updated");
 		
-		if (stage.getClass().isAssignableFrom(HomeStage.class) || stage.getClass().isAssignableFrom(PreGameStage.class) || stage.getClass().isAssignableFrom(EndGameStage.class))
-			stage.addAction(Actions.fadeIn(0.7f));
-		else if (stage.getClass().isAssignableFrom(GameStage.class))
-			stage.addAction(Actions.fadeIn(2));
-		
 		Gdx.input.setInputProcessor(stage);
 		this.stage = stage;
-		
 	}
 }

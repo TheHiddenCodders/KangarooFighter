@@ -1,4 +1,4 @@
-package com.genesys.enums;
+package Enums;
 
 public enum Direction
 {

@@ -1,12 +1,13 @@
-package com.genesys.stages;
+package Stages;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import Client.Network;
+
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.genesys.client.Network;
 import com.genesys.kclient.Main;
 
 public class ServerAccesStage extends Stage

@@ -13,6 +13,6 @@ public class ClientReadyPacket implements Serializable
 	public String toString()
 	{
 		return super.toString() 
-				+ "\n";	
+				+ "\n";		
 	}	
 }

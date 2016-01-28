@@ -3,7 +3,7 @@ package Packets;
 import java.io.Serializable;
 
 public class HeartBeatPacket implements Serializable
-{
+{	
 	/**
 	 * 
 	 */

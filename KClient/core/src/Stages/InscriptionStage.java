@@ -1,17 +1,12 @@
-package com.genesys.stages;
+package Stages;
 
-import Packets.ClientDataPacket;
-import Packets.FriendsDataPacket;
-import Packets.LadderDataPacket;
-import Packets.LoginPacket;
-import Packets.NewsPacket;
+import Class.ConnectedStage;
 import Packets.SignOutPacket;
 import Utils.ConversionUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -20,44 +15,56 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.genesys.kclient.Main;
 
-public class InscriptionStage extends Stage
+public class InscriptionStage extends ConnectedStage
 {
 	/*
 	 * Attributes
 	 */
-	/** Used as a wire between stage to access client for example */
-	public Main main;
-	private ClientDataPacket clientData;
-	private LadderDataPacket ladderData;
-	private FriendsDataPacket friendsData;
-	private NewsPacket lastNews, lastBeforeNews;
 	
-	// Components
+	private SignOutPacket signOutPacket;
+	
+	/*
+	 * Components
+	 */
+	
 	private Label infoName, infoPwd, infoPwdConfirm, other;
 	private TextField name, pwd, pwdConfirm;
 	private TextButton connectAndSignout;
 	private Image background;
 	private Table table;
 	
-	// Triggers
-	private boolean signedOut;
-
 	/*
 	 * Constructors
 	 */
+	
 	public InscriptionStage(Main main)
 	{
-		super();
-		this.main = main;
-		this.signedOut = false;
-		this.table = new Table();
+		super(main);
 		
-		// Make components
+	}
+
+	@Override
+	protected void askServerData()
+	{
+		// No need to ask data on inscription stage		
+	}
+
+	@Override
+	protected void initComponents() 
+	{
+		// Make table
+		table = new Table();
+		
+		// Background
 		background = new Image(new Texture(Gdx.files.internal("sprites/background.png")));
+		
+		// Texts
 		infoName = new Label("Pseudonyme", main.skin);
 		infoPwd = new Label("Mot de passe", main.skin);
 		infoPwdConfirm = new Label("Confirmer mot de passe", main.skin);
 		other = new Label("", main.skin);
+		
+		// TextFields
 		name = new TextField("", main.skin);
 		pwd = new TextField("", main.skin);
 		pwd.setPasswordMode(true);
@@ -65,6 +72,8 @@ public class InscriptionStage extends Stage
 		pwdConfirm = new TextField("", main.skin);
 		pwdConfirm.setPasswordMode(true);
 		pwdConfirm.setPasswordCharacter('*');
+		
+		// Buttons
 		connectAndSignout = new TextButton("S'inscrire et se connecter", main.skin);
 		
 		// Apply some colours to them
@@ -89,54 +98,75 @@ public class InscriptionStage extends Stage
 		table.row();
 		table.add(connectAndSignout).width(200).height(30).padTop(15);
 		table.row();
-		table.add(other);
-		
+		table.add(other);		
+	}
+
+	@Override
+	protected void addListeners()
+	{
 		connectAndSignout.addListener(new ClickListener()
 		{
 			@Override
 			public void clicked(InputEvent event, float x, float y)
 			{
-				signOut(name.getText(), ConversionUtils.sha1(pwd.getText()), ConversionUtils.sha1(pwdConfirm.getText()));
+				signOut(name.getText(), pwd.getText(), pwdConfirm.getText());
 				super.clicked(event, x, y);
 			}
-		});
-		
-		// Add them to the stage
-		this.addActor(background);
-		this.addActor(table);
+		});		
 	}
-	
+
 	@Override
-	public void act(float delta)
-	{			
-		// If login then go to home stage
-		if (signedOut && clientData != null && ladderData != null && lastNews != null && lastBeforeNews != null)
-		{
-			// If isn't already registered, make prefs
-			if (!alreadyRegisteredOnPhone())
-			{
-				main.prefs.putString("[pseudo]", name.getText());
-				main.prefs.putString("[pwd]", ConversionUtils.sha1(pwd.getText()));
-				main.prefs.flush();
-			}
-			
-			login(main.prefs.getString("[pseudo]"), main.prefs.getString("[pwd]"));
-			main.setStage(new HomeStage(main, clientData, friendsData, ladderData, lastNews, lastBeforeNews));
-		}
-				
-		super.act(delta);
-	}
-	
-	@Override
-	public void draw()
+	protected void addAnimations()
 	{
-		super.draw();
+		
 	}
 	
-	/*
-	 * Inherited methods
-	 */	
+	@Override
+	protected void addActors()
+	{
+		addActor(background);
+		addActor(table);		
+	}
+
+	@Override
+	protected void onServerDataReceived()
+	{
+		System.err.println("kk");
+		// If not accepted
+		if (signOutPacket.accepted)
+		{
+			if (signOutPacket.pseudoExists)
+				other.setText("Ce pseudo deja utilise");
+		}
+		
+		// If accepted
+		else
+		{
+			// If not registered on phone register it
+			if (!alreadyRegisteredOnPhone())
+				registerOnPhone(name.getText(), pwd.getText());
+			
+			main.setStage(new HomeStage(main));
+		}
+	}
+
+	@Override
+	public void setServerData(Object... data)
+	{
+		// We can treat only one packet of type login, or signout
+		if (data[0].getClass().isAssignableFrom(SignOutPacket.class))
+		{
+			signOutPacket = (SignOutPacket) data[0];
+			serverAnswered();
+		}
+	}
 	
+	/**
+	 * Send a signout packet
+	 * @param pseudo
+	 * @param pwd
+	 * @param pwdConfirm
+	 */
 	private void signOut(String pseudo, String pwd, String pwdConfirm)
 	{
 		if (!pseudo.isEmpty() && !pwd.isEmpty() && !pwdConfirm.isEmpty() && pwd.equals(pwdConfirm))
@@ -144,38 +174,27 @@ public class InscriptionStage extends Stage
 			// Make packet
 			SignOutPacket signOutPacket = new SignOutPacket();
 			signOutPacket.pseudo = pseudo;
-			signOutPacket.pwd = pwd;
+			signOutPacket.pwd = ConversionUtils.sha1(pwd);
 			
 			// Send it
 			main.network.send(signOutPacket);
 		}
+		else if (!pseudo.isEmpty() || !pwd.isEmpty() || !pwdConfirm.isEmpty())
+		{
+			other.setText("Merci de remplir tous les champs");
+		}
+		else if (pseudo.length() < 4 || pwd.length() < 4)
+		{
+			other.setText("pseudo / mot de passe : 4 caracteres minimum");
+		}
 		else
 		{
-			other.setText("Les mots de passes ne correspondent pas");
+			other.setText("Les mots de passes ne orrespondent pas");
 		}
 	}
 	
 	/**
-	 * Send a login attempt to the server with pseudo and pwd
-	 * @param pseudo
-	 * @param pwd
-	 */
-	private void login(String pseudo, String pwd)
-	{
-		if (!pseudo.isEmpty() && !pwd.isEmpty())
-		{
-			// Make a packet with the pseudo
-			LoginPacket logPacket = new LoginPacket();
-			logPacket.pseudo = pseudo;
-			logPacket.pwd = pwd;
-			
-			// Send it
-			main.network.send(logPacket);
-		}
-	}
-	
-	/**
-	 * Check if the device is already registered
+	 * Check if user has already connect with his phone
 	 * @return
 	 */
 	private boolean alreadyRegisteredOnPhone()
@@ -187,40 +206,14 @@ public class InscriptionStage extends Stage
 	}
 	
 	/**
-	 * Setter for the server
+	 * This method will register pseudo and crypted password onto phone
+	 * @param pseudo
+	 * @param pwd
 	 */
-	
-	public void signedOut()
+	private void registerOnPhone(String pseudo, String pwd)
 	{
-		signedOut = true;
-	}
-	
-	public void notSignedOut(boolean pseudoExists)
-	{
-		signedOut = false;
-		
-		if (pseudoExists)
-			other.setText("Ce pseudo est deja utilise");
-	}
-	
-	public void setClientData(ClientDataPacket packet)
-	{
-		clientData = packet;
-	}
-	
-	public void setLadderData(LadderDataPacket packet)
-	{
-		ladderData = packet;
-	}
-	
-	public void setFriendsData(FriendsDataPacket packet)
-	{
-		friendsData = packet;
-	}
-	
-	public void setNewsData(NewsPacket lastNewsData, NewsPacket lastBeforeNewsData)
-	{
-		lastNews = lastNewsData;
-		lastBeforeNews = lastBeforeNewsData;
+		main.prefs.putString("[pseudo]", pseudo);
+		main.prefs.putString("[pwd]", ConversionUtils.sha1(pwd));
+		main.prefs.flush();
 	}
 }

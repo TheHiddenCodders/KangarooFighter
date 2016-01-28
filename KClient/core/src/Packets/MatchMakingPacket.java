@@ -16,6 +16,7 @@ public class MatchMakingPacket implements Serializable
 	{
 		return super.toString() 
 				+ "\n"
-				+ "- [search]: " + search + "\n";	
+				+ "- [search]: " + search + "\n";
+				
 	}
 }

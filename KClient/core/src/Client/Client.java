@@ -1,4 +1,4 @@
-package com.genesys.client;
+package Client;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
