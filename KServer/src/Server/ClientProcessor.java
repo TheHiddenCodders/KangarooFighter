@@ -43,7 +43,6 @@ public class ClientProcessor implements Runnable
             output = new ObjectOutputStream(client.getOutputStream());	
             output.flush(); // Remove this line and the program freeze
 			input = new ObjectInputStream(client.getInputStream());
-			//remote = (InetSocketAddress) client.getRemoteSocketAddress();
 		} 
 		catch (IOException e) 
 		{
@@ -135,7 +134,7 @@ public class ClientProcessor implements Runnable
 		return null;
 	}
 	
-	/** Get the socket
+	/** Get the client socket
 	 * @return socket
 	 */
 	public Socket getClient()
