@@ -18,7 +18,9 @@ public class Main
 	public static BufferedInputStream inputReader;
 	public static String msg = "";
 	
+	/** games : an ArrayList containing all games*/
 	static ArrayList<Game> games;
+	/** players : an ArrayList containing all thz connected players*/
 	static ArrayList<Player> players;
 	
 	public static void main(String[] args) throws IOException
@@ -30,79 +32,82 @@ public class Main
 		games = new ArrayList<Game>();
 		players = new ArrayList<Player>();
 		
-		ArrayList<Packets> readPackets;
+		// readPackets : an ArrayList containing the packet received from clients
+		ArrayList<Packets> readPackets = null;
 		
-		// Read Packet received by the server
+		// Read received packets by the server
 		while(true)
 		{
-			readPackets = server.readBuffer.readPackets();
-			
 			for (Packets packet : readPackets)
-			
-			/**
-			 * Receive Login packet 
-			 */
-			if (packet.getClass().isAssignableFrom(LoginPacket.class))
-			{			
-				LoginPacket receivedPacket = (LoginPacket) packet;
-				attemptToLogin(receivedPacket);
+			{
+				readPackets = server.readBuffer.readPackets();
 				
-				// Send to the client (who sent the packet) the updated packet
-				server.sendBuffer.sendPacket(packet);
-				
-				// If server accepted the request, send client data
-				if (receivedPacket.accepted)
-				{				
-					// Send to the client his data
-					server.sendBuffer.sendPacket((Packets) getPlayerFromIP(receivedPacket.ip).getPacket());
+				/**
+				 * Receive Login packet 
+				 */
+				if (packet.getClass().isAssignableFrom(LoginPacket.class))
+				{			
+					LoginPacket receivedPacket = (LoginPacket) packet;
+					attemptToLogin(receivedPacket);
 					
-					// Send to the client the last news
-					server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));		
-					server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));		
-
-					// Send to the client his friends
-					server.sendBuffer.sendPacket((Packets) new FriendsDataPacket());
+					// Send to the client (who sent the packet) the updated packet
+					server.sendBuffer.sendPacket(packet);
 					
-					// Send to the client the ladder and his position
-					server.sendBuffer.sendPacket((Packets) new LadderDataPacket());
-					
-					// Send to his connected friends he is connected
-					// TODO : send packets to his friends
+					// If server accepted the request, send client data
+					if (receivedPacket.accepted)
+					{				
+						// Send to the client his data
+						server.sendBuffer.sendPacket((Packets) getPlayerFromIP(receivedPacket.ip).getPacket());
+						
+						// Send to the client the last news
+						server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));		
+						server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));		
+	
+						// Send to the client his friends
+						server.sendBuffer.sendPacket((Packets) new FriendsDataPacket());
+						
+						// Send to the client the ladder and his position
+						server.sendBuffer.sendPacket((Packets) new LadderDataPacket());
+						
+						// Send to his connected friends he is connected
+						// TODO : send packets to his friends
+					}
 				}
+				
+				// TODO : manage the creation of games when receiving MatchMakingPacket
+				/*{
+					Thread t = new Thread(games.get(index));
+					t.start();
+				}*/
 			}
-			
-			// TODO : manage the creation of games when receiving MatchMakingPacket
-			/*{
-				Thread t = new Thread(games.get(index));
-				t.start();
-			}*/
 		}
 	}
 	
-	/**
-	 * Check if the client pseudo exists, if it exists, it check the password match with the pseudo
-	 * @param packet the login packet
-	 * @return true if it's exists and pwd match, false if isn't
+	/**	Check if the client pseudo exists and check the password match with the pseudo
+	 * 	@param packet the login packet
+	 * 	@return true if it's exists and pwd match, false if isn't
 	 */
 	public static void attemptToLogin(LoginPacket packet)
 	{
-		// If already log, unlog him
-		for (int i = 0; i < players.size(); i++)
+		// If the player is already connected
+		if (getPlayerFromPseudo(packet.pseudo) != null)
 		{
-			if (players.get(i).getName().equals(packet.pseudo))
-			{
-				packet.accepted = false;
-				return;
-			}
+			// TODO : disconnect the last cp and connect this new client
+			packet.accepted = false;
+			return;
 		}
 		
+		// If this client is not connected
+		
 		// Check fields
+		// TODO : this loop need to browse an ArrayList<Player>
 		for (File file : ServerUtils.getPlayersFiles())
 		{
 			// If pseudo exists
 			if (file.getName().equals(packet.pseudo))
 			{
 				packet.pseudoExists = true;
+				
 				if (FileUtils.readString(new File(file.getAbsolutePath().concat("/pwd"))).get(0).equals(packet.pwd))
 				{
 					packet.pwdMatch = true;
@@ -123,6 +128,24 @@ public class Main
 		}		
 	}
 	
+	/** return a connected Player object matching with the pseudo in parameter
+	 * @param pseudo : the player pseudo
+	 * @return the player if it is connected, null otherwise
+	 */
+	public static Player getPlayerFromPseudo(String pseudo)
+	{
+		// Browse the list of connected players
+		for (int i = 0; i < players.size(); i++)
+		{
+			// If the player is found
+			if (players.get(i).getName().equals(pseudo))
+				return players.get(i);
+		}
+		
+		// If no player matching with the pseudo
+		return null;
+	}
+	
 	/**
 	 * Get a kangaroo from the ip of a client
 	 * @param ip
@@ -130,10 +153,15 @@ public class Main
 	 */
 	public static Player getPlayerFromIP(String ip)
 	{
+		// Browse the list of connected players
 		for (Player player : players)
+		{
+			// If the player is found
 			if (player.getIp().equals(ip))
 				return player;
+		}
 		
+		// If no player matching with the ip
 		return null;
 	}
 

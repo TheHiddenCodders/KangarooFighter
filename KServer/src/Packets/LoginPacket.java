@@ -1,6 +1,5 @@
 package Packets;
 
-import java.io.Serializable;
 
 /**
  * This object will be sent by client to server.

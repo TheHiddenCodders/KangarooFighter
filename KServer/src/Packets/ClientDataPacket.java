@@ -1,6 +1,5 @@
 package Packets;
 
-import java.io.Serializable;
 
 public class ClientDataPacket extends Packets
 {
