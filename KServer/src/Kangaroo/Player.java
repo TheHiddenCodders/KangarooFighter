@@ -1,18 +1,19 @@
 package Kangaroo;
 
+import enums.Direction;
 import Packets.ClientDataPacket;
-import Packets.KangarooClientPacket;
 import Packets.KangarooServerPacket;
-import Server.ClientProcessor;
+import Utils.ServerUtils;
 
 public class Player 
 {
 	private String ip;
 	private String name = "";
+	private Kangaroo k;
 	//private Stats stats;
 	
-	private KangarooServerPacket networkImage;
-	private KangarooClientPacket lastPacket;
+	//private KangarooServerPacket networkImage;
+	//private KangarooClientPacket lastPacket;
 	
 	public Player()
 	{
@@ -53,5 +54,34 @@ public class Player
 		this.ip = ip;
 	}
 	
+	public ClientDataPacket getClientDataPacket() 
+	{
+		return ServerUtils.getPlayerDataPacket(this);
+	}
 	
+	public void createKangaroo()
+	{
+		k = new Kangaroo(Direction.RIGHT);
+	}
+	
+	/**
+	 * @return an updatekangaroopacket with this kangaroo data
+	 */
+	public KangarooServerPacket getUpdatePacket()
+	{
+		KangarooServerPacket p = new KangarooServerPacket();
+		p.ip = getIp();
+		p.x = k.getPosition().x;
+		p.y = k.getPosition().y;
+		p.health = k.getHealth();
+		p.damage = k.getDamage();
+		p.state = k.getState().ordinal();
+		p.flip = k.getFlip();
+		return p;
+	}
+
+	public Kangaroo getKangaroo() 
+	{
+		return k;
+	}
 }

@@ -55,6 +55,9 @@ public class Server
 			
 			// Create the serverSocket with the port 
 			server = new ServerSocket(port);
+			
+			readBuffer = new BufferPacket();
+			sendBuffer = new BufferPacket();
 		} 
 		catch (UnknownHostException e) 
 		{

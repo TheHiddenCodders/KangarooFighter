@@ -2,17 +2,13 @@ package Kangaroo;
 
 import java.util.Random;
 
-import Packets.ClientDisconnectionPacket;
-import Packets.EndGamePacket;
 import Packets.GamePacket;
+import Packets.Packets;
 import Server.BufferPacket;
 import Server.Server;
-import Utils.ServerUtils;
 import Utils.Timer;
 import enums.Direction;
-import enums.EndGameType;
 import enums.GameStates;
-import enums.States;
 
 /**
  * The Game class manage a game on the server. 
@@ -64,7 +60,7 @@ public class Game implements Runnable
 	 * Attributes
 	 */
 	private Server server;
-	private Kangaroo k1 = null, k2 = null;
+	private Player p1 = null, p2 = null;
 	private int mapIndex;
 	private Timer timer;
 	private float time;
@@ -84,7 +80,9 @@ public class Game implements Runnable
 	public Game(Player p1, Server server)
 	{
 		this.server = server;
-		this.k1 = new Kangaroo(p1, Direction.RIGHT);
+		this.p1 = p1;
+		this.p1.createKangaroo();
+		
 		setState(GameStates.Waiting);
 		
 		Random r = new Random(System.currentTimeMillis());
@@ -98,9 +96,9 @@ public class Game implements Runnable
 	 * @param k2 the second kangaroo of the game
 	 * 
 	 */
-	public Game(Player p1, Player p2)
+	public Game(Player p1, Player p2, Server server)
 	{
-		this(p1);
+		this(p1, server);
 		linkKangaroo(p2);
 	}
 	
@@ -116,19 +114,20 @@ public class Game implements Runnable
 	 */
 	public void linkKangaroo(Player p2)
 	{
-		this.k2 = new Kangaroo(p2, Direction.LEFT);
+		this.p2 = p2;
+		p2.createKangaroo();
+		
 		setState(GameStates.Prepared);
 		
-		server.sendBuffer.addPacket(getGamePacket(k1));
-		server.sendBuffer.addPacket(getGamePacket(k2));
+		server.sendBuffer.sendPacket((Packets) getGamePacket(p1));
+		server.sendBuffer.sendPacket((Packets) getGamePacket(p2));
 	}
 	
 	// Game update 
 	@Override
 	public void run() 
 	{
-		// TODO : 
-		
+		// TODO : The game update here.
 	}
 	
 	/**
@@ -136,35 +135,35 @@ public class Game implements Runnable
 	 * @param k
 	 * @return game packet
 	 */
-	public GamePacket getGamePacket(Kangaroo k)
+	public GamePacket getGamePacket(Player p)
 	{
-		GamePacket p = new GamePacket();
+		GamePacket gamePacket = new GamePacket();
 		
-		int round = k1.getWins() + k2.getWins() + 1;
-		p.round = round;
-		p.mapPath = map[mapIndex]; 
+		int round = p1.getKangaroo().getWins() + p2.getKangaroo().getWins() + 1;
+		gamePacket.round = round;
+		gamePacket.mapPath = map[mapIndex]; 
 		
 		// Player need to receive himself as first
-		if (k == k1)
+		if (p == p1)
 		{
-			p.player = k1.getUpdatePacket();
-			p.opponent = k2.getUpdatePacket();
-			p.playerData = k1.getClientDataPacket();
-			p.opponentData = k2.getClientDataPacket();
-			p.playerWins = k1.getWins();
-			p.opponentWins = k2.getWins();
+			gamePacket.player = p1.getUpdatePacket();
+			gamePacket.opponent = p2.getUpdatePacket();
+			gamePacket.playerData = p1.getClientDataPacket();
+			gamePacket.opponentData = p2.getClientDataPacket();
+			gamePacket.playerWins = p1.getKangaroo().getWins();
+			gamePacket.opponentWins = p2.getKangaroo().getWins();
 		}
-		else if (k == k2)
+		else if (p == p2)
 		{
-			p.player = k2.getUpdatePacket();
-			p.opponent = k1.getUpdatePacket();
-			p.playerData = k2.getClientDataPacket();
-			p.opponentData = k1.getClientDataPacket();
-			p.playerWins = k2.getWins();
-			p.opponentWins = k1.getWins();
+			gamePacket.player = p2.getUpdatePacket();
+			gamePacket.opponent = p1.getUpdatePacket();
+			gamePacket.playerData = p2.getClientDataPacket();
+			gamePacket.opponentData = p1.getClientDataPacket();
+			gamePacket.playerWins = p2.getKangaroo().getWins();
+			gamePacket.opponentWins = p1.getKangaroo().getWins();
 		}
 		
-		return p;
+		return gamePacket;
 	}
 
 	public GameStates getState() 

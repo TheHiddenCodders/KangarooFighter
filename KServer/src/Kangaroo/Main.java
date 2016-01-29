@@ -33,25 +33,25 @@ public class Main
 		players = new ArrayList<Player>();
 		
 		// readPackets : an ArrayList containing the packet received from clients
-		ArrayList<Packets> readPackets = null;
+		ArrayList<Packets> readPackets = new ArrayList<Packets>();
 		
 		// Read received packets by the server
 		while(true)
 		{
-			for (Packets packet : readPackets)
+			readPackets = server.readBuffer.readPackets();
+			
+			for (int i = 0; i < readPackets.size(); i++)
 			{
-				readPackets = server.readBuffer.readPackets();
-				
 				/**
 				 * Receive Login packet 
 				 */
-				if (packet.getClass().isAssignableFrom(LoginPacket.class))
+				if (readPackets.get(i).getClass().isAssignableFrom(LoginPacket.class))
 				{			
-					LoginPacket receivedPacket = (LoginPacket) packet;
+					LoginPacket receivedPacket = (LoginPacket) readPackets.get(i);
 					attemptToLogin(receivedPacket);
 					
 					// Send to the client (who sent the packet) the updated packet
-					server.sendBuffer.sendPacket(packet);
+					server.sendBuffer.sendPacket(readPackets.get(i));
 					
 					// If server accepted the request, send client data
 					if (receivedPacket.accepted)
