@@ -2,14 +2,13 @@ package Packets;
 
 import java.io.Serializable;
 
-public class ClientDataPacket implements Serializable
+public class ClientDataPacket extends Packets
 {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1319262982236758754L;
 	
-	public String ip;
 	public String name;
 	public int games;
 	public int wins;
@@ -23,7 +22,6 @@ public class ClientDataPacket implements Serializable
 	{
 		return super.toString()
 				+ "\n"
-				+ "- [ip]: " + ip + "\n"
 				+ "- [name]: " + name + "\n"
 				+ "- [games]: " + games + "\n"
 				+ "- [wins]: " + wins + "\n"

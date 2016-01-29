@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import Packets.FriendsDataPacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
-import Server.KServer;
+import Packets.Packets;
+import Server.Server;
 import Utils.FileUtils;
 import Utils.ServerUtils;
 
@@ -23,20 +24,20 @@ public class Main
 	public static void main(String[] args) throws IOException
 	{
 		System.out.println("Main thread : Creation of server data");
-		KServer server = new KServer();
+		Server server = new Server();
 		server.open();
 		
 		games = new ArrayList<Game>();
 		players = new ArrayList<Player>();
 		
-		ArrayList<Object> readPacket;
+		ArrayList<Packets> readPackets;
 		
 		// Read Packet received by the server
 		while(true)
 		{
-			readPacket = server.readBuffer.getPackets();
+			readPackets = server.readBuffer.readPackets();
 			
-			for (Object packet : readPacket)
+			for (Packets packet : readPackets)
 			
 			/**
 			 * Receive Login packet 
@@ -47,27 +48,30 @@ public class Main
 				attemptToLogin(receivedPacket);
 				
 				// Send to the client (who sent the packet) the updated packet
-				server.sendBuffer.addPacket(receivedPacket);
+				server.sendBuffer.sendPacket(packet);
 				
 				// If server accepted the request, send client data
 				if (receivedPacket.accepted)
 				{				
 					// Send to the client his data
-					server.sendBuffer.addPacket(getPlayerFromIP(receivedPacket.ip).getPacket());
+					server.sendBuffer.sendPacket((Packets) getPlayerFromIP(receivedPacket.ip).getPacket());
 					
 					// Send to the client the last news
-					server.sendBuffer.addPacket(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));		
-					server.sendBuffer.addPacket(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));		
+					server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));		
+					server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));		
 
 					// Send to the client his friends
-					server.sendBuffer.addPacket(new FriendsDataPacket());
+					server.sendBuffer.sendPacket((Packets) new FriendsDataPacket());
 					
-					// Send to the client the ladder and his pos
-					server.sendBuffer.addPacket(new LadderDataPacket());
+					// Send to the client the ladder and his position
+					server.sendBuffer.sendPacket((Packets) new LadderDataPacket());
 					
 					// Send to his connected friends he is connected
+					// TODO : send packets to his friends
 				}
 			}
+			
+			// TODO : manage the creation of games when receiving MatchMakingPacket
 			/*{
 				Thread t = new Thread(games.get(index));
 				t.start();

@@ -5,6 +5,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import Packets.DisconnectionPacket;
 import Packets.MatchMakingPacket;
 import Packets.Packets;
 
@@ -64,7 +65,7 @@ public class ClientProcessor implements Runnable
 				receivedObject = receiveFromClient();	
 			
 			// Cast the result into packet
-			Packets receivedPacket;
+			Packets receivedPacket = null;
 			if (receivedObject.getClass().isAssignableFrom(Packets.class))
 				receivedPacket = (Packets) receivedObject;
 			
@@ -72,8 +73,7 @@ public class ClientProcessor implements Runnable
 			if (receivedObject.equals(-1))
 			{
 				// Send disconnection packet to the server program
-				// TODO : Create a DisconnectionPacket use by the server only
-				server.readBuffer.addPacket(new DisconnectionPacket(this));
+				server.readBuffer.sendPacket(new DisconnectionPacket(this));
 				break;
 			}
 			

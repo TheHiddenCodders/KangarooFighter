@@ -8,14 +8,13 @@ import java.io.Serializable;
  * @author Nerisma
  *
  */
-public class LoginPacket implements Serializable
+public class LoginPacket extends Packets
 {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -861319294637171380L;
 	
-	public String ip;
 	public String pseudo;
 	public String pwd;
 	public boolean pwdMatch;
@@ -27,7 +26,6 @@ public class LoginPacket implements Serializable
 	{
 		return super.toString()
 				+ "\n"
-				+ "- [ip]: " + ip + "\n"
 				+ "- [pseudo]: " + pseudo + "\n"
 				+ "- [pwd]: " + pwd + "\n"
 				+ "- [pwdMatch]: " + pwdMatch + "\n"

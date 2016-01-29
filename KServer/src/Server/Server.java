@@ -34,7 +34,7 @@ public class Server
 	/** Default constructor : Create a serverSocket listening the default port.
 	 * 
 	 */
-	Server()
+	public Server()
 	{
 		this(defaultPort);
 	}
@@ -42,7 +42,7 @@ public class Server
 	/** Constructor : Create a serverSocket with the port give in parameter.
 	 * @param port : The port to listen. 
 	 */
-	Server(int port)
+	public Server(int port)
 	{
 		try
 		{
