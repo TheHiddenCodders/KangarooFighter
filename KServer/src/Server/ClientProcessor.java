@@ -5,48 +5,45 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import Packets.DeconnexionPacket;
+import Packets.DisconnectionPacket;
+import Packets.Packets;
+
 /** 
  * Manage one client communication in its personal thread.
- * @author Nerisma
+ * @author Nerisma & Kurond
  *
  */
 public class ClientProcessor implements Runnable 
 {
-	
-	/*
-	 * ByteArrayInputStream bis = new ByteArrayInputStream(yourBytes);
-		ObjectInput in = null;
-		try {
-		  in = new ObjectInputStream(bis);
-		  Object o = in.readObject(); 
-		  ...
-		}
-	 * 
-	 */
-	// Attributes
+	/** client : the socket allowing communication with the client */
 	private Socket client;
+	/** input : a buffer to store receiving packets */
 	protected ObjectInputStream input;
+	/** output : a buffer to store sending packets */
 	protected ObjectOutputStream output;
-	protected InetSocketAddress remote;
-	private float lastHeartBeatAnswerTime;
+	//protected InetSocketAddress remote;
+	//private float lastHeartBeatAnswerTime;
 	
+	/** server : a reference to the server object */
 	protected Server server;
 	
 	/** 
-	 * Build a ClientProcessor with the Socket (which mean the client) associated.
-	 * @param client the client to manage
+	 * Constructor : Build a ClientProcessor with a client socket.
+	 * @param client : the client to manage
 	 */
 	public ClientProcessor(Socket client, Server server)
 	{		
+		// Make references to the client and the server
 		this.client = client;
 		this.server = server;
 		
+		// Try to build buffers
 		try 
 		{
             output = new ObjectOutputStream(client.getOutputStream());	
             output.flush(); // Remove this line and the program freeze
 			input = new ObjectInputStream(client.getInputStream());
-			remote = (InetSocketAddress) client.getRemoteSocketAddress();
 		} 
 		catch (IOException e) 
 		{
@@ -54,31 +51,54 @@ public class ClientProcessor implements Runnable
 		} 
 	}
 
-	/** 
-	 * Launch client connection treatment.
+	/** Wait for Reading data from the client and send it to the server program.
 	 */
 	public void run()
 	{		
-		// While connection is active, treat asks
+		// While connection is active
 		while (!client.isClosed())
-		{						
-			// Waiting for client reception
-			Object receivedObject = receiveFromClient();			
+		{				
+			Object receivedObject = null;
 			
-			// If received object equals -1, that's mean client has been quit
-			if (receivedObject.equals(-1))
+			// Waiting for object from the client
+			while (receivedObject == null)
+				receivedObject = receiveFromClient();	
+			
+			// Cast the result into packet
+			// TODO : all packets extend from Packet need to be assignable from Packets
+			Packets receivedPacket = null;
+			if (receivedObject.getClass().getSuperclass().isAssignableFrom(Packets.class))
 			{
-				server.onDisconnection(this);
+				receivedPacket = (Packets) receivedObject;
+				System.out.println("a packet received");
+				receivedPacket.setIp( getIp() );
+				System.out.println("receive from" + receivedPacket.getIp());
+			}
+			else
+			{
+				System.out.println("Sth not a packet received");
+			}
+			
+			// If the client has been disconnected
+			if (receivedObject.getClass().isAssignableFrom(DeconnexionPacket.class))
+			{
+				// Send disconnection packet to the server program
+				server.readBuffer.sendPacket(new DisconnectionPacket(this.getIp()));
 				break;
 			}
 			
-			// Do things on receive
-			server.onReceive(receivedObject, this);
+			// Send the received packet to the server programm
+			server.readBuffer.sendPacket(receivedPacket);
 		}
+		
+		// When the client is disconnected
 		
 		try 
 		{
+			// Try to close the socket
 			client.close();
+			
+			System.out.println("Recive Thread : the client : " + getIp() + "has been disconncted");
 		} 
 		catch (IOException e1) 
 		{
@@ -87,41 +107,47 @@ public class ClientProcessor implements Runnable
 	}
 	
 	/** Send an object to the client
-	 * 
 	 * @param o the object to send
 	 */
-	public void send(Object o)
+	public void send(Object o, String threadName)
 	{
 		try 
 		{
+			// Write the object into the buffer
 			output.writeObject(o);
+			
+			// Send the buffer content to the client
 			output.flush();
 			
-			System.out.println("Sent to " + this.getIp() + ": " + o.toString() + "\n");
-		} catch (IOException e)
+			System.out.println(threadName + " : Sent to " + this.getIp() + ": " + o.toString() + "\n");
+		} 
+		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 	}
 	
-	/**
-	 * Get an object from client 
-	 * @return the object sent by the client
+	/** Get an object from client 
+	 * @return the object received from the client
 	 */
 	public Object receiveFromClient()
 	{
+		// Try to read an object
 		try
 		{	
+			// And return it
 			return input.readObject();
-		} catch (ClassNotFoundException | IOException e)
+		} 
+		catch (ClassNotFoundException | IOException e)
 		{
 			e.printStackTrace();
 		}
+		
+		// Otherwise return null
 		return null;
 	}
 	
-	/**
-	 * Get the socket
+	/** Get the client socket
 	 * @return socket
 	 */
 	public Socket getClient()
@@ -129,24 +155,10 @@ public class ClientProcessor implements Runnable
 		return client;
 	}
 	
-	/** 
-	 * Set the last heartbeat answer time
+	/** Get the ip of the managed client
 	 */
-	public void setLastHeartBeatAnswer(float t)
-	{
-		lastHeartBeatAnswerTime = t;
-	}
-	
-	/** 
-	 * Get the last heartbeat answer time
-	 */
-	public float getLastHeartBeatAnswer()
-	{
-		return lastHeartBeatAnswerTime;
-	}
-	
 	public String getIp()
 	{
-		return remote.getHostString() + ":" + client.getPort();
+		return ((InetSocketAddress) client.getRemoteSocketAddress()).getHostString() + ":" + client.getPort();
 	}
 }

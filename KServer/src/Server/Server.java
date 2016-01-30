@@ -6,43 +6,43 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import Packets.HeartBeatPacket;
+import Packets.ConnectionPacket;
+import Packets.Packets;
 
 /** Encapsulate the server socket and can handle multiple clients.
  * 
  */
-public abstract class Server 
+public class Server 
 {
 	// Attributes
 	public final static int defaultPort = 9999;
 	
+	/** port : the listener port */
 	private int port;
+	/** ip : the current server ip */
 	private String ip;
+	/** server : the socket allowing communication with this server */
 	private ServerSocket server = null;
+	/** running : the current state of the server */
 	protected boolean running;
+	/** clients : all clients connected to this server */
 	protected ArrayList<ClientProcessor> clients;
+	/** Buffers allowing this server to communicate with other thread of the program */
+	public volatile BufferPacket readBuffer;
+	public volatile BufferPacket sendBuffer;
 	
-	/** Amount of time without answer to heartbeat, considered as disconnected */
-	private static final long timeout = 5000;
-	/** Amount of time between two heartbeat */
-	private static final long hbDelay = 10000;
-	
-	private float timeSinceLastHeartbeat = System.currentTimeMillis();
-	
-	/** Default constructor, create a serverSocket with a default port.
+	/** Default constructor : Create a serverSocket listening the default port.
 	 * 
 	 */
-	Server()
+	public Server()
 	{
 		this(defaultPort);
 	}
 	
-	/** This constructor create a serverSocket with the port give in parameter.
-	 * 
-	 * @param port The port where the serverSocker listening to.
-	 * 
+	/** Constructor : Create a serverSocket with the port give in parameter.
+	 * @param port : The port to listen. 
 	 */
-	Server(int port)
+	public Server(int port)
 	{
 		try
 		{
@@ -55,6 +55,9 @@ public abstract class Server
 			
 			// Create the serverSocket with the port 
 			server = new ServerSocket(port);
+			
+			readBuffer = new BufferPacket();
+			sendBuffer = new BufferPacket();
 		} 
 		catch (UnknownHostException e) 
 		{
@@ -71,8 +74,8 @@ public abstract class Server
 	 */
 	public void open()
 	{
-		// Create the ServerClient/Communication thread (synchrone)
-		Thread t = new Thread(new Runnable()
+		// Create the ServerClient/Communication thread
+		Thread t1 = new Thread(new Runnable()
 		{
 			@Override
 			public void run()
@@ -81,7 +84,7 @@ public abstract class Server
 				{ 
 					try 
 					{
-						System.out.println("Server ready, wait for connections"); 
+						System.out.println("Acceptation thread : Server ready, wait for connections"); 
 						
 						// Waiting for a client connection
 						Socket client = server.accept();
@@ -89,10 +92,10 @@ public abstract class Server
 						// Add the client to the list
 						clients.add( new ClientProcessor(client, Server.this) );
 
-						// Send a message to the connected client
-						onConnection( clients.get(clients.size() - 1) );
+						// Broadcast to other thread the connection of a new client 
+						readBuffer.sendPacket(new ConnectionPacket(clients.get(clients.size() - 1).getIp()));
 						
-						// Create a new thread to manage this client               
+						// Create a new thread to listen this client               
 						Thread t = new Thread( clients.get(clients.size() - 1) );
 						t.start();
 	               }
@@ -114,42 +117,63 @@ public abstract class Server
 	         }
 			
 	      });
-	      t.start();
+	      t1.start();
 	      
-	      // TODO: MAKE IT WORK (Usefull for disconnection during game)
-	      @SuppressWarnings("unused")
+	      // Create a thread waiting for packet to send to clients
 	      Thread t2 = new Thread(new Runnable()
-	      {
-			
-			@Override
-			public void run()
-			{	
-				while (running)
-				{		
-					// Send heartbeat if it's necessary (delay handled in the function)
-					sendHeartBeat();
+			{
+				@Override
+				public void run()
+				{
+					String name = "Sender Thread";
+					ArrayList<Packets> packets;
+					ClientProcessor cp;
 					
-					// Disconnect clients which have a last heartbeat answer time > timeout
-					disconnectInactives();
-				}
-			}
-			
-	      });
-	      //t2.start(); 
-	      
+					while(running)
+					{
+						// Get packets from buffer
+						packets = sendBuffer.readPackets();
+						
+						// Browse the packets received from the main thread
+						for (Packets packet : packets)
+						{
+							// Get the cp associate to this ip
+							cp = getCpFromIp(packet.getIp());
+							
+							// Send the packet to the associate client
+							cp.send(packet, name);
+						}
+					}
+		         }
+				
+		      });
+		      t2.start();
 	}
 	
-	public abstract void onConnection(ClientProcessor cp);
-	public abstract void onReceive(Object o, ClientProcessor cp);
-	public abstract void onDisconnection(ClientProcessor cp);
+	/** Browse the client list to find the client with this ip
+	 * @param ip : the ip of the client to find
+	 * @return the client if found, null otherwise
+	 */
+	private ClientProcessor getCpFromIp(String ip)
+	{
+		// Browse the list of client
+		for (ClientProcessor cp : clients)
+		{
+			// If the client with the ip specify in param is found, return it...
+			if (cp.getIp().equals(ip))
+				return cp;
+		}
+		
+		// ... return null otherwise
+		return null;
+	}
 	
 	/** Send an object to the client #clientIndex
-	 * 
 	 * @param clientIndex the index of the client, -1 all clients
 	 * @param o the object to send
 	 * 
 	 */
-	public void send(int clientIndex, Object o)
+	/*public void send(int clientIndex, Object o)
 	{
 		if ( clientIndex == -1)
 		{
@@ -166,15 +190,14 @@ public abstract class Server
 			+ ": "		
 			+ o.toString() + "to client n°" + clientIndex + "\n");
 		}
-	}
+	}*/
 	
 	/** Send an object to a specific client
-	 * 
 	 * @param cp a reference to the client
 	 * @param o the object to send
 	 * 
 	 */
-	public void send(ClientProcessor cp, Object o)
+	/*public void send(ClientProcessor cp, Object o)
 	{
 		for (int i = 0; i < clients.size(); i++)
 		{
@@ -184,9 +207,9 @@ public abstract class Server
 				break;
 			}
 		}
-	}
+	}*/
 	
-	public void sendExcept(ClientProcessor cp, Object o)
+	/*public void sendExcept(ClientProcessor cp, Object o)
 	{
 		for (int i = 0; i < clients.size(); i++)
 		{
@@ -196,40 +219,10 @@ public abstract class Server
 				break;
 			}
 		}
-	}
-
-	/**
-	 * Send heartbeat to all clients
-	 */
-	public void sendHeartBeat()
-	{
-		if (System.currentTimeMillis() - timeSinceLastHeartbeat > hbDelay)
-		{
-			send(-1, new HeartBeatPacket());
-			timeSinceLastHeartbeat = System.currentTimeMillis();
-		}
-	}
+	}*/
 	
 	/**
-	 * Called each frames
-	 */
-	public void disconnectInactives()
-	{
-		for (ClientProcessor cp : clients)
-		{
-			// If last heatbeat answer is > timeout
-			if (System.currentTimeMillis() - cp.getLastHeartBeatAnswer() > timeout)
-			{
-				onDisconnection(cp);
-				System.err.println(cp.remote.getHostString() + " no answer to heartbeat");
-			}
-		}
-	}
-	
-	/**
-	 * 
 	 * @return The port listening by the server
-	 * 
 	 */
 	public int getPort() 
 	{
@@ -238,7 +231,6 @@ public abstract class Server
 
 	/**
 	 * @return the ip
-	 * 
 	 */
 	public String getIp() 
 	{
@@ -247,7 +239,6 @@ public abstract class Server
 
 	/**
 	 * @return the socket
-	 * 
 	 */
 	public ServerSocket getServer() 
 	{
@@ -256,7 +247,6 @@ public abstract class Server
 
 	/**
 	 * @return the running
-	 * 
 	 */
 	public boolean isRunning() 
 	{

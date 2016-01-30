@@ -32,6 +32,7 @@ public class PacketFactory
 	 * @param packet 
 	 * @return same packet but filled
 	 */
+	@SuppressWarnings("unchecked")
 	private static <T> T fillPacket(Object packet)
 	{
 		if (packet.getClass().isAssignableFrom(HomePacket.class))

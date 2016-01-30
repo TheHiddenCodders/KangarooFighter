@@ -1,13 +1,19 @@
 package Packets;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class LadderDataPacket implements Serializable {
+public class LadderDataPacket extends Packets
+{
+	public LadderDataPacket(String ip) 
+	{
+		super(ip);
+	}
 
-	/**
-	 * 
-	 */
+	public LadderDataPacket() 
+	{
+		super();
+	}
+
 	private static final long serialVersionUID = 8410335275464293843L;
 
 	public ArrayList<String> ladder;

@@ -1,9 +1,18 @@
 package Packets;
 
-import java.io.Serializable;
 
-public class HomePacket implements Serializable
+public class HomePacket extends Packets
 {	
+	public HomePacket(String ip) 
+	{
+		super(ip);
+	}
+
+	public HomePacket() 
+	{
+		super();
+	}
+	
 	/**
 	 * 
 	 */

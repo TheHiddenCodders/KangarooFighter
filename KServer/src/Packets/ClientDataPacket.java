@@ -1,12 +1,18 @@
 package Packets;
 
-import java.io.Serializable;
 
-public class ClientDataPacket implements Serializable
+public class ClientDataPacket extends Packets
 {
-	/**
-	 * 
-	 */
+	public ClientDataPacket(String ip) 
+	{
+		super(ip);
+	}
+
+	public ClientDataPacket() 
+	{
+		super();
+	}
+
 	private static final long serialVersionUID = -1319262982236758754L;
 	
 	public String name;

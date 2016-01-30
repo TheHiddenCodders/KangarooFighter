@@ -1,12 +1,17 @@
 package Packets;
 
-import java.io.Serializable;
-
-public class GamePacket implements Serializable
+public class GamePacket extends Packets
 {
-	/**
-	 * 
-	 */
+	public GamePacket(String ip) 
+	{
+		super(ip);
+	}
+
+	public GamePacket() 
+	{
+		super();
+	}
+
 	private static final long serialVersionUID = -2707492392522937092L;
 	
 	public KangarooServerPacket player, opponent;

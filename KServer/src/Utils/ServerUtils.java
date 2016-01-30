@@ -17,6 +17,7 @@ import java.util.Date;
 
 import Kangaroo.Game;
 import Kangaroo.Kangaroo;
+import Kangaroo.Player;
 import Packets.ClientDataPacket;
 import Packets.FriendsDataPacket;
 import Packets.LadderDataPacket;
@@ -24,7 +25,8 @@ import Packets.NewsPacket;
 
 public class ServerUtils
 {
-	public static ArrayList<Kangaroo> kangaroos;
+	/** players : a reference to the server list*/
+	public static ArrayList<Player> players;
 	
 	/****************************************************************
 	 * PLAYERS METHODS												*
@@ -49,9 +51,9 @@ public class ServerUtils
 	 * @param k the kangaroo 
 	 * @return the data file of the player
 	 */	
-	public static File getPlayerDataFile(Kangaroo k)
+	public static File getPlayerDataFile(Player p)
 	{		
-		return getPlayerDataFile(k.getName());
+		return getPlayerDataFile(p.getName());
 	}
 	
 	/**
@@ -75,9 +77,9 @@ public class ServerUtils
 	 * @param k the kangaroo 
 	 * @return the data file of the player
 	 */	
-	public static File getPlayerFriendsFile(Kangaroo k)
+	public static File getPlayerFriendsFile(Player p)
 	{		
-		return getPlayerFriendsFile(k.getName());
+		return getPlayerFriendsFile(p.getName());
 	}
 	
 	/**
@@ -153,9 +155,9 @@ public class ServerUtils
 	 * @param kangaroos
 	 * @return
 	 */
-	public static boolean isPlayerOnline(Kangaroo k)
+	public static boolean isPlayerOnline(Player p)
 	{
-		return isPlayerOnline(k.getName());
+		return isPlayerOnline(p.getName());
 	}
 	
 	/**
@@ -165,10 +167,10 @@ public class ServerUtils
 	 */
 	public static boolean isPlayerOnline(String name)
 	{
-		for (Kangaroo k : kangaroos)
+		for (Player p : players)
 		{
-			System.out.println(k.getName().equals(name));
-			if (k.getName().equals(name))
+			System.out.println(p.getName().equals(name));
+			if (p.getName().equals(name))
 			{
 				return true;
 			}
@@ -182,11 +184,11 @@ public class ServerUtils
 	 * @param k the kangaroo
 	 * @return his data
 	 */
-	public static ClientDataPacket getPlayerDataPacket(Kangaroo k)
+	public static ClientDataPacket getPlayerDataPacket(Player p)
 	{
 		ClientDataPacket packet = new ClientDataPacket();
 		
-		File dataFile = getPlayerDataFile(k);
+		File dataFile = getPlayerDataFile(p);
 
 		try
 		{
@@ -208,7 +210,7 @@ public class ServerUtils
 			e.printStackTrace();
 		}
 		
-		packet.pos = getLadderPosition(k);
+		packet.pos = getLadderPosition(p);
 		return packet;
 	}
 	
@@ -264,9 +266,9 @@ public class ServerUtils
 	 * @param key the name of the field to get
 	 * @return
 	 */
-	public static int getData(Kangaroo k, String key)
+	public static int getData(Player p, String key)
 	{		
-		return getData(k.getName(), key);
+		return getData(p.getName(), key);
 	}
 	
 	/**
@@ -275,9 +277,9 @@ public class ServerUtils
 	 * @param key the name of the field to update
 	 * @param value the transform to apply to the value
 	 */
-	public static void setData(Kangaroo k, String key, int value)
+	public static void setData(Player p, String key, int value)
 	{
-		setData(k.getName(), key, value);	
+		setData(p.getName(), key, value);	
 	}
 	
 	/**
@@ -347,9 +349,9 @@ public class ServerUtils
 	 * @param key the name of the field to update
 	 * @param value the transform to apply to the value
 	 */
-	public static void updateData(Kangaroo k, String key, int value)
+	public static void updateData(Player p, String key, int value)
 	{
-		File dataFile = getPlayerDataFile(k);
+		File dataFile = getPlayerDataFile(p);
 		
 		try
 		{
@@ -407,54 +409,6 @@ public class ServerUtils
 	 * GAMES METHODS												*
 	 ****************************************************************/
 	
-	/**
-	 * This method save a game into the Games folder of the server.
-	 * It assume a tracker of the games
-	 * @param game
-	 */
-	public static void save(Game game)
-	{
-		File gameFile = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Games/"
-				+ (getGamesFiles().size()+1)
-				+ " - " + game.getWinner().getName()
-				+ " - " + game.getLooser().getName()));
-		try
-		{
-			gameFile.createNewFile();
-			
-			// Get date
-			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			Date date = new Date();
-			
-			// Write the file
-			BufferedWriter writer = new BufferedWriter(new FileWriter(gameFile));
-			writer.write("Partie ayant eu lieue le: " + dateFormat.format(date) + ".");
-			writer.newLine();
-			writer.write("Opposant " + game.getK1().getName() + " (" + game.getBaseElo()[0] + " elo) à " + game.getK2().getName() + " (" + game.getBaseElo()[1] + " elo).");
-			writer.newLine();
-			writer.write("-----------------------------------------------------------------------------------");
-			writer.newLine();
-			writer.write("Victoire de " + game.getWinner().getName() + " (" + game.getWinner().getHealth() + " HP.)");
-			writer.newLine();
-			writer.write("Défaite de " + game.getLooser().getName() + " (" + game.getLooser().getHealth() + "HP.)");
-			writer.newLine();
-			writer.write("La partie aura durée " + game.getDuration() + "s.");
-			writer.newLine();
-			writer.write("-----------------------------------------------------------------------------------");
-			writer.newLine();
-			
-			writer.write(game.getWinner().getName() + " remporte " + game.getEloChange(game.getWinner()) + " points d'élo.");
-			writer.newLine();
-			writer.write(game.getLooser().getName() + " perd " + game.getEloChange(game.getLooser()) + " points d'élo.");
-			
-			writer.flush();
-			writer.close();
-			
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
 	
 	/**
 	 * This method give access to the games directory.
@@ -557,9 +511,9 @@ public class ServerUtils
 	/**
 	 * @return the ladder data packet
 	 */
-	public static LadderDataPacket getLadderDataPacket(Kangaroo k)
+	public static LadderDataPacket getLadderDataPacket(Player p)
 	{		
-		return getLadderDataPacket(k.getName());
+		return getLadderDataPacket(p.getName());
 	}
 	/**
 	 * @return the ladder data packet
@@ -605,9 +559,9 @@ public class ServerUtils
 	 * @param k
 	 * @return
 	 */
-	public static int getLadderPosition(Kangaroo k)
+	public static int getLadderPosition(Player p)
 	{
-		return getLadderPosition(k.getName());
+		return getLadderPosition(p.getName());
 	}
 	
 	/**
@@ -666,7 +620,7 @@ public class ServerUtils
 	 * @param name
 	 * @return the news packet of the news named name
 	 */
-	public static NewsPacket getNewsPacket(String name)
+	public static NewsPacket getNewsPacket(String name, String receiverIP)
 	{
 		NewsPacket packet = new NewsPacket();
 		packet.name = name;
@@ -675,6 +629,7 @@ public class ServerUtils
 	
 		try
 		{
+			packet.setIp(receiverIP);
 			packet.banner = Files.readAllBytes(newsFiles.get(0).toPath());
 			packet.news = Files.readAllBytes(newsFiles.get(1).toPath());
 		} catch (IOException e)
@@ -719,9 +674,9 @@ public class ServerUtils
 	 * @param k
 	 * @return the friend file of kangaroo k
 	 */
-	public static FriendsDataPacket getFriendsDataPacket(Kangaroo k)
+	public static FriendsDataPacket getFriendsDataPacket(Player p)
 	{
-		return getFriendsDataPacket(k.getName());
+		return getFriendsDataPacket(p.getName());
 	}
 	
 	/**
@@ -775,7 +730,7 @@ public class ServerUtils
 	 * @param k
 	 * @param friend
 	 */
-	public static void addFriend(Kangaroo k, Kangaroo friend)
+	public static void addFriend(Player k, Player friend)
 	{
 		addFriend(k.getName(), friend.getName());
 	}
@@ -831,9 +786,9 @@ public class ServerUtils
 	 * This method reset player stats as he just sign out to the game
 	 * @param k
 	 */
-	public static void resetPlayer(Kangaroo k)
+	public static void resetPlayer(Player p)
 	{
-		resetPlayer(k.getName());
+		resetPlayer(p.getName());
 	}
 	
 	/**
@@ -866,9 +821,9 @@ public class ServerUtils
 	 * This method will reset the friens of the kangaroo k
 	 * @param k
 	 */
-	public static void resetPlayerFriends(Kangaroo k)
+	public static void resetPlayerFriends(Player p)
 	{
-		resetPlayerFriends(k.getName());
+		resetPlayerFriends(p.getName());
 	}
 	
 	/**

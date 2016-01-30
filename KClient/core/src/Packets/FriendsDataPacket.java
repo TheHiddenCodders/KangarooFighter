@@ -1,18 +1,26 @@
 package Packets;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class FriendsDataPacket implements Serializable {
+public class FriendsDataPacket extends Packets
+{
+	public FriendsDataPacket(String ip) 
+	{
+		super(ip);
+	}
 
-	/**
-	 * 
-	 */
+	public FriendsDataPacket() 
+	{
+		super();
+		friendsName = new ArrayList<String>();
+		friendsOnline = new ArrayList<Boolean>();
+	}
+
 	private static final long serialVersionUID = 8410335275464293843L;
 
 	public ArrayList<String> friendsName;
 	public ArrayList<Boolean> friendsOnline;
-	
+
 	@Override
 	public String toString()
 	{
