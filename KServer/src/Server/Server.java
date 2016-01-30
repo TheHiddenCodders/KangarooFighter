@@ -93,7 +93,7 @@ public class Server
 						clients.add( new ClientProcessor(client, Server.this) );
 
 						// Broadcast to other thread the connection of a new client 
-						readBuffer.sendPacket(new ConnectionPacket(clients.get(clients.size() - 1)));
+						readBuffer.sendPacket(new ConnectionPacket(clients.get(clients.size() - 1).getIp()));
 						
 						// Create a new thread to listen this client               
 						Thread t = new Thread( clients.get(clients.size() - 1) );
@@ -125,6 +125,7 @@ public class Server
 				@Override
 				public void run()
 				{
+					String name = "Sender Thread";
 					ArrayList<Packets> packets;
 					ClientProcessor cp;
 					
@@ -137,10 +138,10 @@ public class Server
 						for (Packets packet : packets)
 						{
 							// Get the cp associate to this ip
-							cp = getCpFromIp(packet.ip);
+							cp = getCpFromIp(packet.getIp());
 							
 							// Send the packet to the associate client
-							cp.send(packet);
+							cp.send(packet, name);
 						}
 					}
 		         }
@@ -172,7 +173,7 @@ public class Server
 	 * @param o the object to send
 	 * 
 	 */
-	public void send(int clientIndex, Object o)
+	/*public void send(int clientIndex, Object o)
 	{
 		if ( clientIndex == -1)
 		{
@@ -189,14 +190,14 @@ public class Server
 			+ ": "		
 			+ o.toString() + "to client n°" + clientIndex + "\n");
 		}
-	}
+	}*/
 	
 	/** Send an object to a specific client
 	 * @param cp a reference to the client
 	 * @param o the object to send
 	 * 
 	 */
-	public void send(ClientProcessor cp, Object o)
+	/*public void send(ClientProcessor cp, Object o)
 	{
 		for (int i = 0; i < clients.size(); i++)
 		{
@@ -206,9 +207,9 @@ public class Server
 				break;
 			}
 		}
-	}
+	}*/
 	
-	public void sendExcept(ClientProcessor cp, Object o)
+	/*public void sendExcept(ClientProcessor cp, Object o)
 	{
 		for (int i = 0; i < clients.size(); i++)
 		{
@@ -218,7 +219,7 @@ public class Server
 				break;
 			}
 		}
-	}
+	}*/
 	
 	/**
 	 * @return The port listening by the server

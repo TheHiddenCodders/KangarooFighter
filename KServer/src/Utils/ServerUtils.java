@@ -620,7 +620,7 @@ public class ServerUtils
 	 * @param name
 	 * @return the news packet of the news named name
 	 */
-	public static NewsPacket getNewsPacket(String name)
+	public static NewsPacket getNewsPacket(String name, String receiverIP)
 	{
 		NewsPacket packet = new NewsPacket();
 		packet.name = name;
@@ -629,6 +629,7 @@ public class ServerUtils
 	
 		try
 		{
+			packet.setIp(receiverIP);
 			packet.banner = Files.readAllBytes(newsFiles.get(0).toPath());
 			packet.news = Files.readAllBytes(newsFiles.get(1).toPath());
 		} catch (IOException e)

@@ -9,9 +9,11 @@ package Packets;
  */
 public class LoginPacket extends Packets
 {
-	/**
-	 * 
-	 */
+	public LoginPacket(String ip) 
+	{
+		super(ip);
+	}
+
 	private static final long serialVersionUID = -861319294637171380L;
 	
 	public String pseudo;

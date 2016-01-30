@@ -1,6 +1,7 @@
 package Stages;
 
 import Class.ConnectedStage;
+import Packets.Packets;
 import Packets.SignOutPacket;
 import Utils.ConversionUtils;
 
@@ -177,7 +178,7 @@ public class InscriptionStage extends ConnectedStage
 			signOutPacket.pwd = ConversionUtils.sha1(pwd);
 			
 			// Send it
-			main.network.send(signOutPacket);
+			main.network.send((Packets) signOutPacket);
 		}
 		else if (!pseudo.isEmpty() || !pwd.isEmpty() || !pwdConfirm.isEmpty())
 		{

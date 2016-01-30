@@ -5,6 +5,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import Packets.DeconnexionPacket;
 import Packets.DisconnectionPacket;
 import Packets.LoginPacket;
 import Packets.Packets;
@@ -65,27 +66,25 @@ public class ClientProcessor implements Runnable
 				receivedObject = receiveFromClient();	
 			
 			// Cast the result into packet
-			// TODO : all packets exetend from Packet need to be assignable from Packets
+			// TODO : all packets extend from Packet need to be assignable from Packets
 			Packets receivedPacket = null;
-			if (receivedObject.getClass().isAssignableFrom(Packets.class))
+			if (receivedObject.getClass().getSuperclass().isAssignableFrom(Packets.class))
 			{
 				receivedPacket = (Packets) receivedObject;
-			}
-			else if (receivedObject.getClass().isAssignableFrom(LoginPacket.class))
-			{
-				receivedPacket = (Packets) receivedObject;
-				receivedPacket.ip = getIp();
+				System.out.println("a packet received");
+				receivedPacket.setIp( getIp() );
+				System.out.println("receive from" + receivedPacket.getIp());
 			}
 			else
 			{
 				System.out.println("Sth not a packet received");
 			}
 			
-			// If received object equals -1, client has been quit
-			if (receivedObject.equals(-1))
+			// If the client has been disconnected
+			if (receivedObject.getClass().isAssignableFrom(DeconnexionPacket.class))
 			{
 				// Send disconnection packet to the server program
-				server.readBuffer.sendPacket(new DisconnectionPacket(this));
+				server.readBuffer.sendPacket(new DisconnectionPacket(this.getIp()));
 				break;
 			}
 			
@@ -99,6 +98,8 @@ public class ClientProcessor implements Runnable
 		{
 			// Try to close the socket
 			client.close();
+			
+			System.out.println("Recive Thread : the client : " + getIp() + "has been disconncted");
 		} 
 		catch (IOException e1) 
 		{
@@ -109,7 +110,7 @@ public class ClientProcessor implements Runnable
 	/** Send an object to the client
 	 * @param o the object to send
 	 */
-	public void send(Object o)
+	public void send(Object o, String threadName)
 	{
 		try 
 		{
@@ -119,8 +120,9 @@ public class ClientProcessor implements Runnable
 			// Send the buffer content to the client
 			output.flush();
 			
-			System.out.println("CP thread : Sent to " + this.getIp() + ": " + o.toString() + "\n");
-		} catch (IOException e)
+			System.out.println(threadName + " : Sent to " + this.getIp() + ": " + o.toString() + "\n");
+		} 
+		catch (IOException e)
 		{
 			e.printStackTrace();
 		}

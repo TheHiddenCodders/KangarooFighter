@@ -21,9 +21,8 @@ public class Player
 	
 	public ClientDataPacket getPacket()
 	{
-		ClientDataPacket packet = new ClientDataPacket();
+		ClientDataPacket packet = new ClientDataPacket(ip);
 		
-		packet.ip = ip;
 		packet.name = name;
 		packet.elo = 0; // stats.elo;
 		packet.games = 0; // stats.games;

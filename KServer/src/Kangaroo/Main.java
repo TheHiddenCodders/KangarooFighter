@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import Packets.ConnectionPacket;
 import Packets.FriendsDataPacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
@@ -45,7 +46,19 @@ public class Main
 				// If the received packet is not null, analyze it.
 				if (readPackets.get(i) != null)
 				{
-					/**
+					/*
+					 * Receive a ConnexionPacket
+					 */
+					if (readPackets.get(i).getClass().isAssignableFrom(ConnectionPacket.class))
+					{
+						// When a client has been connected, create a player with his ip;
+						players.add(new Player());		
+						players.get(players.size() - 1).setIp( readPackets.get(i).getIp());
+						
+						// Update serverInfo for clients
+						//serverInfoUpdated(cp, ServerInfoType.ExceptMe);
+					}
+					/*
 					 * Receive Login packet 
 					 */
 					if (readPackets.get(i).getClass().isAssignableFrom(LoginPacket.class))
@@ -61,17 +74,17 @@ public class Main
 						if (receivedPacket.accepted)
 						{				
 							// Send to the client his data
-							server.sendBuffer.sendPacket((Packets) getPlayerFromIP(receivedPacket.ip).getPacket());
+							server.sendBuffer.sendPacket((Packets) getPlayerFromIP(receivedPacket.getIp()).getPacket());
 							
 							// Send to the client the last news
-							server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));		
-							server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));		
+							server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName(), receivedPacket.getIp()));		
+							server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName(), receivedPacket.getIp()));		
 		
 							// Send to the client his friends
-							server.sendBuffer.sendPacket((Packets) new FriendsDataPacket());
+							server.sendBuffer.sendPacket((Packets) new FriendsDataPacket(receivedPacket.getIp()));
 							
 							// Send to the client the ladder and his position
-							server.sendBuffer.sendPacket((Packets) new LadderDataPacket());
+							server.sendBuffer.sendPacket((Packets) new LadderDataPacket(receivedPacket.getIp()));
 							
 							// Send to his connected friends he is connected
 							// TODO : send packets to his friends
@@ -108,33 +121,43 @@ public class Main
 		
 		// If this client is not connected
 		
-		// Check fields
-		// TODO : this loop need to browse an ArrayList<Player>
-		for (File file : ServerUtils.getPlayersFiles())
+		// Everyone could connect with this pseudo
+		if (packet.pseudo.equals("Kurond"))
 		{
-			// If pseudo exists
-			if (file.getName().equals(packet.pseudo))
+			packet.pwdMatch = true;
+			packet.accepted = true;				
+			getPlayerFromIP(packet.getIp()).setName(packet.pseudo);
+		}
+		else
+		{
+			// Check fields
+			// TODO : this loop need to browse an ArrayList<Player>
+			for (File file : ServerUtils.getPlayersFiles())
 			{
-				packet.pseudoExists = true;
-				
-				if (FileUtils.readString(new File(file.getAbsolutePath().concat("/pwd"))).get(0).equals(packet.pwd))
+				// If pseudo exists
+				if (file.getName().equals(packet.pseudo))
 				{
-					packet.pwdMatch = true;
-					packet.accepted = true;				
-					getPlayerFromIP(packet.ip).setName(packet.pseudo);
+					packet.pseudoExists = true;
+					
+					if (FileUtils.readString(new File(file.getAbsolutePath().concat("/pwd"))).get(0).equals(packet.pwd))
+					{
+						packet.pwdMatch = true;
+						packet.accepted = true;				
+						getPlayerFromIP(packet.getIp()).setName(packet.pseudo);
+						break;
+					}
+					else
+					{
+						packet.pwdMatch = false;
+					}
 					break;
 				}
 				else
 				{
-					packet.pwdMatch = false;
+					packet.pseudoExists = false;
 				}
-				break;
-			}
-			else
-			{
-				packet.pseudoExists = false;
-			}
-		}		
+			}	
+		}
 	}
 	
 	/** return a connected Player object matching with the pseudo in parameter
@@ -165,10 +188,14 @@ public class Main
 		// Browse the list of connected players
 		for (Player player : players)
 		{
+			System.out.println(player.getIp() + " vs " + ip);
+			
 			// If the player is found
 			if (player.getIp().equals(ip))
 				return player;
 		}
+		
+		System.out.println("null");
 		
 		// If no player matching with the ip
 		return null;

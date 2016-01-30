@@ -94,12 +94,14 @@ public abstract class Client extends Socket implements Runnable
 	 * @param o the object to send
 	 */
 	public void send(Packets packet)
-	{
-		packet.ip = ((InetSocketAddress) getRemoteSocketAddress()).getHostString() + ":" + getPort();
-		
+	{	
 		try
 		{
-			System.out.println("Sent : " + packet.toString());
+			if (packet != null)
+				System.out.println("Sent : " + packet.toString());
+			else
+				System.out.println("Sent : null");
+			
 			output.writeObject(packet);
 			output.flush();
 		} catch (IOException e)
