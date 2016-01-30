@@ -69,9 +69,6 @@ public class HomeStage extends ConnectedStage
 	
 		// Bottom ribbon
 		bottomRibbon = new Image(new Texture(Gdx.files.internal("sprites/homestage/botribbon.png")));
-		
-		// ColoredLabel
-		coloredLabel = new ColoredLabel("Il <0|y|> a <1|5|> joueurs en <0|ligne|>", main.skin, Color.YELLOW, Color.RED);
 	}
 	
 	@Override
@@ -110,6 +107,7 @@ public class HomeStage extends ConnectedStage
 		addActor(background);
 		addActor(matchMakingLaunch);
 		addActor(bottomRibbon);
+		addActor(coloredLabel);
 	}
 	
 	@Override
