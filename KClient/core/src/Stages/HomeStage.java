@@ -107,7 +107,6 @@ public class HomeStage extends ConnectedStage
 		addActor(background);
 		addActor(matchMakingLaunch);
 		addActor(bottomRibbon);
-		addActor(coloredLabel);
 	}
 	
 	@Override
