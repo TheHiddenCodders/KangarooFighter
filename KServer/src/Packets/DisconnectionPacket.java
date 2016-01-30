@@ -1,7 +1,5 @@
 package Packets;
 
-import Server.ClientProcessor;
-
 
 public class DisconnectionPacket extends Packets 
 {

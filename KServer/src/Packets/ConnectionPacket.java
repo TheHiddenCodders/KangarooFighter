@@ -1,6 +1,5 @@
 package Packets;
 
-import Server.ClientProcessor;
 
 public class ConnectionPacket extends Packets 
 {

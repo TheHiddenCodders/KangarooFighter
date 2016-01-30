@@ -4,6 +4,7 @@ import Class.ConnectedStage;
 import Client.Network;
 import Packets.DeconnexionPacket;
 import Packets.Packets;
+import Packets.PlayerPacket;
 import Stages.ServerAccesStage;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -24,6 +25,7 @@ public class Main extends ApplicationAdapter
 	public Network network;
 	public Skin skin;
 	public Preferences prefs;
+	public PlayerPacket player;
 	
 	@Override
 	public void create () 
@@ -41,7 +43,7 @@ public class Main extends ApplicationAdapter
 		skin.add("arial", arialFont, BitmapFont.class);
 		
 		// Get prefs
-		prefs = Gdx.app.getPreferences("kangaroo");
+		prefs = Gdx.app.getPreferences("KangarooFighters");
 		stage = new ServerAccesStage(this);
 	}
 

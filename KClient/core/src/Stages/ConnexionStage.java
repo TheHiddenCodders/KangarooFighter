@@ -40,10 +40,13 @@ public class ConnexionStage extends ConnectedStage
 	public ConnexionStage(Main main)
 	{
 		super(main);
+		
+		if (alreadyRegisteredOnPhone())
+			login(main.prefs.getString("[pseudo]"), main.prefs.getString("[pwd]"));
 	}
 
 	@Override
-	protected void askServerData() 
+	protected void askInitData() 
 	{
 		// No need to ask data on connexion stage		
 	}
@@ -98,6 +101,12 @@ public class ConnexionStage extends ConnectedStage
 		signOut.setHeight(30);
 		signOut.setPosition(this.getWidth() / 2 - connect.getWidth() / 2 + 53, this.getHeight() / 2 - connect.getHeight() - 75);		
 	}
+	
+	@Override
+	protected void initDataNeededComponents()
+	{
+		// No data needed components		
+	}
 
 	@Override
 	protected void addListeners()
@@ -107,7 +116,7 @@ public class ConnexionStage extends ConnectedStage
 			@Override
 			public void clicked(InputEvent event, float x, float y)
 			{
-				login(name.getText(), pwd.getText());
+				login(name.getText(), ConversionUtils.sha1(pwd.getText()));
 				super.clicked(event, x, y);
 			}
 		});
@@ -122,11 +131,23 @@ public class ConnexionStage extends ConnectedStage
 			}
 		});		
 	}
+	
+	@Override
+	protected void addInitDataNeededListeners() 
+	{
+		// No init data needed components		
+	}
 
 	@Override
 	protected void addAnimations()
 	{
 		
+	}
+	
+	@Override
+	protected void addInitDataNeededAnimations()
+	{
+		// No init data needed components
 	}
 	
 	@Override
@@ -137,9 +158,15 @@ public class ConnexionStage extends ConnectedStage
 		addActor(connect);
 		addActor(signOut);
 	}
+	
+	@Override
+	protected void addInitDataNeededActors() 
+	{
+		// No init data needed components
+	}
 
 	@Override
-	protected void onServerDataReceived()
+	protected void onDataReceived()
 	{
 		// If not accepted
 		if (!loginPacket.accepted)
@@ -162,14 +189,13 @@ public class ConnexionStage extends ConnectedStage
 	}
 
 	@Override
-	public void setServerData(Object... data) 
+	public void setData(Object data) 
 	{
 		// We can only treat one packet of type login
-		if (data[0].getClass().isAssignableFrom(LoginPacket.class))
+		if (data.getClass().isAssignableFrom(LoginPacket.class))
 		{
-			loginPacket = (LoginPacket) data[0];
-			serverAnswered();
-			receiveState = 1;
+			loginPacket = (LoginPacket) data;
+			dataReceived();
 		}
 	}
 	
@@ -185,7 +211,7 @@ public class ConnexionStage extends ConnectedStage
 			// Make a packet with the pseudo
 			LoginPacket logPacket = new LoginPacket();
 			logPacket.pseudo = pseudo;
-			logPacket.pwd = ConversionUtils.sha1(pwd);
+			logPacket.pwd = pwd;
 			
 			// Send it
 			main.network.send(logPacket);
@@ -222,5 +248,5 @@ public class ConnexionStage extends ConnectedStage
 		main.prefs.putString("[pseudo]", pseudo);
 		main.prefs.putString("[pwd]", ConversionUtils.sha1(pwd));
 		main.prefs.flush();
-	}
+	}	
 }

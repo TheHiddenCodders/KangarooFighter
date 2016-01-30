@@ -22,6 +22,7 @@ public class ServerAccesStage extends Stage
 	/*
 	 * Constructors
 	 */
+	
 	public ServerAccesStage(Main main)
 	{
 		super();
@@ -57,7 +58,7 @@ public class ServerAccesStage extends Stage
 			else
 				ip = "192.168.0.8";
 			
-			main.network = new Network(ip, 9999);
+			main.network = new Network(main, ip, 9999);
 			
 			Thread t = new Thread(main.network);
 			t.start();

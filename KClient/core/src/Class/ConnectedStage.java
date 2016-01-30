@@ -12,10 +12,13 @@ public abstract class ConnectedStage extends Stage
 	protected Main main;
 	
 	/** This value need to be set to true when data that apply a change is received */
-	protected boolean serverAnswered;
+	private boolean dataReceived;
 	
-	/** This value permit to organize packet reception */
-	protected int receiveState = 0;
+	/** This value need to be set to true when init data is received */
+	private boolean initDataReceived;
+	
+	/** Put this boolean to true if data is needed to init */
+	protected boolean needDataToInit = false;
 	
 	/*
 	 * Constructors
@@ -24,8 +27,10 @@ public abstract class ConnectedStage extends Stage
 	public ConnectedStage(Main main)
 	{
 		super();
-		
 		this.main = main;
+		
+		askInitData();
+		
 		init();
 	}
 	
@@ -39,53 +44,90 @@ public abstract class ConnectedStage extends Stage
 	 */
 	public void act(float delta)
 	{
-		if (serverAnswered)
+		if (dataReceived)
 		{
-			onServerDataReceived();
-			serverAnswered = false;
+			onDataReceived();
+			dataReceived = false;
+		}
+		
+		if (initDataReceived)
+		{
+			initDataNeededComponents();
+			initDataReceived = false;
 		}
 		
 		super.act(delta);
 	};
 	
 	/**
-	 * This method init the stage
+	 * This method init the non data needed components of the stage
 	 */
 	public void init()
 	{
-		askServerData();
 		initComponents();
 		addListeners();
+		addAnimations();
 		addActors();
 	}
 	
 	/**
-	 * Call this method in setServerData when a or some data that you need come to stage
+	 * This method init the data needed components of the stage
 	 */
-	protected void serverAnswered()
+	public void initOnDataReceived()
 	{
-		serverAnswered = true;
+		initDataNeededComponents();
+		addInitDataNeededListeners();
+		addInitDataNeededAnimations();
+		addInitDataNeededActors();
 	}
 	
+	/**
+	 * Call this method when an update need to be done after a data has been received
+	 */
+	protected void dataReceived()
+	{
+		dataReceived = true;
+	}
+	
+	/**
+	 * Call this method when all the init data required to init has been received
+	 */
+	protected void initDataReceived()
+	{
+		initDataReceived = true;
+	}	
+	
 	/** This method will ask to the server the data that stage needs to init */
-	protected abstract void askServerData();
+	protected abstract void askInitData();
 	
 	/** This method will tell the stage how to init its components */
 	protected abstract void initComponents();
 	
+	/** This method will tell the stage how to init its data needed components */
+	protected abstract void initDataNeededComponents();
+	
 	/** This method will add listeners onto actors */
 	protected abstract void addListeners();
+	
+	/** This method will add listeners onto actors */
+	protected abstract void addInitDataNeededListeners();
 	
 	/** This method will add animation onto stage and actors */
 	protected abstract void addAnimations();
 	
-	/** This method will add actors on stage */
-	protected abstract void addActors();
+	/** This method will add animation onto stage and actors */
+	protected abstract void addInitDataNeededAnimations();
 	
-	/** This method will tell the stage what to do when server data are acquire */
-	protected abstract void onServerDataReceived();	
+	/** This method will add actors on stage */
+	protected abstract void addActors();	
+	
+	/** This method will add actors on stage */
+	protected abstract void addInitDataNeededActors();	
+	
+	/** This method will tell the stage what to do when server data are acquired */
+	protected abstract void onDataReceived();	
 	
 	/** This method will set the data asked by the stage before.
 	 *	The method is called by the network */
-	public abstract void setServerData(Object... data);
+	public abstract void setData(Object data);
 }

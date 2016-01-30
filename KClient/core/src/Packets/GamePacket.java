@@ -1,7 +1,5 @@
 package Packets;
 
-import java.io.Serializable;
-
 public class GamePacket extends Packets
 {
 	public GamePacket(String ip) 
@@ -17,7 +15,7 @@ public class GamePacket extends Packets
 	private static final long serialVersionUID = -2707492392522937092L;
 	
 	public KangarooServerPacket player, opponent;
-	public ClientDataPacket playerData, opponentData;
+	public PlayerPacket playerData, opponentData;
 	public String mapPath;
 	public int round;
 	public int playerWins;
