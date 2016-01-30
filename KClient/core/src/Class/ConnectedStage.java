@@ -17,6 +17,8 @@ public abstract class ConnectedStage extends Stage
 	/** This value need to be set to true when init data is received */
 	private boolean initDataReceived;
 	
+	private boolean initDataAsked;
+	
 	/** Put this boolean to true if data is needed to init */
 	protected boolean needDataToInit = false;
 	
@@ -28,8 +30,6 @@ public abstract class ConnectedStage extends Stage
 	{
 		super();
 		this.main = main;
-		
-		askInitData();
 		
 		init();
 	}
@@ -44,6 +44,12 @@ public abstract class ConnectedStage extends Stage
 	 */
 	public void act(float delta)
 	{
+		if (!initDataAsked)
+		{
+			askInitData();
+			initDataAsked = true;
+		}
+		
 		if (dataReceived)
 		{
 			onDataReceived();
@@ -52,7 +58,7 @@ public abstract class ConnectedStage extends Stage
 		
 		if (initDataReceived)
 		{
-			initDataNeededComponents();
+			initOnDataReceived();
 			initDataReceived = false;
 		}
 		

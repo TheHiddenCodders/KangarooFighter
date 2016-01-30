@@ -1,7 +1,8 @@
 package Stages;
 
-import Class.ColoredLabel;
 import Class.ConnectedStage;
+import Class.FriendsBloc;
+import Class.LadderBloc;
 import Packets.HomePacket;
 
 import com.badlogic.gdx.Gdx;
@@ -27,14 +28,13 @@ public class HomeStage extends ConnectedStage
 	private TextButton matchMakingLaunch;
 	private Image background;
 	private Image bottomRibbon;
-	private ColoredLabel coloredLabel;
 	
-	/*
-	private PersoBloc persoBloc;
+	
+	//private PersoBloc persoBloc;
 	private LadderBloc ladderBloc;
 	private FriendsBloc friendsBloc;
-	private NewsBloc lastNewsBloc, lastBeforeNewsBloc;
-	*/
+	//private NewsBloc lastNewsBloc, lastBeforeNewsBloc;
+	
 	
 	/*
 	 * Constructors
@@ -74,7 +74,8 @@ public class HomeStage extends ConnectedStage
 	@Override
 	protected void initDataNeededComponents()
 	{
-		
+		ladderBloc = new LadderBloc();
+		friendsBloc = new FriendsBloc();
 	}
 
 	@Override
@@ -112,7 +113,8 @@ public class HomeStage extends ConnectedStage
 	@Override
 	protected void addInitDataNeededActors()
 	{
-		
+		addActor(ladderBloc);
+		addActor(friendsBloc);
 	}
 	
 	@Override
@@ -137,5 +139,21 @@ public class HomeStage extends ConnectedStage
 			if (main.player != null)
 				initDataReceived();
 		}
+	}
+
+	/**
+	 * This method will hide all blocs to draw a display
+	 */
+	public void hideBlocs() 
+	{
+
+	}
+	
+	/**
+	 * This method will show all blocs after exiting a display
+	 */
+	public void showBlocs()
+	{
+		
 	}
 }

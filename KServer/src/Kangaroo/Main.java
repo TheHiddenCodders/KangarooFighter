@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import Packets.ConnectionPacket;
 import Packets.FriendsDataPacket;
+import Packets.HomePacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
 import Packets.Packets;
@@ -74,23 +75,37 @@ public class Main
 						if (receivedPacket.accepted)
 						{				
 							// Send to the client his data
-							server.sendBuffer.sendPacket((Packets) getPlayerFromIP(receivedPacket.getIp()).getPacket());
+							server.sendBuffer.sendPacket(getPlayerFromIP(receivedPacket.getIp()).getPacket());
 							
 							// Send to the client the last news
-							server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName(), receivedPacket.getIp()));		
-							server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName(), receivedPacket.getIp()));		
+							server.sendBuffer.sendPacket(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName(), receivedPacket.getIp()));		
+							server.sendBuffer.sendPacket(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName(), receivedPacket.getIp()));		
 		
 							// Send to the client his friends
-							server.sendBuffer.sendPacket((Packets) new FriendsDataPacket(receivedPacket.getIp()));
+							server.sendBuffer.sendPacket(new FriendsDataPacket(receivedPacket.getIp()));
 							
 							// Send to the client the ladder and his position
-							server.sendBuffer.sendPacket((Packets) new LadderDataPacket(receivedPacket.getIp()));
+							server.sendBuffer.sendPacket(new LadderDataPacket(receivedPacket.getIp()));
 							
 							// Send to his connected friends he is connected
 							// TODO : send packets to his friends
 						}
 					}
-				
+					/*
+					 * Receive a HomePacket (Nerisma)
+					 */
+					if (readPackets.get(i).getClass().isAssignableFrom(HomePacket.class))
+					{						
+						// Cast packet
+						HomePacket receivedPacket = (HomePacket) readPackets.get(i);
+						
+						// TODO fill packet
+						
+						// Re send filled packet
+						server.sendBuffer.sendPacket(receivedPacket);
+						
+					}
+					
 					// TODO : manage the creation of games when receiving MatchMakingPacket
 					/*{
 						Thread t = new Thread(games.get(index));

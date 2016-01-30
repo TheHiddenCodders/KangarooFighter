@@ -1,9 +1,10 @@
 package Kangaroo;
 
-import enums.Direction;
 import Packets.ClientDataPacket;
 import Packets.KangarooServerPacket;
+import Packets.PlayerPacket;
 import Utils.ServerUtils;
+import enums.Direction;
 
 public class Player 
 {
@@ -19,9 +20,9 @@ public class Player
 	{
 	}
 	
-	public ClientDataPacket getPacket()
+	public PlayerPacket getPacket()
 	{
-		ClientDataPacket packet = new ClientDataPacket(ip);
+		PlayerPacket packet = new PlayerPacket(ip);
 		
 		packet.name = name;
 		packet.elo = 0; // stats.elo;
@@ -30,7 +31,8 @@ public class Player
 		packet.wins = 0; // stats.games - stats.looses;
 		packet.pos = 0; // stats.pos;
 		packet.streak = 0; // ?
-
+		packet.friends = new PlayerPacket[1]; // ?
+		
 		return packet;
 	}
 
