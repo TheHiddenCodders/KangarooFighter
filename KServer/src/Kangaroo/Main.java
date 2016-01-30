@@ -42,43 +42,52 @@ public class Main
 			
 			for (int i = 0; i < readPackets.size(); i++)
 			{
-				/**
-				 * Receive Login packet 
-				 */
-				if (readPackets.get(i).getClass().isAssignableFrom(LoginPacket.class))
-				{			
-					LoginPacket receivedPacket = (LoginPacket) readPackets.get(i);
-					attemptToLogin(receivedPacket);
-					
-					// Send to the client (who sent the packet) the updated packet
-					server.sendBuffer.sendPacket(readPackets.get(i));
-					
-					// If server accepted the request, send client data
-					if (receivedPacket.accepted)
-					{				
-						// Send to the client his data
-						server.sendBuffer.sendPacket((Packets) getPlayerFromIP(receivedPacket.ip).getPacket());
+				// If the received packet is not null, analyze it.
+				if (readPackets.get(i) != null)
+				{
+					/**
+					 * Receive Login packet 
+					 */
+					if (readPackets.get(i).getClass().isAssignableFrom(LoginPacket.class))
+					{
+						// Try to login this client
+						LoginPacket receivedPacket = (LoginPacket) readPackets.get(i);
+						attemptToLogin(receivedPacket);
 						
-						// Send to the client the last news
-						server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));		
-						server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));		
-	
-						// Send to the client his friends
-						server.sendBuffer.sendPacket((Packets) new FriendsDataPacket());
+						// Send to the client (who sent the packet) the updated packet
+						server.sendBuffer.sendPacket(readPackets.get(i));
 						
-						// Send to the client the ladder and his position
-						server.sendBuffer.sendPacket((Packets) new LadderDataPacket());
-						
-						// Send to his connected friends he is connected
-						// TODO : send packets to his friends
+						// If server accepted the request, send client data
+						if (receivedPacket.accepted)
+						{				
+							// Send to the client his data
+							server.sendBuffer.sendPacket((Packets) getPlayerFromIP(receivedPacket.ip).getPacket());
+							
+							// Send to the client the last news
+							server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName()));		
+							server.sendBuffer.sendPacket((Packets) ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName()));		
+		
+							// Send to the client his friends
+							server.sendBuffer.sendPacket((Packets) new FriendsDataPacket());
+							
+							// Send to the client the ladder and his position
+							server.sendBuffer.sendPacket((Packets) new LadderDataPacket());
+							
+							// Send to his connected friends he is connected
+							// TODO : send packets to his friends
+						}
 					}
-				}
 				
-				// TODO : manage the creation of games when receiving MatchMakingPacket
-				/*{
-					Thread t = new Thread(games.get(index));
-					t.start();
-				}*/
+					// TODO : manage the creation of games when receiving MatchMakingPacket
+					/*{
+						Thread t = new Thread(games.get(index));
+						t.start();
+					}*/
+				}
+				else // If the received packet is null, replace the -1.
+				{
+					System.out.println("A null packet was received");
+				}
 			}
 		}
 	}
@@ -88,7 +97,7 @@ public class Main
 	 * 	@return true if it's exists and pwd match, false if isn't
 	 */
 	public static void attemptToLogin(LoginPacket packet)
-	{
+	{	
 		// If the player is already connected
 		if (getPlayerFromPseudo(packet.pseudo) != null)
 		{

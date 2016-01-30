@@ -3,8 +3,11 @@ package Client;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import Packets.Packets;
 
 /**
  * A basic Client object which connect to a server.
@@ -90,12 +93,14 @@ public abstract class Client extends Socket implements Runnable
 	 * Send object to the server
 	 * @param o the object to send
 	 */
-	public void send(Object o)
+	public void send(Packets packet)
 	{
+		packet.ip = ((InetSocketAddress) getRemoteSocketAddress()).getHostString() + ":" + getPort();
+		
 		try
 		{
-			System.out.println("Sent : " + o.toString());
-			output.writeObject(o);
+			System.out.println("Sent : " + packet.toString());
+			output.writeObject(packet);
 			output.flush();
 		} catch (IOException e)
 		{

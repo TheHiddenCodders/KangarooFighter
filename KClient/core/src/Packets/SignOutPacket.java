@@ -1,9 +1,8 @@
 package Packets;
 
-import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class SignOutPacket implements Serializable
+public class SignOutPacket extends Packets
 {
 	public String pseudo;
 	public String pwd;

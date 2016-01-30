@@ -6,6 +6,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import Packets.DisconnectionPacket;
+import Packets.LoginPacket;
 import Packets.Packets;
 
 /** 
@@ -64,9 +65,21 @@ public class ClientProcessor implements Runnable
 				receivedObject = receiveFromClient();	
 			
 			// Cast the result into packet
+			// TODO : all packets exetend from Packet need to be assignable from Packets
 			Packets receivedPacket = null;
 			if (receivedObject.getClass().isAssignableFrom(Packets.class))
+			{
 				receivedPacket = (Packets) receivedObject;
+			}
+			else if (receivedObject.getClass().isAssignableFrom(LoginPacket.class))
+			{
+				receivedPacket = (Packets) receivedObject;
+				receivedPacket.ip = getIp();
+			}
+			else
+			{
+				System.out.println("Sth not a packet received");
+			}
 			
 			// If received object equals -1, client has been quit
 			if (receivedObject.equals(-1))

@@ -2,6 +2,7 @@ package com.genesys.kclient;
 
 import Class.ConnectedStage;
 import Client.Network;
+import Packets.Packets;
 import Stages.ServerAccesStage;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -68,7 +69,7 @@ public class Main extends ApplicationAdapter
 	public void dispose()
 	{
 		if (network != null)
-			network.send(-1);
+			network.send((Packets) null );
 		
 		super.dispose();
 	}	

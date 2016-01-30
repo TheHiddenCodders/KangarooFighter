@@ -155,10 +155,15 @@ public class Server
 	 */
 	private ClientProcessor getCpFromIp(String ip)
 	{
+		// Browse the list of client
 		for (ClientProcessor cp : clients)
-			if (cp.getIp() == ip)
+		{
+			// If the client with the ip specify in param is found, return it...
+			if (cp.getIp().equals(ip))
 				return cp;
+		}
 		
+		// ... return null otherwise
 		return null;
 	}
 	

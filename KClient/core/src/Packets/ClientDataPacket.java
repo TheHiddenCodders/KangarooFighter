@@ -1,8 +1,7 @@
 package Packets;
 
-import java.io.Serializable;
 
-public class ClientDataPacket implements Serializable
+public class ClientDataPacket extends Packets
 {
 	/**
 	 * 
