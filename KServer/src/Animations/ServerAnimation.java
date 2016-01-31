@@ -1,4 +1,4 @@
-package Kangaroo;
+package Animations;
 
 import java.awt.Polygon;
 import java.awt.image.BufferedImage;

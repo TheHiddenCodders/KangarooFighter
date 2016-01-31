@@ -1,4 +1,4 @@
-package Kangaroo;
+package Animations;
 
 import java.awt.Point;
 import java.awt.Polygon;
