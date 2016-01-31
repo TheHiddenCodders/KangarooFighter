@@ -7,6 +7,8 @@ public class FriendsDataPacket extends Packets
 	public FriendsDataPacket(String ip) 
 	{
 		super(ip);
+		friendsName = new ArrayList<String>();
+		friendsOnline = new ArrayList<Boolean>();
 	}
 
 	public FriendsDataPacket() 

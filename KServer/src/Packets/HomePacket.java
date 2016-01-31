@@ -1,12 +1,8 @@
 package Packets;
 
-import java.io.Serializable;
 
-public class HomePacket implements Serializable
-{	
-	/**
-	 * 
-	 */
+public class HomePacket extends Packets
+{
 	private static final long serialVersionUID = 4367432052684494554L;
 
 	public NewsPacket[] news;
