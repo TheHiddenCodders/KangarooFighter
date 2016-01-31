@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
-import Kangaroo.Game;
-import Kangaroo.Kangaroo;
 import Kangaroo.Player;
 import Packets.ClientDataPacket;
 import Packets.FriendsDataPacket;

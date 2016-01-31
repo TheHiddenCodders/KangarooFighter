@@ -4,6 +4,7 @@ import enums.Direction;
 import Packets.ClientDataPacket;
 import Packets.KangarooServerPacket;
 import Utils.ServerUtils;
+import Utils.Timer;
 
 public class Player 
 {
@@ -12,11 +13,14 @@ public class Player
 	private Kangaroo k;
 	//private Stats stats;
 	
+	private Timer timeInQueue;
+	
 	//private KangarooServerPacket networkImage;
 	//private KangarooClientPacket lastPacket;
 	
 	public Player()
 	{
+		timeInQueue = new Timer();
 	}
 	
 	public ClientDataPacket getPacket()
@@ -82,5 +86,11 @@ public class Player
 	public Kangaroo getKangaroo() 
 	{
 		return k;
+	}
+	
+	public int getElo()
+	{
+		// TODO : return stats.getElo();
+		return 0;
 	}
 }

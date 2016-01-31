@@ -3,12 +3,15 @@ package Stages;
 import Class.ColoredLabel;
 import Class.ConnectedStage;
 import Packets.HomePacket;
+import Packets.MatchMakingPacket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.genesys.kclient.Main;
 
 public class HomeStage extends ConnectedStage 
@@ -28,6 +31,8 @@ public class HomeStage extends ConnectedStage
 	private Image background;
 	private Image bottomRibbon;
 	private ColoredLabel coloredLabel;
+	
+	private boolean seekingGame = false;
 	
 	/*
 	private PersoBloc persoBloc;
@@ -80,7 +85,44 @@ public class HomeStage extends ConnectedStage
 	@Override
 	protected void addListeners()
 	{
-		
+		matchMakingLaunch.addListener(new ClickListener()
+		{
+			// Call when the matchMakingLaunch is clicked
+			@Override
+			public void clicked(InputEvent event, float x, float y)
+			{
+				if (!seekingGame)
+					launchMatchMaking();
+				else
+					cancelMatchMaking();
+			}
+
+			private void cancelMatchMaking() 
+			{
+				// Change the button to prevent player
+				matchMakingLaunch.setColor(Color.TAN);
+				matchMakingLaunch.setText("Jouer");
+				seekingGame = false;
+				
+				// Send a packet to server
+				MatchMakingPacket packet = new MatchMakingPacket();
+				packet.search = false;
+				main.network.send(packet);
+			}
+
+			private void launchMatchMaking() 
+			{
+				// Change the button to prevent player
+				matchMakingLaunch.setColor(Color.RED);
+				matchMakingLaunch.setText("Recherche..");
+				seekingGame = true;
+				
+				// Send a packet to server
+				MatchMakingPacket packet = new MatchMakingPacket();
+				packet.search = true;
+				main.network.send(packet);
+			}
+		});
 	}
 
 	@Override

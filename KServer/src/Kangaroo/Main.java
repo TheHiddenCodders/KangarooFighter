@@ -5,10 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import enums.GameStates;
 import Packets.ConnectionPacket;
 import Packets.FriendsDataPacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
+import Packets.MatchMakingPacket;
 import Packets.Packets;
 import Server.Server;
 import Utils.FileUtils;
@@ -19,19 +21,21 @@ public class Main
 	public static BufferedInputStream inputReader;
 	public static String msg = "";
 	
-	/** games : an ArrayList containing all games*/
-	static ArrayList<Game> games;
-	/** players : an ArrayList containing all thz connected players*/
+	/** gp : a GameProcessor that manage all games and waiting players*/
+	static GameProcessor gp;
+	/** players : an ArrayList containing all the connected players*/
 	static ArrayList<Player> players;
+	/** server : a reference to the server to communicate with clients */
+	static Server server;
 	
 	public static void main(String[] args) throws IOException
 	{
 		System.out.println("Main thread : Creation of server data");
-		Server server = new Server();
+		server = new Server();
 		server.open();
 		
-		games = new ArrayList<Game>();
 		players = new ArrayList<Player>();
+		gp = new GameProcessor(players);
 		
 		// readPackets : an ArrayList containing the packet received from clients
 		ArrayList<Packets> readPackets = new ArrayList<Packets>();
@@ -61,7 +65,7 @@ public class Main
 					/*
 					 * Receive Login packet 
 					 */
-					if (readPackets.get(i).getClass().isAssignableFrom(LoginPacket.class))
+					else if (readPackets.get(i).getClass().isAssignableFrom(LoginPacket.class))
 					{
 						// Try to login this client
 						LoginPacket receivedPacket = (LoginPacket) readPackets.get(i);
@@ -90,6 +94,16 @@ public class Main
 							// TODO : send packets to his friends
 						}
 					}
+					/*
+					 * Receive Match Making packet 
+					 */
+					else if (readPackets.get(i).getClass().isAssignableFrom(MatchMakingPacket.class))
+					{
+						// Check if game are ready for this client
+						MatchMakingPacket receivedPacket = (MatchMakingPacket) readPackets.get(i);
+						
+						// TODO : Use the GameProcessor class
+					}
 				
 					// TODO : manage the creation of games when receiving MatchMakingPacket
 					/*{
@@ -105,6 +119,15 @@ public class Main
 		}
 	}
 	
+	public static float winRateEstimation(int elo1, int elo2)
+	{
+		float estimation = 0;
+		
+		estimation = (float) Math.pow(10f,(-(elo1 - elo2) / 400f));
+		
+		return estimation;
+	}
+
 	/**	Check if the client pseudo exists and check the password match with the pseudo
 	 * 	@param packet the login packet
 	 * 	@return true if it's exists and pwd match, false if isn't
