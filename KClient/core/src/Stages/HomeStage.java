@@ -3,6 +3,7 @@ package Stages;
 import Class.ConnectedStage;
 import Class.FriendsBloc;
 import Class.LadderBloc;
+import Class.PersoBloc;
 import Client.Main;
 import Packets.HomePacket;
 import Packets.MatchMakingPacket;
@@ -33,7 +34,7 @@ public class HomeStage extends ConnectedStage
 	private Image bottomRibbon;
 	
 	
-	//private PersoBloc persoBloc;
+	private PersoBloc persoBloc;
 	private LadderBloc ladderBloc;
 	private FriendsBloc friendsBloc;
 	//private NewsBloc lastNewsBloc, lastBeforeNewsBloc;
@@ -77,8 +78,9 @@ public class HomeStage extends ConnectedStage
 	@Override
 	protected void initDataNeededComponents()
 	{
-		ladderBloc = new LadderBloc();
-		friendsBloc = new FriendsBloc();
+		ladderBloc = new LadderBloc(this);
+		friendsBloc = new FriendsBloc(this);
+		persoBloc = new PersoBloc(this);
 	}
 
 	@Override
@@ -131,6 +133,7 @@ public class HomeStage extends ConnectedStage
 	{
 		addActor(ladderBloc);
 		addActor(friendsBloc);
+		addActor(persoBloc);
 	}
 	
 	@Override
@@ -162,7 +165,8 @@ public class HomeStage extends ConnectedStage
 	 */
 	public void hideBlocs() 
 	{
-
+		ladderBloc.remove();
+		friendsBloc.remove();
 	}
 	
 	/**
@@ -170,7 +174,8 @@ public class HomeStage extends ConnectedStage
 	 */
 	public void showBlocs()
 	{
-		
+		addActor(ladderBloc = new LadderBloc(this));
+		addActor(friendsBloc = new FriendsBloc(this));
 	}
 	
 	/**

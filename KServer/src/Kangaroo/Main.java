@@ -11,6 +11,7 @@ import Packets.HomePacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
 import Packets.Packets;
+import Packets.PlayerPacket;
 import Server.Server;
 import Utils.FileUtils;
 import Utils.ServerUtils;
@@ -100,6 +101,10 @@ public class Main
 						HomePacket receivedPacket = (HomePacket) readPackets.get(i);
 						
 						// TODO fill packet
+						receivedPacket.ladderPlayers = new PlayerPacket[9];
+						
+						for (int j = 0; j < receivedPacket.ladderPlayers.length; j++)
+							;// TODO receivedPacket.ladderPlayers = 
 						
 						// Re send filled packet
 						server.sendBuffer.sendPacket(receivedPacket);
@@ -215,5 +220,4 @@ public class Main
 		// If no player matching with the ip
 		return null;
 	}
-
 }

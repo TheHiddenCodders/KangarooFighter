@@ -1,5 +1,7 @@
 package Class;
 
+import Stages.HomeStage;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -18,7 +20,7 @@ public abstract class Bloc extends Table
 	 * Attributes
 	 */
 	
-
+	protected HomeStage homeStage;
 	
 	/*
 	 * Components
@@ -31,9 +33,12 @@ public abstract class Bloc extends Table
 	 * Constructors
 	 */
 	
-	public Bloc()
+	public Bloc(final HomeStage homeStage)
 	{
 		super();
+		
+		// Store homeStage
+		this.homeStage = homeStage;
 		
 		// Add fade in so adding a bloc to a stage will make him fade in
 		addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1)));
@@ -47,7 +52,8 @@ public abstract class Bloc extends Table
 			@Override
 			public void clicked(InputEvent event, float x, float y)
 			{
-				addActor(display);
+				homeStage.addActor(display);
+				homeStage.hideBlocs();
 				super.clicked(event, x, y);
 			}
 		});
@@ -79,6 +85,17 @@ public abstract class Bloc extends Table
 		background.setDrawable(new Image(texture).getDrawable());
 		background.pack();
 		setSize(background.getWidth(), background.getHeight());
+	}
+	
+	/**
+	 * Setter for display
+	 * @param display
+	 */
+	public void setDisplay(Display display)
+	{
+		this.display = display;
+		this.display.setHomeStage(homeStage);
+		this.display.setPosition(13, 45);
 	}
 	
 	/** This method refresh the bloc */

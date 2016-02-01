@@ -1,5 +1,7 @@
 package Class;
 
+import Stages.HomeStage;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
@@ -22,14 +24,13 @@ public class FriendsBloc extends Bloc
 	 * Constructors
 	 */
 	
-	public FriendsBloc() 
+	public FriendsBloc(HomeStage homeStage) 
 	{
-		super();
+		super(homeStage);
 		
+		// Set position and background
 		setPosition(530, 50);
 		setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/background.png")));
-		
-		System.err.println(getChildren().size);
 	}
 	
 	/*

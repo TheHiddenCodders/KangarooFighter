@@ -21,7 +21,7 @@ public abstract class Display extends Table
 	 * Attributes
 	 */
 	
-
+	private HomeStage homeStage;
 	
 	/*
 	 * Components
@@ -34,7 +34,7 @@ public abstract class Display extends Table
 	 * Constructors
 	 */
 	
-	public Display(HomeStage homeStage)
+	public Display()
 	{
 		super();
 		
@@ -74,6 +74,7 @@ public abstract class Display extends Table
 	public boolean remove() 
 	{
 		addAction(Actions.fadeOut(1));
+		homeStage.showBlocs();
 		return super.remove();
 	}
 	
@@ -84,7 +85,20 @@ public abstract class Display extends Table
 	public void setBackground(Texture texture)
 	{
 		background.setDrawable(new Image(texture).getDrawable());
+		background.pack();
 		setSize(background.getWidth(), background.getHeight());
+		
+		// Set close button position
+		closeButton.setPosition(getWidth() - closeButton.getWidth() - 10, getHeight() - closeButton.getHeight() - 10);
+	}
+	
+	/** 
+	 * Setter for homeStage
+	 * @param homeStage
+	 */
+	public void setHomeStage(HomeStage homeStage)
+	{
+		this.homeStage = homeStage;
 	}
 	
 	/** This method refresh the display */
