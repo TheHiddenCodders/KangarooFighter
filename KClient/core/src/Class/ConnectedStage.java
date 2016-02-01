@@ -1,7 +1,8 @@
 package Class;
 
+import Client.Main;
+
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.genesys.kclient.Main;
 
 public abstract class ConnectedStage extends Stage
 {

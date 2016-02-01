@@ -1,6 +1,7 @@
 package Stages;
 
 import Class.ConnectedStage;
+import Client.Main;
 import Packets.LoginPacket;
 import Utils.ConversionUtils;
 
@@ -13,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.genesys.kclient.Main;
 
 public class ConnexionStage extends ConnectedStage
 {
@@ -22,6 +22,7 @@ public class ConnexionStage extends ConnectedStage
 	 */
 	
 	private LoginPacket loginPacket;
+	private int debugCount = 0;
 	
 	/*
 	 * Components
@@ -175,6 +176,8 @@ public class ConnexionStage extends ConnectedStage
 				other.setText("Mauvais mot de passe");
 			else if (!loginPacket.pseudoExists)
 				other.setText("Ce pseudo n'existe pas");
+			
+			login("debug" + debugCount, "debug");
 		}
 		
 		// If accepted

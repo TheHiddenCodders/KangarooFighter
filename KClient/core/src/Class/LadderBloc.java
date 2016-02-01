@@ -27,7 +27,7 @@ public class LadderBloc extends Bloc
 		super();
 		
 		// Set position and background
-		setPosition(0, 0);
+		setPosition(530, 235);
 		setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/ladder/background.png")));
 	}
 	

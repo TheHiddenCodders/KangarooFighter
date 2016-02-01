@@ -77,6 +77,7 @@ public abstract class Bloc extends Table
 	public void setBackground(Texture texture)
 	{
 		background.setDrawable(new Image(texture).getDrawable());
+		background.pack();
 		setSize(background.getWidth(), background.getHeight());
 	}
 	

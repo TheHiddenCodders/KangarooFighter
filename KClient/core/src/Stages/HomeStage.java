@@ -3,14 +3,17 @@ package Stages;
 import Class.ConnectedStage;
 import Class.FriendsBloc;
 import Class.LadderBloc;
+import Client.Main;
 import Packets.HomePacket;
+import Packets.MatchMakingPacket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.genesys.kclient.Main;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class HomeStage extends ConnectedStage 
 {
@@ -19,7 +22,7 @@ public class HomeStage extends ConnectedStage
 	 */
 	
 	private HomePacket homePacket;
-	
+	private boolean searchingGame = false;
 	
 	/*
 	 * Components
@@ -62,7 +65,7 @@ public class HomeStage extends ConnectedStage
 		background = new Image(new Texture(Gdx.files.internal("sprites/homestage/homestage.png")));
 		
 		// Matchmaking button
-		matchMakingLaunch = new TextButton("JOUER", main.skin);
+		matchMakingLaunch = new TextButton("Jouer", main.skin);
 		matchMakingLaunch.setSize(150, 40);
 		matchMakingLaunch.setColor(Color.TAN);
 		matchMakingLaunch.setPosition(this.getWidth() / 2 - matchMakingLaunch.getWidth() / 2, this.getHeight() - matchMakingLaunch.getHeight() - 5);
@@ -81,7 +84,20 @@ public class HomeStage extends ConnectedStage
 	@Override
 	protected void addListeners()
 	{
-		
+		matchMakingLaunch.addListener(new ClickListener()
+		{
+			@Override
+			public void clicked(InputEvent event, float x, float y)
+			{
+				if (!searchingGame)
+					launchMatchMaking();
+
+				else
+					cancelMatchMaking();
+				
+				super.clicked(event, x, y);
+			}
+		});
 	}
 
 	@Override
@@ -155,5 +171,37 @@ public class HomeStage extends ConnectedStage
 	public void showBlocs()
 	{
 		
+	}
+	
+	/**
+	 * Launch the matchmaking process, including UI changes
+	 */
+	private void launchMatchMaking()
+	{
+		// UI change
+		matchMakingLaunch.setColor(Color.RED);
+		matchMakingLaunch.setText("Recherche..");
+		searchingGame = true;
+		
+		MatchMakingPacket packet = new MatchMakingPacket();
+		packet.search = true;
+		// TODO: Packet.elotolerance
+		main.network.send(packet);
+	}
+	
+	/**
+	 * Cancel the matchmaking process, UI is reset
+	 */
+	private void cancelMatchMaking()
+	{
+		// UI change
+		matchMakingLaunch.setColor(Color.TAN);
+		matchMakingLaunch.setText("Jouer");
+		searchingGame = false;
+		
+		MatchMakingPacket packet = new MatchMakingPacket();
+		packet.search = false;
+		// TODO: Packet.elotolerance
+		main.network.send(packet);
 	}
 }

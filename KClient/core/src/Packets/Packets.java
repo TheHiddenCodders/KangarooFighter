@@ -23,7 +23,7 @@ public class Packets implements Serializable
 	{
 		return super.toString() 
 				+ "\n"
-				+ "- [ip]: " + ip + "\n";
+				+ "- [ip]: " + ip;
 	}
 	
 	public String getIp()

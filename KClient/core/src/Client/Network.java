@@ -6,8 +6,6 @@ import java.net.UnknownHostException;
 import Class.ConnectedStage;
 import Packets.PlayerPacket;
 
-import com.genesys.kclient.Main;
-
 /**
  * Network handle the data exchanges between client and server.
  * @author Nerisma

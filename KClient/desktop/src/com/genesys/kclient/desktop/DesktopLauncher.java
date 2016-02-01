@@ -1,8 +1,9 @@
 package com.genesys.kclient.desktop;
 
+import Client.Main;
+
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.genesys.kclient.Main;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {

@@ -26,7 +26,7 @@ public class FriendsBloc extends Bloc
 	{
 		super();
 		
-		setPosition(0, 0);
+		setPosition(530, 50);
 		setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/background.png")));
 		
 		System.err.println(getChildren().size);

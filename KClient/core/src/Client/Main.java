@@ -1,7 +1,6 @@
-package com.genesys.kclient;
+package Client;
 
 import Class.ConnectedStage;
-import Client.Network;
 import Packets.DeconnexionPacket;
 import Packets.Packets;
 import Packets.PlayerPacket;
