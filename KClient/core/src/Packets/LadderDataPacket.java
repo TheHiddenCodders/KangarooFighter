@@ -7,6 +7,8 @@ public class LadderDataPacket extends Packets
 	public LadderDataPacket(String ip) 
 	{
 		super(ip);
+		
+		ladder = new ArrayList<String>();
 	}
 
 	public LadderDataPacket() 

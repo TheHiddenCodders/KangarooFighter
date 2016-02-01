@@ -1,13 +1,18 @@
 package Packets;
 
 
-public class DisconnectionPacket extends Packets 
+public class DisconnexionPacket extends Packets 
 {
 	private static final long serialVersionUID = -4499570665948541789L;
 	
-	public DisconnectionPacket(String ip)
+	public DisconnexionPacket(String ip)
 	{
 		super(ip);
+	}
+
+	public DisconnexionPacket() 
+	{
+		super();
 	}
 
 	@Override

@@ -14,6 +14,11 @@ public class LoginPacket extends Packets
 		super(ip);
 	}
 
+	public LoginPacket() 
+	{
+		super();
+	}
+
 	private static final long serialVersionUID = -861319294637171380L;
 	
 	public String pseudo;

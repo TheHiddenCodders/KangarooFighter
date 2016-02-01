@@ -2,6 +2,7 @@ package Kangaroo;
 
 import java.util.ArrayList;
 
+import Animations.ServerAnimation;
 import Packets.KangarooServerPacket;
 import Utils.Timer;
 import Utils.Vector2;

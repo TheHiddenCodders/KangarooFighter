@@ -1,12 +1,8 @@
 package Packets;
 
-import java.io.Serializable;
 
-public class ClientDisconnectionPacket implements Serializable
+public class ClientDisconnexionPacket extends Packets
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6007358750306979800L;
 	
 	public String disconnectedClientIp;
