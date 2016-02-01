@@ -12,7 +12,7 @@ public class BufferPacket
 	/** Default Constructor
 	 * 
 	 */
-	BufferPacket()
+	public BufferPacket()
 	{
 		packets = new ArrayList<Packets>();
 	}

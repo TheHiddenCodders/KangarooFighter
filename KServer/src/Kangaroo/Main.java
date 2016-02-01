@@ -211,8 +211,6 @@ public class Main
 		// Browse the list of connected players
 		for (Player player : players)
 		{
-			System.out.println(player.getIp() + " vs " + ip);
-			
 			// If the player is found
 			if (player.getIp().equals(ip))
 				return player;
