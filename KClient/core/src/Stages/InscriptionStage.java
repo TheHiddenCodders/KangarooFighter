@@ -56,7 +56,7 @@ public class InscriptionStage extends ConnectedStage
 		table = new Table();
 		
 		// Background
-		background = new Image(new Texture(Gdx.files.internal("sprites/background.png")));
+		background = new Image(new Texture(Gdx.files.internal("sprites/incriptionstage/background.png")));
 		
 		// Texts
 		infoName = new Label("Pseudonyme", main.skin);

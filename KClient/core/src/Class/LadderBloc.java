@@ -4,7 +4,10 @@ import Packets.PlayerPacket;
 import Stages.HomeStage;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 
 
 public class LadderBloc extends Bloc
@@ -19,7 +22,7 @@ public class LadderBloc extends Bloc
 	 * Components
 	 */
 	
-	
+	private Label title;
 	
 	/*
 	 * Constructors
@@ -35,6 +38,11 @@ public class LadderBloc extends Bloc
 		
 		// Set display
 		setDisplay(new LadderDisplay(ladderPlayers, skin));
+		
+		// Title
+		title = new Label("Classement", new LabelStyle(skin.getFont("korean"), Color.WHITE));
+		title.setPosition(getWidth() / 2 - title.getWidth() / 2, getHeight() - title.getHeight() - 5); 
+		addActor(title);
 	}
 	
 	/*

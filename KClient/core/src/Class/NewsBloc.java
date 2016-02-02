@@ -42,6 +42,11 @@ public class NewsBloc extends Bloc
 		edge = new Image(new Texture("sprites/homestage/blocs/news/edge.png"));
 		edge.setPosition(2, 2);
 		addActor(edge);
+		
+		// Title
+		title = new Label("No title", skin); // TODO: replace by news name
+		title.setPosition(4, 4);
+		addActor(title);
 	}
 	
 	/*

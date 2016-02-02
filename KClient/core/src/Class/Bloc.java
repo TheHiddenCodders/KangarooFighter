@@ -23,6 +23,7 @@ public abstract class Bloc extends Table
 	
 	protected HomeStage homeStage;
 	protected Skin skin;
+	private boolean animated = false;
 	
 	/*
 	 * Components
@@ -72,6 +73,15 @@ public abstract class Bloc extends Table
 	 * Methods
 	 */
 	
+	@Override
+	public void act(float delta)
+	{
+		if (animated && getActions().size == 0)
+			super.remove();
+		
+		super.act(delta);
+	};
+	
 	/**
 	 * Override remove method so bloc will fade out before beeing removed of stage
 	 */
@@ -79,7 +89,9 @@ public abstract class Bloc extends Table
 	public boolean remove() 
 	{
 		addAction(Actions.fadeOut(1));
-		return super.remove();
+		animated = true;
+		
+		return true;
 	}
 	
 	/**

@@ -61,7 +61,7 @@ public class ConnexionStage extends ConnectedStage
 			table = new Table();
 			
 			// Background
-			background = new Image(new Texture(Gdx.files.internal("sprites/background.png")));
+			background = new Image(new Texture(Gdx.files.internal("sprites/connexionstage/background.png")));
 			
 			// Texts
 			infoName = new Label("Pseudonyme", main.skin);
