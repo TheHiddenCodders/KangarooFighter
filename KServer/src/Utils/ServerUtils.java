@@ -17,7 +17,7 @@ import java.util.Date;
 
 import Kangaroo.Player;
 import Packets.ClientDataPacket;
-import Packets.FriendsDataPacket;
+import Packets.FriendsPacket;
 import Packets.LadderDataPacket;
 import Packets.NewsPacket;
 
@@ -672,18 +672,18 @@ public class ServerUtils
 	 * @param k
 	 * @return the friend file of kangaroo k
 	 */
-	public static FriendsDataPacket getFriendsDataPacket(Player p)
+	public static FriendsPacket getFriendsDataPacket(Player p)
 	{
-		return getFriendsDataPacket(p.getName());
+		return getFriendsPacket(p.getName());
 	}
 	
 	/**
 	 * @param name
 	 * @return the friend file of kangaroo named name
 	 */
-	public static FriendsDataPacket getFriendsDataPacket(String name)
+	public static FriendsPacket getFriendsPacket(String name)
 	{
-		FriendsDataPacket packet = new FriendsDataPacket();
+		FriendsPacket packet = new FriendsPacket();
 		packet.friendsName = new ArrayList<String>();
 		packet.friendsOnline = new ArrayList<Boolean>();
 		

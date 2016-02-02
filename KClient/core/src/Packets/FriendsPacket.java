@@ -2,16 +2,16 @@ package Packets;
 
 import java.util.ArrayList;
 
-public class FriendsDataPacket extends Packets
+public class FriendsPacket extends Packets
 {
-	public FriendsDataPacket(String ip) 
+	public FriendsPacket(String ip) 
 	{
 		super(ip);
 		friendsName = new ArrayList<String>();
 		friendsOnline = new ArrayList<Boolean>();
 	}
 
-	public FriendsDataPacket() 
+	public FriendsPacket() 
 	{
 		super();
 		friendsName = new ArrayList<String>();

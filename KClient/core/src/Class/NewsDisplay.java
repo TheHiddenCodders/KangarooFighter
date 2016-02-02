@@ -1,5 +1,7 @@
 package Class;
 
+import Packets.NewsPacket;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -22,7 +24,7 @@ public class NewsDisplay extends Display
 	 * Constructors
 	 */
 	
-	public NewsDisplay(Skin skin) 
+	public NewsDisplay(NewsPacket newsPacket, Skin skin) 
 	{
 		super(skin);
 		

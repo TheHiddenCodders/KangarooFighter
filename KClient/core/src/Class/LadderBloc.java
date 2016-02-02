@@ -1,5 +1,6 @@
 package Class;
 
+import Packets.PlayerPacket;
 import Stages.HomeStage;
 
 import com.badlogic.gdx.Gdx;
@@ -24,7 +25,7 @@ public class LadderBloc extends Bloc
 	 * Constructors
 	 */
 	
-	public LadderBloc(HomeStage homeStage) 
+	public LadderBloc(PlayerPacket[] ladderPlayers, HomeStage homeStage) 
 	{
 		super(homeStage);
 		
@@ -33,7 +34,7 @@ public class LadderBloc extends Bloc
 		setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/ladder/background.png")));
 		
 		// Set display
-		setDisplay(new LadderDisplay(skin));
+		setDisplay(new LadderDisplay(ladderPlayers, skin));
 	}
 	
 	/*

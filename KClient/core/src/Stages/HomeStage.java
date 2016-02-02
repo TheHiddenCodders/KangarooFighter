@@ -81,12 +81,12 @@ public class HomeStage extends ConnectedStage
 	@Override
 	protected void initDataNeededComponents()
 	{
-		ladderBloc = new LadderBloc(this);
+		ladderBloc = new LadderBloc(homePacket.ladderPlayers, this);
 		friendsBloc = new FriendsBloc(this);
 		persoBloc = new PersoBloc(this);
-		newsBloc = new NewsBloc(this);
+		newsBloc = new NewsBloc(homePacket.news[0], this);
 		newsBloc.setPosition(10, 255);
-		newsBloc2 = new NewsBloc(this);
+		newsBloc2 = new NewsBloc(homePacket.news[1], this);
 		newsBloc2.setPosition(10, 50);
 	}
 
@@ -195,12 +195,12 @@ public class HomeStage extends ConnectedStage
 	 */
 	public void showBlocs()
 	{
-		addActor(ladderBloc = new LadderBloc(this));
+		addActor(ladderBloc = new LadderBloc(homePacket.ladderPlayers, this));
 		addActor(friendsBloc = new FriendsBloc(this));
 		addActor(persoBloc = new PersoBloc(this));
-		addActor(newsBloc = new NewsBloc(this));
+		addActor(newsBloc = new NewsBloc(homePacket.news[0], this));
 		newsBloc.setPosition(10, 255);
-		addActor(newsBloc2 = new NewsBloc(this));
+		addActor(newsBloc2 = new NewsBloc(homePacket.news[1], this));
 		newsBloc2.setPosition(10, 50);
 	}
 	

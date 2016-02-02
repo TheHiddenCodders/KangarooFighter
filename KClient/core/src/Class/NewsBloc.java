@@ -1,9 +1,12 @@
 package Class;
 
+import Packets.NewsPacket;
 import Stages.HomeStage;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 
 public class NewsBloc extends Bloc
@@ -18,13 +21,14 @@ public class NewsBloc extends Bloc
 	 * Components
 	 */
 	
-	
+	private Image edge;
+	private Label title;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public NewsBloc(HomeStage homeStage) 
+	public NewsBloc(NewsPacket newsPacket, HomeStage homeStage) 
 	{
 		super(homeStage);
 		
@@ -32,7 +36,12 @@ public class NewsBloc extends Bloc
 		setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/news/background.png")));
 		
 		// Set display
-		setDisplay(new NewsDisplay(skin));
+		setDisplay(new NewsDisplay(newsPacket, skin));
+		
+		// Edge
+		edge = new Image(new Texture("sprites/homestage/blocs/news/edge.png"));
+		edge.setPosition(2, 2);
+		addActor(edge);
 	}
 	
 	/*

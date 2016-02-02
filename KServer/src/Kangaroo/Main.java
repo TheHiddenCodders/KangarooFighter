@@ -3,13 +3,15 @@ package Kangaroo;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 
 import Packets.ConnectionPacket;
-import Packets.FriendsDataPacket;
+import Packets.FriendsPacket;
 import Packets.HomePacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
+import Packets.NewsPacket;
 import Packets.Packets;
 import Packets.PlayerPacket;
 import Server.Server;
@@ -83,7 +85,7 @@ public class Main
 							server.sendBuffer.sendPacket(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName(), receivedPacket.getIp()));		
 		
 							// Send to the client his friends
-							server.sendBuffer.sendPacket(new FriendsDataPacket(receivedPacket.getIp()));
+							server.sendBuffer.sendPacket(new FriendsPacket(receivedPacket.getIp()));
 							
 							// Send to the client the ladder and his position
 							server.sendBuffer.sendPacket(new LadderDataPacket(receivedPacket.getIp()));
@@ -102,9 +104,7 @@ public class Main
 						
 						// TODO fill packet
 						receivedPacket.ladderPlayers = new PlayerPacket[9];
-						
-						for (int j = 0; j < receivedPacket.ladderPlayers.length; j++)
-							;// TODO receivedPacket.ladderPlayers = 
+						receivedPacket.news = new NewsPacket[2];
 						
 						// Re send filled packet
 						server.sendBuffer.sendPacket(receivedPacket);
