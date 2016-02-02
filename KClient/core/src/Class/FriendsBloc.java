@@ -31,6 +31,9 @@ public class FriendsBloc extends Bloc
 		// Set position and background
 		setPosition(530, 50);
 		setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/background.png")));
+		
+		// Set display
+		setDisplay(new FriendsDisplay());
 	}
 	
 	/*

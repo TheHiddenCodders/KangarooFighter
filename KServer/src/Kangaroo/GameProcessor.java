@@ -35,7 +35,7 @@ public class GameProcessor implements Runnable
 		this.waitingThreads = new ArrayList<Thread>();
 	}
 	
-	public int howManyPlayerWainting()
+	public int howManyPlayerWaiting()
 	{
 		return waitingPlayers.size();
 	}
@@ -69,7 +69,8 @@ public class GameProcessor implements Runnable
 								// Stop the waiting thread of the second player
 								waitingThreads.get(i).interrupt();
 								
-								// TODO : create a game here
+								// TODO : create a game here (Nerisma add code, check it)
+								// games.add(new Game(waitingPlayers.get(i), getPlayerFromIp(mmPacket.getIp()), server?));
 							}
 						}
 					

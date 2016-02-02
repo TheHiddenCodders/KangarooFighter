@@ -1,6 +1,5 @@
 package Kangaroo;
 
-import Packets.ClientDataPacket;
 import Packets.KangarooServerPacket;
 import Packets.PlayerPacket;
 import Utils.ServerUtils;
@@ -55,9 +54,13 @@ public class Player
 		this.ip = ip;
 	}
 	
-	public ClientDataPacket getClientDataPacket() 
+	/**
+	 * Return elo (nerisma)
+	 * @return
+	 */
+	public int getElo()
 	{
-		return ServerUtils.getPlayerDataPacket(this);
+		return ServerUtils.getData(this, "elo");
 	}
 	
 	public void createKangaroo()

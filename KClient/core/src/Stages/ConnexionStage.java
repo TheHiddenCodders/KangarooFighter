@@ -177,7 +177,9 @@ public class ConnexionStage extends ConnectedStage
 			else if (!loginPacket.pseudoExists)
 				other.setText("Ce pseudo n'existe pas");
 			
+			// This two lines allows infinite debug connexion
 			login("debug" + debugCount, "debug");
+			debugCount++;
 		}
 		
 		// If accepted

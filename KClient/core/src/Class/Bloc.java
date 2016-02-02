@@ -52,8 +52,11 @@ public abstract class Bloc extends Table
 			@Override
 			public void clicked(InputEvent event, float x, float y)
 			{
-				homeStage.addActor(display);
-				homeStage.hideBlocs();
+				if (display != null)
+				{
+					homeStage.addActor(display);
+					homeStage.hideBlocs();
+				}
 				super.clicked(event, x, y);
 			}
 		});

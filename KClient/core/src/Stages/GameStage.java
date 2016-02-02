@@ -2,8 +2,15 @@ package Stages;
 
 import Class.ConnectedStage;
 import Class.Game;
+import Class.Kangaroo;
 import Client.Main;
-import Utils.Timer;
+import Enums.GameStates;
+import Packets.ClientReadyPacket;
+import Packets.GamePacket;
+import Packets.GameReadyPacket;
+
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 public class GameStage extends ConnectedStage 
 {
@@ -20,16 +27,19 @@ public class GameStage extends ConnectedStage
 	 * Components
 	 */
 	
-	
+	private Image background;
+	private Label time;
+	private Kangaroo player, opponent;
 
 	/*
 	 * Constructors
 	 */
 	
-	public GameStage(Main main)
+	public GameStage(Main main, GamePacket gamePacket)
 	{
 		super(main);
-		// TODO Auto-generated constructor stub
+		
+		game = new Game(gamePacket);
 	}
 	
 	/*
@@ -40,21 +50,22 @@ public class GameStage extends ConnectedStage
 	public void act(float delta)
 	{
 		game.update(delta);
+		time.setText(String.valueOf(game.getTime()));
+		
 		super.act(delta);
 	}
 	
 	@Override
 	protected void askInitData()
 	{
-		// TODO Auto-generated method stub
-
+		// No init data needed to ask
 	}
 
 	@Override
 	protected void initComponents()
 	{
-		// TODO Auto-generated method stub
-
+		background = new Image(game.getBackground());
+		time = new Label("-", main.skin);
 	}
 
 	@Override
@@ -95,8 +106,11 @@ public class GameStage extends ConnectedStage
 	@Override
 	protected void addActors() 
 	{
-		// TODO Auto-generated method stub
-
+		addActor(background);
+		addActor(time);
+		
+		main.network.send(new ClientReadyPacket());
+		game.setState(GameStates.Loaded);
 	}
 
 	@Override
@@ -116,8 +130,10 @@ public class GameStage extends ConnectedStage
 	@Override
 	public void setData(Object data) 
 	{
-		// TODO Auto-generated method stub
-
+		if (data.getClass().isAssignableFrom(GameReadyPacket.class))
+		{
+			game.setState(GameStates.Running);
+		}
 	}
 
 }

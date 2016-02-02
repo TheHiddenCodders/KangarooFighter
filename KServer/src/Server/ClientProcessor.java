@@ -5,8 +5,8 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import Packets.DeconnexionPacket;
 import Packets.DisconnectionPacket;
+import Packets.DisconnexionPacket;
 import Packets.Packets;
 
 /** 
@@ -80,7 +80,7 @@ public class ClientProcessor implements Runnable
 			}
 			
 			// If the client has been disconnected
-			if (receivedObject.getClass().isAssignableFrom(DeconnexionPacket.class))
+			if (receivedObject.getClass().isAssignableFrom(DisconnexionPacket.class))
 			{
 				// Send disconnection packet to the server program
 				server.readBuffer.sendPacket(new DisconnectionPacket(this.getIp()));

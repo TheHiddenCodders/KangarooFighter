@@ -1,9 +1,9 @@
 package Client;
 
 import Class.ConnectedStage;
-import Packets.DeconnexionPacket;
+import Class.Player;
+import Packets.DisconnexionPacket;
 import Packets.Packets;
-import Packets.PlayerPacket;
 import Stages.ServerAccesStage;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -24,7 +24,7 @@ public class Main extends ApplicationAdapter
 	public Network network;
 	public Skin skin;
 	public Preferences prefs;
-	public PlayerPacket player;
+	public Player player;
 	
 	@Override
 	public void create () 
@@ -71,7 +71,7 @@ public class Main extends ApplicationAdapter
 	public void dispose()
 	{
 		if (network != null)
-			network.send((Packets) new DeconnexionPacket() );
+			network.send((Packets) new DisconnexionPacket() );
 		
 		super.dispose();
 	}	

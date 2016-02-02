@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 import Class.ConnectedStage;
+import Class.Player;
 import Packets.PlayerPacket;
 
 /**
@@ -48,7 +49,12 @@ public class Network extends Client
 		
 		// If it's a player packet, update player
 		if (o.getClass().isAssignableFrom(PlayerPacket.class))
-			main.player = (PlayerPacket) o;
+		{
+			if (main.player != null)
+				main.player.update((PlayerPacket) o);
+			else
+				main.player = new Player((PlayerPacket) o);
+		}
 
 		else
 			currentStage.setData(o);

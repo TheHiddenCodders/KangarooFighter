@@ -5,6 +5,7 @@ import Class.FriendsBloc;
 import Class.LadderBloc;
 import Class.PersoBloc;
 import Client.Main;
+import Packets.GamePacket;
 import Packets.HomePacket;
 import Packets.MatchMakingPacket;
 
@@ -23,6 +24,7 @@ public class HomeStage extends ConnectedStage
 	 */
 	
 	private HomePacket homePacket;
+	private GamePacket gamePacket;
 	private boolean searchingGame = false;
 	
 	/*
@@ -139,10 +141,8 @@ public class HomeStage extends ConnectedStage
 	@Override
 	protected void onDataReceived() 
 	{
-		initComponents();
-		addListeners();
-		addAnimations();
-		addActors();
+		if (gamePacket != null)
+			main.setStage(new PreGameStage(main, gamePacket));
 	}
 
 	@Override
@@ -158,6 +158,17 @@ public class HomeStage extends ConnectedStage
 			if (main.player != null)
 				initDataReceived();
 		}
+		
+		if (data.getClass().isAssignableFrom(GamePacket.class))
+		{
+			GamePacket gamePacket = (GamePacket) data;
+			
+			// Store packet
+			this.gamePacket = gamePacket;
+			
+			dataReceived();
+			
+		}
 	}
 
 	/**
@@ -167,6 +178,7 @@ public class HomeStage extends ConnectedStage
 	{
 		ladderBloc.remove();
 		friendsBloc.remove();
+		persoBloc.remove();
 	}
 	
 	/**
@@ -176,6 +188,7 @@ public class HomeStage extends ConnectedStage
 	{
 		addActor(ladderBloc = new LadderBloc(this));
 		addActor(friendsBloc = new FriendsBloc(this));
+		addActor(persoBloc = new PersoBloc(this));
 	}
 	
 	/**

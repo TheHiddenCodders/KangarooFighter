@@ -19,9 +19,8 @@ import enums.GameStates;
  */
 public class Game implements Runnable
 {
-	
 	/*
-	 * Store this in a file
+	 * TODO: Store this in a file
 	 */
 	/** The start positionX for player 1 */
 	public static int[] player1X = 
@@ -138,8 +137,6 @@ public class Game implements Runnable
 	{
 		GamePacket gamePacket = new GamePacket();
 		
-		int round = p1.getKangaroo().getWins() + p2.getKangaroo().getWins() + 1;
-		gamePacket.round = round;
 		gamePacket.mapPath = map[mapIndex]; 
 		
 		// Player need to receive himself as first
@@ -147,8 +144,7 @@ public class Game implements Runnable
 		{
 			gamePacket.player = p1.getUpdatePacket();
 			gamePacket.opponent = p2.getUpdatePacket();
-			gamePacket.playerData = p1.getClientDataPacket();
-			gamePacket.opponentData = p2.getClientDataPacket();
+			gamePacket.opponentData = p2.getPacket();
 			gamePacket.playerWins = p1.getKangaroo().getWins();
 			gamePacket.opponentWins = p2.getKangaroo().getWins();
 		}
@@ -156,8 +152,7 @@ public class Game implements Runnable
 		{
 			gamePacket.player = p2.getUpdatePacket();
 			gamePacket.opponent = p1.getUpdatePacket();
-			gamePacket.playerData = p2.getClientDataPacket();
-			gamePacket.opponentData = p1.getClientDataPacket();
+			gamePacket.opponentData = p1.getPacket();
 			gamePacket.playerWins = p2.getKangaroo().getWins();
 			gamePacket.opponentWins = p1.getKangaroo().getWins();
 		}

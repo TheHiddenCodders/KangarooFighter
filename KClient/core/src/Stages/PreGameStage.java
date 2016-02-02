@@ -27,10 +27,12 @@ public class PreGameStage extends ConnectedStage
 	 * Constructors
 	 */
 
-	public PreGameStage(Main main) 
+	public PreGameStage(Main main, GamePacket gamePacket) 
 	{
 		super(main);
-		// TODO Auto-generated constructor stub
+		
+		// Store game packet
+		this.gamePacket = gamePacket;
 	}
 
 	/*
@@ -41,7 +43,7 @@ public class PreGameStage extends ConnectedStage
 	public void act(float delta)
 	{
 		if (timer.getElapsedTime() > DELAY)
-			main.setStage(new GameStage(main));
+			main.setStage(new GameStage(main, gamePacket));
 			
 		super.act(delta);
 	};

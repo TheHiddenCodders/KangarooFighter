@@ -101,6 +101,8 @@ public abstract class Client extends Socket implements Runnable
 			else
 				System.out.println("Sent : null");
 			
+			packet.setIp(getInetAddress().getHostAddress());
+			
 			output.writeObject(packet);
 			output.flush();
 		} catch (IOException e)
