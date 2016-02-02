@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
@@ -21,6 +22,7 @@ public abstract class Bloc extends Table
 	 */
 	
 	protected HomeStage homeStage;
+	protected Skin skin;
 	
 	/*
 	 * Components
@@ -39,6 +41,7 @@ public abstract class Bloc extends Table
 		
 		// Store homeStage
 		this.homeStage = homeStage;
+		this.skin = homeStage.main.skin;
 		
 		// Add fade in so adding a bloc to a stage will make him fade in
 		addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1)));

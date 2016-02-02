@@ -3,6 +3,7 @@ package Stages;
 import Class.ConnectedStage;
 import Class.FriendsBloc;
 import Class.LadderBloc;
+import Class.NewsBloc;
 import Class.PersoBloc;
 import Client.Main;
 import Packets.GamePacket;
@@ -35,11 +36,11 @@ public class HomeStage extends ConnectedStage
 	private Image background;
 	private Image bottomRibbon;
 	
-	
+	// Blocs
 	private PersoBloc persoBloc;
 	private LadderBloc ladderBloc;
 	private FriendsBloc friendsBloc;
-	//private NewsBloc lastNewsBloc, lastBeforeNewsBloc;
+	private NewsBloc newsBloc, newsBloc2;
 	
 	
 	/*
@@ -83,6 +84,10 @@ public class HomeStage extends ConnectedStage
 		ladderBloc = new LadderBloc(this);
 		friendsBloc = new FriendsBloc(this);
 		persoBloc = new PersoBloc(this);
+		newsBloc = new NewsBloc(this);
+		newsBloc.setPosition(10, 255);
+		newsBloc2 = new NewsBloc(this);
+		newsBloc2.setPosition(10, 50);
 	}
 
 	@Override
@@ -136,6 +141,8 @@ public class HomeStage extends ConnectedStage
 		addActor(ladderBloc);
 		addActor(friendsBloc);
 		addActor(persoBloc);
+		addActor(newsBloc);
+		addActor(newsBloc2);
 	}
 	
 	@Override
@@ -179,6 +186,8 @@ public class HomeStage extends ConnectedStage
 		ladderBloc.remove();
 		friendsBloc.remove();
 		persoBloc.remove();
+		newsBloc.remove();
+		newsBloc2.remove();
 	}
 	
 	/**
@@ -189,6 +198,10 @@ public class HomeStage extends ConnectedStage
 		addActor(ladderBloc = new LadderBloc(this));
 		addActor(friendsBloc = new FriendsBloc(this));
 		addActor(persoBloc = new PersoBloc(this));
+		addActor(newsBloc = new NewsBloc(this));
+		newsBloc.setPosition(10, 255);
+		addActor(newsBloc2 = new NewsBloc(this));
+		newsBloc2.setPosition(10, 50);
 	}
 	
 	/**

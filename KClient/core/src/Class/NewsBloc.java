@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 
-public class LadderBloc extends Bloc
+public class NewsBloc extends Bloc
 {
 	/*
 	 * Attributes
@@ -24,16 +24,15 @@ public class LadderBloc extends Bloc
 	 * Constructors
 	 */
 	
-	public LadderBloc(HomeStage homeStage) 
+	public NewsBloc(HomeStage homeStage) 
 	{
 		super(homeStage);
 		
-		// Set position and background
-		setPosition(535, 235);
-		setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/ladder/background.png")));
+		// Set background (news position are setted by homestage
+		setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/news/background.png")));
 		
 		// Set display
-		setDisplay(new LadderDisplay(skin));
+		setDisplay(new NewsDisplay(skin));
 	}
 	
 	/*

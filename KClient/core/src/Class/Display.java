@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
@@ -22,6 +23,7 @@ public abstract class Display extends Table
 	 */
 	
 	private HomeStage homeStage;
+	protected Skin skin;
 	
 	/*
 	 * Components
@@ -34,9 +36,10 @@ public abstract class Display extends Table
 	 * Constructors
 	 */
 	
-	public Display()
+	public Display(Skin skin)
 	{
 		super();
+		this.skin = skin;
 		
 		// Add fade in so adding a display to a stage will make him fade in
 		addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1)));
@@ -99,6 +102,7 @@ public abstract class Display extends Table
 	public void setHomeStage(HomeStage homeStage)
 	{
 		this.homeStage = homeStage;
+		this.skin = homeStage.main.skin;
 	}
 	
 	/** This method refresh the display */

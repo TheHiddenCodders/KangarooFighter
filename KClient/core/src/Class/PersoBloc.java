@@ -35,7 +35,7 @@ public class PersoBloc extends Bloc
 		super(homeStage);
 		
 		// Set position and background
-		setPosition(270, 42.5f);
+		setPosition(272, 42.5f);
 		setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/perso/background.png")));
 		
 		// Kangaroo
@@ -45,30 +45,30 @@ public class PersoBloc extends Bloc
 		addActor(kangaroo);
 		
 		// Labels
-		name = new Label(homeStage.main.player.getName(), homeStage.main.skin);
-		name.setStyle(new LabelStyle(homeStage.main.skin.getFont("korean"), Color.TAN));
+		name = new Label(homeStage.main.player.getName(), skin);
+		name.setStyle(new LabelStyle(skin.getFont("korean"), Color.TAN));
 		name.setPosition(this.getWidth() / 2 - name.getWidth() / 2, this.getHeight() - name.getHeight() - 10);
 		addActor(name);
 		
-		elo = new Label(homeStage.main.player.getElo() + "", homeStage.main.skin);
-		elo.setStyle(new LabelStyle(homeStage.main.skin.getFont("korean"), Color.TAN));
+		elo = new Label(homeStage.main.player.getElo() + "", skin);
+		elo.setStyle(new LabelStyle(skin.getFont("korean"), Color.TAN));
 		elo.pack();
 		elo.setPosition(this.getWidth() / 2 - elo.getWidth() / 2 - 15, kangaroo.getY() - elo.getHeight() - 10);
 		addActor(elo);
 		
-		eloI = new Label(" elo" , homeStage.main.skin);
-		eloI.setStyle(new LabelStyle(homeStage.main.skin.getFont("korean"), Color.WHITE));
+		eloI = new Label(" elo" , skin);
+		eloI.setStyle(new LabelStyle(skin.getFont("korean"), Color.WHITE));
 		eloI.pack();
 		eloI.setPosition(elo.getX() + elo.getWidth(), elo.getY());
 		addActor(eloI);
 		
-		games = new Label(homeStage.main.player.getGames() + " parties" , homeStage.main.skin);
-		games.setStyle(new LabelStyle(homeStage.main.skin.getFont("default-font"), Color.WHITE));
+		games = new Label(homeStage.main.player.getGames() + " parties" , skin);
+		games.setStyle(new LabelStyle(skin.getFont("default-font"), Color.WHITE));
 		games.setPosition(this.getWidth() / 2 - games.getWidth() / 2, elo.getY() - games.getHeight() - 2);
 		addActor(games);
 		
-		win = new Label(homeStage.main.player.getWins() + "" , homeStage.main.skin);
-		win.setStyle(new LabelStyle(homeStage.main.skin.getFont("default-font"), Color.TAN));
+		win = new Label(homeStage.main.player.getWins() + "" , skin);
+		win.setStyle(new LabelStyle(skin.getFont("default-font"), Color.TAN));
 		win.setPosition(this.getWidth() / 4 - win.getWidth() / 2, games.getY() - win.getHeight() - 10);
 		addActor(win);
 		
@@ -82,8 +82,8 @@ public class PersoBloc extends Bloc
 		loseIcon.scaleBy(0.2f);
 		addActor(loseIcon);
 		
-		loses = new Label(homeStage.main.player.getLoses() + "" , homeStage.main.skin);
-		loses.setStyle(new LabelStyle(homeStage.main.skin.getFont("default-font"), new Color(200f/255f, 80f/255f, 80f/255f, 1)));
+		loses = new Label(homeStage.main.player.getLoses() + "" , skin);
+		loses.setStyle(new LabelStyle(skin.getFont("default-font"), new Color(200f/255f, 80f/255f, 80f/255f, 1)));
 		loses.setPosition(loseIcon.getX() + loseIcon.getWidth() + 5, win.getY());
 		addActor(loses);
 	}

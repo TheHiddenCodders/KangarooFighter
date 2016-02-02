@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-public class LadderDisplay extends Display 
+public class NewsDisplay extends Display 
 {
 	/*
 	 * Attributes
@@ -22,12 +22,12 @@ public class LadderDisplay extends Display
 	 * Constructors
 	 */
 	
-	public LadderDisplay(Skin skin) 
+	public NewsDisplay(Skin skin) 
 	{
 		super(skin);
 		
 		// Set position and background
-		setBackground(new Texture(Gdx.files.internal("sprites/homestage/displays/ladder/background.png")));
+		setBackground(new Texture(Gdx.files.internal("sprites/homestage/displays/news/background.png")));
 	}
 
 	@Override
