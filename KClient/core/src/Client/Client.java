@@ -96,12 +96,9 @@ public abstract class Client extends Socket implements Runnable
 	{	
 		try
 		{
-			if (packet != null)
-				System.out.println("Sent : " + packet.toString());
-			else
-				System.out.println("Sent : null");
+			packet.setIp(getInetAddress().getHostAddress() + ":" + getLocalPort());
 			
-			packet.setIp(getInetAddress().getHostAddress());
+			System.out.println("Sent : " + packet.toString());
 			
 			output.writeObject(packet);
 			output.flush();

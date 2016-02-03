@@ -40,6 +40,8 @@ public class GameStage extends ConnectedStage
 		super(main);
 		
 		game = new Game(gamePacket);
+		
+		initDataReceived();
 	}
 	
 	/*
@@ -58,21 +60,19 @@ public class GameStage extends ConnectedStage
 	@Override
 	protected void askInitData()
 	{
-		// No init data needed to ask
+		needDataToInit = true;
 	}
 
 	@Override
 	protected void initComponents()
 	{
-		background = new Image(game.getBackground());
 		time = new Label("-", main.skin);
 	}
 
 	@Override
 	protected void initDataNeededComponents()
 	{
-		// TODO Auto-generated method stub
-
+		background = new Image(game.getBackground());
 	}
 
 	@Override
@@ -106,18 +106,16 @@ public class GameStage extends ConnectedStage
 	@Override
 	protected void addActors() 
 	{
-		addActor(background);
 		addActor(time);
 		
 		main.network.send(new ClientReadyPacket());
-		game.setState(GameStates.Loaded);
 	}
 
 	@Override
 	protected void addInitDataNeededActors() 
 	{
-		// TODO Auto-generated method stub
-
+		addActor(background);
+		game.setState(GameStates.Loaded);
 	}
 
 	@Override

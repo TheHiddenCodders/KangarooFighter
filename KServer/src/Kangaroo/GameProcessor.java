@@ -2,6 +2,7 @@ package Kangaroo;
 
 import java.util.ArrayList;
 
+import Packets.GamePacket;
 import Packets.MatchMakingPacket;
 import Packets.Packets;
 import Server.BufferPacket;
@@ -60,6 +61,7 @@ public class GameProcessor implements Runnable
 					// If the player search a game (want to play)
 					if (mmPacket.search)
 					{
+						System.err.println("koukou");
 						// Browse all the waiting players
 						for (int i = 0; i < waitingPlayers.size(); i++)
 						{
@@ -69,8 +71,7 @@ public class GameProcessor implements Runnable
 								// Stop the waiting thread of the second player
 								waitingThreads.get(i).interrupt();
 								
-								// TODO : create a game here (Nerisma add code, check it)
-								// games.add(new Game(waitingPlayers.get(i), getPlayerFromIp(mmPacket.getIp()), server?));
+								// TODO : create a game here (Check in main)
 							}
 						}
 					

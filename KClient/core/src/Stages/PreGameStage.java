@@ -31,6 +31,9 @@ public class PreGameStage extends ConnectedStage
 	{
 		super(main);
 		
+		// Make timer
+		timer = new Timer();
+		
 		// Store game packet
 		this.gamePacket = gamePacket;
 	}

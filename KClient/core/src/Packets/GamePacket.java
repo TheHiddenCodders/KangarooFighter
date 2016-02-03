@@ -26,8 +26,8 @@ public class GamePacket extends Packets
 	{
 		return super.toString()
 				+ "\n"
-				+ "[player]: " + player.toString() + "\n"
-				+ "[opponent]: " + opponent.toString() + "\n"
+				+ "[player]: " + /*player.toString() + */ "\n"
+				+ "[opponent]: " + /*opponent.toString() + */ "\n"
 				+ "[playerData]: " + playerData.toString() + "\n"
 				+ "[opponentData]: " + opponentData.toString() + "\n"
 				+ "[mapPath]: " + mapPath + "\n"
