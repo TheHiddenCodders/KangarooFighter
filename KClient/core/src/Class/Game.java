@@ -14,7 +14,7 @@ public class Game
 	 * Attributes
 	 */
 
-	private Player p1, p2;
+	private Kangaroo player, opponent;
 	private Timer timer;	
 	private Texture background;
 	private GameStates state = GameStates.Created;
