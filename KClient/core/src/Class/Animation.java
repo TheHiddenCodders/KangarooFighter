@@ -58,7 +58,14 @@ public class Animation
 	 */
 	public void update(float delta)
 	{
-		
+		// If animation not paused
+		if (!resume)
+		{
+			if (timer.getElapsedTime() > 1f / fps)
+			{
+				skipFrame();
+			}
+		}
 	}
 	
 	/**
@@ -74,7 +81,7 @@ public class Animation
 	 */
 	public void resume()
 	{
-		resume = true;
+		resume = !resume;
 	}
 	
 	/**
@@ -94,17 +101,8 @@ public class Animation
 			currentFrame++;
 		else
 			currentFrame = 0;
-	}
-	
-	/**
-	 * Go to previous frame
-	 */
-	public void unSkipFrame()
-	{
-		if (currentFrame > 0)
-			currentFrame--;
-		else
-			currentFrame = frames.length - 1;
+		
+		timer.restart();
 	}
 		
 	/**
@@ -113,7 +111,7 @@ public class Animation
 	 */
 	public void load(String path)
 	{
-			
+		// TODO
 	}
 	
 	/*

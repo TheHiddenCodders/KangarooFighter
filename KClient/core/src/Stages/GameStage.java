@@ -71,8 +71,6 @@ public class GameStage extends ConnectedStage
 	protected void initDataNeededComponents()
 	{
 		background = new Image(game.getBackground());
-		addActor(game.getKPlayer());
-		addActor(game.getKOpponent());
 	}
 
 	@Override
@@ -115,6 +113,8 @@ public class GameStage extends ConnectedStage
 	protected void addInitDataNeededActors() 
 	{
 		addActor(background);
+		addActor(game.getKPlayer());
+		addActor(game.getKOpponent());
 		game.setState(GameStates.Loaded);
 	}
 
