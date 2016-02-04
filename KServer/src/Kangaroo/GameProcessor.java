@@ -2,6 +2,7 @@ package Kangaroo;
 
 import java.util.ArrayList;
 
+import Packets.GamePacket;
 import Packets.MatchMakingPacket;
 import Packets.Packets;
 import Server.BufferPacket;
@@ -62,6 +63,7 @@ public class GameProcessor implements Runnable
 					// If the player search a game (want to play)
 					if (mmPacket.search)
 					{
+						System.err.println("koukou");
 						// Browse all the waiting players
 						for (int i = 0; i < waitingPlayers.size(); i++)
 						{

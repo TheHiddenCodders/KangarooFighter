@@ -55,55 +55,52 @@ public class ConnexionStage extends ConnectedStage
 	@Override
 	protected void initComponents()
 	{
-		if (!alreadyRegisteredOnPhone())
-		{
-			// Make table
-			table = new Table();
-			
-			// Background
-			background = new Image(new Texture(Gdx.files.internal("sprites/connexionstage/background.png")));
-			
-			// Texts
-			infoName = new Label("Pseudonyme", main.skin);
-			infoPwd = new Label("Mot de passe", main.skin);
-			other = new Label("", main.skin);
-			
-			// Textfields
-			name = new TextField("", main.skin);
-			pwd = new TextField("", main.skin);
-			pwd.setPasswordMode(true);
-			pwd.setPasswordCharacter('*');
-			
-			// Buttons
-			connect = new TextButton("Connexion", main.skin);
-			signOut = new TextButton("S'inscrire", main.skin);
-			
-			// Apply some colours to them
-			other.setColor(1, 0.2f, 0.2f, 1);
-			signOut.setColor(1f, 0.5f, 0.5f, 1);
-			
-			// Organize display
-			table.setFillParent(true);
-			table.center();
-			
-			table.add(infoName);
-			table.row();
-			table.add(name).width(200);
-			table.row();
-			table.add(infoPwd);
-			table.row();
-			table.add(pwd).width(200);
-			table.row();
-			table.add(other).bottom();
-	
-			// Set size
-			connect.setWidth(95);
-			connect.setHeight(30);
-			connect.setPosition(this.getWidth() / 2 - connect.getWidth() / 2 - 53, this.getHeight() / 2 - connect.getHeight() - 75);
-			signOut.setWidth(95);
-			signOut.setHeight(30);
-			signOut.setPosition(this.getWidth() / 2 - connect.getWidth() / 2 + 53, this.getHeight() / 2 - connect.getHeight() - 75);		
-		}
+		// Make table
+		table = new Table();
+		
+		// Background
+		background = new Image(new Texture(Gdx.files.internal("sprites/connexionstage/background.png")));
+		
+		// Texts
+		infoName = new Label("Pseudonyme", main.skin);
+		infoPwd = new Label("Mot de passe", main.skin);
+		other = new Label("", main.skin);
+		
+		// Textfields
+		name = new TextField("", main.skin);
+		pwd = new TextField("", main.skin);
+		pwd.setPasswordMode(true);
+		pwd.setPasswordCharacter('*');
+		
+		// Buttons
+		connect = new TextButton("Connexion", main.skin);
+		signOut = new TextButton("S'inscrire", main.skin);
+		
+		// Apply some colours to them
+		other.setColor(1, 0.2f, 0.2f, 1);
+		signOut.setColor(1f, 0.5f, 0.5f, 1);
+		
+		// Organize display
+		table.setFillParent(true);
+		table.center();
+		
+		table.add(infoName);
+		table.row();
+		table.add(name).width(200);
+		table.row();
+		table.add(infoPwd);
+		table.row();
+		table.add(pwd).width(200);
+		table.row();
+		table.add(other).bottom();
+
+		// Set size
+		connect.setWidth(95);
+		connect.setHeight(30);
+		connect.setPosition(this.getWidth() / 2 - connect.getWidth() / 2 - 53, this.getHeight() / 2 - connect.getHeight() - 75);
+		signOut.setWidth(95);
+		signOut.setHeight(30);
+		signOut.setPosition(this.getWidth() / 2 - connect.getWidth() / 2 + 53, this.getHeight() / 2 - connect.getHeight() - 75);		
 	}
 	
 	@Override
@@ -181,6 +178,8 @@ public class ConnexionStage extends ConnectedStage
 		// If not accepted
 		if (!loginPacket.accepted)
 		{
+			initComponents();
+			
 			if (loginPacket.pseudoExists && !loginPacket.pwdMatch)
 				other.setText("Mauvais mot de passe");
 			else if (!loginPacket.pseudoExists)

@@ -4,6 +4,7 @@ import Enums.GameStates;
 import Packets.GamePacket;
 import Utils.Timer;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 
@@ -29,7 +30,8 @@ public class Game
 		p1 = new Player(gamePacket.playerData);
 		p2 = new Player(gamePacket.opponentData);
 		
-		background = new Texture(gamePacket.mapPath);
+		background = new Texture(Gdx.files.internal("sprites/gamestage/maps/" + gamePacket.mapPath + ".png"));
+		System.err.println("sprites/gamestage/maps/" + gamePacket.mapPath + ".png");
 		timer = new Timer();
 	}
 	
