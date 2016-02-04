@@ -24,7 +24,7 @@ public class Player
 		PlayerPacket packet = new PlayerPacket(ip);
 		
 		packet.name = name;
-		packet.elo = 0; // stats.elo;
+		packet.elo = 300000000; // stats.elo;
 		packet.games = 0; // stats.games;
 		packet.looses = 0; // stats.looses;
 		packet.wins = 0; // stats.games - stats.looses;
