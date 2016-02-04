@@ -254,7 +254,7 @@ public class Main
 		
 		// TODO: Get ladder pos
 		// TODO: Fill "ladderPlayers" with good player packets
-		ladder.getLadderFromPosition(getPlayerFromIp(packet.getIp()).getPacket().pos);
+		packet.ladderPlayers = ladder.getLadderFromPosition(getPlayerFromIp(packet.getIp()).getPacket().pos);
 		
 		// TODO: Get news packets
 		// TODO: Fill "news" with the good news

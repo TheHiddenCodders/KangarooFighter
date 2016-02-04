@@ -114,7 +114,9 @@ public class Ladder
 		
 		// Fill the result in
 		for (int i = 0; i < end-begin; i++)
+		{
 			result[i] = ladder.get(i + begin);
+		}
 		
 		return result;
 	}
