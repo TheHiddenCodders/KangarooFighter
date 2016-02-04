@@ -164,7 +164,7 @@ public class HomeStage extends ConnectedStage
 			
 			// Test integrety of data
 			for (int i = 0; i < homePacket.ladderPlayers.length; i++)
-				System.out.println(homePacket.ladderPlayers[i]);
+				System.out.println(homePacket.ladderPlayers[i].name);
 			
 			if (main.player != null)
 				initDataReceived();
