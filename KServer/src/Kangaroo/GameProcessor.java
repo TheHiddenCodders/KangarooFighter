@@ -54,6 +54,8 @@ public class GameProcessor implements Runnable
 				// If the received packet is a MatchMakingPacket
 				if (packet.getClass().isAssignableFrom(MatchMakingPacket.class))
 				{
+					System.out.println("GameProcessor : receive a MatchMakingPacket");
+					
 					// Get the match making packet
 					mmPacket = (MatchMakingPacket) packet;
 					
@@ -66,8 +68,12 @@ public class GameProcessor implements Runnable
 							// Try to find an opponent
 							if (waitingPlayers.get(i).getElo() / getPlayerFromIp(mmPacket.getIp()).getElo() <= mmPacket.eloTolerance)
 							{
+								System.err.println(waitingPlayers.get(i).getName() + "" + getPlayerFromIp(mmPacket.getIp()).getName());
+								
 								// Stop the waiting thread of the second player
 								waitingThreads.get(i).interrupt();
+								
+								// TODO : remove the players from lists : waitingPlayers + waitingThreads
 								
 								// TODO : create a game here (Nerisma add code, check it)
 								// games.add(new Game(waitingPlayers.get(i), getPlayerFromIp(mmPacket.getIp()), server?));
@@ -76,6 +82,7 @@ public class GameProcessor implements Runnable
 					
 						// If no player match, then launch a waiting thread
 						waitingThreads.add(new Thread(new WaitingPlayer(mmPacket, gamePackets) ));
+						waitingThreads.get(waitingThreads.size() - 1).start();
 						
 						// Add this player in the list of waiters
 						waitingPlayers.add(getPlayerFromIp(mmPacket.getIp()));

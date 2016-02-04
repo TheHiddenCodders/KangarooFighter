@@ -3,14 +3,15 @@ package Kangaroo;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 
 import Packets.ConnectionPacket;
+import Packets.DisconnexionPacket;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
+import Packets.MatchMakingPacket;
 import Packets.NewsPacket;
 import Packets.Packets;
 import Packets.PlayerPacket;
@@ -24,18 +25,25 @@ public class Main
 	public static String msg = "";
 	
 	/** games : an ArrayList containing all games*/
-	static ArrayList<Game> games;
+	//static ArrayList<Game> games;
+	static GameProcessor gp;
 	/** players : an ArrayList containing all thz connected players*/
 	static ArrayList<Player> players;
 	
 	public static void main(String[] args) throws IOException
 	{
 		System.out.println("Main thread : Creation of server data");
+		
+		// Launch server threads
 		Server server = new Server();
 		server.open();
-		
-		games = new ArrayList<Game>();
+
 		players = new ArrayList<Player>();
+		gp = new GameProcessor(players);
+		
+		// Launch game threads
+		Thread t = new Thread(gp);
+		t.start();
 		
 		// readPackets : an ArrayList containing the packet received from clients
 		ArrayList<Packets> readPackets = new ArrayList<Packets>();
@@ -61,6 +69,14 @@ public class Main
 						
 						// Update serverInfo for clients
 						//serverInfoUpdated(cp, ServerInfoType.ExceptMe);
+					}
+					/*
+					 * Receive a DisconnexionPacket
+					 */
+					if (readPackets.get(i).getClass().isAssignableFrom(DisconnexionPacket.class))
+					{
+						// Remove the disconnected player
+						players.remove(getPlayerFromIP(readPackets.get(i).getIp()));
 					}
 					/*
 					 * Receive Login packet 
@@ -110,6 +126,17 @@ public class Main
 						server.sendBuffer.sendPacket(receivedPacket);
 						
 					}
+					if (readPackets.get(i).getClass().isAssignableFrom(MatchMakingPacket.class))
+					{					
+						System.out.println("Send a MatchMackingPacket to the GameProcessor");
+						
+						// Send this packet to the GameProcessor
+						gp.gamePackets.sendPacket(readPackets.get(i));
+					}
+					else
+					{
+						System.err.println("Received an unknowned packet" + readPackets.get(i).getClass());
+					}
 					
 					// TODO : manage the creation of games when receiving MatchMakingPacket
 					/*{
@@ -141,43 +168,33 @@ public class Main
 		
 		// If this client is not connected
 		
-		// Everyone could connect with this pseudo
-		if (packet.pseudo.equals("Kurond"))
+		// Check fields
+		// TODO : this loop need to browse an ArrayList<Player>
+		for (File file : ServerUtils.getPlayersFiles())
 		{
-			packet.pwdMatch = true;
-			packet.accepted = true;				
-			getPlayerFromIP(packet.getIp()).setName(packet.pseudo);
-		}
-		else
-		{
-			// Check fields
-			// TODO : this loop need to browse an ArrayList<Player>
-			for (File file : ServerUtils.getPlayersFiles())
+			// If pseudo exists
+			if (file.getName().equals(packet.pseudo))
 			{
-				// If pseudo exists
-				if (file.getName().equals(packet.pseudo))
+				packet.pseudoExists = true;
+				
+				if (FileUtils.readString(new File(file.getAbsolutePath().concat("/pwd"))).get(0).equals(packet.pwd))
 				{
-					packet.pseudoExists = true;
-					
-					if (FileUtils.readString(new File(file.getAbsolutePath().concat("/pwd"))).get(0).equals(packet.pwd))
-					{
-						packet.pwdMatch = true;
-						packet.accepted = true;				
-						getPlayerFromIP(packet.getIp()).setName(packet.pseudo);
-						break;
-					}
-					else
-					{
-						packet.pwdMatch = false;
-					}
+					packet.pwdMatch = true;
+					packet.accepted = true;				
+					getPlayerFromIP(packet.getIp()).setName(packet.pseudo);
 					break;
 				}
 				else
 				{
-					packet.pseudoExists = false;
+					packet.pwdMatch = false;
 				}
-			}	
-		}
+				break;
+			}
+			else
+			{
+				packet.pseudoExists = false;
+			}
+		}	
 	}
 	
 	/** return a connected Player object matching with the pseudo in parameter

@@ -35,5 +35,7 @@ public class WaitingPlayer implements Runnable
 		
 		// Send it to the GameProcessor
 		gameProcessorBuffer.sendPacket(mmPacket);
+		
+		System.out.println(mmPacket.getIp() + " relaunch match making");
 	}
 }
