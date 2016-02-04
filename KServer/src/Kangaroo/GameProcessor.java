@@ -113,15 +113,25 @@ public class GameProcessor implements Runnable
 							// If he is waiting
 							if (isWaiter(mmPacket) > -1)
 							{
-								if (waitingTimers.get(isWaiter(mmPacket)).getElapsedTime() >= 5.f)
-									waitingPlayers.get(isWaiter(mmPacket)).eloTolerance += 0.5;
+								//if (waitingTimers.get(isWaiter(mmPacket)).getElapsedTime() >= 5.f)
+									//waitingPlayers.get(isWaiter(mmPacket)).eloTolerance += 0.5;
 							}
 							else
 							{
 								waitingPlayers.add(mmPacket);
 								waitingTimers.add(new Timer());
 								
-								mainPackets.sendPacket(mmPacket);
+								//mainPackets.sendPacket(mmPacket);
+							}
+							
+							for (int i = 0; i < waitingPlayers.size(); i++)
+							{
+								if (waitingTimers.get(isWaiter(mmPacket)).getElapsedTime() >= 5.f)
+								{
+									waitingPlayers.get(isWaiter(mmPacket)).eloTolerance += 0.5;
+									mainPackets.sendPacket(mmPacket);
+									
+								}
 							}
 						}
 					}
