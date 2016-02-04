@@ -1,11 +1,10 @@
 package Kangaroo;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import Packets.GamePacket;
 import Packets.Packets;
-import Server.BufferPacket;
-import Server.Server;
 import Utils.Timer;
 import enums.GameStates;
 
@@ -54,16 +53,16 @@ public class Game implements Runnable
 		"sprites/dojo.png",
 		"sprites/ponton.png"
 	};
-	/*
-	 * Attributes
-	 */
-	private Server server;
+
+	
+	/** Allow communication with game processor */
+	private GameProcessor gp;
 	private Player p1 = null, p2 = null;
 	private int mapIndex;
 	private Timer timer;
 	private float time;
-	private BufferPacket readBuffer;
 	private GameStates state;
+	private ArrayList<Packets> gamePackets;
 	
 	/*
 	 * Constructors
@@ -75,11 +74,12 @@ public class Game implements Runnable
 	 * @param k1 the kangaroo who create the game
 	 * 
 	 */
-	public Game(Player p1, Server server)
+	public Game(Player p1, GameProcessor gp)
 	{
-		this.server = server;
+		this.gp = gp;
 		this.p1 = p1;
 		this.p1.createKangaroo();
+		this.gamePackets = new ArrayList<Packets>();
 		
 		setState(GameStates.Waiting);
 		
@@ -94,9 +94,9 @@ public class Game implements Runnable
 	 * @param k2 the second kangaroo of the game
 	 * 
 	 */
-	public Game(Player p1, Player p2, Server server)
+	public Game(Player p1, Player p2, GameProcessor gp)
 	{
-		this(p1, server);
+		this(p1, gp);
 		linkKangaroo(p2);
 	}
 	
@@ -117,15 +117,34 @@ public class Game implements Runnable
 		
 		setState(GameStates.Prepared);
 		
-		server.sendBuffer.sendPacket((Packets) getGamePacket(p1));
-		server.sendBuffer.sendPacket((Packets) getGamePacket(p2));
+		gp.mainSender.sendPacket((Packets) getGamePacket(p1));
+		gp.mainSender.sendPacket((Packets) getGamePacket(p2));
 	}
 	
 	// Game update 
 	@Override
 	public void run() 
 	{
-		// TODO : The game update here.
+		// The game is updated when it receive a packet (synchrone)
+		
+		GamePacket readPacket; // ClientGamePacket
+		// ServerGamePacket sendPacket
+		
+		// Play the game until the end
+		while (state != GameStates.ended)
+		{
+			// Wait for new packets
+			gamePackets = gp.gameSender.readPackets();
+			
+			for (int i = 0; i < gamePackets.size(); i++)
+			{
+				readPacket = (GamePacket) gamePackets.get(i);
+				
+				// TODO : Game update here
+				
+				// TODO : Send the evolution to the sender using sendPacket
+			}
+		}
 	}
 	
 	/**

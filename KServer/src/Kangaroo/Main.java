@@ -43,7 +43,7 @@ public class Main
 		server.open();
 
 		players = new ArrayList<Player>();
-		gp = new GameProcessor(players);
+		gp = new GameProcessor(players, server.sendBuffer);
 		
 		// Launch game threads
 		Thread t = new Thread(gp);
@@ -135,7 +135,7 @@ public class Main
 						System.out.println("Send a MatchMackingPacket to the GameProcessor");
 						
 						// Send this packet to the GameProcessor
-						gp.gamePackets.sendPacket(readPackets.get(i));
+						gp.mainPackets.sendPacket(readPackets.get(i));
 					}
 					else
 					{
