@@ -6,8 +6,8 @@ import Class.Kangaroo;
 import Client.Main;
 import Enums.GameStates;
 import Packets.ClientReadyPacket;
-import Packets.GamePacket;
 import Packets.GameReadyPacket;
+import Packets.InitGamePacket;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -35,7 +35,7 @@ public class GameStage extends ConnectedStage
 	 * Constructors
 	 */
 	
-	public GameStage(Main main, GamePacket gamePacket)
+	public GameStage(Main main, InitGamePacket gamePacket)
 	{
 		super(main);
 		

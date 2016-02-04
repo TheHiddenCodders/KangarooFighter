@@ -3,7 +3,7 @@ package Kangaroo;
 import java.util.ArrayList;
 import java.util.Random;
 
-import Packets.GamePacket;
+import Packets.InitGamePacket;
 import Packets.Packets;
 import Utils.Timer;
 import enums.GameStates;
@@ -127,7 +127,7 @@ public class Game implements Runnable
 	{
 		// The game is updated when it receive a packet (synchrone)
 		
-		GamePacket readPacket; // ClientGamePacket
+		InitGamePacket readPacket; // ClientGamePacket
 		// ServerGamePacket sendPacket
 		
 		// Play the game until the end
@@ -138,7 +138,7 @@ public class Game implements Runnable
 			
 			for (int i = 0; i < gamePackets.size(); i++)
 			{
-				readPacket = (GamePacket) gamePackets.get(i);
+				readPacket = (InitGamePacket) gamePackets.get(i);
 				
 				// TODO : Game update here
 				
@@ -152,9 +152,9 @@ public class Game implements Runnable
 	 * @param k
 	 * @return game packet
 	 */
-	public GamePacket getGamePacket(Player p)
+	public InitGamePacket getGamePacket(Player p)
 	{
-		GamePacket gamePacket = new GamePacket();
+		InitGamePacket gamePacket = new InitGamePacket();
 		
 		gamePacket.mapPath = map[mapIndex]; 
 		

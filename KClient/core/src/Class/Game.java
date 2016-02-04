@@ -1,7 +1,7 @@
 package Class;
 
 import Enums.GameStates;
-import Packets.GamePacket;
+import Packets.InitGamePacket;
 import Utils.Timer;
 
 import com.badlogic.gdx.Gdx;
@@ -23,7 +23,7 @@ public class Game
 	 * Constructors
 	 */
 	
-	public Game(GamePacket gamePacket) 
+	public Game(InitGamePacket gamePacket) 
 	{
 		super();
 		

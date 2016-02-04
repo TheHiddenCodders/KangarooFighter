@@ -1,14 +1,14 @@
 package Packets;
 
 
-public class GamePacket extends Packets
+public class InitGamePacket extends Packets
 {
-	public GamePacket(String ip) 
+	public InitGamePacket(String ip) 
 	{
 		super(ip);
 	}
 
-	public GamePacket() 
+	public InitGamePacket() 
 	{
 		super();
 	}

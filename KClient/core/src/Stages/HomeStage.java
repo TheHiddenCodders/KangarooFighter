@@ -6,8 +6,8 @@ import Class.LadderBloc;
 import Class.NewsBloc;
 import Class.PersoBloc;
 import Client.Main;
-import Packets.GamePacket;
 import Packets.HomePacket;
+import Packets.InitGamePacket;
 import Packets.MatchMakingPacket;
 
 import com.badlogic.gdx.Gdx;
@@ -25,7 +25,7 @@ public class HomeStage extends ConnectedStage
 	 */
 	
 	private HomePacket homePacket;
-	private GamePacket gamePacket;
+	private InitGamePacket gamePacket;
 	private boolean searchingGame = false;
 	
 	/*
@@ -166,9 +166,9 @@ public class HomeStage extends ConnectedStage
 				initDataReceived();
 		}
 		
-		if (data.getClass().isAssignableFrom(GamePacket.class))
+		if (data.getClass().isAssignableFrom(InitGamePacket.class))
 		{
-			GamePacket gamePacket = (GamePacket) data;
+			InitGamePacket gamePacket = (InitGamePacket) data;
 			
 			// Store packet
 			this.gamePacket = gamePacket;

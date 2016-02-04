@@ -2,7 +2,7 @@ package Stages;
 
 import Class.ConnectedStage;
 import Client.Main;
-import Packets.GamePacket;
+import Packets.InitGamePacket;
 import Utils.Timer;
 
 public class PreGameStage extends ConnectedStage 
@@ -11,7 +11,7 @@ public class PreGameStage extends ConnectedStage
 	 * Attributes
 	 */
 	
-	private GamePacket gamePacket;
+	private InitGamePacket gamePacket;
 	private Timer timer;
 	
 	/** When timer reach this value, pre-game stage is over */
@@ -27,7 +27,7 @@ public class PreGameStage extends ConnectedStage
 	 * Constructors
 	 */
 
-	public PreGameStage(Main main, GamePacket gamePacket) 
+	public PreGameStage(Main main, InitGamePacket gamePacket) 
 	{
 		super(main);
 		

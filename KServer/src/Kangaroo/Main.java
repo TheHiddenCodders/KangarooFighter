@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import Packets.ConnectionPacket;
 import Packets.DisconnexionPacket;
 import Packets.FriendsPacket;
-import Packets.GamePacket;
 import Packets.HomePacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
