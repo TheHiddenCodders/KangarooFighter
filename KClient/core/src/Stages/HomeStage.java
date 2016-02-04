@@ -1,10 +1,10 @@
 package Stages;
 
+import BlocsDisplays.FriendsBloc;
+import BlocsDisplays.LadderBloc;
+import BlocsDisplays.NewsBloc;
+import BlocsDisplays.PersoBloc;
 import Class.ConnectedStage;
-import Class.FriendsBloc;
-import Class.LadderBloc;
-import Class.NewsBloc;
-import Class.PersoBloc;
 import Client.Main;
 import Packets.HomePacket;
 import Packets.InitGamePacket;

@@ -161,19 +161,17 @@ public class Game implements Runnable
 		// Player need to receive himself as first
 		if (p == p1)
 		{
-			gamePacket.setIp(p1.getIp());
-			gamePacket.player = p1.getUpdatePacket();
-			gamePacket.opponent = p2.getUpdatePacket();
+			gamePacket.player = p1.getGamePacket();
+			gamePacket.opponent = p2.getGamePacket();
 			gamePacket.opponentData = p2.getPacket();
 			gamePacket.playerWins = p1.getKangaroo().getWins();
 			gamePacket.opponentWins = p2.getKangaroo().getWins();
 		}
 		else if (p == p2)
 		{
-			gamePacket.setIp(p2.getIp());
-			gamePacket.player = p2.getUpdatePacket();
-			gamePacket.opponent = p1.getUpdatePacket();
-			//gamePacket.opponentData = p1.getPacket();
+			gamePacket.player = p2.getGamePacket();
+			gamePacket.opponent = p1.getGamePacket();
+			gamePacket.opponentData = p1.getPacket();
 			gamePacket.playerWins = p2.getKangaroo().getWins();
 			gamePacket.opponentWins = p1.getKangaroo().getWins();
 		}

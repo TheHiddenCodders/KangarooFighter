@@ -1,4 +1,6 @@
-package Class;
+package BlocsDisplays;
+
+import Class.Display;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

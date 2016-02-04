@@ -1,5 +1,6 @@
-package Class;
+package BlocsDisplays;
 
+import Class.Bloc;
 import Packets.PlayerPacket;
 import Stages.HomeStage;
 

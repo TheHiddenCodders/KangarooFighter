@@ -1,8 +1,8 @@
 package Class;
 
-import Enums.Direction;
+import Packets.GameServerPacket;
 
-public class Kangaroo 
+public class Kangaroo extends AnimatedSprite
 {
 	/*
 	 * Attributes
@@ -16,11 +16,13 @@ public class Kangaroo
 	
 	public Kangaroo() 
 	{
-		
+		super();
 	}
 	
-	public Kangaroo(Direction direction)
+	public Kangaroo(GameServerPacket gamePacket)
 	{
+		super();
 		
+		setPosition(gamePacket.x, gamePacket.y);
 	}
 }

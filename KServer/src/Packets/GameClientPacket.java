@@ -2,7 +2,7 @@ package Packets;
 
 import java.io.Serializable;
 
-public class KangarooClientPacket implements Serializable
+public class GameClientPacket implements Serializable
 {
 	/**
 	 * 

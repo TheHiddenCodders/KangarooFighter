@@ -1,6 +1,6 @@
 package Kangaroo;
 
-import Packets.KangarooServerPacket;
+import Packets.GameServerPacket;
 import Packets.PlayerPacket;
 import Utils.ServerUtils;
 import enums.Direction;
@@ -71,9 +71,9 @@ public class Player
 	/**
 	 * @return an updatekangaroopacket with this kangaroo data
 	 */
-	public KangarooServerPacket getUpdatePacket()
+	public GameServerPacket getGamePacket()
 	{
-		KangarooServerPacket p = new KangarooServerPacket();
+		GameServerPacket p = new GameServerPacket();
 		p.ip = getIp();
 		p.x = k.getPosition().x;
 		p.y = k.getPosition().y;

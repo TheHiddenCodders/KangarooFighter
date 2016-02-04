@@ -1,5 +1,6 @@
-package Class;
+package BlocsDisplays;
 
+import Class.Bloc;
 import Stages.HomeStage;
 
 import com.badlogic.gdx.Gdx;

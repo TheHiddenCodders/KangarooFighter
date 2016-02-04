@@ -1,5 +1,6 @@
-package Class;
+package BlocsDisplays;
 
+import Class.Display;
 import Packets.NewsPacket;
 
 import com.badlogic.gdx.Gdx;
