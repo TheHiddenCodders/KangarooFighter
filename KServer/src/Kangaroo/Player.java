@@ -8,41 +8,30 @@ import enums.Direction;
 public class Player 
 {
 	private String ip;
-	private String name = "";
 	private Kangaroo k;
-	//private Stats stats;
+	private PlayerPacket playerPacket;
 	
 	//private KangarooServerPacket networkImage;
 	//private KangarooClientPacket lastPacket;
 	
-	public Player()
+	public Player(PlayerPacket packet)
 	{
+		playerPacket = packet;
 	}
 	
 	public PlayerPacket getPacket()
-	{
-		PlayerPacket packet = new PlayerPacket(ip);
-		
-		packet.name = name;
-		packet.elo = 300000000; // stats.elo;
-		packet.games = 0; // stats.games;
-		packet.looses = 0; // stats.looses;
-		packet.wins = 0; // stats.games - stats.looses;
-		packet.pos = 0; // stats.pos;
-		packet.streak = 0; // ?
-		packet.friends = new PlayerPacket[1]; // ?
-		
-		return packet;
+	{		
+		return playerPacket;
 	}
 
 	public String getName() 
 	{
-		return name;
+		return playerPacket.name;
 	}
 
 	public void setName(String name) 
 	{
-		this.name = name;
+		this.playerPacket.name = name;
 	}
 
 	public String getIp() 

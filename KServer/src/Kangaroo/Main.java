@@ -68,7 +68,10 @@ public class Main
 					if (readPackets.get(i).getClass().isAssignableFrom(ConnectionPacket.class))
 					{
 						// When a client has been connected, create a player with his ip;
-						players.add(new Player());		
+						// TODO: Fill player packet
+						PlayerPacket playerPacket = new PlayerPacket(readPackets.get(i).getIp());
+						
+						players.add(new Player(playerPacket));		
 						players.get(players.size() - 1).setIp( readPackets.get(i).getIp());
 						
 						// Update serverInfo for clients
@@ -123,8 +126,8 @@ public class Main
 						HomePacket receivedPacket = (HomePacket) readPackets.get(i);
 						
 						// TODO fill packet
-						receivedPacket.ladderPlayers = new PlayerPacket[9];
-						receivedPacket.news = new NewsPacket[2];
+						receivedPacket = fillHomePacket(receivedPacket);
+						
 						
 						// Re send filled packet
 						server.sendBuffer.sendPacket(receivedPacket);
@@ -240,5 +243,26 @@ public class Main
 		
 		// If no player matching with the ip
 		return null;
+	}
+	
+	public static HomePacket fillHomePacket(HomePacket packet)
+	{
+		// Make tabs
+		packet.ladderPlayers = new PlayerPacket[9];
+		packet.news = new NewsPacket[2];
+		
+		// Get player
+		Player player = getPlayerFromIP(packet.getIp());
+		
+		// TODO: Get ladder pos
+		// TODO: Fill "ladderPlayers" with good player packets
+		
+		// TODO: Get news packets
+		// TODO: Fill "news" with the good news
+		
+		// TODO: Get server info packet
+		// TODO: Fill packet with
+		
+		return packet;
 	}
 }
