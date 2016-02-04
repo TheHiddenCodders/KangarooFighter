@@ -13,7 +13,7 @@ public class WaitingPlayer implements Runnable
 	/** sendPacket : a reference to the GameProcessor BufferPacket to send it the new mmPcket */
 	private BufferPacket gameProcessorBuffer;
 	/**  */
-	private boolean quit;
+	private volatile boolean quit;
 	
 	public WaitingPlayer(MatchMakingPacket mmPacket, BufferPacket sendPacket)
 	{
@@ -24,15 +24,15 @@ public class WaitingPlayer implements Runnable
 	}
 	
 	@Override
-	public void run() 
+	synchronized public void run() 
 	{
 		time = new Timer();
 		time.restart();
 		
 		// The player wait for 15 seconds
-		while (time.getElapsedTime() < 0.15 || !quit)
+		while (time.getElapsedTime() < 0.15 && !quit)
 		{
-			System.out.println("loop");
+			//System.out.println(mmPacket.getIp() + " " + time.getElapsedTime());
 		}
 		
 		// Compute the new tolerance
@@ -43,7 +43,7 @@ public class WaitingPlayer implements Runnable
 		{
 			// Send it to the GameProcessor
 			gameProcessorBuffer.sendPacket(mmPacket);
-			System.out.println(mmPacket.getIp() + " relaunch match making");
+			System.out.println(mmPacket.getIp() + " relaunch match making " + quit);
 		}
 		else 
 		{
@@ -51,7 +51,7 @@ public class WaitingPlayer implements Runnable
 		}
 	}
 	
-	public void quit()
+	synchronized public void quit()
 	{
 		this.quit = true;
 	}

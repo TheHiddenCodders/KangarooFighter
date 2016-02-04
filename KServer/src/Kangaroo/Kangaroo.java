@@ -77,8 +77,8 @@ public class Kangaroo
 	{
 		flip = !flip;
 		
-		for (int i = 0; i < animations.size(); i++)
-			animations.get(i).flip();
+		/*for (int i = 0; i < animations.size(); i++)
+			animations.get(i).flip();*/
 	}
 	
 	/*

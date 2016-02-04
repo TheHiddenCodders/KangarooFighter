@@ -14,7 +14,7 @@ public class Game
 	 * Attributes
 	 */
 
-	private Player p1, p2;
+	private Kangaroo k1, k2;
 	private Timer timer;	
 	private Texture background;
 	private GameStates state = GameStates.Created;
@@ -27,7 +27,7 @@ public class Game
 	{
 		super();
 		
-		p1 = new Player(gamePacket.playerData);
+		p1 = new Kangaroo(gamePacket.player);
 		p2 = new Player(gamePacket.opponentData);
 		
 		background = new Texture(Gdx.files.internal("sprites/gamestage/maps/" + gamePacket.mapPath + ".png"));

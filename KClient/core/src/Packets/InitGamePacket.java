@@ -16,7 +16,7 @@ public class InitGamePacket extends Packets
 	private static final long serialVersionUID = -2707492392522937092L;
 	
 	public KangarooServerPacket player, opponent;
-	public PlayerPacket playerData, opponentData;
+	public PlayerPacket opponentData;
 	public String mapPath;
 	public int playerWins;
 	public int opponentWins;
@@ -28,7 +28,6 @@ public class InitGamePacket extends Packets
 				+ "\n"
 				+ "[player]: " + /*player.toString() + */ "\n"
 				+ "[opponent]: " + /*opponent.toString() + */ "\n"
-				+ "[playerData]: " + playerData.toString() + "\n"
 				+ "[opponentData]: " + opponentData.toString() + "\n"
 				+ "[mapPath]: " + mapPath + "\n"
 				+ "[playerWins]: " + playerWins + "\n"

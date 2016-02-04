@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import Packets.MatchMakingPacket;
 import Packets.Packets;
 import Server.BufferPacket;
+import Utils.Timer;
 
 public class GameProcessor implements Runnable
 {
@@ -20,8 +21,8 @@ public class GameProcessor implements Runnable
 	
 	/** waitingPlayers : a list of reference on player waiting for play */
 	private ArrayList<MatchMakingPacket> waitingPlayers;
-	/** waitingThread : same size as waitingPlayers, allow the match making to stop thread if a player was found */
-	private ArrayList<WaitingPlayer> waitingThreads;
+	/** */
+	private ArrayList<Timer> waitingTimers;
 	/** connectedPlayer : a reference to all connected player */
 	private ArrayList<Player> connectedPlayers;
 	
@@ -40,9 +41,8 @@ public class GameProcessor implements Runnable
 		this.gameSender = new BufferPacket();
 		
 		this.waitingPlayers = new ArrayList<MatchMakingPacket>();
+		this.waitingTimers = new ArrayList<Timer>();
 		this.connectedPlayers = connectedPlayers;
-		
-		this.waitingThreads = new ArrayList<WaitingPlayer>();
 	}
 	
 	public int howManyPlayerWaiting()
@@ -53,6 +53,8 @@ public class GameProcessor implements Runnable
 	@Override
 	public void run() 
 	{
+		boolean findGame = false;
+		
 		while (true)
 		{
 			// Wait the receiving of packets
@@ -83,28 +85,45 @@ public class GameProcessor implements Runnable
 								{
 									System.err.println(getPlayerFromIp(waitingPlayers.get(i).getIp()).getName() + " vs " + getPlayerFromIp(mmPacket.getIp()).getName());
 									
-									// Stop the waiting thread of the second player and remove it.
-									//waitingThreads.get(i).interrupt();
-									waitingThreads.get(i).quit();
-									waitingThreads.remove(waitingThreads.get(i));
+									games.add(new Game(getPlayerFromIp(waitingPlayers.get(i).getIp()), getPlayerFromIp(mmPacket.getIp()), this));
 									
 									// Remove the opponent from the waiting list
 									waitingPlayers.remove(waitingPlayers.get(i));
+									waitingTimers.remove(waitingTimers.get(i));
 									
-									// TODO : create a game here (Nerisma add code, check it)
-									// games.add(new Game(waitingPlayers.get(i), getPlayerFromIp(mmPacket.getIp()), server?));
+									// Remove the current packet is the player was waiting
+									if (isWaiter(mmPacket) > -1)
+									{
+										waitingPlayers.remove(isWaiter(mmPacket));
+										waitingTimers.remove(isWaiter(mmPacket));
+									}
+									
+									findGame = true;
+									break;
 								}
 							}
 						}
 						// TODO : send gamePacket to the game
 					
 						// If no player match, then launch a waiting thread
-						waitingThreads.add(new WaitingPlayer(mmPacket, mainPackets));
-						Thread t = new Thread(waitingThreads.get(waitingThreads.size() - 1));
-						t.start();
 						
-						// Add this player in the list of waiters
-						waitingPlayers.add(mmPacket);
+						// If the player don't find game
+						if (!findGame)
+						{
+							// If he is waiting
+							if (isWaiter(mmPacket) > -1)
+							{
+								if (waitingTimers.get(isWaiter(mmPacket)).getElapsedTime() >= 5.f)
+									waitingPlayers.get(isWaiter(mmPacket)).eloTolerance += 0.5;
+							}
+							else
+							{
+								waitingPlayers.add(mmPacket);
+								waitingTimers.add(new Timer());
+								
+								mainPackets.sendPacket(mmPacket);
+							}
+						}
 					}
 					else // If the player quit the queue
 					{
@@ -136,6 +155,24 @@ public class GameProcessor implements Runnable
 		// Compute the elo rate between players
 		float eloRate = Math.abs(1 - (getPlayerFromIp(p1.getIp()).getElo() / getPlayerFromIp(p2.getIp()).getElo() * 100));
 		
-		return (eloRate < Math.min(p1.eloTolerance, p2.eloTolerance));
+		return (eloRate <= Math.min(p1.eloTolerance, p2.eloTolerance));
+	}
+	
+	/**
+	 * 
+	 * @param p : the player to check
+	 * @return the position of the player in the wanting list
+	 */
+	private int isWaiter(MatchMakingPacket p)
+	{
+		for (int i = 0; i < waitingPlayers.size(); i++)
+		{
+			if (waitingPlayers.get(i).getIp() == p.getIp())
+			{
+				return i;
+			}
+		}
+		
+		return -1;
 	}
 }

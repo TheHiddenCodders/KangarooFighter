@@ -9,6 +9,7 @@ import Packets.ConnectionPacket;
 import Packets.DisconnexionPacket;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
+import Packets.InitGamePacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
@@ -139,41 +140,6 @@ public class Main
 					else
 					{
 						System.err.println("Received an unknowned packet" + readPackets.get(i).getClass());
-					}
-					
-					// Just to test game (nerisma)
-					if (readPackets.get(i).getClass().isAssignableFrom(MatchMakingPacket.class))
-					{
-						// First packet received
-						if (p == null)
-						{
-							p = (MatchMakingPacket) readPackets.get(i);
-						}
-						else
-						{
-							MatchMakingPacket p2 = (MatchMakingPacket) readPackets.get(i);
-							GamePacket gamePacket = new GamePacket();
-							gamePacket.mapPath = "dojo";
-							
-							gamePacket.setIp(p.getIp());
-							gamePacket.playerData = getPlayerFromIP(p.getIp()).getPacket();
-							gamePacket.opponentData = getPlayerFromIP(p2.getIp()).getPacket();
-							
-							server.sendBuffer.sendPacket(gamePacket);
-							
-							gamePacket.setIp(p2.getIp());
-							gamePacket.opponentData = getPlayerFromIP(p.getIp()).getPacket();
-							gamePacket.playerData = getPlayerFromIP(p2.getIp()).getPacket();
-							
-							server.sendBuffer.sendPacket(gamePacket);
-							
-							/*
-							 *  FIX: Second packet isn't send to the good client, he used the same ip that is contained
-							 *  by packet 1, he should use the ip contained by p2 packet
-							 */
-							
-							p = null;
-						}
 					}
 					
 					// TODO : manage the creation of games when receiving MatchMakingPacket
