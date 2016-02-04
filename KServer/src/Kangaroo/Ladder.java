@@ -38,6 +38,7 @@ public class Ladder
 			// Read the file
 			while (line != null)
 			{
+				// TODO : Add all PlayerPaket attribute in ladder save file
 				// Create a player packet for each line
 				ladder.add(createPacketFromLine(line));
 				line = reader.readLine();
