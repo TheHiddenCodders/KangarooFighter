@@ -57,22 +57,21 @@ public class Game implements Runnable
 	
 	/** Allow communication with game processor */
 	private GameProcessor gp;
+	/** p1 & p2 : the 2 playersin the game */
 	private Player p1 = null, p2 = null;
+	/** mapIndex : the index of the map (background) */
 	private int mapIndex;
-	private Timer timer;
-	private float time;
+	/** timer : compute the time of the game */
+	//private Timer timer;
+	/** time ; the current time of the game */
+	//private float time;
+	/**  */
 	private GameStates state;
+	/** gamePackets : packets received from GameProcessor */
 	private ArrayList<Packets> gamePackets;
 	
-	/*
-	 * Constructors
-	 */
-	
-	/**
-	 * Create a game with one kangaroo and wait for one other.
-	 * 
-	 * @param k1 the kangaroo who create the game
-	 * 
+	/** Constructor : Create a game with one kangaroo and wait for one other.
+	 * @param k1 the kangaroo who create the game.
 	 */
 	public Game(Player p1, GameProcessor gp)
 	{
@@ -87,28 +86,19 @@ public class Game implements Runnable
 		mapIndex = r.nextInt(map.length);
 	}
 	
-	/**
-	 * Create a game with two kangaroos and launch it.
-	 * 
+	/** Constructor : Create a game with two kangaroos and launch it.
 	 * @param k1 the first kangaroo of the game
 	 * @param k2 the second kangaroo of the game
-	 * 
 	 */
 	public Game(Player p1, Player p2, GameProcessor gp)
 	{
 		this(p1, gp);
 		linkKangaroo(p2);
 	}
-	
-	/*
-	 * Methods
-	 */
-	
-	/**
-	 * Link a second kangaroo to this game
-	 * 
+
+
+	/** Link a second kangaroo to this game
 	 * @param k2 the second kangaroo who join the game
-	 * 
 	 */
 	public void linkKangaroo(Player p2)
 	{
@@ -147,8 +137,7 @@ public class Game implements Runnable
 		}
 	}
 	
-	/**
-	 * Get the game packet depending of the kangaroo k
+	/** Get the game packet depending of the kangaroo k
 	 * @param k
 	 * @return game packet
 	 */

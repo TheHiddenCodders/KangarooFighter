@@ -9,7 +9,6 @@ import Packets.ConnectionPacket;
 import Packets.DisconnexionPacket;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
-import Packets.InitGamePacket;
 import Packets.LadderDataPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;

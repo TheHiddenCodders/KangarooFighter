@@ -14,12 +14,18 @@ import Utils.Timer;
 
 public class Ladder 
 {
-	
+	/** ladder : A list containing players order by elo*/
 	private ArrayList<PlayerPacket> ladder;
+	
+	/** saveBuffer : A buffer allowing communication with save thread */
 	private BufferPacket saveBuffer;
 	
+	/** Constructor : create a game with the path to the save file.
+	 * @param filePath : the path to the ladder file
+	 */
 	public Ladder(String filePath)
 	{
+		// Create objects
 		saveBuffer = new BufferPacket();
 		ladder = new ArrayList<PlayerPacket>();
 		
@@ -35,15 +41,17 @@ public class Ladder
 			line = reader.readLine();
 			
 			
-			// Read the file
+			// Read each line
 			while (line != null)
 			{
 				// TODO : Add all PlayerPaket attribute in ladder save file
+				
 				// Create a player packet for each line
 				ladder.add(createPacketFromLine(line));
 				line = reader.readLine();
 			}
 			
+			// Close the file
 			reader.close();
 			
 		} 
@@ -56,7 +64,7 @@ public class Ladder
 			e.printStackTrace();
 		}
 		
-		// When ladder is initiated, lauch a thread to save file each minute
+		// When ladder is initiated, launch a thread to save the ladder file each minute
 		Thread t = new Thread(new Runnable()
 		{
 			@Override
@@ -82,6 +90,7 @@ public class Ladder
 					{
 						if (packetToSave.get(i).getClass().isAssignableFrom(PlayerPacket.class))
 						{
+							// Save the packets
 							savingPacket = (PlayerPacket) packetToSave.get(i);
 							
 							// TODO : save data in file here
@@ -98,22 +107,30 @@ public class Ladder
 		int begin, end;
 		PlayerPacket[] result;
 		
-		// Find where the ladder start
-		if (position - 5 < 0)
-			begin = 0;
-		else
-			begin = position - 5;
+		// - Find where the ladder start -
+		begin = position - 3;
 		
-		// Find where the ladder end
-		if (position + 5 > ladder.size())
+		// If the first block is before the list
+		if (begin < 0) 
+		{
+			// Start from the first bloc
+			begin = 0;
+		}
+		
+		// - Find where the ladder end - 
+		end = begin + 9;
+		
+		// If the last block is after the list
+		if (end > ladder.size())
+		{
+			// End the ladder to the last
 			end = ladder.size();
-		else
-			end = position + 5;
+		}
 			
-		// Create the object
+		// - Create the object -
 		result = new PlayerPacket[end - begin];
 		
-		// Fill the result in
+		// - Fill the result in -
 		for (int i = 0; i < end-begin; i++)
 		{
 			result[i] = ladder.get(i + begin);
@@ -122,14 +139,21 @@ public class Ladder
 		return result;
 	}
 	
+	/** Create a packet with a line of the ladder file
+	 * @param line : a line from ladder file
+	 * @return A new PlayerPacket containing the packet store in the ladder file
+	 */
 	private PlayerPacket createPacketFromLine(String line)
 	{
+		// Create the packet
 		PlayerPacket packet = new PlayerPacket();
 		
+		// Fill it in
 		packet.pos = Integer.parseInt(line.split(" | ")[0]);
 		packet.name = line.split(" | ")[2];
 		packet.elo = Integer.parseInt(line.split(" | ")[4]);
 		
+		// Return it
 		return packet;
 	}
 	

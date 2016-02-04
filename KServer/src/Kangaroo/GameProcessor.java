@@ -21,15 +21,13 @@ public class GameProcessor implements Runnable
 	
 	/** waitingPlayers : a list of reference on player waiting for play */
 	private ArrayList<MatchMakingPacket> waitingPlayers;
-	/** */
+	/** waitingTimers : compute the time a player is waiting*/
 	private ArrayList<Timer> waitingTimers;
 	/** connectedPlayer : a reference to all connected player */
 	private ArrayList<Player> connectedPlayers;
 	
 	/** a copy of received packets */
 	private ArrayList<Packets> packets;
-	/** */
-	private MatchMakingPacket mmPacket;
 	
 	public GameProcessor(ArrayList<Player> connectedPlayers, BufferPacket sender)
 	{
@@ -69,7 +67,7 @@ public class GameProcessor implements Runnable
 					System.out.println("GameProcessor : receive a MatchMakingPacket");
 					
 					// Get the match making packet
-					mmPacket = (MatchMakingPacket) packet;
+					 MatchMakingPacket mmPacket = (MatchMakingPacket) packet;
 					
 					// If the player search a game (want to play)
 					if (mmPacket.search)
@@ -105,32 +103,30 @@ public class GameProcessor implements Runnable
 						}
 						// TODO : send gamePacket to the game
 					
-						// If no player match, then launch a waiting thread
+						// - If no player match, then launch a waiting thread -
 						
 						// If the player don't find game
 						if (!findGame)
 						{
-							// If he is waiting
-							if (isWaiter(mmPacket) > -1)
+							// If it is a new player
+							if (isWaiter(mmPacket) == -1)
 							{
-								//if (waitingTimers.get(isWaiter(mmPacket)).getElapsedTime() >= 5.f)
-									//waitingPlayers.get(isWaiter(mmPacket)).eloTolerance += 0.5;
-							}
-							else
-							{
+								// Create a new player and launch his associated timer
 								waitingPlayers.add(mmPacket);
 								waitingTimers.add(new Timer());
-								
-								//mainPackets.sendPacket(mmPacket);
 							}
 							
+							// Browse all the waiting player
 							for (int i = 0; i < waitingPlayers.size(); i++)
 							{
+								// If they wait for more than 5 seconds
 								if (waitingTimers.get(isWaiter(mmPacket)).getElapsedTime() >= 5.f)
 								{
+									// Raise the tolerance
 									waitingPlayers.get(isWaiter(mmPacket)).eloTolerance += 0.5;
-									mainPackets.sendPacket(mmPacket);
 									
+									// Try to find an opponent
+									mainPackets.sendPacket(mmPacket);
 								}
 							}
 						}
@@ -160,6 +156,11 @@ public class GameProcessor implements Runnable
 		return null;
 	}
 	
+	/** Tell if two player can launch a game together.
+	 * @param p1 : the first player
+	 * @param p2 : the second player
+	 * @return true if players can launch a game, else otherwise
+	 */
 	private boolean isMatching(MatchMakingPacket p1, MatchMakingPacket p2)
 	{
 		// Compute the elo rate between players
@@ -168,21 +169,23 @@ public class GameProcessor implements Runnable
 		return (eloRate <= Math.min(p1.eloTolerance, p2.eloTolerance));
 	}
 	
-	/**
-	 * 
+	/** Tell if a players have already waited
 	 * @param p : the player to check
 	 * @return the position of the player in the wanting list
 	 */
 	private int isWaiter(MatchMakingPacket p)
 	{
+		// Brawse the list of waiting players
 		for (int i = 0; i < waitingPlayers.size(); i++)
 		{
+			// If the player is found
 			if (waitingPlayers.get(i).getIp() == p.getIp())
 			{
 				return i;
 			}
 		}
 		
+		// If the player is nor waiting
 		return -1;
 	}
 }
