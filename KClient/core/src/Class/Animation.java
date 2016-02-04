@@ -16,7 +16,7 @@ public class Animation
 	private int currentFrame;
 	private float fps;
 	private Timer timer;
-	private boolean resume = true;
+	private boolean resume;
 	
 	/*
 	 * Constructors
@@ -27,6 +27,7 @@ public class Animation
 		currentFrame = 0;
 		fps = 1;
 		timer = new Timer();
+		resume = false;
 	}
 	
 	/**
@@ -34,18 +35,19 @@ public class Animation
 	 * @param sheet (to cut)
 	 * @param dimensions (of a frame)
 	 */
-	public Animation(Texture sheet, Rectangle dimensions)
+	public Animation(String name, Texture sheet, Rectangle dimensions)
 	{
 		this();
+		
+		// Set name
+		this.name = name;
 		
 		// Set number of frames
 		frames = new TextureRegion[(int) (sheet.getWidth() / dimensions.width)];
 		
 		// Cut the sheet into frames
 		for (int frame = 0; frame < frames.length; frame++)
-		{
-			frames[frame] =new TextureRegion(sheet, dimensions.x, dimensions.y, dimensions.width, dimensions.height);
-		}
+			frames[frame] =new TextureRegion(sheet, (int) (dimensions.x + frame * dimensions.width), (int) dimensions.y, (int) dimensions.width, (int) dimensions.height);
 	}
 	
 	/*

@@ -28,7 +28,7 @@ public class AnimatedSprite extends Actor
 	@Override
 	public void act(float delta) 
 	{
-		
+		getCurrentAnimation().update(delta);
 		super.act(delta);
 	}
 	

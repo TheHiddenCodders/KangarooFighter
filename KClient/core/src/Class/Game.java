@@ -27,10 +27,13 @@ public class Game
 	{
 		super();
 		
+		// Init kangaroos
 		player = new Kangaroo(gamePacket.player);
 		opponent = new Kangaroo(gamePacket.opponent);
 		
+		// Init map
 		background = new Texture(Gdx.files.internal("sprites/gamestage/maps/" + gamePacket.mapPath));
+		
 		timer = new Timer();
 	}
 	
@@ -44,11 +47,13 @@ public class Game
 		if (state == GameStates.Running)
 		{
 			timer.update();
+			player.act(delta);
+			opponent.act(delta);
 		}
 	}	
 	
 	/*
-	 * Getters
+	 * Getters - Setters
 	 */
 	
 	public Texture getBackground()
