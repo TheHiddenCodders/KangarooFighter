@@ -25,14 +25,11 @@ public class Main
 	public static BufferedInputStream inputReader;
 	public static String msg = "";
 	
-	/** games : an ArrayList containing all games*/
-	//static ArrayList<Game> games;
 	static GameProcessor gp;
 	/** players : an ArrayList containing all thz connected players*/
 	static ArrayList<Player> players;
-	
-	// Just to test game (nerisma)
-	static MatchMakingPacket p;
+	/** ladder : contain the game ladder */
+	static Ladder ladder;
 	
 	public static void main(String[] args) throws IOException
 	{
@@ -41,6 +38,8 @@ public class Main
 		// Launch server threads
 		Server server = new Server();
 		server.open();
+		
+		ladder = new Ladder("/KangarooFighters/Ladder/elo");
 
 		players = new ArrayList<Player>();
 		gp = new GameProcessor(players, server.sendBuffer);
@@ -83,7 +82,7 @@ public class Main
 					if (readPackets.get(i).getClass().isAssignableFrom(DisconnexionPacket.class))
 					{
 						// Remove the disconnected player
-						players.remove(getPlayerFromIP(readPackets.get(i).getIp()));
+						players.remove(getPlayerFromIp(readPackets.get(i).getIp()));
 					}
 					/*
 					 * Receive Login packet 
@@ -101,7 +100,7 @@ public class Main
 						if (receivedPacket.accepted)
 						{				
 							// Send to the client his data
-							server.sendBuffer.sendPacket(getPlayerFromIP(receivedPacket.getIp()).getPacket());
+							server.sendBuffer.sendPacket(getPlayerFromIp(receivedPacket.getIp()).getPacket());
 							
 							// Send to the client the last news
 							server.sendBuffer.sendPacket(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName(), receivedPacket.getIp()));		
@@ -188,7 +187,7 @@ public class Main
 				{
 					packet.pwdMatch = true;
 					packet.accepted = true;				
-					getPlayerFromIP(packet.getIp()).setName(packet.pseudo);
+					getPlayerFromIp(packet.getIp()).setName(packet.pseudo);
 					break;
 				}
 				else
@@ -228,7 +227,7 @@ public class Main
 	 * @param ip
 	 * @return the associated kangaroo or null if no kangaroo exist with this ip
 	 */
-	public static Player getPlayerFromIP(String ip)
+	public static Player getPlayerFromIp(String ip)
 	{
 		// Browse the list of connected players
 		for (Player player : players)
@@ -252,11 +251,10 @@ public class Main
 		packet.ladderPlayers = new PlayerPacket[9];
 		packet.news = new NewsPacket[2];
 		
-		// Get player
-		Player player = getPlayerFromIP(packet.getIp());
 		
 		// TODO: Get ladder pos
 		// TODO: Fill "ladderPlayers" with good player packets
+		ladder.getLadderFromPosition(getPlayerFromIp(packet.getIp()).getPacket().pos);
 		
 		// TODO: Get news packets
 		// TODO: Fill "news" with the good news

@@ -1,11 +1,14 @@
 package Packets;
 
 
+
 public class HomePacket extends Packets
 {	
 	public HomePacket(String ip) 
 	{
 		super(ip);
+		
+		ladderPlayers = new PlayerPacket[9];
 	}
 
 	public HomePacket() 
@@ -26,6 +29,8 @@ public class HomePacket extends Packets
 	public String toString()
 	{
 		return super.toString() 
+				+ "\n"
+				+ "- [ladderPlayers]: " + ladderPlayers.toString()
 				+ "\n";
 	}
 }
