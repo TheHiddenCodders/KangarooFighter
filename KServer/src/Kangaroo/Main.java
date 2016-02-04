@@ -68,7 +68,7 @@ public class Main
 					if (readPackets.get(i).getClass().isAssignableFrom(ConnectionPacket.class))
 					{
 						// When a client has been connected, create a player with his ip;
-						// TODO: Fill player packet
+						// TODO : fill playerPacket in -> ServerUtils.getPlayerDataPacket
 						PlayerPacket playerPacket = new PlayerPacket(readPackets.get(i).getIp());
 						
 						players.add(new Player(playerPacket));		
@@ -214,6 +214,7 @@ public class Main
 		for (int i = 0; i < players.size(); i++)
 		{
 			// If the player is found
+			System.out.println(players.get(i).getName());
 			if (players.get(i).getName().equals(pseudo))
 				return players.get(i);
 		}
