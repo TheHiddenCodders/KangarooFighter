@@ -2,7 +2,6 @@ package Stages;
 
 import Class.ConnectedStage;
 import Class.Game;
-import Class.Kangaroo;
 import Client.Main;
 import Enums.GameStates;
 import Packets.ClientReadyPacket;
@@ -29,7 +28,6 @@ public class GameStage extends ConnectedStage
 	
 	private Image background;
 	private Label time;
-	private Kangaroo player, opponent;
 
 	/*
 	 * Constructors
@@ -73,6 +71,8 @@ public class GameStage extends ConnectedStage
 	protected void initDataNeededComponents()
 	{
 		background = new Image(game.getBackground());
+		addActor(game.getKPlayer());
+		addActor(game.getKOpponent());
 	}
 
 	@Override

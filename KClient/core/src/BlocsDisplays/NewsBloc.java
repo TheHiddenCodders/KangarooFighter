@@ -1,5 +1,6 @@
-package Class;
+package BlocsDisplays;
 
+import Class.Bloc;
 import Packets.NewsPacket;
 import Stages.HomeStage;
 

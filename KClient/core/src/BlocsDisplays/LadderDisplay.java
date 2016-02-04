@@ -1,15 +1,16 @@
-package Class;
+package BlocsDisplays;
 
-import Stages.HomeStage;
+import Class.Display;
+import Packets.PlayerPacket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 
-
-public class FriendsBloc extends Bloc
+public class LadderDisplay extends Display 
 {
 	/*
 	 * Attributes
@@ -27,30 +28,24 @@ public class FriendsBloc extends Bloc
 	 * Constructors
 	 */
 	
-	public FriendsBloc(HomeStage homeStage) 
+	public LadderDisplay(PlayerPacket[] ladderPlayers, Skin skin) 
 	{
-		super(homeStage);
+		super(skin);
 		
 		// Set position and background
-		setPosition(535, 50);
-		setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/background.png")));
-		
-		// Set display
-		setDisplay(new FriendsDisplay(skin));
+		setBackground(new Texture(Gdx.files.internal("sprites/homestage/displays/ladder/background.png")));
 		
 		// Title
-		title = new Label("Amis", new LabelStyle(skin.getFont("korean"), Color.WHITE));
+		title = new Label("Classement", new LabelStyle(skin.getFont("korean"), Color.WHITE));
 		title.setPosition(getWidth() / 2 - title.getWidth() / 2, getHeight() - title.getHeight() - 5); 
 		addActor(title);
 	}
-	
-	/*
-	 * Methods
-	 */
-	
+
 	@Override
-	public void refresh() {
+	public void refresh()
+	{
 		// TODO Auto-generated method stub
 
 	}
+
 }

@@ -16,7 +16,6 @@ public class Player
 	private int wins;
 	private int pos;
 	private PlayerPacket[] friends;
-	private Kangaroo k;
 	
 	/*
 	 * Constructors
@@ -45,16 +44,6 @@ public class Player
 		wins = packet.wins;
 		pos = packet.pos;
 		friends = packet.friends;
-	}
-	
-	public void createKangaroo()
-	{
-		k = new Kangaroo(Direction.RIGHT);
-	}
-	
-	public Kangaroo getKangaroo()
-	{
-		return k;
 	}
 
 	public String getName() {

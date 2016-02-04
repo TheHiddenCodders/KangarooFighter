@@ -27,11 +27,10 @@ public class Game
 	{
 		super();
 		
-		p1 = new Player(gamePacket.playerData);
-		p2 = new Player(gamePacket.opponentData);
+		player = new Kangaroo(gamePacket.player);
+		opponent = new Kangaroo(gamePacket.opponent);
 		
 		background = new Texture(Gdx.files.internal("sprites/gamestage/maps/" + gamePacket.mapPath + ".png"));
-		System.err.println("sprites/gamestage/maps/" + gamePacket.mapPath + ".png");
 		timer = new Timer();
 	}
 	
@@ -55,6 +54,16 @@ public class Game
 	public Texture getBackground()
 	{
 		return background;
+	}
+	
+	public Kangaroo getKPlayer()
+	{
+		return player;
+	}
+	
+	public Kangaroo getKOpponent()
+	{
+		return opponent;
 	}
 	
 	public float getTime()
