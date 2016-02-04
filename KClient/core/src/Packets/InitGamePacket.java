@@ -28,7 +28,6 @@ public class InitGamePacket extends Packets
 		return super.toString()
 				+ "\n"
 				+ "[player]: " + /*player.toString() + */ "\n"
-				+ "[opponent]: " + /*opponent.toString() + */ "\n"
 				+ "[opponentData]: " + opponentData.toString() + "\n"
 				+ "[mapPath]: " + mapPath + "\n"
 				+ "[playerWins]: " + playerWins + "\n"

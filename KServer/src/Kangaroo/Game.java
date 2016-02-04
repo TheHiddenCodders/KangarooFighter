@@ -50,8 +50,8 @@ public class Game implements Runnable
 	/** The map paths */
 	public static String[] map =
 	{
-		"sprites/dojo.png",
-		"sprites/ponton.png"
+		"dojo.png",
+		"ponton.png"
 	};
 
 	

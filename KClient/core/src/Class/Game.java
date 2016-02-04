@@ -30,7 +30,7 @@ public class Game
 		player = new Kangaroo(gamePacket.player);
 		opponent = new Kangaroo(gamePacket.opponent);
 		
-		background = new Texture(Gdx.files.internal("sprites/gamestage/maps/" + gamePacket.mapPath + ".png"));
+		background = new Texture(Gdx.files.internal("sprites/gamestage/maps/" + gamePacket.mapPath));
 		timer = new Timer();
 	}
 	
