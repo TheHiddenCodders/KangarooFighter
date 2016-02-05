@@ -3,9 +3,6 @@ package Packets;
 
 public class ClientReadyPacket extends Packets
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6842609063504303426L;
 
 	public ClientReadyPacket() 

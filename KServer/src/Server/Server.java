@@ -168,59 +168,6 @@ public class Server
 		return null;
 	}
 	
-	/** Send an object to the client #clientIndex
-	 * @param clientIndex the index of the client, -1 all clients
-	 * @param o the object to send
-	 * 
-	 */
-	/*public void send(int clientIndex, Object o)
-	{
-		if ( clientIndex == -1)
-		{
-			for (int i = 0; i < clients.size(); i++)
-				clients.get(i).send(o);
-			
-			System.out.println("Sent to ALL:" + o.toString() + "\n");
-		}
-		else if ( clientIndex >= 0 && clientIndex < clients.size() )
-		{
-			clients.get(clientIndex).send(o);
-			System.out.println("Sent to :"
-			+ clients.get(clientIndex).getIp()
-			+ ": "		
-			+ o.toString() + "to client n°" + clientIndex + "\n");
-		}
-	}*/
-	
-	/** Send an object to a specific client
-	 * @param cp a reference to the client
-	 * @param o the object to send
-	 * 
-	 */
-	/*public void send(ClientProcessor cp, Object o)
-	{
-		for (int i = 0; i < clients.size(); i++)
-		{
-			if (clients.get(i) == cp)
-			{
-				send(i, o);
-				break;
-			}
-		}
-	}*/
-	
-	/*public void sendExcept(ClientProcessor cp, Object o)
-	{
-		for (int i = 0; i < clients.size(); i++)
-		{
-			if (clients.get(i) != cp)
-			{
-				send(i, o);
-				break;
-			}
-		}
-	}*/
-	
 	/**
 	 * @return The port listening by the server
 	 */

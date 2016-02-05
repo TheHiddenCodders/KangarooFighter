@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import Packets.ClientReadyPacket;
 import Packets.ConnectionPacket;
 import Packets.DisconnexionPacket;
 import Packets.FriendsPacket;
@@ -132,15 +133,18 @@ public class Main
 						
 					}
 					if (readPackets.get(i).getClass().isAssignableFrom(MatchMakingPacket.class))
-					{					
-						System.out.println("Send a MatchMackingPacket to the GameProcessor");
-						
+					{
+						// Send this packet to the GameProcessor
+						gp.mainPackets.sendPacket(readPackets.get(i));
+					}
+					if (readPackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
+					{
 						// Send this packet to the GameProcessor
 						gp.mainPackets.sendPacket(readPackets.get(i));
 					}
 					else
 					{
-						System.err.println("Received an unknowned packet" + readPackets.get(i).getClass());
+						System.err.println("Main thread : Received an unknowned packet" + readPackets.get(i).getClass());
 					}
 					
 					// TODO : manage the creation of games when receiving MatchMakingPacket
