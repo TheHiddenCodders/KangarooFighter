@@ -109,7 +109,7 @@ public class Ladder
 		
 		// - Find where the ladder start -
 		begin = position - 3;
-		
+
 		// If the first block is before the list
 		if (begin < 0) 
 		{

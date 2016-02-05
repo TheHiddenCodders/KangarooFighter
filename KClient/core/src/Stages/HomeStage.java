@@ -82,6 +82,7 @@ public class HomeStage extends ConnectedStage
 	protected void initDataNeededComponents()
 	{
 		ladderBloc = new LadderBloc(homePacket.ladderPlayers, this);
+		ladderBloc.refresh(homePacket);
 		friendsBloc = new FriendsBloc(this);
 		persoBloc = new PersoBloc(this);
 		newsBloc = new NewsBloc(homePacket.news[0], this);
@@ -161,10 +162,6 @@ public class HomeStage extends ConnectedStage
 			
 			// Store packet
 			this.homePacket = homePacket;
-			
-			// Test integrety of data
-			for (int i = 0; i < homePacket.ladderPlayers.length; i++)
-				System.out.println(homePacket.ladderPlayers[i].name);
 			
 			if (main.player != null)
 				initDataReceived();

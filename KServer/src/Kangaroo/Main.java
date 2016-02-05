@@ -255,8 +255,7 @@ public class Main
 		packet.news = new NewsPacket[2];
 		
 		
-		// TODO: Get ladder pos
-		// TODO: Fill "ladderPlayers" with good player packets
+		// TODO: Set position of the player before doing this
 		packet.ladderPlayers = ladder.getLadderFromPosition(getPlayerFromIp(packet.getIp()).getPacket().pos);
 		
 		// TODO: Get news packets

@@ -34,7 +34,7 @@ public class NewsDisplay extends Display
 	}
 
 	@Override
-	public void refresh()
+	public void refresh(Object data)
 	{
 		// TODO Auto-generated method stub
 

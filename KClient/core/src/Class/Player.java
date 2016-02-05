@@ -1,6 +1,5 @@
 package Class;
 
-import Enums.Direction;
 import Packets.PlayerPacket;
 
 public class Player 

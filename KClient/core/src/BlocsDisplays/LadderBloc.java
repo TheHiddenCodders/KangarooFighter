@@ -51,8 +51,8 @@ public class LadderBloc extends Bloc
 	 */
 	
 	@Override
-	public void refresh() {
-		// TODO Auto-generated method stub
-
+	public void refresh(Object data) 
+	{
+		display.refresh(data);
 	}
 }

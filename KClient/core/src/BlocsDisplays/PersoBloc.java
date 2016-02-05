@@ -94,7 +94,7 @@ public class PersoBloc extends Bloc
 	 */
 	
 	@Override
-	public void refresh() {
+	public void refresh(Object data) {
 		// TODO Auto-generated method stub
 
 	}
