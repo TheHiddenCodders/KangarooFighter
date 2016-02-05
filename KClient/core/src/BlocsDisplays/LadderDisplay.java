@@ -77,9 +77,6 @@ public class LadderDisplay extends Display
 			elo[i] = new Label("", skin);
 			elo[i].setColor(Color.TAN);
 			
-			
-			
-			
 			addActor(rank[i]);
 			addActor(name[i]);
 			addActor(games[i]);
