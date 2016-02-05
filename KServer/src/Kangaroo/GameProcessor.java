@@ -3,7 +3,6 @@ package Kangaroo;
 import java.util.ArrayList;
 
 import Packets.ClientReadyPacket;
-import Packets.GameClientPacket;
 import Packets.GameReadyPacket;
 import Packets.MatchMakingPacket;
 import Packets.Packets;

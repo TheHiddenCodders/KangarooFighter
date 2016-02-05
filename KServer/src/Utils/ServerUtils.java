@@ -18,7 +18,6 @@ import java.util.Date;
 import Kangaroo.Player;
 import Packets.ClientDataPacket;
 import Packets.FriendsPacket;
-import Packets.LadderDataPacket;
 import Packets.NewsPacket;
 
 public class ServerUtils
@@ -208,7 +207,6 @@ public class ServerUtils
 			e.printStackTrace();
 		}
 		
-		packet.pos = getLadderPosition(p);
 		return packet;
 	}
 	
@@ -467,118 +465,6 @@ public class ServerUtils
 		{
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * @return the ladder data packet
-	 */
-	public static LadderDataPacket getLadderDataPacket()
-	{
-		LadderDataPacket packet = new LadderDataPacket();
-		packet.ladder = new ArrayList<String>();
-		
-		File ladderFile = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Ladder/elo"));
-		
-		try
-		{
-			BufferedReader reader = new BufferedReader(new FileReader(ladderFile));
-			
-			String line = reader.readLine();
-			
-			while (line != null)
-			{
-				line = reader.readLine();
-				
-				if (line != null)
-					packet.ladder.add(line);
-			}
-			
-			reader.close();
-			
-		} catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		} catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-		
-		return packet;
-	}
-	
-	/**
-	 * @return the ladder data packet
-	 */
-	public static LadderDataPacket getLadderDataPacket(Player p)
-	{		
-		return getLadderDataPacket(p.getName());
-	}
-	/**
-	 * @return the ladder data packet
-	 */
-	public static LadderDataPacket getLadderDataPacket(String name)
-	{
-		LadderDataPacket packet = new LadderDataPacket();
-		packet.ladder = new ArrayList<String>();
-		
-		File ladderFile = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Ladder/elo"));
-		
-		try
-		{
-			BufferedReader reader = new BufferedReader(new FileReader(ladderFile));
-			
-			String line = reader.readLine();
-			
-			while (line != null)
-			{
-				line = reader.readLine();
-				
-				if (line != null)
-					packet.ladder.add(line);
-			}
-			
-			reader.close();
-			
-		} catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		} catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-		
-		packet.playerPos = getLadderPosition(name);
-		
-		return packet;
-	}
-	
-	/**
-	 * Return ladder position of the kangaroo k
-	 * @param k
-	 * @return
-	 */
-	public static int getLadderPosition(Player p)
-	{
-		return getLadderPosition(p.getName());
-	}
-	
-	/**
-	 * Return ladder position of the kangaroo named name
-	 * @param name
-	 * @return
-	 */
-	public static int getLadderPosition(String name)
-	{
-		LadderDataPacket data = getLadderDataPacket();
-		for (int i = 0; i < data.ladder.size(); i++)
-		{
-			String line = data.ladder.get(i);
-			
-			if (line.split(" | ")[2].equals(name))
-				return i + 1;
-		}
-		
-		return -1;
 	}
 	
 	/****************************************************************

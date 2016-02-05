@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import Packets.LadderPacket;
 import Packets.Packets;
 import Packets.PlayerPacket;
 import Server.BufferPacket;
@@ -102,10 +103,10 @@ public class Ladder
 		t.start();
 	}
 	
-	public PlayerPacket[] getLadderFromPosition(int position)
+	public LadderPacket getLadderFromPosition(int position)
 	{
+		LadderPacket result = new LadderPacket();
 		int begin, end;
-		PlayerPacket[] result;
 		
 		// - Find where the ladder start -
 		begin = position - 3;
@@ -117,7 +118,7 @@ public class Ladder
 			begin = 0;
 		}
 		
-		// - Find where the ladder end - 
+		// Find where the ladder end
 		end = begin + 9;
 		
 		// If the last block is after the list
@@ -126,15 +127,10 @@ public class Ladder
 			// End the ladder to the last
 			end = ladder.size();
 		}
-			
-		// - Create the object -
-		result = new PlayerPacket[end - begin];
 		
-		// - Fill the result in -
+		// Fill the result in
 		for (int i = 0; i < end-begin; i++)
-		{
-			result[i] = ladder.get(i + begin);
-		}
+			result.addPlayer(ladder.get(i + begin));
 		
 		return result;
 	}

@@ -10,7 +10,7 @@ import Packets.ConnectionPacket;
 import Packets.DisconnexionPacket;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
-import Packets.LadderDataPacket;
+import Packets.LadderPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.NewsPacket;
@@ -110,7 +110,7 @@ public class Main
 							server.sendBuffer.sendPacket(new FriendsPacket(receivedPacket.getIp()));
 							
 							// Send to the client the ladder and his position
-							server.sendBuffer.sendPacket(new LadderDataPacket(receivedPacket.getIp()));
+							server.sendBuffer.sendPacket(new LadderPacket(receivedPacket.getIp()));
 							
 							// Send to his connected friends he is connected
 							// TODO : send packets to his friends
@@ -251,15 +251,13 @@ public class Main
 	public static HomePacket fillHomePacket(HomePacket packet)
 	{
 		// Make tabs
-		packet.ladderPlayers = new PlayerPacket[9];
-		packet.news = new NewsPacket[2];
-		
 		
 		// TODO: Set position of the player before doing this
-		packet.ladderPlayers = ladder.getLadderFromPosition(getPlayerFromIp(packet.getIp()).getPacket().pos);
+		packet.ladder = ladder.getLadderFromPosition(getPlayerFromIp(packet.getIp()).getPacket().pos);
 		
 		// TODO: Get news packets
 		// TODO: Fill "news" with the good news
+		packet.news = new NewsPacket[2];
 		
 		// TODO: Get server info packet
 		// TODO: Fill packet with

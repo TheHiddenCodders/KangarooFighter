@@ -2,7 +2,6 @@ package Server;
 
 import Packets.HomePacket;
 import Packets.NewsPacket;
-import Packets.PlayerPacket;
 import Packets.ServerInfoPacket;
 
 /**
@@ -53,7 +52,7 @@ public class PacketFactory
 	private static HomePacket getFilledHomePacket(HomePacket packet)
 	{
 		packet.news = new NewsPacket[2];
-		packet.ladderPlayers = new PlayerPacket[5];
+		//packet.ladderPlayers = new PlayerPacket[5];
 		packet.serverInfos = new ServerInfoPacket();
 		
 		return packet;
