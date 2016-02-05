@@ -124,11 +124,10 @@ public class Main
 						// Cast packet
 						HomePacket receivedPacket = (HomePacket) readPackets.get(i);
 						
-						// TODO fill packet
+						// Fill the packet
 						receivedPacket = fillHomePacket(receivedPacket);
 						
-						
-						// Re send filled packet
+						// Send filled packet
 						server.sendBuffer.sendPacket(receivedPacket);
 						
 					}

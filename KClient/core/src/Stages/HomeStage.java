@@ -81,7 +81,7 @@ public class HomeStage extends ConnectedStage
 	@Override
 	protected void initDataNeededComponents()
 	{
-		ladderBloc = new LadderBloc(homePacket.ladderPlayers, this);
+		ladderBloc = new LadderBloc(homePacket.ladder, this);
 		ladderBloc.refresh(homePacket);
 		friendsBloc = new FriendsBloc(this);
 		persoBloc = new PersoBloc(this);
@@ -196,7 +196,7 @@ public class HomeStage extends ConnectedStage
 	 */
 	public void showBlocs()
 	{
-		addActor(ladderBloc = new LadderBloc(homePacket.ladderPlayers, this));
+		addActor(ladderBloc = new LadderBloc(homePacket.ladder, this));
 		addActor(friendsBloc = new FriendsBloc(this));
 		addActor(persoBloc = new PersoBloc(this));
 		addActor(newsBloc = new NewsBloc(homePacket.news[0], this));

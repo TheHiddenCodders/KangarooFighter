@@ -13,13 +13,13 @@ public class HomePacket extends Packets
 	public HomePacket(String ip) 
 	{
 		super(ip);
-		
 		ladder = new LadderPacket();
 	}
 
 	public HomePacket() 
 	{
 		super();
+		ladder = new LadderPacket();
 	}
 	
 	@Override
