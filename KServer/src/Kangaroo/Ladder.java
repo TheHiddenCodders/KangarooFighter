@@ -21,7 +21,7 @@ public class Ladder
 	/** saveBuffer : A buffer allowing communication with save thread */
 	private BufferPacket saveBuffer;
 	
-	/** Constructor : create a game with the path to the save file.
+	/** Constructor : create the ladder with the path to the save file.
 	 * @param filePath : the path to the ladder file
 	 */
 	public Ladder(String filePath)
