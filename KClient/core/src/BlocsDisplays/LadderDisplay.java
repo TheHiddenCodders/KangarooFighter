@@ -101,6 +101,13 @@ public class LadderDisplay extends Display
 				wins[i].setText(String.valueOf(packet.ladder.ladderList.get(i).wins));
 				loses[i].setText(String.valueOf(packet.ladder.ladderList.get(i).looses));
 				elo[i].setText(String.valueOf(packet.ladder.ladderList.get(i).elo));
+				
+				rank[i].setPosition(0 + 58 / 2 - rank[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
+				name[i].setPosition(23 + 92 / 2 - name[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
+				games[i].setPosition(390 + 92 / 2 - games[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
+				wins[i].setPosition(484 + 92 / 2 - wins[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
+				loses[i].setPosition(576 + 92 / 2 - loses[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
+				elo[i].setPosition(660 + 92 / 2 - elo[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
 			}
 		}
 	}
