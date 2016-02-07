@@ -85,7 +85,7 @@ public class ClientProcessor implements Runnable
 				break;
 			}
 			
-			// Send the received packet to the server programm
+			// Send the received packet to the server program
 			server.readBuffer.sendPacket(receivedPacket);
 		}
 		

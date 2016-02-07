@@ -2,6 +2,7 @@ package BlocsDisplays;
 
 import Class.Display;
 import Packets.HomePacket;
+import Packets.LadderPacket;
 import Packets.PlayerPacket;
 
 import com.badlogic.gdx.Gdx;
@@ -34,7 +35,7 @@ public class LadderDisplay extends Display
 	 * Constructors
 	 */
 	
-	public LadderDisplay(PlayerPacket[] ladderPlayers, Skin skin) 
+	public LadderDisplay(LadderPacket ladder, Skin skin) 
 	{
 		super(skin);
 		
@@ -94,12 +95,12 @@ public class LadderDisplay extends Display
 			HomePacket packet = (HomePacket) data;
 			for (int i = 0; i < rank.length; i++)
 			{
-				rank[i].setText(String.valueOf(packet.ladderPlayers[i].pos));
-				name[i].setText(packet.ladderPlayers[i].name);
-				games[i].setText(String.valueOf(packet.ladderPlayers[i].games));
-				wins[i].setText(String.valueOf(packet.ladderPlayers[i].wins));
-				loses[i].setText(String.valueOf(packet.ladderPlayers[i].looses));
-				elo[i].setText(String.valueOf(packet.ladderPlayers[i].elo));
+				rank[i].setText(String.valueOf(packet.ladder.ladderList.get(i).pos));
+				name[i].setText(packet.ladder.ladderList.get(i).name);
+				games[i].setText(String.valueOf(packet.ladder.ladderList.get(i).games));
+				wins[i].setText(String.valueOf(packet.ladder.ladderList.get(i).wins));
+				loses[i].setText(String.valueOf(packet.ladder.ladderList.get(i).looses));
+				elo[i].setText(String.valueOf(packet.ladder.ladderList.get(i).elo));
 				
 				rank[i].setPosition(0 + 58 / 2 - rank[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
 				name[i].setPosition(23 + 92 / 2 - name[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);

@@ -1,6 +1,5 @@
 package Animations;
 
-import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -137,7 +136,7 @@ public class ServerAnimation
 						ypoints[k / 2] = (int) y;
 					}
 					
-					temp.addPoly(new Polygon(xpoints, ypoints, xpoints.length));
+					//temp.addPoly(new Polygon(xpoints, ypoints, xpoints.length));
 				}				
 				hitboxes.add(temp);
 			}
@@ -200,8 +199,8 @@ public class ServerAnimation
 	{
 		for (int i = 0; i < hitboxes.size(); i++)
 		{
-			hitboxes.get(i).translateX((int) (x - hitboxes.get(i).x));
-			hitboxes.get(i).translateY((int) (y - hitboxes.get(i).y));
+			hitboxes.get(i).translateX((int) (x - hitboxes.get(i).getGlobalHitbox().x));
+			hitboxes.get(i).translateY((int) (y - hitboxes.get(i).getGlobalHitbox().y));
 		}
 	}
 	
