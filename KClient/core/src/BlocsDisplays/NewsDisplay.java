@@ -1,5 +1,6 @@
-package Class;
+package BlocsDisplays;
 
+import Class.Display;
 import Packets.NewsPacket;
 
 import com.badlogic.gdx.Gdx;
@@ -33,7 +34,7 @@ public class NewsDisplay extends Display
 	}
 
 	@Override
-	public void refresh()
+	public void refresh(Object data)
 	{
 		// TODO Auto-generated method stub
 

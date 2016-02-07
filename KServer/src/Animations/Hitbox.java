@@ -1,7 +1,5 @@
 package Animations;
 
-import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
@@ -13,9 +11,8 @@ public class Hitbox
 	 * Attributes
 	 */
 	
-	public ArrayList<Polygon> polygons;
-	public float x = 0, y = 0;
-	public float w = 0, h = 0;
+	public ArrayList<Rectangle> rectangles;
+	private Rectangle globalHitbox;
 	
 	/*
 	 * Constructors
@@ -26,7 +23,8 @@ public class Hitbox
 	 */
 	public Hitbox()
 	{
-		polygons = new ArrayList<Polygon>();
+		rectangles = new ArrayList<Rectangle>();
+		globalHitbox = new Rectangle();
 	}
 	
 	/**
@@ -36,13 +34,13 @@ public class Hitbox
 	public Hitbox(Hitbox hitbox)
 	{
 		this();
-		x = hitbox.x;
-		y = hitbox.y;
 		
-		for (int i = 0; i < hitbox.polygons.size(); i++)
+		globalHitbox.setLocation(hitbox.getGlobalHitbox().x, hitbox.getGlobalHitbox().y);
+		
+		for (int i = 0; i < hitbox.rectangles.size(); i++)
 		{
-			Polygon temp = new Polygon(hitbox.polygons.get(i).xpoints, hitbox.polygons.get(i).ypoints, hitbox.polygons.get(i).npoints);
-			addPoly(temp);
+			Rectangle temp = new Rectangle(hitbox.rectangles.get(i));
+			addRectangle(temp);
 		}
 	}
 	
@@ -56,8 +54,11 @@ public class Hitbox
 	 */
 	public void translateX(int value)
 	{
-		x += value;
-		for (Polygon a : polygons)
+		// Translate the global hitbox
+		globalHitbox.translate(value, 0);
+			
+		// Translate each rectangle
+		for (Rectangle a : rectangles)
 			a.translate(value, 0);
 	}
 	
@@ -67,8 +68,11 @@ public class Hitbox
 	 */
 	public void translateY(int value)
 	{
-		y += value;
-		for (Polygon a : polygons)
+		// Translate the global hitbox
+		globalHitbox.translate(0, value);
+
+		// Translate each rectangle
+		for (Rectangle a : rectangles)
 			a.translate(0, value);
 	}
 	
@@ -79,46 +83,28 @@ public class Hitbox
 	 * @param polygons2
 	 * @return bodyPart[0] = bodyPart of this and bodyPart[1] = polygons2 bodyPart
 	 */
-	public BodyPart[] collidWith(Hitbox polygons2)
+	public BodyPart[] collidWith(Hitbox otherHitbox)
 	{
-		BodyPart a, b;
-		for(int i = 0; i < polygons.size(); i++)
+		BodyPart[] parts = new BodyPart[2];
+		
+		// Browse all rectangles of the current hitbox
+		for(int i = 0; i < rectangles.size(); i++)
 		{
-			a = BodyPart.values()[i];
-			for(int j = 0; j < polygons2.polygons.size(); j++)
+			parts[0] = BodyPart.values()[i];
+			
+			// Browse all rectangles of the hitbox in parameter
+			for(int j = 0; j < otherHitbox.rectangles.size(); j++)
 			{
-				b = BodyPart.values()[j];
-				if ((a == BodyPart.LEFTPUNCH || a == BodyPart.RIGHTPUNCH) && polygonIntersectPolygon(polygons.get(i), polygons2.polygons.get(j)))
-				{
-					BodyPart[] parts = new BodyPart[2];
-					parts[0] = a;
-					parts[1] = b;
-					//System.out.println(a + " hit " + b);
+				parts[1] = BodyPart.values()[j];
+				
+				// If the rectangles are colliding, then return the two parts
+				if (rectangles.get(i).contains(otherHitbox.rectangles.get(j)))
 					return parts;
-				}
 			}
 		}
 		
+		// If the two hitboxes aren't colliding
 		return null;
-	}
-	
-	/**
-	 * Determines if the two polygons supplied intersect each other, by checking if either polygon has points which are contained in the other. 
-	 * (It doesn't detect body-only intersections, but is sufficient in most cases.) 
-	*/ 
-	public static boolean polygonIntersectPolygon(Polygon p1, Polygon p2)
-	{
-		Point p; 
-		for(int i = 0; i < p2.npoints;i++)
-		{
-			p = new Point(p2.xpoints[i],p2.ypoints[i]); if(p1.contains(p)) return true; 
-		} 
-		
-		for(int i = 0; i < p1.npoints;i++) 
-		{
-			p = new Point(p1.xpoints[i],p1.ypoints[i]); if(p2.contains(p)) return true;
-		}
-		return false;
 	}
 	
 	/**
@@ -127,32 +113,16 @@ public class Hitbox
 	 */
 	public void flip()
 	{			
-		for (Polygon a : polygons)
-			polyFlip(a);
-	}
-	
-	/**
-	 * Flip a single polygon (ONLY TESTED ON RECTANGLES)
-	 * @param poly to flip
-	 */
-	private void polyFlip(Polygon poly)
-	{		
-		// Reverse 
-		for (int i = 0; i < poly.npoints; i++)
-		{
-			poly.xpoints[i] -= x;
-			poly.xpoints[i] = (int) (w - poly.xpoints[i]);
-			poly.xpoints[i] += x;
-		}
+		// TODO : Flip hitboxes
 	}
 	
 	@Override
 	public String toString() 
 	{
 		String temp = "";
-		for (Polygon poly : polygons)
+		for (Rectangle rect : rectangles)
 		{
-			temp.concat(poly.toString());
+			temp.concat(rect.toString());
 			temp = temp.concat("\n");
 		}
 		return temp;
@@ -162,41 +132,21 @@ public class Hitbox
 	 * Getters & Setters
 	 */
 	
-	public void addBox(Rectangle box)
+	private void addRectangle(Rectangle temp) 
 	{
-		Polygon temp = new Polygon();
-		temp.addPoint(box.x, box.y);
-		temp.addPoint(box.x + box.width, box.y);
-		temp.addPoint(box.x + box.width, box.y + box.height);
-		temp.addPoint(box.x, box.y + box.height);
-		addPoly(temp);
-	}
-	
-	public void addPoly(Polygon poly)
-	{
-		for (int i = 0; i < poly.npoints; i++)
-		{
-			w = Math.max(w, poly.xpoints[i]);
-			h = Math.max(h, poly.ypoints[i]);
-		}
+		rectangles.add(temp);
 		
-		poly.translate((int) x, (int) y);
-		polygons.add(poly);
-	}
-	
-	public void addPolyWithoutTransform(Polygon poly)
-	{
-		polygons.add(poly);
-	}
-	
-	public void removePoly(Polygon poly)
-	{
-		polygons.remove(poly);
+		// TODO : Recompute the global hitbox
 	}
 	
 	public void setSize(int w, int h)
 	{
-		this.w = w; 
-		this.h = h;
+		// TODO : check if the new size contain all rectangle
+		globalHitbox.setSize(w, h);
+	}
+	
+	public Rectangle getGlobalHitbox()
+	{
+		return globalHitbox;
 	}
 }

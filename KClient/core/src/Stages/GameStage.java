@@ -2,15 +2,19 @@ package Stages;
 
 import Class.ConnectedStage;
 import Class.Game;
-import Class.Kangaroo;
+import Class.ProgressBar;
 import Client.Main;
 import Enums.GameStates;
 import Packets.ClientReadyPacket;
-import Packets.GamePacket;
 import Packets.GameReadyPacket;
+import Packets.InitGamePacket;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 
 public class GameStage extends ConnectedStage 
 {
@@ -20,26 +24,26 @@ public class GameStage extends ConnectedStage
 	
 	private Game game;
 	
-	/** When timer reach this value, pre-game stage is over */
-	private static final float DELAY = 1f;
-	
 	/*
 	 * Components
 	 */
 	
 	private Image background;
+	private ProgressBar playerBar, opponentBar;
 	private Label time;
-	private Kangaroo player, opponent;
+	private Label playerName, opponentName;
 
 	/*
 	 * Constructors
 	 */
 	
-	public GameStage(Main main, GamePacket gamePacket)
+	public GameStage(Main main, InitGamePacket gamePacket)
 	{
 		super(main);
 		
 		game = new Game(gamePacket);
+		game.getKPlayer().setName(main.player.getName());
+		game.getKOpponent().setName(gamePacket.opponentData.name);
 		
 		initDataReceived();
 	}
@@ -72,7 +76,21 @@ public class GameStage extends ConnectedStage
 	@Override
 	protected void initDataNeededComponents()
 	{
+		// Init map
 		background = new Image(game.getBackground());
+		
+		// Init bars TODO: determine which one need to be left or right
+		playerBar = new ProgressBar(new Texture(Gdx.files.internal("sprites/gamestage/sheetbar.png")), 0, 100, game.getKPlayer().getHealth());
+		playerBar.setPosition(800 - playerBar.getWidth() - 5, 480 - playerBar.getHeight() - 10);
+		playerBar.flip();		
+		opponentBar = new ProgressBar(new Texture(Gdx.files.internal("sprites/gamestage/sheetbar.png")), 0, 100, game.getKOpponent().getHealth());
+		opponentBar.setPosition(5, 480 - opponentBar.getHeight() - 10);
+		
+		// Init names TODO: determine which one need to be left or right
+		playerName = new Label(game.getKPlayer().getName(), new LabelStyle(main.skin.getFont("default-font"), new Color(0.3f, 0.3f, 0.3f, 1)));
+		playerName.setPosition(this.getWidth() - playerName.getWidth() - 82, this.getHeight() - playerName.getHeight() - 37);
+		opponentName = new Label(game.getKOpponent().getName(), new LabelStyle(main.skin.getFont("default-font"), new Color(0.3f, 0.3f, 0.3f, 1)));
+		opponentName.setPosition(80, this.getHeight() - opponentName.getHeight() - 37);
 	}
 
 	@Override
@@ -107,15 +125,21 @@ public class GameStage extends ConnectedStage
 	protected void addActors() 
 	{
 		addActor(time);
-		
-		main.network.send(new ClientReadyPacket());
 	}
 
 	@Override
 	protected void addInitDataNeededActors() 
 	{
 		addActor(background);
+		addActor(game.getKPlayer());
+		addActor(game.getKOpponent());
+		addActor(playerBar);
+		addActor(opponentBar);
+		addActor(playerName);
+		addActor(opponentName);
+	
 		game.setState(GameStates.Loaded);
+		main.network.send(new ClientReadyPacket());
 	}
 
 	@Override

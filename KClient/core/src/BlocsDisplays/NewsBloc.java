@@ -1,5 +1,6 @@
-package Class;
+package BlocsDisplays;
 
+import Class.Bloc;
 import Packets.NewsPacket;
 import Stages.HomeStage;
 
@@ -54,7 +55,7 @@ public class NewsBloc extends Bloc
 	 */
 	
 	@Override
-	public void refresh() {
+	public void refresh(Object data) {
 		// TODO Auto-generated method stub
 
 	}

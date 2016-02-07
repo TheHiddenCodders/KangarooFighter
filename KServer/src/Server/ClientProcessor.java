@@ -82,12 +82,10 @@ public class ClientProcessor implements Runnable
 			// If the client has been disconnected
 			if (receivedObject.getClass().isAssignableFrom(DisconnexionPacket.class))
 			{
-				// Send disconnection packet to the server program
-				server.readBuffer.sendPacket(new DisconnectionPacket(this.getIp()));
 				break;
 			}
 			
-			// Send the received packet to the server programm
+			// Send the received packet to the server program
 			server.readBuffer.sendPacket(receivedPacket);
 		}
 		
@@ -97,6 +95,9 @@ public class ClientProcessor implements Runnable
 		{
 			// Try to close the socket
 			client.close();
+			
+			// Send disconnection packet to the server program
+			server.readBuffer.sendPacket(new DisconnectionPacket(this.getIp()));
 			
 			System.out.println("Recive Thread : the client : " + getIp() + "has been disconncted");
 		} 

@@ -1,5 +1,6 @@
-package Class;
+package BlocsDisplays;
 
+import Class.Bloc;
 import Stages.HomeStage;
 
 import com.badlogic.gdx.Gdx;
@@ -93,7 +94,7 @@ public class PersoBloc extends Bloc
 	 */
 	
 	@Override
-	public void refresh() {
+	public void refresh(Object data) {
 		// TODO Auto-generated method stub
 
 	}

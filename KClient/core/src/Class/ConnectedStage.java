@@ -10,7 +10,7 @@ public abstract class ConnectedStage extends Stage
 	 * Attributes
 	 */
 	
-	protected Main main;
+	public Main main;
 	
 	/** This value need to be set to true when data that apply a change is received */
 	private boolean dataReceived;

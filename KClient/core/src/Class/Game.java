@@ -1,7 +1,7 @@
 package Class;
 
 import Enums.GameStates;
-import Packets.GamePacket;
+import Packets.InitGamePacket;
 import Utils.Timer;
 
 import com.badlogic.gdx.Gdx;
@@ -14,7 +14,7 @@ public class Game
 	 * Attributes
 	 */
 
-	private Player p1, p2;
+	private Kangaroo player, opponent;
 	private Timer timer;	
 	private Texture background;
 	private GameStates state = GameStates.Created;
@@ -23,15 +23,17 @@ public class Game
 	 * Constructors
 	 */
 	
-	public Game(GamePacket gamePacket) 
+	public Game(InitGamePacket gamePacket) 
 	{
 		super();
 		
-		p1 = new Player(gamePacket.playerData);
-		p2 = new Player(gamePacket.opponentData);
+		// Init kangaroos
+		player = new Kangaroo(gamePacket.player);
+		opponent = new Kangaroo(gamePacket.opponent);
 		
-		background = new Texture(Gdx.files.internal("sprites/gamestage/maps/" + gamePacket.mapPath + ".png"));
-		System.err.println("sprites/gamestage/maps/" + gamePacket.mapPath + ".png");
+		// Init map
+		background = new Texture(Gdx.files.internal("sprites/gamestage/maps/" + gamePacket.mapPath));
+		
 		timer = new Timer();
 	}
 	
@@ -45,16 +47,28 @@ public class Game
 		if (state == GameStates.Running)
 		{
 			timer.update();
+			player.act(delta);
+			opponent.act(delta);
 		}
 	}	
 	
 	/*
-	 * Getters
+	 * Getters - Setters
 	 */
 	
 	public Texture getBackground()
 	{
 		return background;
+	}
+	
+	public Kangaroo getKPlayer()
+	{
+		return player;
+	}
+	
+	public Kangaroo getKOpponent()
+	{
+		return opponent;
 	}
 	
 	public float getTime()

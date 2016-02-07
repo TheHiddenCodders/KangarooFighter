@@ -1,12 +1,18 @@
 package Packets;
 
-import java.io.Serializable;
 
-public class PlayerPacket implements Serializable
+public class PlayerPacket extends Packets
 {
-	/**
-	 * 
-	 */
+	public PlayerPacket(String ip) 
+	{
+		super(ip);
+	}
+
+	public PlayerPacket() 
+	{
+		super();
+	}
+
 	private static final long serialVersionUID = -1319262982236758754L;
 	
 	public String name;
@@ -28,7 +34,7 @@ public class PlayerPacket implements Serializable
 				+ "- [wins]: " + wins + "\n"
 				+ "- [looses]: " + looses + "\n"
 				+ "- [elo]: " + elo + "\n"
-				+ "- [streak]: " + streak + "\n"
-				+ "- [friends]: " + friends.toString() + "\n";
+				+ "- [streak]: " + streak + "\n";
+				//+ "- [friends]: " + friends.toString() + "\n";
 	}
 }

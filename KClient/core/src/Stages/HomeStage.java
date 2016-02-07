@@ -1,13 +1,13 @@
 package Stages;
 
+import BlocsDisplays.FriendsBloc;
+import BlocsDisplays.LadderBloc;
+import BlocsDisplays.NewsBloc;
+import BlocsDisplays.PersoBloc;
 import Class.ConnectedStage;
-import Class.FriendsBloc;
-import Class.LadderBloc;
-import Class.NewsBloc;
-import Class.PersoBloc;
 import Client.Main;
-import Packets.GamePacket;
 import Packets.HomePacket;
+import Packets.InitGamePacket;
 import Packets.MatchMakingPacket;
 
 import com.badlogic.gdx.Gdx;
@@ -25,7 +25,7 @@ public class HomeStage extends ConnectedStage
 	 */
 	
 	private HomePacket homePacket;
-	private GamePacket gamePacket;
+	private InitGamePacket gamePacket;
 	private boolean searchingGame = false;
 	
 	/*
@@ -81,7 +81,8 @@ public class HomeStage extends ConnectedStage
 	@Override
 	protected void initDataNeededComponents()
 	{
-		ladderBloc = new LadderBloc(homePacket.ladderPlayers, this);
+		ladderBloc = new LadderBloc(homePacket.ladder, this);
+		ladderBloc.refresh(homePacket);
 		friendsBloc = new FriendsBloc(this);
 		persoBloc = new PersoBloc(this);
 		newsBloc = new NewsBloc(homePacket.news[0], this);
@@ -166,9 +167,9 @@ public class HomeStage extends ConnectedStage
 				initDataReceived();
 		}
 		
-		if (data.getClass().isAssignableFrom(GamePacket.class))
+		if (data.getClass().isAssignableFrom(InitGamePacket.class))
 		{
-			GamePacket gamePacket = (GamePacket) data;
+			InitGamePacket gamePacket = (InitGamePacket) data;
 			
 			// Store packet
 			this.gamePacket = gamePacket;
@@ -195,7 +196,7 @@ public class HomeStage extends ConnectedStage
 	 */
 	public void showBlocs()
 	{
-		addActor(ladderBloc = new LadderBloc(homePacket.ladderPlayers, this));
+		addActor(ladderBloc = new LadderBloc(homePacket.ladder, this));
 		addActor(friendsBloc = new FriendsBloc(this));
 		addActor(persoBloc = new PersoBloc(this));
 		addActor(newsBloc = new NewsBloc(homePacket.news[0], this));

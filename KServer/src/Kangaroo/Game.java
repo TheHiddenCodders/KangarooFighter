@@ -1,11 +1,14 @@
 package Kangaroo;
 
+import java.util.ArrayList;
 import java.util.Random;
 
-import Packets.GamePacket;
+import Packets.ClientReadyPacket;
+import Packets.GameClientPacket;
+import Packets.GameReadyPacket;
+import Packets.InitGamePacket;
 import Packets.Packets;
 import Server.BufferPacket;
-import Server.Server;
 import Utils.Timer;
 import enums.GameStates;
 
@@ -51,107 +54,154 @@ public class Game implements Runnable
 	/** The map paths */
 	public static String[] map =
 	{
-		"sprites/dojo.png",
-		"sprites/ponton.png"
+		"dojo.png",
+		"ponton.png"
 	};
-	/*
-	 * Attributes
-	 */
-	private Server server;
+	
+	// - Game Infos -
+	/** gp : a reference to the GameProcessor allowing communication */
+	private GameProcessor gp;
+	/** p1 & p2 : the 2 players in the game */
 	private Player p1 = null, p2 = null;
+	/** mapIndex : the index of the map (background) */
 	private int mapIndex;
-	private Timer timer;
-	private float time;
-	private BufferPacket readBuffer;
+	/** timer : compute the time of the game */
+	//private Timer timer;
+	/** time ; the current time of the game */
+	//private float time;
+	/**  */
 	private GameStates state;
 	
-	/*
-	 * Constructors
-	 */
+	// - Game Communication -
+	/** gameSend : send packet to games */
+	public BufferPacket gameSender;
+	/** gamePackets : packets received from GameProcessor */
+	private ArrayList<Packets> gamePackets;
 	
-	/**
-	 * Create a game with one kangaroo and wait for one other.
-	 * 
-	 * @param k1 the kangaroo who create the game
-	 * 
+	/** Constructor : Create a game with one kangaroo and wait for one other.
+	 * @param k1 the kangaroo who create the game.
 	 */
-	public Game(Player p1, Server server)
+	public Game(Player p1, GameProcessor gp)
 	{
-		this.server = server;
+		this.gp = gp;
+		this.gameSender = new BufferPacket();
+		
+		// Store the first player and create is kangaroo
 		this.p1 = p1;
 		this.p1.createKangaroo();
+		this.gamePackets = new ArrayList<Packets>();
 		
+		// Set the state of the game
 		setState(GameStates.Waiting);
 		
+		// Choose randomly a map
 		Random r = new Random(System.currentTimeMillis());
 		mapIndex = r.nextInt(map.length);
 	}
 	
-	/**
-	 * Create a game with two kangaroos and launch it.
-	 * 
+	/** Constructor : Create a game with two kangaroos and launch it.
 	 * @param k1 the first kangaroo of the game
 	 * @param k2 the second kangaroo of the game
-	 * 
 	 */
-	public Game(Player p1, Player p2, Server server)
+	public Game(Player p1, Player p2, GameProcessor gp)
 	{
-		this(p1, server);
+		// Create the first kangaroo
+		this(p1, gp);
+		
+		// Create the second one and initiate the game
 		linkKangaroo(p2);
 	}
-	
-	/*
-	 * Methods
-	 */
-	
-	/**
-	 * Link a second kangaroo to this game
-	 * 
+
+
+	/** Link a second kangaroo to this game
 	 * @param k2 the second kangaroo who join the game
-	 * 
 	 */
 	public void linkKangaroo(Player p2)
 	{
+		// Create the econd kangaroo
 		this.p2 = p2;
 		p2.createKangaroo();
 		
+		// Set the state of the game
 		setState(GameStates.Prepared);
 		
-		server.sendBuffer.sendPacket((Packets) getGamePacket(p1));
-		server.sendBuffer.sendPacket((Packets) getGamePacket(p2));
+		// Prevent players that game is ready
+		gp.mainSender.sendPacket((Packets) getInitPacket(p1));
+		gp.mainSender.sendPacket((Packets) getInitPacket(this.p2));
 	}
 	
 	// Game update 
 	@Override
 	public void run() 
 	{
-		// TODO : The game update here.
+		// The game is updated when it receive a packet (synchrone)
+		
+		// Create an object for each readable packet
+		InitGamePacket initPacket;
+		ClientReadyPacket readyPacket;
+		GameClientPacket clientPacket; 
+		
+		// Play the game until the end
+		while (state != GameStates.ended)
+		{
+			// Wait for new packets
+			gamePackets = gameSender.readPackets();
+			
+			for (int i = 0; i < gamePackets.size(); i++)
+			{
+				if (gamePackets.get(i).getClass().isAssignableFrom(InitGamePacket.class))
+				{
+					initPacket = (InitGamePacket) gamePackets.get(i);
+				}
+				else if (gamePackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
+				{
+					readyPacket = (ClientReadyPacket) gamePackets.get(i);
+					
+					// TODO : store which player is ready. When both are ready send GameReadyPacket
+				}
+				else if (gamePackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
+				{
+					clientPacket = (GameClientPacket) gamePackets.get(i);
+					
+					// TODO : Game update here
+					// update(clientPacket);
+					
+					// TODO : Send the evolution to the sender using sendPacket
+				}
+				else
+				{
+					System.err.println("Game thread : received unreadable packet : " + gamePackets.get(i).getClass());
+				}
+			}
+		}
 	}
 	
-	/**
-	 * Get the game packet depending of the kangaroo k
+	/** Get the game packet depending of the kangaroo k
 	 * @param k
 	 * @return game packet
 	 */
-	public GamePacket getGamePacket(Player p)
+	public InitGamePacket getInitPacket(Player p)
 	{
-		GamePacket gamePacket = new GamePacket();
+		// Create the packet
+		InitGamePacket gamePacket = new InitGamePacket();
 		
+		// - Fill the packet in, player need to receive himself as first -
 		gamePacket.mapPath = map[mapIndex]; 
 		
-		// Player need to receive himself as first
 		if (p == p1)
 		{
-			gamePacket.player = p1.getUpdatePacket();
-			gamePacket.opponent = p2.getUpdatePacket();
+			gamePacket.setIp(p1.getIp());
+			gamePacket.player = p1.getGamePacket();
+			gamePacket.opponent = p2.getGamePacket();
 			gamePacket.opponentData = p2.getPacket();
 			gamePacket.playerWins = p1.getKangaroo().getWins();
 			gamePacket.opponentWins = p2.getKangaroo().getWins();
 		}
 		else if (p == p2)
 		{
-			gamePacket.player = p2.getUpdatePacket();
-			gamePacket.opponent = p1.getUpdatePacket();
+			gamePacket.setIp(p2.getIp());
+			gamePacket.player = p2.getGamePacket();
+			gamePacket.opponent = p1.getGamePacket();
 			gamePacket.opponentData = p1.getPacket();
 			gamePacket.playerWins = p2.getKangaroo().getWins();
 			gamePacket.opponentWins = p1.getKangaroo().getWins();
@@ -168,5 +218,50 @@ public class Game implements Runnable
 	public void setState(GameStates state) 
 	{
 		this.state = state;
+	}
+	
+	/** Update the game with info received from one of the player
+	 * @param packet : The packet sent by the player
+	 */
+	private void update(GameClientPacket packet)
+	{
+		// TODO : the update of game here
+	}
+	
+	/** Return the opponent
+	 * @param p
+	 * @return
+	 */
+	private Player getOpponent(Player p)
+	{
+		if (p == p1)
+			return p2;
+		
+		return p1;
+	}
+	
+	private Player getPlayerFromIp(String ip)
+	{
+		if (p1.getIp() == ip)
+			return p1;
+		
+		return p2;
+	}
+	
+	// WARNING : Could have concurrent problems
+	/** Tell if a player is inside the game
+	 * @param ip : the player's ip
+	 * @return true if the player is in this game, false otherwise
+	 */
+	public boolean isInside(String ip)
+	{
+		// Check if the player is inside
+		if (p1.getIp().equals(ip))
+			return true;
+		else if (p2.getIp().equals(ip))
+			return true;
+		
+		// If the player is not in this game, then return false
+		return false;
 	}
 }

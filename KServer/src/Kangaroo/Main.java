@@ -5,11 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import Packets.ClientReadyPacket;
 import Packets.ConnectionPacket;
+import Packets.DisconnexionPacket;
 import Packets.FriendsPacket;
-import Packets.GamePacket;
 import Packets.HomePacket;
-import Packets.LadderDataPacket;
+import Packets.LadderPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.NewsPacket;
@@ -24,22 +25,28 @@ public class Main
 	public static BufferedInputStream inputReader;
 	public static String msg = "";
 	
-	/** games : an ArrayList containing all games*/
-	static ArrayList<Game> games;
+	static GameProcessor gp;
 	/** players : an ArrayList containing all thz connected players*/
 	static ArrayList<Player> players;
-	
-	// Just to test game (nerisma)
-	static MatchMakingPacket p;
+	/** ladder : contain the game ladder */
+	static Ladder ladder;
 	
 	public static void main(String[] args) throws IOException
 	{
 		System.out.println("Main thread : Creation of server data");
+		
+		// Launch server threads
 		Server server = new Server();
 		server.open();
 		
-		games = new ArrayList<Game>();
+		ladder = new Ladder("/KangarooFighters/Ladder/elo");
+
 		players = new ArrayList<Player>();
+		gp = new GameProcessor(players, server.sendBuffer);
+		
+		// Launch game threads
+		Thread t = new Thread(gp);
+		t.start();
 		
 		// readPackets : an ArrayList containing the packet received from clients
 		ArrayList<Packets> readPackets = new ArrayList<Packets>();
@@ -60,11 +67,22 @@ public class Main
 					if (readPackets.get(i).getClass().isAssignableFrom(ConnectionPacket.class))
 					{
 						// When a client has been connected, create a player with his ip;
-						players.add(new Player());		
+						// TODO : fill playerPacket in -> ServerUtils.getPlayerDataPacket
+						PlayerPacket playerPacket = new PlayerPacket(readPackets.get(i).getIp());
+						
+						players.add(new Player(playerPacket));		
 						players.get(players.size() - 1).setIp( readPackets.get(i).getIp());
 						
 						// Update serverInfo for clients
 						//serverInfoUpdated(cp, ServerInfoType.ExceptMe);
+					}
+					/*
+					 * Receive a DisconnexionPacket
+					 */
+					if (readPackets.get(i).getClass().isAssignableFrom(DisconnexionPacket.class))
+					{
+						// Remove the disconnected player
+						players.remove(getPlayerFromIp(readPackets.get(i).getIp()));
 					}
 					/*
 					 * Receive Login packet 
@@ -82,7 +100,7 @@ public class Main
 						if (receivedPacket.accepted)
 						{				
 							// Send to the client his data
-							server.sendBuffer.sendPacket(getPlayerFromIP(receivedPacket.getIp()).getPacket());
+							server.sendBuffer.sendPacket(getPlayerFromIp(receivedPacket.getIp()).getPacket());
 							
 							// Send to the client the last news
 							server.sendBuffer.sendPacket(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName(), receivedPacket.getIp()));		
@@ -92,7 +110,7 @@ public class Main
 							server.sendBuffer.sendPacket(new FriendsPacket(receivedPacket.getIp()));
 							
 							// Send to the client the ladder and his position
-							server.sendBuffer.sendPacket(new LadderDataPacket(receivedPacket.getIp()));
+							server.sendBuffer.sendPacket(new LadderPacket(receivedPacket.getIp()));
 							
 							// Send to his connected friends he is connected
 							// TODO : send packets to his friends
@@ -106,48 +124,26 @@ public class Main
 						// Cast packet
 						HomePacket receivedPacket = (HomePacket) readPackets.get(i);
 						
-						// TODO fill packet
-						receivedPacket.ladderPlayers = new PlayerPacket[9];
-						receivedPacket.news = new NewsPacket[2];
+						// Fill the packet
+						receivedPacket = fillHomePacket(receivedPacket);
 						
-						// Re send filled packet
+						// Send filled packet
 						server.sendBuffer.sendPacket(receivedPacket);
 						
 					}
-					
-					// Just to test game (nerisma)
 					if (readPackets.get(i).getClass().isAssignableFrom(MatchMakingPacket.class))
 					{
-						// First packet received
-						if (p == null)
-						{
-							p = (MatchMakingPacket) readPackets.get(i);
-						}
-						else
-						{
-							MatchMakingPacket p2 = (MatchMakingPacket) readPackets.get(i);
-							GamePacket gamePacket = new GamePacket();
-							gamePacket.mapPath = "dojo";
-							
-							gamePacket.setIp(p.getIp());
-							gamePacket.playerData = getPlayerFromIP(p.getIp()).getPacket();
-							gamePacket.opponentData = getPlayerFromIP(p2.getIp()).getPacket();
-							
-							server.sendBuffer.sendPacket(gamePacket);
-							
-							gamePacket.setIp(p2.getIp());
-							gamePacket.opponentData = getPlayerFromIP(p.getIp()).getPacket();
-							gamePacket.playerData = getPlayerFromIP(p2.getIp()).getPacket();
-							
-							server.sendBuffer.sendPacket(gamePacket);
-							
-							/*
-							 *  FIX: Second packet isn't send to the good client, he used the same ip that is contained
-							 *  by packet 1, he should use the ip contained by p2 packet
-							 */
-							
-							p = null;
-						}
+						// Send this packet to the GameProcessor
+						gp.mainPackets.sendPacket(readPackets.get(i));
+					}
+					if (readPackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
+					{
+						// Send this packet to the GameProcessor
+						gp.mainPackets.sendPacket(readPackets.get(i));
+					}
+					else
+					{
+						System.err.println("Main thread : Received an unknowned packet" + readPackets.get(i).getClass());
 					}
 					
 					// TODO : manage the creation of games when receiving MatchMakingPacket
@@ -180,43 +176,33 @@ public class Main
 		
 		// If this client is not connected
 		
-		// Everyone could connect with this pseudo
-		if (packet.pseudo.equals("Kurond"))
+		// Check fields
+		// TODO : this loop need to browse an ArrayList<Player>
+		for (File file : ServerUtils.getPlayersFiles())
 		{
-			packet.pwdMatch = true;
-			packet.accepted = true;				
-			getPlayerFromIP(packet.getIp()).setName(packet.pseudo);
-		}
-		else
-		{
-			// Check fields
-			// TODO : this loop need to browse an ArrayList<Player>
-			for (File file : ServerUtils.getPlayersFiles())
+			// If pseudo exists
+			if (file.getName().equals(packet.pseudo))
 			{
-				// If pseudo exists
-				if (file.getName().equals(packet.pseudo))
+				packet.pseudoExists = true;
+				
+				if (FileUtils.readString(new File(file.getAbsolutePath().concat("/pwd"))).get(0).equals(packet.pwd))
 				{
-					packet.pseudoExists = true;
-					
-					if (FileUtils.readString(new File(file.getAbsolutePath().concat("/pwd"))).get(0).equals(packet.pwd))
-					{
-						packet.pwdMatch = true;
-						packet.accepted = true;				
-						getPlayerFromIP(packet.getIp()).setName(packet.pseudo);
-						break;
-					}
-					else
-					{
-						packet.pwdMatch = false;
-					}
+					packet.pwdMatch = true;
+					packet.accepted = true;				
+					getPlayerFromIp(packet.getIp()).setName(packet.pseudo);
 					break;
 				}
 				else
 				{
-					packet.pseudoExists = false;
+					packet.pwdMatch = false;
 				}
-			}	
-		}
+				break;
+			}
+			else
+			{
+				packet.pseudoExists = false;
+			}
+		}	
 	}
 	
 	/** return a connected Player object matching with the pseudo in parameter
@@ -229,6 +215,7 @@ public class Main
 		for (int i = 0; i < players.size(); i++)
 		{
 			// If the player is found
+			System.out.println(players.get(i).getName());
 			if (players.get(i).getName().equals(pseudo))
 				return players.get(i);
 		}
@@ -242,7 +229,7 @@ public class Main
 	 * @param ip
 	 * @return the associated kangaroo or null if no kangaroo exist with this ip
 	 */
-	public static Player getPlayerFromIP(String ip)
+	public static Player getPlayerFromIp(String ip)
 	{
 		// Browse the list of connected players
 		for (Player player : players)
@@ -258,5 +245,22 @@ public class Main
 		
 		// If no player matching with the ip
 		return null;
+	}
+	
+	public static HomePacket fillHomePacket(HomePacket packet)
+	{
+		// Make tabs
+		
+		// TODO: Set position of the player before doing this
+		packet.ladder = ladder.getLadderFromPosition(getPlayerFromIp(packet.getIp()).getPacket().pos);
+		
+		// TODO: Get news packets
+		// TODO: Fill "news" with the good news
+		packet.news = new NewsPacket[2];
+		
+		// TODO: Get server info packet
+		// TODO: Fill packet with
+		
+		return packet;
 	}
 }

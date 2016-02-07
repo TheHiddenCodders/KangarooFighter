@@ -118,5 +118,5 @@ public abstract class Display extends Table
 	}
 	
 	/** This method refresh the display */
-	public abstract void refresh();
+	public abstract void refresh(Object data);
 }

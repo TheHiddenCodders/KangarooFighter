@@ -1,13 +1,15 @@
-package Class;
+package BlocsDisplays;
+
+import Class.Display;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 
 
 public class FriendsDisplay extends Display 
@@ -55,7 +57,7 @@ public class FriendsDisplay extends Display
 	}
 
 	@Override
-	public void refresh() 
+	public void refresh(Object data) 
 	{
 		// TODO Auto-generated method stub
 

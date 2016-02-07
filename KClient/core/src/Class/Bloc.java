@@ -117,5 +117,5 @@ public abstract class Bloc extends Table
 	}
 	
 	/** This method refresh the bloc */
-	public abstract void refresh();
+	public abstract void refresh(Object data);
 }

@@ -1,12 +1,8 @@
 package Packets;
 
-import java.io.Serializable;
 
-public class KangarooClientPacket implements Serializable
+public class GameClientPacket extends Packets
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4448845967749323548L;
 	
 	public boolean leftArrow;
