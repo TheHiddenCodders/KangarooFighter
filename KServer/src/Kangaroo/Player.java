@@ -7,9 +7,9 @@ import enums.Direction;
 
 public class Player 
 {
-	private String ip;
 	private Kangaroo k;
 	private PlayerPacket playerPacket;
+	private String password;
 	
 	//private KangarooServerPacket networkImage;
 	//private KangarooClientPacket lastPacket;
@@ -39,11 +39,12 @@ public class Player
 
 	public String getIp() 
 	{
-		return ip;
+		return playerPacket.getIp();
 	}
 
-	public void setIp(String ip) {
-		this.ip = ip;
+	public void setIp(String ip) 
+	{
+		playerPacket.setIp(ip);
 	}
 	
 	/**
@@ -79,5 +80,15 @@ public class Player
 	public Kangaroo getKangaroo() 
 	{
 		return k;
+	}
+
+	public String getPassword() 
+	{
+		return password;
+	}
+
+	public void setPassword(String password) 
+	{
+		this.password = password;
 	}
 }

@@ -28,7 +28,7 @@ public class Main
 	public static String msg = "";
 	
 	static GameProcessor gp;
-	/** players : an ArrayList containing all thz connected players*/
+	/** players : an ArrayList containing all the connected players*/
 	static ArrayList<Player> players;
 	/** ladder : contain the game ladder */
 	static Ladder ladder;
