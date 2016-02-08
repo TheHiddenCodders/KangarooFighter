@@ -31,7 +31,7 @@ public class Ladder
 		ladder = new ArrayList<PlayerPacket>();
 		
 		// Open the ladder file
-		File ladderFile = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Ladder/elo"));
+		File ladderFile = new File(new File("").getAbsolutePath().concat(filePath));
 		
 		try
 		{

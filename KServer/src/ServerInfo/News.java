@@ -19,13 +19,13 @@ public class News
 	public News(String filePath)
 	{
 		// Load news from files
-		loadNewsFromFiles();
+		loadNewsFromFiles(filePath);
 	}
 	
 	/** Search files containing news 
 	 * @return all the news in the news directory
 	 */
-	private void loadNewsFromFiles()
+	private void loadNewsFromFiles(String filePath)
 	{
 		ArrayList<File> newsContent;
 		ArrayList<File> newsFiles = new ArrayList<File>();
@@ -33,7 +33,7 @@ public class News
 		news = new ArrayList<NewsPacket>();
 		
 		// Get the directory containing news
-		File directory = new File(new File("").getAbsolutePath().concat("/KangarooFighters/News"));
+		File directory = new File(new File("").getAbsolutePath().concat(filePath));
 		
 		// Browse all news in the directory
 		for (File file : directory.listFiles())
@@ -82,8 +82,17 @@ public class News
 		return newsFiles;
 	}
 	
-	public NewsPacket getLastNews()
+	public NewsPacket[] getLastNews(int howManyNews, String ip)
 	{
-		return news.get(news.size() - 1);
+		NewsPacket[] result = new NewsPacket[howManyNews];
+		
+		for (int i = 0; i < howManyNews; i++)
+		{
+			result[i].setIp(ip);
+			result[i].name = news.get(news.size() - i).name;
+			result[i].banner = news.get(news.size() - i).banner;
+			result[i].news = news.get(news.size() - i).news;
+		}
+		return result;
 	}
 }

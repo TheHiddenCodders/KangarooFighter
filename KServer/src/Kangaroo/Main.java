@@ -18,6 +18,7 @@ import Packets.Packets;
 import Packets.PlayerPacket;
 import Server.Server;
 import ServerInfo.Ladder;
+import ServerInfo.News;
 import Utils.FileUtils;
 import Utils.ServerUtils;
 
@@ -31,6 +32,8 @@ public class Main
 	static ArrayList<Player> players;
 	/** ladder : contain the game ladder */
 	static Ladder ladder;
+	/** news : contain the server news */
+	static News news;
 	
 	public static void main(String[] args) throws IOException
 	{
@@ -41,6 +44,7 @@ public class Main
 		server.open();
 		
 		ladder = new Ladder("/KangarooFighters/Ladder/elo");
+		news = new News("/KangarooFighters/News");
 
 		players = new ArrayList<Player>();
 		gp = new GameProcessor(players, server.sendBuffer);
@@ -104,8 +108,9 @@ public class Main
 							server.sendBuffer.sendPacket(getPlayerFromIp(receivedPacket.getIp()).getPacket());
 							
 							// Send to the client the last news
-							server.sendBuffer.sendPacket(ServerUtils.getNewsPacket(ServerUtils.getLastNewsFiles().getName(), receivedPacket.getIp()));		
-							server.sendBuffer.sendPacket(ServerUtils.getNewsPacket(ServerUtils.getLastBeforeNewsFiles().getName(), receivedPacket.getIp()));		
+							NewsPacket[] newsBuffer = news.getLastNews(2, receivedPacket.getIp());
+							server.sendBuffer.sendPacket(newsBuffer[0]);		
+							server.sendBuffer.sendPacket(newsBuffer[1]);		
 		
 							// Send to the client his friends
 							server.sendBuffer.sendPacket(new FriendsPacket(receivedPacket.getIp()));
@@ -255,9 +260,8 @@ public class Main
 		// TODO: Set position of the player before doing this
 		packet.ladder = ladder.getLadderFromPosition(getPlayerFromIp(packet.getIp()).getPacket().pos);
 		
-		// TODO: Get news packets
-		// TODO: Fill "news" with the good news
-		packet.news = new NewsPacket[2];
+		// Get the 2 last news of the server
+		packet.news = news.getLastNews(2, packet.getIp());
 		
 		// TODO: Get server info packet
 		// TODO: Fill packet with
