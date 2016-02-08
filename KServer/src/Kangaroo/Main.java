@@ -19,6 +19,7 @@ import Packets.PlayerPacket;
 import Server.Server;
 import ServerInfo.Ladder;
 import ServerInfo.News;
+import ServerInfo.PlayerProcessor;
 import Utils.FileUtils;
 import Utils.ServerUtils;
 
@@ -35,6 +36,8 @@ public class Main
 	/** news : contain the server news */
 	static News news;
 	
+	static PlayerProcessor caca;
+	
 	public static void main(String[] args) throws IOException
 	{
 		System.out.println("Main thread : Creation of server data");
@@ -48,6 +51,8 @@ public class Main
 
 		players = new ArrayList<Player>();
 		gp = new GameProcessor(players, server.sendBuffer);
+		
+		caca = new PlayerProcessor("/KangarooFighters/Players");
 		
 		// Launch game threads
 		Thread t = new Thread(gp);

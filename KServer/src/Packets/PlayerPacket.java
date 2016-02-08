@@ -34,7 +34,8 @@ public class PlayerPacket extends Packets
 				+ "- [wins]: " + wins + "\n"
 				+ "- [looses]: " + looses + "\n"
 				+ "- [elo]: " + elo + "\n"
-				+ "- [streak]: " + streak + "\n";
+				+ "- [streak]: " + streak + "\n"
+				+ "- [pos]: " + pos + "\n";
 				//+ "- [friends]: " + friends.toString() + "\n";
 	}
 }
