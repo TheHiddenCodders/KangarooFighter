@@ -22,7 +22,7 @@ public abstract class Display extends Table
 	 * Attributes
 	 */
 	
-	private HomeStage homeStage;
+	protected HomeStage homeStage;
 	protected Skin skin;
 	private boolean animated = false;
 	
@@ -43,7 +43,7 @@ public abstract class Display extends Table
 		this.skin = skin;
 		
 		// Add fade in so adding a display to a stage will make him fade in
-		addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1)));
+		addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
 		
 		// Make background
 		background = new Image();
@@ -86,7 +86,7 @@ public abstract class Display extends Table
 	@Override
 	public boolean remove() 
 	{
-		addAction(Actions.fadeOut(1));
+		addAction(Actions.fadeOut(0.5f));
 		homeStage.showBlocs();
 		animated = true;
 		

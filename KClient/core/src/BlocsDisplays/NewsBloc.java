@@ -5,6 +5,7 @@ import Packets.NewsPacket;
 import Stages.HomeStage;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -24,6 +25,7 @@ public class NewsBloc extends Bloc
 	
 	private Image edge;
 	private Label title;
+	private Image banner;
 	
 	/*
 	 * Constructors
@@ -39,13 +41,20 @@ public class NewsBloc extends Bloc
 		// Set display
 		setDisplay(new NewsDisplay(newsPacket, skin));
 		
+		// Banner
+		Pixmap pixBanner = new Pixmap(newsPacket.banner, 0, newsPacket.banner.length);
+		banner = new Image(new Texture(pixBanner));
+		banner.setPosition(2, 2);
+		pixBanner.dispose();
+		addActor(banner);
+		
 		// Edge
 		edge = new Image(new Texture("sprites/homestage/blocs/news/edge.png"));
 		edge.setPosition(2, 2);
 		addActor(edge);
-		
+				
 		// Title
-		title = new Label("No title", skin); // TODO: replace by news name
+		title = new Label(newsPacket.name, skin);
 		title.setPosition(4, 4);
 		addActor(title);
 	}
@@ -56,7 +65,6 @@ public class NewsBloc extends Bloc
 	
 	@Override
 	public void refresh(Object data) {
-		// TODO Auto-generated method stub
 
 	}
 }

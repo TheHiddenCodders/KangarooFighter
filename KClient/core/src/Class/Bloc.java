@@ -45,7 +45,7 @@ public abstract class Bloc extends Table
 		this.skin = homeStage.main.skin;
 		
 		// Add fade in so adding a bloc to a stage will make him fade in
-		addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1)));
+		addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
 		
 		// Make background
 		background = new Image();
@@ -88,7 +88,7 @@ public abstract class Bloc extends Table
 	@Override
 	public boolean remove() 
 	{
-		addAction(Actions.fadeOut(1));
+		addAction(Actions.fadeOut(0.5f));
 		animated = true;
 		
 		return true;
