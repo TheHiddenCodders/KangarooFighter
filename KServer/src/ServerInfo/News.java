@@ -91,17 +91,21 @@ public class News
 	{
 		NewsPacket[] result = new NewsPacket[howManyNews];
 		
+		// Don't return more news than stored
+		if (howManyNews > news.size())
+			howManyNews = news.size();
+		
 		// Browse all packets
-		for (int i = 0; i < howManyNews; i++)
+		for (int i = 1; i <= howManyNews; i++)
 		{
 			// Create the packet
-			result[i] = new NewsPacket();
+			result[i-1] = new NewsPacket();
 			
 			// Fill it in
-			result[i].setIp(ip);
-			result[i].name = news.get(news.size() - i).name;
-			result[i].banner = news.get(news.size() - i).banner;
-			result[i].news = news.get(news.size() - i).news;
+			result[i-1].setIp(ip);
+			result[i-1].name = news.get(news.size() - i).name;
+			result[i-1].banner = news.get(news.size() - i).banner;
+			result[i-1].news = news.get(news.size() - i).news;
 		}
 		return result;
 	}
