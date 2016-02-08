@@ -7,8 +7,6 @@ import Class.ConnectedStage;
 import Class.Player;
 import Packets.PlayerPacket;
 
-import com.sun.xml.internal.ws.api.message.Packet;
-
 /**
  * Network handle the data exchanges between client and server.
  * @author Nerisma

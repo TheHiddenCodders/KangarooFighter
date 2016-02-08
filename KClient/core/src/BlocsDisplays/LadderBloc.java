@@ -2,7 +2,6 @@ package BlocsDisplays;
 
 import Class.Bloc;
 import Packets.LadderPacket;
-import Packets.PlayerPacket;
 import Stages.HomeStage;
 
 import com.badlogic.gdx.Gdx;
@@ -45,6 +44,8 @@ public class LadderBloc extends Bloc
 		title = new Label("Classement", new LabelStyle(skin.getFont("korean"), Color.WHITE));
 		title.setPosition(getWidth() / 2 - title.getWidth() / 2, getHeight() - title.getHeight() - 5); 
 		addActor(title);
+		
+		refresh(ladder);
 	}
 	
 	/*

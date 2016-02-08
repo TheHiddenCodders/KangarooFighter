@@ -85,13 +85,13 @@ public class News
 	public NewsPacket[] getLastNews(int howManyNews, String ip)
 	{
 		NewsPacket[] result = new NewsPacket[howManyNews];
-		
-		for (int i = 0; i < howManyNews; i++)
+		for (int i = 0; i < howManyNews - 1; i++)
 		{
+			result[i] = new NewsPacket();
 			result[i].setIp(ip);
-			result[i].name = news.get(news.size() - i).name;
-			result[i].banner = news.get(news.size() - i).banner;
-			result[i].news = news.get(news.size() - i).news;
+			result[i].name = news.get(news.size() - 1 - i).name;
+			result[i].banner = news.get(news.size() - 1 - i).banner;
+			result[i].news = news.get(news.size() - 1 - i).news;
 		}
 		return result;
 	}

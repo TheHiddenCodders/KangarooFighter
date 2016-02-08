@@ -109,8 +109,8 @@ public class Main
 							
 							// Send to the client the last news
 							NewsPacket[] newsBuffer = news.getLastNews(2, receivedPacket.getIp());
-							server.sendBuffer.sendPacket(newsBuffer[0]);		
-							server.sendBuffer.sendPacket(newsBuffer[1]);		
+							//server.sendBuffer.sendPacket(newsBuffer[0]);		
+							//server.sendBuffer.sendPacket(newsBuffer[1]);		
 		
 							// Send to the client his friends
 							server.sendBuffer.sendPacket(new FriendsPacket(receivedPacket.getIp()));
