@@ -1,4 +1,4 @@
-package Utils;
+package ServerInfo;
 
 import java.io.File;
 import java.util.Comparator;
