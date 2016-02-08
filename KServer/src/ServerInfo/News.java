@@ -82,12 +82,22 @@ public class News
 		return newsFiles;
 	}
 	
+	/** Return the last news of the server
+	 * @param howManyNews : number of news to be returned
+	 * @param ip : the ip of the receiver
+	 * @return an array of news packet containing the last ones
+	 */
 	public NewsPacket[] getLastNews(int howManyNews, String ip)
 	{
 		NewsPacket[] result = new NewsPacket[howManyNews];
 		
+		// Browse all packets
 		for (int i = 0; i < howManyNews; i++)
 		{
+			// Create the packet
+			result[i] = new NewsPacket();
+			
+			// Fill it in
 			result[i].setIp(ip);
 			result[i].name = news.get(news.size() - i).name;
 			result[i].banner = news.get(news.size() - i).banner;
