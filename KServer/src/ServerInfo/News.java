@@ -1,4 +1,4 @@
-package Kangaroo;
+package ServerInfo;
 
 import java.io.File;
 import java.util.ArrayList;
