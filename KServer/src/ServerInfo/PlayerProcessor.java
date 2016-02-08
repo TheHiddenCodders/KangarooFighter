@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import Kangaroo.Player;
+import Packets.ConnectionPacket;
 import Packets.LoginPacket;
 import Packets.PlayerPacket;
 
@@ -127,5 +128,13 @@ public class PlayerProcessor
 	public static boolean isPlayerOnline(String name)
 	{
 		return false;
+	}
+	
+	/**	Check if the client pseudo exists and check the password match with the pseudo
+	 * 	@param packet the login packet
+	 */
+	public void connexion(ConnectionPacket packet)
+	{
+		
 	}
 }
