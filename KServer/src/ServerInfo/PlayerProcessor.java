@@ -196,16 +196,6 @@ public class PlayerProcessor
 		// If no player matching with the pseudo
 		return null;
 	}
-
-	/**
-	 * Check if the player is online
-	 * @param name : the name of the player to check
-	 * @return true if the player is connected, false otherwise
-	 */
-	public static boolean isPlayerOnline(String name)
-	{
-		return false;
-	}
 	
 	/**	Add the ip of the client in the waitingClient list
 	 * 	@param packet the ConnexionPacket received from the server class
@@ -221,7 +211,14 @@ public class PlayerProcessor
 	 */
 	public void deconnexion(DisconnexionPacket packet)
 	{
-		// TODO : remove player 
+		Player player = isPlayerConnected(getPlayerFromIp(packet.getIp()).getName());
+		
+		// If the player is login
+		if (player != null)
+			connectedPlayers.remove(player);
+		
+		// If the player is not login, then he is in waiting list
+		waitingClients.remove(packet.getIp());
 	}
 
 	/**
@@ -242,4 +239,11 @@ public class PlayerProcessor
 		// If no player matching with the ip
 		return null;
 	}
+	
+	public ArrayList<Player> getConnectedPlayers()
+	{
+		return connectedPlayers;
+	}
+	
+	// TODO : manage ladder in this class. Create a method modifing players elo and reorder them
 }

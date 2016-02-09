@@ -25,13 +25,11 @@ public class Main
 	public static String msg = "";
 	
 	static GameProcessor gp;
-	/** players : an ArrayList containing all the connected players*/
-	static ArrayList<Player> players;
 	/** ladder : contain the game ladder */
 	static Ladder ladder;
 	/** news : contain the server news */
 	static News news;
-	
+	/** pp : an object managing all the registered players on the server*/
 	static PlayerProcessor pp;
 	
 	public static void main(String[] args) throws IOException
@@ -45,10 +43,8 @@ public class Main
 		ladder = new Ladder("/KangarooFighters/Ladder/elo");
 		news = new News("/KangarooFighters/News");
 
-		players = new ArrayList<Player>();
-		gp = new GameProcessor(players, server.sendBuffer);
-		
 		pp = new PlayerProcessor("/KangarooFighters/Players");
+		gp = new GameProcessor(pp, server.sendBuffer);
 		
 		// Launch game threads
 		Thread t = new Thread(gp);

@@ -7,6 +7,7 @@ import Packets.GameReadyPacket;
 import Packets.MatchMakingPacket;
 import Packets.Packets;
 import Server.BufferPacket;
+import ServerInfo.PlayerProcessor;
 import Utils.Timer;
 
 public class GameProcessor implements Runnable
@@ -23,13 +24,13 @@ public class GameProcessor implements Runnable
 	private ArrayList<MatchMakingPacket> waitingPlayers;
 	/** waitingTimers : compute the time a player is waiting*/
 	private ArrayList<Timer> waitingTimers;
-	/** connectedPlayer : a reference to all connected player */
-	private ArrayList<Player> connectedPlayers;
+	/** pp : a reference to all connected player */
+	private PlayerProcessor pp;
 	
 	/** a copy of received packets */
 	private ArrayList<Packets> packets;
 	
-	public GameProcessor(ArrayList<Player> connectedPlayers, BufferPacket sender)
+	public GameProcessor(PlayerProcessor pp, BufferPacket sender)
 	{
 		// Create attributes
 		this.games = new ArrayList<Game>();
@@ -39,7 +40,7 @@ public class GameProcessor implements Runnable
 		
 		this.waitingPlayers = new ArrayList<MatchMakingPacket>();
 		this.waitingTimers = new ArrayList<Timer>();
-		this.connectedPlayers = connectedPlayers;
+		this.pp = pp;
 	}
 
 	@Override
@@ -75,26 +76,6 @@ public class GameProcessor implements Runnable
 		}
 	}
 	
-	/** Allow to manipulate player with the ip received in packets
-	 * @param ip : The ip which is contained in packets
-	 * @return the player object if it exist, null otherwise.
-	 */
-	private Player getPlayerFromIp(String ip) 
-	{
-		// Browse the list of connected players
-		for (Player player : connectedPlayers)
-		{
-			// If the player is found
-			if (player.getIp().equals(ip))
-				return player;
-		}
-		
-		System.out.println("null");
-		
-		// If no player matching with the ip
-		return null;
-	}
-	
 	/** Tell if two player can launch a game together.
 	 * @param p1 : the first player
 	 * @param p2 : the second player
@@ -103,7 +84,7 @@ public class GameProcessor implements Runnable
 	private boolean isMatching(MatchMakingPacket p1, MatchMakingPacket p2)
 	{
 		// Compute the elo rate between players
-		float eloRate = Math.abs(1 - (getPlayerFromIp(p1.getIp()).getElo() / getPlayerFromIp(p2.getIp()).getElo() * 100));
+		float eloRate = Math.abs(1 - (pp.getPlayerFromIp(p1.getIp()).getElo() / pp.getPlayerFromIp(p2.getIp()).getElo() * 100));
 		
 		return (eloRate <= Math.min(p1.eloTolerance, p2.eloTolerance));
 	}
@@ -142,15 +123,13 @@ public class GameProcessor implements Runnable
 			for (int i = 0; i < waitingPlayers.size(); i++)
 			{
 				// Don't check the player him self
-				if (getPlayerFromIp(waitingPlayers.get(i).getIp()).getName() != getPlayerFromIp(mmPacket.getIp()).getName())
+				if (pp.getPlayerFromIp(waitingPlayers.get(i).getIp()).getName() != pp.getPlayerFromIp(mmPacket.getIp()).getName())
 				{
 					// Try to find an opponent
 					if (isMatching(mmPacket, waitingPlayers.get(i)))
 					{
-						System.err.println(getPlayerFromIp(waitingPlayers.get(i).getIp()).getName() + " vs " + getPlayerFromIp(mmPacket.getIp()).getName());
-						
 						// Create a game and launch it in a thread
-						games.add(new Game(getPlayerFromIp(waitingPlayers.get(i).getIp()), getPlayerFromIp(mmPacket.getIp()), this));
+						games.add(new Game(pp.getPlayerFromIp(waitingPlayers.get(i).getIp()), pp.getPlayerFromIp(mmPacket.getIp()), this));
 						Thread t = new Thread(games.get(games.size() - 1));
 						t.start();
 						
@@ -202,7 +181,7 @@ public class GameProcessor implements Runnable
 		}
 		else // If the player quit the queue
 		{
-			waitingPlayers.remove(getPlayerFromIp(mmPacket.getIp()));
+			waitingPlayers.remove(pp.getPlayerFromIp(mmPacket.getIp()));
 		}
 	}
 	
