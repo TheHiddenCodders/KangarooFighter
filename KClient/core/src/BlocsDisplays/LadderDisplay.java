@@ -29,7 +29,7 @@ public class LadderDisplay extends Display
 	 */
 	
 	private Label title;
-	private TextButton search, prev, next, me;
+	private TextButton search, prev, next, me, friends;
 	private TextField nameField;
 	
 	private Label[] rank, name, games, wins, loses, elo;
@@ -57,7 +57,7 @@ public class LadderDisplay extends Display
 		// Add name
 		nameField = new TextField("", skin);
 		nameField.setPosition(search.getX() + search.getWidth(), 5);
-		nameField.setSize(getWidth() - 190 - search.getWidth(), search.getHeight());
+		nameField.setSize(getWidth() - 250 - search.getWidth(), search.getHeight());
 		addActor(nameField);
 		
 		// Add browsing buttons
@@ -71,6 +71,10 @@ public class LadderDisplay extends Display
 		me.setWidth(60);
 		me.setColor(Color.TAN);
 		addActor(me);
+		friends = new TextButton("Amis", skin);
+		friends.setWidth(60);
+		friends.setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
+		addActor(friends);
 		
 		// Make labels tabs
 		rank = new Label[9];
@@ -171,18 +175,17 @@ public class LadderDisplay extends Display
 			else
 			{
 				prev.setText("-");
-				prev.setColor(Color.GRAY);
 				prev.setTouchable(Touchable.disabled);
 			}
 			
 			// Set parameters of buttons
 			next.setText((rankMin + 9) + " - " + (rankMax + 9));
-			next.setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
 			prev.setWidth(60);
 			next.setWidth(60);
 			prev.setPosition(nameField.getX() + nameField.getWidth(), 5);
 			next.setPosition(prev.getX() + prev.getWidth(), 5);
-			me.setPosition(next.getX() + next.getWidth(), 5);			
+			me.setPosition(next.getX() + next.getWidth(), 5);	
+			friends.setPosition(me.getX() + me.getWidth(), 5);
 			
 			// Add listeners
 			prev.addListener(new ClickListener() 
@@ -217,6 +220,28 @@ public class LadderDisplay extends Display
 					SearchLadderPacket packet = new SearchLadderPacket();
 					packet.name = homeStage.main.player.getName();
 					homeStage.main.network.send(packet);
+					super.clicked(event, x, y);
+				}
+			});
+			
+			friends.addListener(new ClickListener()
+			{
+				@Override
+				public void clicked(InputEvent event, float x, float y) 
+				{
+					// TODO
+					/*
+					//if (friends.getText())
+					{
+						friends.setText("Tous");
+						friends.setColor(Color.TAN);
+					}
+					else
+					{
+						friends.setText("Amis");
+						friends.setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
+					}
+					*/
 					super.clicked(event, x, y);
 				}
 			});

@@ -233,7 +233,6 @@ public class HomeStage extends ConnectedStage
 		
 		MatchMakingPacket packet = new MatchMakingPacket();
 		packet.search = false;
-		// TODO: Packet.elotolerance
 		main.network.send(packet);
 	}
 }
