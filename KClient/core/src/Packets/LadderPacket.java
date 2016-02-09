@@ -7,7 +7,6 @@ public class LadderPacket extends Packets
 	private static final long serialVersionUID = 8410335275464293843L;
 
 	public ArrayList<PlayerPacket> ladderList;
-	public int playerPos;
 	
 	public LadderPacket(String ip) 
 	{
@@ -26,8 +25,7 @@ public class LadderPacket extends Packets
 	{
 		return super.toString()
 				+ "\n"
-				+ "- [ladder]:" + ladderList.toString() + "\n"
-				+ "- [playerPos]: " + playerPos + "\n";
+				+ "- [ladder]:" + ladderList.toString() + "\n";
 	}
 	
 	public void addPlayer(PlayerPacket playerPacket)

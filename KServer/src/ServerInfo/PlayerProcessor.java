@@ -6,10 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import Kangaroo.Player;
 import Packets.ConnexionPacket;
 import Packets.DisconnexionPacket;
+import Packets.LadderPacket;
 import Packets.LoginPacket;
 import Packets.PlayerPacket;
 
@@ -32,17 +34,16 @@ public class PlayerProcessor
 		connectedPlayers = new ArrayList<Player>();
 		players = new ArrayList<Player>();
 		
-		loadPlayerFromFile();
+		loadPlayerFromFile(filePath);
 	}
 	
 	/** Load player from the file stored on the server
 	 * @return all player found in files
 	 */
-	private void loadPlayerFromFile() 
+	private void loadPlayerFromFile(String filePath) 
 	{
 		// Get the directory containing player infos
-		// TODO : change /KangarooFighters/Players with playerFilePath
-		File directory = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Players"));
+		File directory = new File(new File("").getAbsolutePath().concat(filePath));
 		
 		// Browse all file of the directory
 		for (File file : directory.listFiles())
@@ -80,6 +81,7 @@ public class PlayerProcessor
 			
 			// TODO : store player friends in the player object using friendsFile
 			
+			
 			// Create the player with those infos
 			players.add(new Player(playerData));
 			
@@ -101,6 +103,9 @@ public class PlayerProcessor
 				e.printStackTrace();
 			}
 		}
+		
+		// Order the players by their elo
+		Collections.sort(players, new EloComparator());
 	}
 	
 	/** Create a new registered player
@@ -245,5 +250,50 @@ public class PlayerProcessor
 		return connectedPlayers;
 	}
 	
-	// TODO : manage ladder in this class. Create a method modifing players elo and reorder them
+	public LadderPacket getLadder(Player player)
+	{
+		LadderPacket result = new LadderPacket();
+		int position = 0, begin, end;
+		
+		// Get player position
+		for (int i = 0; i < players.size(); i++)
+		{
+			if (players.get(i).getName().equals(player.getName()))
+			{
+				position = i;
+				break;
+			}
+		}
+		
+		// Try to get the 4 players above
+		begin = position - 4;
+
+		// If there is less than 4 players above
+		if (begin < 0) 
+		{
+			// Then start from the first player of the ladder
+			begin = 0;
+		}
+		
+		// Try to get 9 players in total
+		end = begin + 9;
+		
+		// If there is less than 9 players below the begining
+		if (end > players.size())
+		{
+			// Then end to the last player
+			end = players.size();
+		}
+		
+		// Fill the result in
+		for (int i = 0; i < end-begin; i++)
+		{
+			players.get(i + begin).getPacket().pos = i + begin + 1;
+			result.addPlayer(players.get(i + begin).getPacket());
+		}
+		
+		return result;
+	}
+	
+	// TODO : manage ladder in this class. Create a method modifing players and reorder them using EloComparator
 }

@@ -77,7 +77,7 @@ public class Main
 					/*
 					 * Receive a DisconnexionPacket
 					 */
-					if (readPackets.get(i).getClass().isAssignableFrom(DisconnexionPacket.class))
+					else if (readPackets.get(i).getClass().isAssignableFrom(DisconnexionPacket.class))
 					{
 						// Get the packet
 						DisconnexionPacket disconnexionPacket = (DisconnexionPacket) readPackets.get(i);
@@ -88,7 +88,7 @@ public class Main
 					/*
 					 * Receive Login packet 
 					 */
-					if (readPackets.get(i).getClass().isAssignableFrom(LoginPacket.class))
+					else if (readPackets.get(i).getClass().isAssignableFrom(LoginPacket.class))
 					{
 						// Try to login this client
 						LoginPacket receivedPacket = (LoginPacket) readPackets.get(i);
@@ -112,16 +112,17 @@ public class Main
 							server.sendBuffer.sendPacket(new FriendsPacket(receivedPacket.getIp()));
 							
 							// Send to the client the ladder and his position
-							server.sendBuffer.sendPacket(new LadderPacket(receivedPacket.getIp()));
+							//server.sendBuffer.sendPacket(new LadderPacket(receivedPacket.getIp()));
+							//server.sendBuffer.sendPacket(pp.getLadder(pp.getPlayerFromIp(receivedPacket.getIp())));
 							
 							// Send to his connected friends he is connected
 							// TODO : send packets to his friends
 						}
 					}
 					/*
-					 * Receive a HomePacket (Nerisma)
+					 * Receive a HomePacket
 					 */
-					if (readPackets.get(i).getClass().isAssignableFrom(HomePacket.class))
+					else if (readPackets.get(i).getClass().isAssignableFrom(HomePacket.class))
 					{						
 						// Cast packet
 						HomePacket receivedPacket = (HomePacket) readPackets.get(i);
@@ -133,12 +134,12 @@ public class Main
 						server.sendBuffer.sendPacket(receivedPacket);
 						
 					}
-					if (readPackets.get(i).getClass().isAssignableFrom(MatchMakingPacket.class))
+					else if (readPackets.get(i).getClass().isAssignableFrom(MatchMakingPacket.class))
 					{
 						// Send this packet to the GameProcessor
 						gp.mainPackets.sendPacket(readPackets.get(i));
 					}
-					if (readPackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
+					else if (readPackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
 					{
 						// Send this packet to the GameProcessor
 						gp.mainPackets.sendPacket(readPackets.get(i));
@@ -164,10 +165,9 @@ public class Main
 	
 	public static HomePacket fillHomePacket(HomePacket packet)
 	{
-		// Make tabs
-		
 		// TODO: Set position of the player before doing this
-		packet.ladder = ladder.getLadderFromPosition(pp.getPlayerFromIp(packet.getIp()).getPacket().pos);
+		//packet.ladder = ladder.getLadderFromPosition(pp.getPlayerFromIp(packet.getIp()).getPacket().pos);
+		packet.ladder = pp.getLadder(pp.getPlayerFromIp(packet.getIp()));
 		
 		// Get the 2 last news of the server
 		packet.news = news.getLastNews(2, packet.getIp());
