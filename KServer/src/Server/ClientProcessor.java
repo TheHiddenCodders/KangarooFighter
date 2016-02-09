@@ -5,7 +5,6 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import Packets.DisconnectionPacket;
 import Packets.DisconnexionPacket;
 import Packets.Packets;
 
@@ -97,7 +96,7 @@ public class ClientProcessor implements Runnable
 			client.close();
 			
 			// Send disconnection packet to the server program
-			server.readBuffer.sendPacket(new DisconnectionPacket(this.getIp()));
+			server.readBuffer.sendPacket(new DisconnexionPacket(this.getIp()));
 			
 			System.out.println("Recive Thread : the client : " + getIp() + "has been disconncted");
 		} 

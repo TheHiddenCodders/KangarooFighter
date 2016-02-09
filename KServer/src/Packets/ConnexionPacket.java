@@ -1,11 +1,11 @@
 package Packets;
 
 
-public class ConnectionPacket extends Packets 
+public class ConnexionPacket extends Packets 
 {
 	private static final long serialVersionUID = 7843668593522499265L;
 
-	public ConnectionPacket(String ip) 
+	public ConnexionPacket(String ip) 
 	{
 		super(ip);
 	}

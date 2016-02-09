@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import Packets.ConnectionPacket;
+import Packets.ConnexionPacket;
 import Packets.Packets;
 
 /** Encapsulate the server socket and can handle multiple clients.
@@ -93,7 +93,7 @@ public class Server
 						clients.add( new ClientProcessor(client, Server.this) );
 
 						// Broadcast to other thread the connection of a new client 
-						readBuffer.sendPacket(new ConnectionPacket(clients.get(clients.size() - 1).getIp()));
+						readBuffer.sendPacket(new ConnexionPacket(clients.get(clients.size() - 1).getIp()));
 						
 						// Create a new thread to listen this client               
 						Thread t = new Thread( clients.get(clients.size() - 1) );
