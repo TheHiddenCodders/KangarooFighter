@@ -101,8 +101,11 @@ public class Main
 						// If server accepted the request, send client data
 						if (receivedPacket.accepted)
 						{				
+							// Get the player associate to this packet
+							Player loginPlayer = pp.getPlayerFromIp(receivedPacket.getIp());
+							
 							// Send to the client his data
-							server.sendBuffer.sendPacket(pp.getPlayerFromIp(receivedPacket.getIp()).getPacket());
+							server.sendBuffer.sendPacket(loginPlayer.getPacket());
 							
 							// Send to the client the last news
 							NewsPacket[] newsBuffer = news.getLastNews(2, receivedPacket.getIp());
@@ -114,6 +117,13 @@ public class Main
 							
 							// Send to his connected friends he is connected
 							// TODO : send packets to his friends
+							for (int j = 0; j < loginPlayer.getPacket().friends.size(); j++)
+							{
+								if (loginPlayer.getPacket().friends.get(j).online)
+								{
+									server.sendBuffer.sendPacket(loginPlayer.getPacket().friends.get(j));
+								}
+							}
 						}
 					}
 					/*
