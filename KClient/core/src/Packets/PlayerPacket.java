@@ -9,14 +9,14 @@ public class PlayerPacket extends Packets
 	{
 		super(ip);
 		
-		friends = new ArrayList<FriendsPacket>();
+		friends = new ArrayList<PlayerPacket>();
 	}
 
 	public PlayerPacket() 
 	{
 		super();
 		
-		friends = new ArrayList<FriendsPacket>();
+		friends = new ArrayList<PlayerPacket>();
 	}
 
 	private static final long serialVersionUID = -1319262982236758754L;
@@ -28,7 +28,8 @@ public class PlayerPacket extends Packets
 	public int elo;
 	public int streak;
 	public int pos;
-	public ArrayList<FriendsPacket> friends;
+	public boolean online;
+	public ArrayList<PlayerPacket> friends;
 
 	@Override
 	public String toString()
@@ -42,11 +43,11 @@ public class PlayerPacket extends Packets
 				+ "- [elo]: " + elo + "\n"
 				+ "- [streak]: " + streak + "\n"
 				+ "- [pos]: " + pos + "\n"
-				+ "- [friends]: " + friends.toString() + "\n";
+				+ "- [online]: " + online + "\n";
 	}
 	
-	public void addFriend(String name, boolean online)
+	public void addFriend(PlayerPacket newFriend)
 	{
-		friends.add(new FriendsPacket(name, online));
+		friends.add(newFriend);
 	}
 }

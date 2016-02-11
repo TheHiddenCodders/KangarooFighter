@@ -111,7 +111,7 @@ public class LadderBloc extends Bloc
 				// Check if it's a friend
 				for (int j = 0; j < homeStage.main.player.getFriends().size(); j++)
 				{
-					if (packet.ladderList.get(i).name == homeStage.main.player.getFriends().get(j).friendsName)
+					if (packet.ladderList.get(i).name == homeStage.main.player.getFriends().get(j).name)
 					{
 						rank[i].setColor(Color.BLUE);
 						name[i].setColor(Color.BLUE);

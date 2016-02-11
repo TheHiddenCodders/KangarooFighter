@@ -53,7 +53,6 @@ public class PlayerProcessor
 			
 			// Get specific file storing players infos
 			File dataFile = new File(file.getPath() + "/data");
-			File friendsFile = new File(file.getPath() + "/friends");
 			File pwdFile = new File(file.getPath() + "/pwd");
 			
 			// Get the players data from file
@@ -78,30 +77,6 @@ public class PlayerProcessor
 			{
 				e.printStackTrace();
 			}
-			
-			// Get player's friends
-			try
-			{
-				BufferedReader reader = new BufferedReader(new FileReader(friendsFile));
-				String readingLine;
-				
-				// Brows the friend file
-				while ( (readingLine = reader.readLine()) != null)
-				{
-					// Add the name in the file into the player's friends
-					playerData.addFriend(readingLine, false);
-				}
-				
-				reader.close();
-			}
-			catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-			}
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
 				
 			// Create the player with those infos
 			players.add(new Player(playerData));
@@ -115,6 +90,36 @@ public class PlayerProcessor
 				
 				reader.close();
 			} 
+			catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+			}
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		// Re browse player to init friends
+		for (File file : directory.listFiles())
+		{
+			File friendsFile = new File(file.getPath() + "/friends");
+			
+			// Get player's friends
+			try
+			{
+				BufferedReader reader = new BufferedReader(new FileReader(friendsFile));
+				String readingLine;
+				
+				// Brows the friend file
+				while ( (readingLine = reader.readLine()) != null)
+				{
+					// Add the name in the file into the player's friends
+					isPlayerExist(file.getName()).getPacket().addFriend(isPlayerExist(readingLine).getPacket());
+				}
+				
+				reader.close();
+			}
 			catch (FileNotFoundException e)
 			{
 				e.printStackTrace();
@@ -188,12 +193,12 @@ public class PlayerProcessor
 		for (int i = 0; i < player.getPacket().friends.size(); i++)
 		{
 			// Try to find player in his friend's, friend list
-			Player friendPlayer = isPlayerExist(player.getPacket().friends.get(i).friendsName);
+			Player friendPlayer = isPlayerExist(player.getPacket().friends.get(i).name);
 			for (int j = 0; j < friendPlayer.getPacket().friends.size(); j++)
 			{
-				if (friendPlayer.getPacket().friends.get(j).friendsName.equals(player.getName()))
+				if (friendPlayer.getPacket().friends.get(j).name.equals(player.getName()))
 				{
-					friendPlayer.getPacket().friends.get(j).friendsOnline = true;
+					friendPlayer.getPacket().friends.get(j).online = true;
 					break;
 				}
 			}

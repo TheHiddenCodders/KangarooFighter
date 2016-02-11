@@ -17,7 +17,7 @@ public class Player
 	private int loses;
 	private int wins;
 	private int pos;
-	private ArrayList<FriendsPacket> friends;
+	private ArrayList<PlayerPacket> friends;
 	
 	/*
 	 * Constructors
@@ -96,11 +96,11 @@ public class Player
 		this.pos = pos;
 	}
 
-	public ArrayList<FriendsPacket> getFriends() {
+	public ArrayList<PlayerPacket> getFriends() {
 		return friends;
 	}
 
-	public void setFriends(ArrayList<FriendsPacket> friends) {
+	public void setFriends(ArrayList<PlayerPacket> friends) {
 		this.friends = friends;
 	}
 	
