@@ -184,7 +184,20 @@ public class PlayerProcessor
 		// Add him to the connected players list
 		connectedPlayers.add(player);
 		
-		// TODO : Check friends and update the online variable
+		// Browse all player friends
+		for (int i = 0; i < player.getPacket().friends.size(); i++)
+		{
+			// Try to find player in his friend's, friend list
+			Player friendPlayer = isPlayerExist(player.getPacket().friends.get(i).friendsName);
+			for (int j = 0; j < friendPlayer.getPacket().friends.size(); j++)
+			{
+				if (friendPlayer.getPacket().friends.get(j).friendsName.equals(player.getName()))
+				{
+					friendPlayer.getPacket().friends.get(j).friendsOnline = true;
+					break;
+				}
+			}
+		}
 		
 		return packet;
 	}
@@ -211,7 +224,7 @@ public class PlayerProcessor
 	 * @param name : the player's name to check
 	 * @return return the player itself if exist, null otherwise.
 	 */
-	private Player isPlayerExist(String name)
+	public Player isPlayerExist(String name)
 	{
 		// Browse the list of connected players
 		for (int i = 0; i < players.size(); i++)
@@ -247,6 +260,8 @@ public class PlayerProcessor
 		
 		// If the player is not login, then he is in waiting list
 		waitingClients.remove(packet.getIp());
+		
+		// TODO : notified friend this client is deco
 	}
 
 	/**
@@ -273,10 +288,9 @@ public class PlayerProcessor
 		return connectedPlayers;
 	}
 	
-	public LadderPacket getLadder(Player player)
+	public LadderPacket getLadderFromPlayer(Player player)
 	{
-		LadderPacket result = new LadderPacket();
-		int position = 0, begin, end;
+		int position = 0;
 		
 		// Get player position
 		for (int i = 0; i < players.size(); i++)
@@ -287,6 +301,14 @@ public class PlayerProcessor
 				break;
 			}
 		}
+		
+		return getLadderFromPosition(position);
+	}
+	
+	public LadderPacket getLadderFromPosition(int position)
+	{
+		LadderPacket result = new LadderPacket();
+		int begin, end;
 		
 		// Try to get the 4 players above
 		begin = position - 4;

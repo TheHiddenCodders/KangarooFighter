@@ -9,10 +9,12 @@ import Packets.ConnexionPacket;
 import Packets.DisconnexionPacket;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
+import Packets.LadderPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.NewsPacket;
 import Packets.Packets;
+import Packets.SearchLadderPacket;
 import Server.Server;
 import ServerInfo.Ladder;
 import ServerInfo.News;
@@ -139,6 +141,29 @@ public class Main
 						// Send this packet to the GameProcessor
 						gp.mainPackets.sendPacket(readPackets.get(i));
 					}
+					else if (readPackets.get(i).getClass().isAssignableFrom(SearchLadderPacket.class))
+					{
+						SearchLadderPacket receivedPacket = (SearchLadderPacket) readPackets.get(i);
+						LadderPacket packetToSend;
+						
+						// If the client want the Ladder of a player
+						if (receivedPacket.name != null)
+						{
+							// Send him the ladder
+							packetToSend = pp.getLadderFromPlayer(pp.isPlayerExist(receivedPacket.name));
+							packetToSend.setIp(receivedPacket.getIp());
+							
+							server.sendBuffer.sendPacket(packetToSend);
+						}
+						// If the client want the Ladder of a specific position
+						else
+						{
+							packetToSend = pp.getLadderFromPosition(receivedPacket.pos);
+							packetToSend.setIp(receivedPacket.getIp());
+							
+							server.sendBuffer.sendPacket(packetToSend);
+						}
+					}
 					else
 					{
 						System.err.println("Main thread : Received an unknowned packet" + readPackets.get(i).getClass());
@@ -162,7 +187,7 @@ public class Main
 	{
 		// TODO: Set position of the player before doing this
 		//packet.ladder = ladder.getLadderFromPosition(pp.getPlayerFromIp(packet.getIp()).getPacket().pos);
-		packet.ladder = pp.getLadder(pp.getPlayerFromIp(packet.getIp()));
+		packet.ladder = pp.getLadderFromPlayer(pp.getPlayerFromIp(packet.getIp()));
 		
 		// Get the 2 last news of the server
 		packet.news = news.getLastNews(2, packet.getIp());
