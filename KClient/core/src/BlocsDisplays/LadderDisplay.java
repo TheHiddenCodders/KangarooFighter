@@ -123,9 +123,7 @@ public class LadderDisplay extends Display
 			LadderPacket packet = (LadderPacket) data;
 			
 			// Set min and max rank
-			final int rankMin = packet.ladderList.get(0).pos;
 			final int rankMid = packet.ladderList.get(4).pos;
-			final int rankMax = rankMin + 9;
 			
 			// Init labels
 			for (int i = 0; i < rank.length; i++)
