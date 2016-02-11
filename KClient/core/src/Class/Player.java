@@ -1,5 +1,7 @@
 package Class;
 
+import java.util.ArrayList;
+
 import Packets.FriendsPacket;
 import Packets.PlayerPacket;
 
@@ -15,7 +17,7 @@ public class Player
 	private int loses;
 	private int wins;
 	private int pos;
-	private FriendsPacket friends;
+	private ArrayList<FriendsPacket> friends;
 	
 	/*
 	 * Constructors
@@ -94,11 +96,11 @@ public class Player
 		this.pos = pos;
 	}
 
-	public FriendsPacket getFriends() {
+	public ArrayList<FriendsPacket> getFriends() {
 		return friends;
 	}
 
-	public void setFriends(FriendsPacket friends) {
+	public void setFriends(ArrayList<FriendsPacket> friends) {
 		this.friends = friends;
 	}
 	

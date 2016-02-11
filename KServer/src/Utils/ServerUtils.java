@@ -556,61 +556,6 @@ public class ServerUtils
 	 ****************************************************************/
 	
 	/**
-	 * @param k
-	 * @return the friend file of kangaroo k
-	 */
-	public static FriendsPacket getFriendsDataPacket(Player p)
-	{
-		return getFriendsPacket(p.getName());
-	}
-	
-	/**
-	 * @param name
-	 * @return the friend file of kangaroo named name
-	 */
-	public static FriendsPacket getFriendsPacket(String name)
-	{
-		FriendsPacket packet = new FriendsPacket();
-		packet.friendsName = new ArrayList<String>();
-		packet.friendsOnline = new ArrayList<Boolean>();
-		
-		File friendsFile = getPlayerFriendsFile(name);
-		
-		// Get friends names
-		try
-		{
-			BufferedReader reader = new BufferedReader(new FileReader(friendsFile));
-			
-			String line = reader.readLine();
-			
-			while (line != null)
-			{				
-				if (line != null)
-					packet.friendsName.add(line);
-				
-				line = reader.readLine();
-			}
-			
-			reader.close();	
-		} catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		} catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-		
-		// Order packet alphabetically
-		packet.friendsName.sort(String.CASE_INSENSITIVE_ORDER);
-		
-		// Fill packet
-		for (int i = 0; i < packet.friendsName.size(); i++)
-			packet.friendsOnline.add(ServerUtils.isPlayerOnline(packet.friendsName.get(i)));
-	
-		return packet;
-	}
-	
-	/**
 	 * Add the kangaroo friend to the friend list of k
 	 * @param k
 	 * @param friend

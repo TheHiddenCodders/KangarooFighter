@@ -89,7 +89,7 @@ public class PlayerProcessor
 				while ( (readingLine = reader.readLine()) != null)
 				{
 					// Add the name in the file into the player's friends
-					playerData.friends.addFriend(readingLine, false);
+					playerData.addFriend(readingLine, false);
 				}
 				
 				reader.close();

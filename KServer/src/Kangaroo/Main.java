@@ -9,7 +9,6 @@ import Packets.ConnexionPacket;
 import Packets.DisconnexionPacket;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
-import Packets.LadderPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.NewsPacket;
@@ -110,10 +109,6 @@ public class Main
 		
 							// Send to the client his friends
 							server.sendBuffer.sendPacket(new FriendsPacket(receivedPacket.getIp()));
-							
-							// Send to the client the ladder and his position
-							//server.sendBuffer.sendPacket(new LadderPacket(receivedPacket.getIp()));
-							//server.sendBuffer.sendPacket(pp.getLadder(pp.getPlayerFromIp(receivedPacket.getIp())));
 							
 							// Send to his connected friends he is connected
 							// TODO : send packets to his friends

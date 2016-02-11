@@ -1,27 +1,31 @@
 package Packets;
 
-import java.util.ArrayList;
 
 public class FriendsPacket extends Packets
 {
 	public FriendsPacket(String ip) 
 	{
 		super(ip);
-		friendsName = new ArrayList<String>();
-		friendsOnline = new ArrayList<Boolean>();
+		friendsName = new String();
 	}
 
 	public FriendsPacket() 
 	{
 		super();
-		friendsName = new ArrayList<String>();
-		friendsOnline = new ArrayList<Boolean>();
+		friendsName = new String();
+	}
+	
+	public FriendsPacket(String name, boolean online)
+	{
+		super();
+		friendsName = name;
+		friendsOnline = online;
 	}
 
 	private static final long serialVersionUID = 8410335275464293843L;
 
-	public ArrayList<String> friendsName;
-	public ArrayList<Boolean> friendsOnline;
+	public String friendsName;
+	public boolean friendsOnline;
 
 	@Override
 	public String toString()
@@ -29,12 +33,6 @@ public class FriendsPacket extends Packets
 		return super.toString()
 				+ "\n"
 				+ "- [friendsName]:" + friendsName.toString() + "\n"
-				+ "- [friendsOnline]:" + friendsOnline.toString() + "\n";
-	}
-	
-	public void addFriend(String name, boolean online)
-	{
-		friendsName.add(name);
-		friendsOnline.add(online);
+				+ "- [friendsOnline]:" + friendsOnline + "\n";
 	}
 }
