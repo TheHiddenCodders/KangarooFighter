@@ -113,9 +113,9 @@ public class LadderBloc extends Bloc
 				{
 					if (packet.ladderList.get(i).name == homeStage.main.player.getFriends().get(j).name)
 					{
-						rank[i].setColor(Color.BLUE);
-						name[i].setColor(Color.BLUE);
-						elo[i].setColor(Color.BLUE);
+						rank[i].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
+						name[i].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
+						elo[i].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
 					}
 				}
 			}
