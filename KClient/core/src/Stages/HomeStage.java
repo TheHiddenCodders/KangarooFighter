@@ -6,11 +6,11 @@ import BlocsDisplays.NewsBloc;
 import BlocsDisplays.PersoBloc;
 import Class.ConnectedStage;
 import Client.Main;
+import Packets.FriendsPacket;
 import Packets.HomePacket;
 import Packets.InitGamePacket;
 import Packets.LadderPacket;
 import Packets.MatchMakingPacket;
-import Packets.PlayerPacket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -31,6 +31,7 @@ public class HomeStage extends ConnectedStage
 	private LadderPacket ladderPacket;
 	
 	private boolean searchingGame = false;
+	private boolean updateFriends = false;
 	
 	/*
 	 * Components
@@ -45,7 +46,6 @@ public class HomeStage extends ConnectedStage
 	private LadderBloc ladderBloc;
 	private FriendsBloc friendsBloc;
 	private NewsBloc newsBloc, newsBloc2;
-	
 	
 	/*
 	 * Constructors
@@ -158,6 +158,12 @@ public class HomeStage extends ConnectedStage
 		
 		if (ladderPacket != null)
 			ladderBloc.getDisplay().refresh(ladderPacket);
+		
+		if (updateFriends)
+		{
+			friendsBloc.refresh(null);
+			updateFriends = false;
+		}
 	}
 
 	@Override
@@ -188,9 +194,12 @@ public class HomeStage extends ConnectedStage
 			dataReceived();
 		}
 		
-		if (data.getClass().isAssignableFrom(PlayerPacket.class))
+		if (data.getClass().isAssignableFrom(FriendsPacket.class))
 		{
-			friendsBloc.refresh(null);
+			// Fire trigger
+			updateFriends = true;
+			
+			dataReceived();
 		}
 	}
 

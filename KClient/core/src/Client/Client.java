@@ -63,7 +63,7 @@ public abstract class Client extends Socket implements Runnable
         {     
             // Receive from server
             Object receivedObject = receiveFromServer();
-    		
+            
     		onReceived(receivedObject);
         }	
 	}

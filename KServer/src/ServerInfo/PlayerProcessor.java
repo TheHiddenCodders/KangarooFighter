@@ -11,6 +11,7 @@ import java.util.Collections;
 import Kangaroo.Player;
 import Packets.ConnexionPacket;
 import Packets.DisconnexionPacket;
+import Packets.FriendsPacket;
 import Packets.LadderPacket;
 import Packets.LoginPacket;
 import Packets.PlayerPacket;
@@ -115,7 +116,7 @@ public class PlayerProcessor
 				while ( (readingLine = reader.readLine()) != null)
 				{
 					// Add the name in the file into the player's friends
-					isPlayerExist(file.getName()).getPacket().addFriend(isPlayerExist(readingLine).getPacket());
+					isPlayerExist(file.getName()).getPacket().addFriend(new FriendsPacket(isPlayerExist(readingLine).getPacket()));
 				}
 				
 				reader.close();
@@ -189,17 +190,13 @@ public class PlayerProcessor
 		packet.accepted = true;	
 		player.setIp(packet.getIp());
 		
-		// Remove this client from the waiting list
-		waitingClients.remove(packet.getIp());
-		
-		// Add him to the connected players list
-		connectedPlayers.add(player);
-		
 		// Browse all player friends
 		for (int i = 0; i < player.getPacket().friends.size(); i++)
 		{
 			// Try to find player in his friend's, friend list
 			Player friendPlayer = isPlayerExist(player.getPacket().friends.get(i).name);
+			
+			// Put me online in my friends friends packets
 			for (int j = 0; j < friendPlayer.getPacket().friends.size(); j++)
 			{
 				if (friendPlayer.getPacket().friends.get(j).name.equals(player.getName()))
@@ -209,6 +206,15 @@ public class PlayerProcessor
 				}
 			}
 		}
+		
+		// Put me online in my own packet
+		player.getPacket().online = true;
+		
+		// Remove this client from the waiting list
+		waitingClients.remove(packet.getIp());
+		
+		// Add him to the connected players list
+		connectedPlayers.add(player);
 		
 		return packet;
 	}

@@ -54,12 +54,11 @@ public class FriendsBloc extends Bloc
 		for (int j = 0; j < name.length; j++)
 		{
 			name[j] = new Label("", skin);
-			
 			name[j].setPosition(38, getHeight() - 52 - j * 26.5f);
-			
 			name[j].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
 			
 			status[j] = new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/offline.png")));
+			status[j].setPosition(5, getHeight() - 52 - j * 26.5f);
 			status[j].setVisible(false);
 			
 			addActor(name[j]);
@@ -81,13 +80,16 @@ public class FriendsBloc extends Bloc
 	@Override
 	public void refresh(Object data) 
 	{
+		
 		if (homeStage.main.player.getFriends().size() > 0)
 		{
 			// Init them
 			for (int i = 0; i < homeStage.main.player.getFriends().size(); i++)
 			{
-				name[i].setText(homeStage.main.player.getFriends().get(i).name);
+				System.err.println(homeStage.main.player.getFriends().get(i).online);
 				
+				name[i].setText(homeStage.main.player.getFriends().get(i).name);
+								
 				if (homeStage.main.player.getFriends().get(i).online)
 					status[i].setDrawable(new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/online.png"))).getDrawable());
 				else

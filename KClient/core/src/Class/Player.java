@@ -2,6 +2,7 @@ package Class;
 
 import java.util.ArrayList;
 
+import Packets.FriendsPacket;
 import Packets.PlayerPacket;
 
 public class Player 
@@ -16,8 +17,10 @@ public class Player
 	private int loses;
 	private int wins;
 	private int pos;
-	private ArrayList<PlayerPacket> friends;
+	private boolean online;
+	private ArrayList<FriendsPacket> friends;
 	
+	// TODO: Just replace all by a player packet to prevent further changes
 	/*
 	 * Constructors
 	 */
@@ -44,7 +47,10 @@ public class Player
 		loses = packet.looses;
 		wins = packet.wins;
 		pos = packet.pos;
+		online = packet.online;
 		friends = packet.friends;
+		
+		System.err.println(friends.get(0));
 	}
 
 	public String getName() {
@@ -95,12 +101,29 @@ public class Player
 		this.pos = pos;
 	}
 
-	public ArrayList<PlayerPacket> getFriends() {
+	public boolean isOnline() {
+		return online;
+	}
+
+	public void setOnline(boolean online) {
+		this.online = online;
+	}
+
+	public ArrayList<FriendsPacket> getFriends() {
 		return friends;
 	}
 
-	public void setFriends(ArrayList<PlayerPacket> friends) {
+	public void setFriends(ArrayList<FriendsPacket> friends) {
 		this.friends = friends;
+	}
+	
+	public void updateFriend(FriendsPacket receivedFriend)
+	{
+		for (FriendsPacket friend : friends)
+		{
+			if (friend.name.equals(receivedFriend.name))
+				friend = receivedFriend;
+		}
 	}
 	
 }
