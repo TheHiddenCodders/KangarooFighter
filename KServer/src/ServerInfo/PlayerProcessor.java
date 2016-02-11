@@ -132,6 +132,12 @@ public class PlayerProcessor
 		
 		// Order the players by their elo
 		Collections.sort(players, new EloComparator());
+		
+		// Affect position to each player
+		for (int i = 0; i < players.size(); i++)
+		{
+			players.get(i).getPacket().pos = i + 1;
+		}
 	}
 	
 	/** Create a new registered player
@@ -342,12 +348,11 @@ public class PlayerProcessor
 		// Fill the result in
 		for (int i = 0; i < end-begin; i++)
 		{
-			players.get(i + begin).getPacket().pos = i + begin + 1;
 			result.addPlayer(players.get(i + begin).getPacket());
 		}
 		
 		return result;
 	}
 	
-	// TODO : Create a method modifying players and reorder them using EloComparator
+	// TODO : Create a method modifying players and reorder them using EloComparator, make for to affect position
 }
