@@ -80,9 +80,9 @@ public class FriendsBloc extends Bloc
 			// Init them
 			for (int i = 0; i < homeStage.main.player.getFriends().size(); i++)
 			{
-				name[i] = new Label(homeStage.main.player.getFriends().get(i).friendsName, skin);
+				name[i] = new Label(homeStage.main.player.getFriends().get(i).name, skin);
 				
-				if (homeStage.main.player.getFriends().get(i).friendsOnline)
+				if (homeStage.main.player.getFriends().get(i).online)
 					status[i].setDrawable(new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/online.png"))).getDrawable());
 				else
 					status[i].setDrawable(new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/offline.png"))).getDrawable());

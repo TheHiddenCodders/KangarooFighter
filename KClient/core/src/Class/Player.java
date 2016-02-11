@@ -2,7 +2,6 @@ package Class;
 
 import java.util.ArrayList;
 
-import Packets.FriendsPacket;
 import Packets.PlayerPacket;
 
 public class Player 
