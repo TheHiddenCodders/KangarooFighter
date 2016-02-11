@@ -79,13 +79,20 @@ public class LadderBloc extends Bloc
 			LadderPacket packet = (LadderPacket) data;
 			for (int i = 0; i < rank.length; i++)
 			{
+				// Set texts
 				rank[i].setText(String.valueOf(packet.ladderList.get(i).pos));
 				name[i].setText(packet.ladderList.get(i).name);
 				elo[i].setText(String.valueOf(packet.ladderList.get(i).elo));
 				
-				rank[i].setPosition(0 + 30 / 2 - rank[i].getWidth() / 2, getHeight() - 55 - i * 26.2f);
-				name[i].setPosition(23 + 60 / 2 - name[i].getWidth() / 2, getHeight() - 55 - i * 26.2f);
-				elo[i].setPosition(185 + 43 / 2 - elo[i].getWidth() / 2, getHeight() - 55 - i * 26.2f);
+				// Update actor size
+				rank[i].pack();
+				name[i].pack();
+				elo[i].pack();
+				
+				// Set positions according to their size
+				rank[i].setPosition(0 + 40 / 2 - rank[i].getWidth() / 2, getHeight() - 65 - i * 26.5f);
+				name[i].setPosition(47, getHeight() - 65 - i * 26.5f);
+				elo[i].setPosition(205 + 43 / 2 - elo[i].getWidth() / 2, getHeight() - 65 - i * 26.5f);
 				
 				// If it's the player
 				if (packet.ladderList.get(i).name == homeStage.main.player.getName())

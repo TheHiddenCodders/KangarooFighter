@@ -283,6 +283,9 @@ public class PlayerProcessor
 		{
 			// Then end to the last player
 			end = players.size();
+			
+			// NERISMA ADD
+			begin = end - 9;
 		}
 		
 		// Fill the result in

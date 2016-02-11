@@ -29,7 +29,7 @@ public class LadderDisplay extends Display
 	 */
 	
 	private Label title;
-	private TextButton search, prev, next, me, friends;
+	private TextButton search, prev, next, me, top, friends;
 	private TextField nameField;
 	
 	private Label[] rank, name, games, wins, loses, elo;
@@ -57,7 +57,7 @@ public class LadderDisplay extends Display
 		// Add name
 		nameField = new TextField("", skin);
 		nameField.setPosition(search.getX() + search.getWidth(), 5);
-		nameField.setSize(getWidth() - 250 - search.getWidth(), search.getHeight());
+		nameField.setSize(getWidth() - 310 - search.getWidth(), search.getHeight());
 		addActor(nameField);
 		
 		// Add browsing buttons
@@ -75,6 +75,10 @@ public class LadderDisplay extends Display
 		friends.setWidth(60);
 		friends.setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
 		addActor(friends);
+		top = new TextButton("Top", skin);
+		top.setWidth(60);
+		top.setColor(Color.GOLDENROD);
+		addActor(top);
 		
 		// Make labels tabs
 		rank = new Label[9];
@@ -118,6 +122,7 @@ public class LadderDisplay extends Display
 			// Init labels
 			for (int i = 0; i < rank.length; i++)
 			{
+				// Set texts
 				rank[i].setText(String.valueOf(packet.ladderList.get(i).pos));
 				name[i].setText(packet.ladderList.get(i).name);
 				games[i].setText(String.valueOf(packet.ladderList.get(i).games));
@@ -125,12 +130,21 @@ public class LadderDisplay extends Display
 				loses[i].setText(String.valueOf(packet.ladderList.get(i).looses));
 				elo[i].setText(String.valueOf(packet.ladderList.get(i).elo));
 				
-				rank[i].setPosition(0 + 58 / 2 - rank[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
-				name[i].setPosition(23 + 92 / 2 - name[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
-				games[i].setPosition(390 + 92 / 2 - games[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
-				wins[i].setPosition(484 + 92 / 2 - wins[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
-				loses[i].setPosition(576 + 92 / 2 - loses[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
-				elo[i].setPosition(660 + 92 / 2 - elo[i].getWidth() / 2, getHeight() - 120 - i * 26.2f);
+				// Update actor size
+				rank[i].pack();
+				name[i].pack();
+				games[i].pack();
+				wins[i].pack();
+				loses[i].pack();
+				elo[i].pack();
+				
+				// Set their position according to their size
+				rank[i].setPosition(0 + 58 / 2 - rank[i].getWidth() / 2, getHeight() - 132 - i * 26.2f);
+				name[i].setPosition(68, getHeight() - 132 - i * 26.2f);
+				games[i].setPosition(396 + 92 / 2 - games[i].getWidth() / 2, getHeight() - 132 - i * 26.2f);
+				wins[i].setPosition(490 + 92 / 2 - wins[i].getWidth() / 2, getHeight() - 132 - i * 26.2f);
+				loses[i].setPosition(582 + 92 / 2 - loses[i].getWidth() / 2, getHeight() - 132 - i * 26.2f);
+				elo[i].setPosition(676 + 92 / 2 - elo[i].getWidth() / 2, getHeight() - 132 - i * 26.2f);
 				
 				// If it's the player
 				if (packet.ladderList.get(i).name == homeStage.main.player.getName())
@@ -170,7 +184,7 @@ public class LadderDisplay extends Display
 			// Init browsing buttons
 			if (packet.ladderList.get(0).pos > 9)
 			{
-				prev.setText((rankMin - 9) + " - " + (rankMax + 9));
+				prev.setText((rankMin - 9) + " - " + (rankMin - 1));
 			}
 			else
 			{
@@ -185,9 +199,15 @@ public class LadderDisplay extends Display
 			prev.setPosition(nameField.getX() + nameField.getWidth(), 5);
 			next.setPosition(prev.getX() + prev.getWidth(), 5);
 			me.setPosition(next.getX() + next.getWidth(), 5);	
-			friends.setPosition(me.getX() + me.getWidth(), 5);
+			top.setPosition(me.getX() + me.getWidth(), 5);
+			friends.setPosition(top.getX() + top.getWidth(), 5);
 			
-			// Add listeners
+			/*
+			 * Send a SearchLadderPacket with the good value to the server
+			 * So he can send to the client the right ladder packet
+			 */
+			
+			// Prev listener
 			prev.addListener(new ClickListener() 
 			{
 				@Override
@@ -200,6 +220,7 @@ public class LadderDisplay extends Display
 				}
 			});
 			
+			// Next listener
 			next.addListener(new ClickListener() 
 			{
 				@Override
@@ -212,6 +233,7 @@ public class LadderDisplay extends Display
 				}
 			});
 			
+			// Me listener
 			me.addListener(new ClickListener() 
 			{
 				@Override
@@ -224,6 +246,20 @@ public class LadderDisplay extends Display
 				}
 			});
 			
+			// Top listener
+			top.addListener(new ClickListener() 
+			{
+				@Override
+				public void clicked(InputEvent event, float x, float y) 
+				{
+					SearchLadderPacket packet = new SearchLadderPacket();
+					packet.pos = 0;
+					homeStage.main.network.send(packet);
+					super.clicked(event, x, y);
+				}
+			});
+			
+			// Friends listener
 			friends.addListener(new ClickListener()
 			{
 				@Override
