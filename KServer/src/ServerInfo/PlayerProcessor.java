@@ -308,7 +308,7 @@ public class PlayerProcessor
 		{
 			if (players.get(i).getName().equals(player.getName()))
 			{
-				position = i;
+				position = i + 1;
 				break;
 			}
 		}
