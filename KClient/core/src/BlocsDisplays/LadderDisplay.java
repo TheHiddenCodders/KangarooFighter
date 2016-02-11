@@ -30,9 +30,10 @@ public class LadderDisplay extends Display
 	
 	private Label title;
 	private TextButton search, prev, next, me, top, friends;
-	private TextField nameField;
+	private TextField nameField, rankField;
 	
 	private Label[] rank, name, games, wins, loses, elo;
+	
 	/*
 	 * Constructors
 	 */
@@ -57,15 +58,21 @@ public class LadderDisplay extends Display
 		// Add name
 		nameField = new TextField("", skin);
 		nameField.setPosition(search.getX() + search.getWidth(), 5);
-		nameField.setSize(getWidth() - 310 - search.getWidth(), search.getHeight());
+		nameField.setSize(getWidth() - 370 - search.getWidth(), search.getHeight());
 		addActor(nameField);
 		
 		// Add browsing buttons
-		prev = new TextButton("", skin);
+		prev = new TextButton("<", skin);
 		prev.setWidth(60);
+		prev.setPosition(nameField.getX() + nameField.getWidth(), 5);	
 		addActor(prev);
-		next = new TextButton("", skin);
+		rankField = new TextField("", skin);
+		rankField.setSize(60, prev.getHeight());
+		rankField.setPosition(prev.getX() + prev.getWidth(), 5);	
+		addActor(rankField);
+		next = new TextButton(">", skin);
 		next.setWidth(60);
+		next.setPosition(rankField.getX() + rankField.getWidth(), 5);
 		addActor(next);
 		me = new TextButton("Moi", skin);
 		me.setWidth(60);
@@ -117,6 +124,7 @@ public class LadderDisplay extends Display
 			
 			// Set min and max rank
 			final int rankMin = packet.ladderList.get(0).pos;
+			final int rankMid = packet.ladderList.get(4).pos;
 			final int rankMax = rankMin + 9;
 			
 			// Init labels
@@ -182,25 +190,17 @@ public class LadderDisplay extends Display
 			}
 			
 			// Init browsing buttons
-			if (packet.ladderList.get(0).pos > 9)
-			{
-				prev.setText((rankMin - 9) + " - " + (rankMin - 1));
-			}
-			else
+			if (packet.ladderList.get(0).pos <= 9)
 			{
 				prev.setText("-");
 				prev.setTouchable(Touchable.disabled);
 			}
 			
 			// Set parameters of buttons
-			next.setText((rankMin + 9) + " - " + (rankMax + 9));
-			prev.setWidth(60);
-			next.setWidth(60);
-			prev.setPosition(nameField.getX() + nameField.getWidth(), 5);
-			next.setPosition(prev.getX() + prev.getWidth(), 5);
 			me.setPosition(next.getX() + next.getWidth(), 5);	
 			top.setPosition(me.getX() + me.getWidth(), 5);
 			friends.setPosition(top.getX() + top.getWidth(), 5);
+			rankField.setText(String.valueOf(rankMid));
 			
 			/*
 			 * Send a SearchLadderPacket with the good value to the server
@@ -214,7 +214,7 @@ public class LadderDisplay extends Display
 				public void clicked(InputEvent event, float x, float y) 
 				{
 					SearchLadderPacket packet = new SearchLadderPacket();
-					packet.pos = rankMin - 9;
+					packet.pos = rankMid - 9;
 					homeStage.main.network.send(packet);
 					super.clicked(event, x, y);
 				}
@@ -227,7 +227,7 @@ public class LadderDisplay extends Display
 				public void clicked(InputEvent event, float x, float y) 
 				{
 					SearchLadderPacket packet = new SearchLadderPacket();
-					packet.pos = rankMax + 1;
+					packet.pos = rankMid + 9;
 					homeStage.main.network.send(packet);
 					super.clicked(event, x, y);
 				}
