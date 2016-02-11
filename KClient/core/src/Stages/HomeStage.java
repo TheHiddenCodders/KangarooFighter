@@ -8,6 +8,7 @@ import Class.ConnectedStage;
 import Client.Main;
 import Packets.HomePacket;
 import Packets.InitGamePacket;
+import Packets.LadderPacket;
 import Packets.MatchMakingPacket;
 
 import com.badlogic.gdx.Gdx;
@@ -26,6 +27,8 @@ public class HomeStage extends ConnectedStage
 	
 	private HomePacket homePacket;
 	private InitGamePacket gamePacket;
+	private LadderPacket ladderPacket;
+	
 	private boolean searchingGame = false;
 	
 	/*
@@ -151,31 +154,37 @@ public class HomeStage extends ConnectedStage
 	{
 		if (gamePacket != null)
 			main.setStage(new PreGameStage(main, gamePacket));
+		
+		if (ladderPacket != null)
+			ladderBloc.getDisplay().refresh(ladderPacket);
 	}
 
 	@Override
 	public void setData(Object data)
 	{
 		if (data.getClass().isAssignableFrom(HomePacket.class))
-		{
-			HomePacket homePacket = (HomePacket) data;
-			
+		{			
 			// Store packet
-			this.homePacket = homePacket;
+			this.homePacket = (HomePacket) data;
 			
 			if (main.player != null)
 				initDataReceived();
 		}
 		
 		if (data.getClass().isAssignableFrom(InitGamePacket.class))
-		{
-			InitGamePacket gamePacket = (InitGamePacket) data;
-			
+		{			
 			// Store packet
-			this.gamePacket = gamePacket;
+			this.gamePacket = (InitGamePacket) data;
 			
 			dataReceived();
-			
+		}
+		
+		if (data.getClass().isAssignableFrom(LadderPacket.class))
+		{
+			// Store packet
+			this.ladderPacket = (LadderPacket) data;
+						
+			dataReceived();
 		}
 	}
 

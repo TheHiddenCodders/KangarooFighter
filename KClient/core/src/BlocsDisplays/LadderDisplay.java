@@ -205,6 +205,18 @@ public class LadderDisplay extends Display
 			 * So he can send to the client the right ladder packet
 			 */
 			
+			search.addListener(new ClickListener()
+			{
+				@Override
+				public void clicked(InputEvent event, float x, float y) 
+				{
+					SearchLadderPacket packet = new SearchLadderPacket();
+					packet.name = nameField.getText();
+					homeStage.main.network.send(packet);
+					super.clicked(event, x, y);
+				}
+			});
+			
 			// Prev listener
 			prev.addListener(new ClickListener() 
 			{

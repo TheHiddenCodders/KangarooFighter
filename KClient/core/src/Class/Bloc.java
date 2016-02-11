@@ -116,6 +116,15 @@ public abstract class Bloc extends Table
 		this.display.setPosition(13, 45);
 	}
 	
+	/**
+	 * Getter for display
+	 * @return display
+	 */
+	public Display getDisplay()
+	{
+		return display;
+	}
+	
 	/** This method refresh the bloc */
 	public abstract void refresh(Object data);
 }
