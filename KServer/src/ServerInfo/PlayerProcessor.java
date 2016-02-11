@@ -321,6 +321,9 @@ public class PlayerProcessor
 		LadderPacket result = new LadderPacket();
 		int begin, end;
 		
+		// The 1st player is accessible with player.get(0)
+		position--;
+		
 		// Try to get the 4 players above
 		begin = position - 4;
 
