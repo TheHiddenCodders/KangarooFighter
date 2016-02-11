@@ -167,9 +167,9 @@ public class LadderDisplay extends Display
 				}
 				
 				// Check if it's a friend
-				for (int j = 0; j < homeStage.main.player.getFriends().length; j++)
+				for (int j = 0; j < homeStage.main.player.getFriends().friendsName.size(); j++)
 				{
-					if (packet.ladderList.get(i).name == homeStage.main.player.getFriends()[j].name)
+					if (packet.ladderList.get(i).name == homeStage.main.player.getFriends().friendsName.get(j))
 					{
 						rank[i].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
 						name[i].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);

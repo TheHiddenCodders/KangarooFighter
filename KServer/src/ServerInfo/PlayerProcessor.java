@@ -79,9 +79,30 @@ public class PlayerProcessor
 				e.printStackTrace();
 			}
 			
-			// TODO : store player friends in the player object using friendsFile
-			
-			
+			// Get player's friends
+			try
+			{
+				BufferedReader reader = new BufferedReader(new FileReader(friendsFile));
+				String readingLine;
+				
+				// Brows the friend file
+				while ( (readingLine = reader.readLine()) != null)
+				{
+					// Add the name in the file into the player's friends
+					playerData.friends.addFriend(readingLine, false);
+				}
+				
+				reader.close();
+			}
+			catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+			}
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+				
 			// Create the player with those infos
 			players.add(new Player(playerData));
 			
@@ -162,6 +183,8 @@ public class PlayerProcessor
 		
 		// Add him to the connected players list
 		connectedPlayers.add(player);
+		
+		// TODO : Check friends and update the online variable
 		
 		return packet;
 	}
@@ -278,13 +301,14 @@ public class PlayerProcessor
 		// Try to get 9 players in total
 		end = begin + 9;
 		
-		// If there is less than 9 players below the begining
+		// If there is less than 9 players below the beginning
 		if (end > players.size())
 		{
 			// Then end to the last player
 			end = players.size();
 			
 			// NERISMA ADD
+			// Kurond.getFriends(Nerisma).giveCookie
 			begin = end - 9;
 		}
 		
@@ -298,5 +322,5 @@ public class PlayerProcessor
 		return result;
 	}
 	
-	// TODO : manage ladder in this class. Create a method modifing players and reorder them using EloComparator
+	// TODO : Create a method modifying players and reorder them using EloComparator
 }

@@ -16,8 +16,6 @@ public class Player
 	
 	public Player(PlayerPacket packet)
 	{
-		packet.friends = new PlayerPacket[0];
-		
 		playerPacket = packet;
 	}
 

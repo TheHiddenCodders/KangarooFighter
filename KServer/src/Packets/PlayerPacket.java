@@ -1,16 +1,22 @@
 package Packets;
 
+import java.util.ArrayList;
+
 
 public class PlayerPacket extends Packets
 {
 	public PlayerPacket(String ip) 
 	{
 		super(ip);
+		
+		friends = new FriendsPacket();
 	}
 
 	public PlayerPacket() 
 	{
 		super();
+		
+		friends = new FriendsPacket();
 	}
 
 	private static final long serialVersionUID = -1319262982236758754L;
@@ -22,7 +28,7 @@ public class PlayerPacket extends Packets
 	public int elo;
 	public int streak;
 	public int pos;
-	public PlayerPacket[] friends;
+	public FriendsPacket friends;
 
 	@Override
 	public String toString()
@@ -35,7 +41,7 @@ public class PlayerPacket extends Packets
 				+ "- [looses]: " + looses + "\n"
 				+ "- [elo]: " + elo + "\n"
 				+ "- [streak]: " + streak + "\n"
-				+ "- [pos]: " + pos + "\n";
-				//+ "- [friends]: " + friends.toString() + "\n";
+				+ "- [pos]: " + pos + "\n"
+				+ "- [friends]: " + friends.toString() + "\n";
 	}
 }

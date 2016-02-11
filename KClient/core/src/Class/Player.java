@@ -1,5 +1,6 @@
 package Class;
 
+import Packets.FriendsPacket;
 import Packets.PlayerPacket;
 
 public class Player 
@@ -14,7 +15,7 @@ public class Player
 	private int loses;
 	private int wins;
 	private int pos;
-	private PlayerPacket[] friends;
+	private FriendsPacket friends;
 	
 	/*
 	 * Constructors
@@ -93,11 +94,11 @@ public class Player
 		this.pos = pos;
 	}
 
-	public PlayerPacket[] getFriends() {
+	public FriendsPacket getFriends() {
 		return friends;
 	}
 
-	public void setFriends(PlayerPacket[] friends) {
+	public void setFriends(FriendsPacket friends) {
 		this.friends = friends;
 	}
 	

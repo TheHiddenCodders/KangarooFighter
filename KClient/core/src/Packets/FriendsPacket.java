@@ -31,4 +31,10 @@ public class FriendsPacket extends Packets
 				+ "- [friendsName]:" + friendsName.toString() + "\n"
 				+ "- [friendsOnline]:" + friendsOnline.toString() + "\n";
 	}
+	
+	public void addFriend(String name, boolean online)
+	{
+		friendsName.add(name);
+		friendsOnline.add(online);
+	}
 }
