@@ -56,8 +56,7 @@ public class Network extends Client
 				main.player = new Player((PlayerPacket) o);
 		}
 
-		else
-			currentStage.setData(o);
+		currentStage.setData(o);
 		
 	}
 	

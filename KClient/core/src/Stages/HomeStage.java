@@ -10,6 +10,7 @@ import Packets.HomePacket;
 import Packets.InitGamePacket;
 import Packets.LadderPacket;
 import Packets.MatchMakingPacket;
+import Packets.PlayerPacket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -185,6 +186,11 @@ public class HomeStage extends ConnectedStage
 			this.ladderPacket = (LadderPacket) data;
 						
 			dataReceived();
+		}
+		
+		if (data.getClass().isAssignableFrom(PlayerPacket.class))
+		{
+			friendsBloc.refresh(null);
 		}
 	}
 

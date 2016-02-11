@@ -54,7 +54,13 @@ public class FriendsBloc extends Bloc
 		for (int j = 0; j < name.length; j++)
 		{
 			name[j] = new Label("", skin);
-			status[j] = new Image();
+			
+			name[j].setPosition(38, getHeight() - 52 - j * 26.5f);
+			
+			name[j].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
+			
+			status[j] = new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/offline.png")));
+			status[j].setVisible(false);
 			
 			addActor(name[j]);
 			addActor(status[j]);
@@ -65,7 +71,7 @@ public class FriendsBloc extends Bloc
 			setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/background1.png")));
 		
 		// We don't need any object till friends are stored in player
-		refresh(new Object());
+		refresh(null);
 	}
 	
 	/*
@@ -80,12 +86,14 @@ public class FriendsBloc extends Bloc
 			// Init them
 			for (int i = 0; i < homeStage.main.player.getFriends().size(); i++)
 			{
-				name[i] = new Label(homeStage.main.player.getFriends().get(i).name, skin);
+				name[i].setText(homeStage.main.player.getFriends().get(i).name);
 				
 				if (homeStage.main.player.getFriends().get(i).online)
 					status[i].setDrawable(new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/online.png"))).getDrawable());
 				else
 					status[i].setDrawable(new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/offline.png"))).getDrawable());
+			
+				status[i].setVisible(true);
 			}
 		}
 	}
