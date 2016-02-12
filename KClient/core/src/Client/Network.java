@@ -52,13 +52,22 @@ public class Network extends Client
 		if (o.getClass().isAssignableFrom(PlayerPacket.class))
 		{			
 			if (main.player != null)
+			{
 				main.player.update((PlayerPacket) o);
+				System.out.println("Player updated");
+			}
 			else
+			{
 				main.player = new Player((PlayerPacket) o);
+				System.out.println("Player created");
+			}
 		}
 		
 		if (o.getClass().isAssignableFrom(FriendsPacket.class))
+		{
 			main.player.updateFriend((FriendsPacket) o);
+			System.out.println("Friends updated");
+		}
 
 		currentStage.setData(o);
 		

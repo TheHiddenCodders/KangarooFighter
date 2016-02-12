@@ -118,6 +118,7 @@ public class LadderDisplay extends Display
 	@Override
 	public void refresh(Object data)
 	{
+		System.err.println("LadderDisplay.refresh()");
 		if (data.getClass().isAssignableFrom(LadderPacket.class))
 		{
 			LadderPacket packet = (LadderPacket) data;

@@ -51,18 +51,18 @@ public class FriendsBloc extends Bloc
 		name = new Label[5];
 		status = new Image[5];
 		
-		for (int j = 0; j < name.length; j++)
+		for (int i = 0; i < name.length; i++)
 		{
-			name[j] = new Label("", skin);
-			name[j].setPosition(38, getHeight() - 52 - j * 26.5f);
-			name[j].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
+			name[i] = new Label("", skin);
+			name[i].setPosition(35, getHeight() - 52 - i * 26.5f);
+			name[i].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
 			
-			status[j] = new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/offline.png")));
-			status[j].setPosition(5, getHeight() - 52 - j * 26.5f);
-			status[j].setVisible(false);
+			status[i] = new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/offline.png")));
+			status[i].setPosition(9, getHeight() - 58 - i * 26.5f);
+			status[i].setVisible(false);
 			
-			addActor(name[j]);
-			addActor(status[j]);
+			addActor(name[i]);
+			addActor(status[i]);
 		}
 		
 		// Set background if no friends
@@ -71,6 +71,7 @@ public class FriendsBloc extends Bloc
 		
 		// We don't need any object till friends are stored in player
 		refresh(null);
+		display.refresh(null);
 	}
 	
 	/*
@@ -80,14 +81,11 @@ public class FriendsBloc extends Bloc
 	@Override
 	public void refresh(Object data) 
 	{
-		
 		if (homeStage.main.player.getFriends().size() > 0)
 		{
 			// Init them
 			for (int i = 0; i < homeStage.main.player.getFriends().size(); i++)
-			{
-				System.err.println(homeStage.main.player.getFriends().get(i).online);
-				
+			{				
 				name[i].setText(homeStage.main.player.getFriends().get(i).name);
 								
 				if (homeStage.main.player.getFriends().get(i).online)

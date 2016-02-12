@@ -65,6 +65,7 @@ public class LadderBloc extends Bloc
 		}
 		
 		refresh(ladder);
+		display.refresh(ladder);
 	}
 	
 	/*
@@ -120,7 +121,5 @@ public class LadderBloc extends Bloc
 				}
 			}
 		}
-		
-		display.refresh(data);
 	}
 }

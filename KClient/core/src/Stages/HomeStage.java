@@ -86,7 +86,6 @@ public class HomeStage extends ConnectedStage
 	protected void initDataNeededComponents()
 	{
 		ladderBloc = new LadderBloc(homePacket.ladder, this);
-		ladderBloc.refresh(homePacket);
 		friendsBloc = new FriendsBloc(this);
 		persoBloc = new PersoBloc(this);
 		newsBloc = new NewsBloc(homePacket.news[0], this);
@@ -162,6 +161,7 @@ public class HomeStage extends ConnectedStage
 		if (updateFriends)
 		{
 			friendsBloc.refresh(null);
+			friendsBloc.getDisplay().refresh(null);
 			updateFriends = false;
 		}
 	}
@@ -173,6 +173,7 @@ public class HomeStage extends ConnectedStage
 		{			
 			// Store packet
 			this.homePacket = (HomePacket) data;
+			System.out.println("HomePacket received");
 			
 			if (main.player != null)
 				initDataReceived();
@@ -182,7 +183,7 @@ public class HomeStage extends ConnectedStage
 		{			
 			// Store packet
 			this.gamePacket = (InitGamePacket) data;
-			
+			System.out.println("InitGamePacket received");
 			dataReceived();
 		}
 		
@@ -190,7 +191,7 @@ public class HomeStage extends ConnectedStage
 		{
 			// Store packet
 			this.ladderPacket = (LadderPacket) data;
-						
+			System.out.println("LadderPacket received");			
 			dataReceived();
 		}
 		
