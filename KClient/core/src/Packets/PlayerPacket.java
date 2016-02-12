@@ -30,6 +30,7 @@ public class PlayerPacket extends Packets
 	public int pos;
 	public boolean online;
 	public ArrayList<FriendsPacket> friends;
+	public ArrayList<FriendRequestPacket> friendRequests;
 
 	@Override
 	public String toString()

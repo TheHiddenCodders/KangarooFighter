@@ -1,21 +1,31 @@
 package Packets;
 
-import java.io.Serializable;
 
-public class FriendRequestPacket implements Serializable {
 
+public class FriendRequestPacket extends Packets
+{
+	public FriendRequestPacket(String ip) 
+	{
+		super(ip);
+	}
+
+	public FriendRequestPacket() 
+	{
+		super();
+	}
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2490418226242388006L;
+	private static final long serialVersionUID = 455349863221403030L;
 	
 	public String name;
-	
+
 	@Override
 	public String toString()
 	{
 		return super.toString()
 				+ "\n"
-				+ "- [name]:" + name + "\n";
+				+ "- [name]: " + name + "\n";
 	}
 }
