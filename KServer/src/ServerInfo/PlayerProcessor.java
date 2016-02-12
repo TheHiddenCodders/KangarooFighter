@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import Kangaroo.Player;
 import Packets.ConnexionPacket;
@@ -35,7 +37,23 @@ public class PlayerProcessor
 		connectedPlayers = new ArrayList<Player>();
 		players = new ArrayList<Player>();
 		
+		// Load players from their files
 		loadPlayerFromFile(filePath);
+		
+		// Create a thread that save data
+		TimerTask saveFile = new TimerTask(){
+
+			@Override
+			public void run() 
+			{
+				// TODO : Save file here
+			}
+		};
+		
+		Timer timer = new Timer();
+		
+		// Save files each 30 minutes
+		timer.schedule(saveFile, 0, 1800000);
 	}
 	
 	/** Load player from the file stored on the server
