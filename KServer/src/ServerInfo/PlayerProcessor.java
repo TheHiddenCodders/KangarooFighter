@@ -146,7 +146,7 @@ public class PlayerProcessor
 	 */
 	public void createPlayer(Player newPlayer)
 	{
-		
+		// TODO : send a ServerInfoPacket
 	}
 	
 	/**	Check if the client pseudo exists and check the password match with the pseudo
@@ -216,6 +216,8 @@ public class PlayerProcessor
 		// Add him to the connected players list
 		connectedPlayers.add(player);
 		
+		// TODO : send a ServerInfoPacket
+		
 		return packet;
 	}
 	
@@ -279,6 +281,7 @@ public class PlayerProcessor
 		waitingClients.remove(packet.getIp());
 		
 		// TODO : notified friend this client is deco
+		// TODO : send a ServerInfoPacket
 	}
 
 	/**

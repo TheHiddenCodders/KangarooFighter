@@ -15,7 +15,6 @@ import Packets.MatchMakingPacket;
 import Packets.Packets;
 import Packets.SearchLadderPacket;
 import Server.Server;
-import ServerInfo.Ladder;
 import ServerInfo.News;
 import ServerInfo.PlayerProcessor;
 
@@ -25,8 +24,6 @@ public class Main
 	public static String msg = "";
 	
 	static GameProcessor gp;
-	/** ladder : contain the game ladder */
-	static Ladder ladder;
 	/** news : contain the server news */
 	static News news;
 	/** pp : an object managing all the registered players on the server*/
@@ -40,7 +37,6 @@ public class Main
 		Server server = new Server();
 		server.open();
 		
-		ladder = new Ladder("/KangarooFighters/Ladder/elo");
 		news = new News("/KangarooFighters/News");
 
 		pp = new PlayerProcessor("/KangarooFighters/Players");
