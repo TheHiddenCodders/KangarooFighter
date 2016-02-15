@@ -10,6 +10,7 @@ public class PlayerPacket extends Packets
 		super(ip);
 		
 		friends = new ArrayList<FriendsPacket>();
+		notifications = new ArrayList<Notification>();
 	}
 
 	public PlayerPacket() 
@@ -17,6 +18,7 @@ public class PlayerPacket extends Packets
 		super();
 		
 		friends = new ArrayList<FriendsPacket>();
+		notifications = new ArrayList<Notification>();
 	}
 
 	private static final long serialVersionUID = -1319262982236758754L;
@@ -30,7 +32,7 @@ public class PlayerPacket extends Packets
 	public int pos;
 	public boolean online;
 	public ArrayList<FriendsPacket> friends;
-	public ArrayList<FriendRequestPacket> friendRequests;
+	public ArrayList<Notification> notifications;
 
 	@Override
 	public String toString()
@@ -50,5 +52,10 @@ public class PlayerPacket extends Packets
 	public void addFriend(FriendsPacket newFriend)
 	{
 		friends.add(newFriend);
+	}
+	
+	public void addNotification(Notification notif)
+	{
+		notifications.add(notif);
 	}
 }

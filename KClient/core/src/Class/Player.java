@@ -3,6 +3,7 @@ package Class;
 import java.util.ArrayList;
 
 import Packets.FriendsPacket;
+import Packets.Notification;
 import Packets.PlayerPacket;
 
 public class Player 
@@ -77,5 +78,9 @@ public class Player
 
 	public ArrayList<FriendsPacket> getFriends() {
 		return packet.friends;
+	}
+	
+	public ArrayList<Notification> getNotifications() {
+		return packet.notifications;
 	}
 }
