@@ -52,6 +52,7 @@ public class Main
 		// Read received packets by the server
 		while(true)
 		{
+			// Read received packets
 			readPackets = server.readBuffer.readPackets();
 			
 			for (int i = 0; i < readPackets.size(); i++)
@@ -59,9 +60,7 @@ public class Main
 				// If the received packet is not null, analyze it.
 				if (readPackets.get(i) != null)
 				{
-					/*
-					 * Receive a ConnexionPacket
-					 */
+					// Receive a ConnexionPacket
 					if (readPackets.get(i).getClass().isAssignableFrom(ConnexionPacket.class))
 					{
 						// Get the packet
@@ -70,9 +69,8 @@ public class Main
 						// Connect this client while is not login
 						pp.connexion(connexionPacket);
 					}
-					/*
-					 * Receive a DisconnexionPacket
-					 */
+					
+					// Receive a DisconnexionPacket
 					else if (readPackets.get(i).getClass().isAssignableFrom(DisconnexionPacket.class))
 					{
 						// Get the packet
@@ -81,9 +79,8 @@ public class Main
 						// Remove the disconnected player
 						pp.deconnexion(disconnexionPacket);
 					}
-					/*
-					 * Receive Login packet 
-					 */
+
+					// Receive Login packet
 					else if (readPackets.get(i).getClass().isAssignableFrom(LoginPacket.class))
 					{
 						// Try to login this client
@@ -124,9 +121,8 @@ public class Main
 							}
 						}
 					}
-					/*
-					 * Receive a HomePacket
-					 */
+					
+					// Receive a HomePacket
 					else if (readPackets.get(i).getClass().isAssignableFrom(HomePacket.class))
 					{						
 						// Cast packet
@@ -139,16 +135,22 @@ public class Main
 						server.sendBuffer.sendPacket(receivedPacket);
 						
 					}
+					
+					// Receive a MatchMakingPacket
 					else if (readPackets.get(i).getClass().isAssignableFrom(MatchMakingPacket.class))
 					{
 						// Send this packet to the GameProcessor
 						gp.mainPackets.sendPacket(readPackets.get(i));
 					}
+					
+					// Receive a ClientReadyPacket
 					else if (readPackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
 					{
 						// Send this packet to the GameProcessor
 						gp.mainPackets.sendPacket(readPackets.get(i));
 					}
+					
+					// Receive a SearchLadderPacket
 					else if (readPackets.get(i).getClass().isAssignableFrom(SearchLadderPacket.class))
 					{
 						SearchLadderPacket receivedPacket = (SearchLadderPacket) readPackets.get(i);
@@ -172,16 +174,12 @@ public class Main
 							server.sendBuffer.sendPacket(packetToSend);
 						}
 					}
+					
+					// Receive an unknown packet
 					else
 					{
 						System.err.println("Main thread : Received an unknowned packet" + readPackets.get(i).getClass());
 					}
-					
-					// TODO : manage the creation of games when receiving MatchMakingPacket
-					/*{
-						Thread t = new Thread(games.get(index));
-						t.start();
-					}*/
 				}
 				else // If the received packet is null, replace the -1.
 				{
@@ -193,15 +191,13 @@ public class Main
 	
 	public static HomePacket fillHomePacket(HomePacket packet)
 	{
-		// TODO: Set position of the player before doing this
-		//packet.ladder = ladder.getLadderFromPosition(pp.getPlayerFromIp(packet.getIp()).getPacket().pos);
+		// Get the ladder with the player sending the packet
 		packet.ladder = pp.getLadderFromPlayer(pp.getPlayerFromIp(packet.getIp()));
 		
 		// Get the 2 last news of the server
 		packet.news = news.getLastNews(2, packet.getIp());
 		
 		// TODO: Get server info packet
-		// TODO: Fill packet with
 		
 		return packet;
 	}
