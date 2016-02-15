@@ -44,8 +44,12 @@ public class ServerInfo
 		// Browse all connected players to send them the updated packet
 		for (int i = 0; i < connectedPlayers.size(); i++)
 		{
-			this.packet.setIp(connectedPlayers.get(i).getIp());
-			sendBuffer.sendPacket(this.packet);
+			// Create a new ServerInfoPacket from the one store
+			ServerInfoPacket packetToSend = new ServerInfoPacket(this.packet);
+			
+			packetToSend.setIp(connectedPlayers.get(i).getIp());
+			
+			sendBuffer.sendPacket(packetToSend);
 		}
 		
 	}
