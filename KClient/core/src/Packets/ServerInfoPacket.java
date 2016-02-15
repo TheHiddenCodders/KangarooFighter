@@ -1,8 +1,6 @@
 package Packets;
 
-import java.io.Serializable;
-
-public class ServerInfoPacket implements Serializable
+public class ServerInfoPacket extends Packets
 {
 	/**
 	 * 
