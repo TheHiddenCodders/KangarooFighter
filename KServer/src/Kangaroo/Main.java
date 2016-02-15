@@ -102,16 +102,7 @@ public class Main
 							// Send to the client his data
 							server.sendBuffer.sendPacket(loginPlayer.getPacket());
 							
-							/*// Send to the client the last news
-							NewsPacket[] newsBuffer = news.getLastNews(2, receivedPacket.getIp());
-							server.sendBuffer.sendPacket(newsBuffer[0]);		
-							server.sendBuffer.sendPacket(newsBuffer[1]);		
-		
-							// Send to the client his friends
-							server.sendBuffer.sendPacket(new FriendsPacket(receivedPacket.getIp()));*/
-							
 							// Send to his connected friends he is connected
-							// TODO : change connected player in reference to players (in playerprocessor)
 							Player player = pp.isPlayerExist(loginPlayer.getName());
 							
 							// Browse player's friends
@@ -123,19 +114,12 @@ public class Main
 									// Get the "player" associated to this friend
 									Player friendPlayer = pp.isPlayerExist(player.getPacket().friends.get(j).name);
 									
-									// Browse his friends
-									for (int k = 0; k < friendPlayer.getPacket().friends.size(); k++)
-									{
-										// Try to find myself
-										if (friendPlayer.getPacket().friends.get(k).name.equals(player.getName()))
-										{
-											FriendsPacket test = new FriendsPacket(player.getPacket());
-											test.setIp(friendPlayer.getIp());
-											
-											// Fill my packet inside him (exactly what it is doing)
-											server.sendBuffer.sendPacket(test);
-										}
-									}
+									// Create a friend packet to notify the connection to a friend
+									FriendsPacket friendPacket = new FriendsPacket(player.getPacket());
+									friendPacket.setIp(friendPlayer.getIp());
+									
+									// Send this packet to the friend
+									server.sendBuffer.sendPacket(friendPacket);
 								}
 							}
 						}
