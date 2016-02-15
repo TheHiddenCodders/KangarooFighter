@@ -12,6 +12,7 @@ import Packets.HomePacket;
 import Packets.InitGamePacket;
 import Packets.LadderPacket;
 import Packets.MatchMakingPacket;
+import Packets.Notification;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -33,6 +34,7 @@ public class HomeStage extends ConnectedStage
 	
 	private boolean searchingGame = false;
 	private boolean updateFriends = false;
+	private boolean updateNotifications = false;
 	
 	/*
 	 * Components
@@ -169,6 +171,12 @@ public class HomeStage extends ConnectedStage
 			friendsBloc.getDisplay().refresh(null);
 			updateFriends = false;
 		}
+		
+		if (updateNotifications)
+		{
+			notifTable.refresh();
+			updateNotifications = false;
+		}
 	}
 
 	@Override
@@ -204,6 +212,14 @@ public class HomeStage extends ConnectedStage
 		{
 			// Fire trigger
 			updateFriends = true;
+			
+			dataReceived();
+		}
+		
+		if (data.getClass().isAssignableFrom(Notification.class))
+		{
+			// Fire trigger
+			updateNotifications = true;
 			
 			dataReceived();
 		}
