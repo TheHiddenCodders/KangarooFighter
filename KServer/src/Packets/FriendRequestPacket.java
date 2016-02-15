@@ -2,7 +2,7 @@ package Packets;
 
 
 
-public class FriendRequestPacket extends Packets
+public class FriendRequestPacket extends Notification
 {
 	public FriendRequestPacket(String ip) 
 	{

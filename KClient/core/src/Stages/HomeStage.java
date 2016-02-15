@@ -5,12 +5,14 @@ import BlocsDisplays.LadderBloc;
 import BlocsDisplays.NewsBloc;
 import BlocsDisplays.PersoBloc;
 import Class.ConnectedStage;
+import Class.NotificationsTable;
 import Client.Main;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
 import Packets.InitGamePacket;
 import Packets.LadderPacket;
 import Packets.MatchMakingPacket;
+import Packets.Notification;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -32,6 +34,7 @@ public class HomeStage extends ConnectedStage
 	
 	private boolean searchingGame = false;
 	private boolean updateFriends = false;
+	private boolean updateNotifications = false;
 	
 	/*
 	 * Components
@@ -40,6 +43,7 @@ public class HomeStage extends ConnectedStage
 	private TextButton matchMakingLaunch;
 	private Image background;
 	private Image bottomRibbon;
+	private NotificationsTable notifTable;
 	
 	// Blocs
 	private PersoBloc persoBloc;
@@ -92,6 +96,8 @@ public class HomeStage extends ConnectedStage
 		newsBloc.setPosition(10, 255);
 		newsBloc2 = new NewsBloc(homePacket.news[1], this);
 		newsBloc2.setPosition(10, 50);
+		notifTable = new NotificationsTable(this);
+		notifTable.setPosition(getWidth() - notifTable.getWidth() - 10, 5);
 	}
 
 	@Override
@@ -147,6 +153,7 @@ public class HomeStage extends ConnectedStage
 		addActor(persoBloc);
 		addActor(newsBloc);
 		addActor(newsBloc2);
+		addActor(notifTable);
 	}
 	
 	@Override
@@ -163,6 +170,12 @@ public class HomeStage extends ConnectedStage
 			friendsBloc.refresh(null);
 			friendsBloc.getDisplay().refresh(null);
 			updateFriends = false;
+		}
+		
+		if (updateNotifications)
+		{
+			notifTable.refresh();
+			updateNotifications = false;
 		}
 	}
 
@@ -199,6 +212,14 @@ public class HomeStage extends ConnectedStage
 		{
 			// Fire trigger
 			updateFriends = true;
+			
+			dataReceived();
+		}
+		
+		if (data.getClass().isAssignableFrom(Notification.class))
+		{
+			// Fire trigger
+			updateNotifications = true;
 			
 			dataReceived();
 		}
