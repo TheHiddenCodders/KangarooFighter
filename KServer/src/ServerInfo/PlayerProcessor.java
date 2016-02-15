@@ -27,11 +27,14 @@ public class PlayerProcessor
 	/** connectedPlayers : all Player logged in */
 	private ArrayList<Player> connectedPlayers;
 	/** playerFilePath : the path of the directory storing all players infos */
-	String playerFilePath;
+	private String playerFilePath;
+	/** serverInfo : a reference to the main ServerInfo instance allowing to send a ServerInfoPacket when updated */
+	private ServerInfo serverInfo;
 	
-	public PlayerProcessor(String filePath)
+	public PlayerProcessor(String filePath, ServerInfo serverInfo)
 	{
-		playerFilePath = filePath;
+		this.playerFilePath = filePath;
+		this.serverInfo = serverInfo;
 		
 		waitingClients = new ArrayList<String>();
 		connectedPlayers = new ArrayList<Player>();
@@ -164,6 +167,7 @@ public class PlayerProcessor
 	 */
 	public void createPlayer(Player newPlayer)
 	{
+		// TODO : create the player file
 		// TODO : send a ServerInfoPacket
 	}
 	
@@ -234,7 +238,8 @@ public class PlayerProcessor
 		// Add him to the connected players list
 		connectedPlayers.add(player);
 		
-		// TODO : send a ServerInfoPacket
+		// Update the ServerInfoPacket
+		serverInfo.update(this);
 		
 		return packet;
 	}
@@ -299,7 +304,9 @@ public class PlayerProcessor
 		waitingClients.remove(packet.getIp());
 		
 		// TODO : notified friend this client is deco
-		// TODO : send a ServerInfoPacket
+		
+		// Update the ServerInfoPacket
+		serverInfo.update(this);
 	}
 
 	/**
@@ -383,5 +390,14 @@ public class PlayerProcessor
 		return result;
 	}
 	
+	public int howManyRegisteredPlayer()
+	{
+		return players.size();
+	}
+	
+	public int howManyConnectedPlayer()
+	{
+		return connectedPlayers.size();
+	}
 	// TODO : Create a method modifying players and reorder them using EloComparator, make for to affect position
 }

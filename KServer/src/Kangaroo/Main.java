@@ -17,6 +17,7 @@ import Packets.SearchLadderPacket;
 import Server.Server;
 import ServerInfo.News;
 import ServerInfo.PlayerProcessor;
+import ServerInfo.ServerInfo;
 
 public class Main 
 {
@@ -29,6 +30,8 @@ public class Main
 	static News news;
 	/** pp : an object managing all the registered players on the server*/
 	static PlayerProcessor pp;
+	/* serverInfo : containing all server infos, send a ServerInfoPacket to clients when updated */
+	static ServerInfo serverInfo;
 	
 	public static void main(String[] args) throws IOException
 	{
@@ -39,8 +42,12 @@ public class Main
 		server.open();
 		
 		news = new News("/KangarooFighters/News");
-
-		pp = new PlayerProcessor("/KangarooFighters/Players");
+		
+		// Create the class that update servers infos
+		serverInfo = new ServerInfo(server.sendBuffer);
+		
+		// Create processors
+		pp = new PlayerProcessor("/KangarooFighters/Players", serverInfo);
 		gp = new GameProcessor(pp, server.sendBuffer);
 		
 		// Launch game threads
