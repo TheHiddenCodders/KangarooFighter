@@ -23,6 +23,7 @@ public class Main
 	public static BufferedInputStream inputReader;
 	public static String msg = "";
 	
+	/** gp : Manage the match making and all game instances */
 	static GameProcessor gp;
 	/** news : contain the server news */
 	static News news;
