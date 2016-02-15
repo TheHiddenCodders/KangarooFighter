@@ -17,6 +17,7 @@ public class ColoredLabel extends Table
 	private String tempPart = "";
 	private int cursor = 0; 
 	private int state = -1; 
+	private Skin skin;
 
 	// -1 = begin
 	// 0 = read a char 
@@ -35,8 +36,38 @@ public class ColoredLabel extends Table
 	{
 		super();
 		
+		this.skin = skin;
+		
 		parts = new ArrayList<Label>();
 		
+		parse(sentence, colors);
+	}
+	
+	@Override
+	public void setPosition(float x, float y)
+	{
+		// Set pos first part
+		parts.get(0).setPosition(getX(), getY());
+		parts.get(0).pack();
+		
+		// Concat them
+		for (int i = 1; i < parts.size(); i++)
+		{
+			parts.get(i).pack();
+			parts.get(i).setPosition(parts.get(i - 1).getX() + parts.get(i - 1).getWidth(), getY());
+		}	
+		super.setPosition(x, y);
+	}
+	
+	public void setText(String sentence, Color... colors)
+	{
+		parts.clear();
+		
+		parse(sentence, colors);
+	}
+	
+	private void parse(String sentence, Color... colors)
+	{
 		// While cursor has not pass through entire string
 		while (cursor < sentence.length())
 		{
@@ -90,8 +121,11 @@ public class ColoredLabel extends Table
 			else if (state == 2)
 			{	
 				// Close last part
-				parts.get(parts.size() - 1).setText(tempPart);
-				tempPart = "";
+				if (parts.size() != 0)
+				{
+					parts.get(parts.size() - 1).setText(tempPart);
+					tempPart = "";
+				}
 				
 				// Make new part
 				parts.add(new Label("", skin));
@@ -139,8 +173,11 @@ public class ColoredLabel extends Table
 			else if (state == 6)
 			{			
 				// Close last part
-				parts.get(parts.size() - 1).setText(tempPart);
-				tempPart = "";
+				if (parts.size() != 0)
+				{
+					parts.get(parts.size() - 1).setText(tempPart);
+					tempPart = "";
+				}
 				
 				// Make new part
 				parts.add(new Label("", skin));
@@ -168,29 +205,25 @@ public class ColoredLabel extends Table
 		parts.get(0).pack();
 		addActor(parts.get(0));
 		
+		int width = 0;
+		int height = 0;
 		// Concat them
 		for (int i = 1; i < parts.size(); i++)
 		{
 			parts.get(i).pack();
 			parts.get(i).setPosition(parts.get(i - 1).getX() + parts.get(i - 1).getWidth(), getY());
-			System.err.println(parts.get(i).getX());
+			//System.err.println(parts.get(i).getX());
 			addActor(parts.get(i));
-		}		
-	}
-	
-	@Override
-	public void setPosition(float x, float y)
-	{
-		// Set pos first part
-		parts.get(0).setPosition(getX(), getY());
-		parts.get(0).pack();
+			
+			width += (parts.get(i - 1).getWidth() + parts.get(i).getWidth());
+			height = (int) parts.get(i).getHeight();
+			//System.out.println(width);
+		}
 		
-		// Concat them
-		for (int i = 1; i < parts.size(); i++)
-		{
-			parts.get(i).pack();
-			parts.get(i).setPosition(parts.get(i - 1).getX() + parts.get(i - 1).getWidth(), getY());
-		}	
-		super.setPosition(x, y);
+		setSize(width, height);
+		//System.out.println(getWidth());
+		
+		// Reset cursor
+		cursor = 0;	
 	}
 }

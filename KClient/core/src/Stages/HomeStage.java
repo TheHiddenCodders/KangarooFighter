@@ -5,6 +5,7 @@ import BlocsDisplays.LadderBloc;
 import BlocsDisplays.NewsBloc;
 import BlocsDisplays.PersoBloc;
 import Class.ConnectedStage;
+import Class.NotificationsDisplay;
 import Class.NotificationsTable;
 import Client.Main;
 import Packets.FriendsPacket;
@@ -44,6 +45,7 @@ public class HomeStage extends ConnectedStage
 	private Image background;
 	private Image bottomRibbon;
 	private NotificationsTable notifTable;
+	private NotificationsDisplay notifDisplay;
 	
 	// Blocs
 	private PersoBloc persoBloc;
@@ -81,7 +83,7 @@ public class HomeStage extends ConnectedStage
 		matchMakingLaunch.setSize(150, 40);
 		matchMakingLaunch.setColor(Color.TAN);
 		matchMakingLaunch.setPosition(this.getWidth() / 2 - matchMakingLaunch.getWidth() / 2, this.getHeight() - matchMakingLaunch.getHeight() - 5);
-	
+		
 		// Bottom ribbon
 		bottomRibbon = new Image(new Texture(Gdx.files.internal("sprites/homestage/botribbon.png")));
 	}
@@ -98,6 +100,8 @@ public class HomeStage extends ConnectedStage
 		newsBloc2.setPosition(10, 50);
 		notifTable = new NotificationsTable(this);
 		notifTable.setPosition(getWidth() - notifTable.getWidth() - 10, 5);
+		notifDisplay = new NotificationsDisplay(this);
+		notifDisplay.setPosition(10, getHeight() - 51);
 	}
 
 	@Override
@@ -122,7 +126,16 @@ public class HomeStage extends ConnectedStage
 	@Override
 	protected void addInitDataNeededListeners()
 	{
-		
+		notifTable.addListener(new ClickListener() 
+		{
+			@Override
+			public void clicked(InputEvent event, float x, float y) 
+			{
+				hideBlocs();
+				addActor(notifDisplay);
+				super.clicked(event, x, y);
+			}
+		});
 	}
 	
 	@Override
@@ -141,8 +154,8 @@ public class HomeStage extends ConnectedStage
 	protected void addActors() 
 	{
 		addActor(background);
-		addActor(matchMakingLaunch);
 		addActor(bottomRibbon);
+		addActor(matchMakingLaunch);
 	}
 	
 	@Override
@@ -280,5 +293,15 @@ public class HomeStage extends ConnectedStage
 		MatchMakingPacket packet = new MatchMakingPacket();
 		packet.search = false;
 		main.network.send(packet);
+	}
+	
+	public Image getBottomRibbon()
+	{
+		return bottomRibbon;
+	}
+	
+	public NotificationsTable getNotificationsTable()
+	{
+		return notifTable;
 	}
 }
