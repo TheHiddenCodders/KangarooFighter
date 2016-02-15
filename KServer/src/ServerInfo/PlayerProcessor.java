@@ -119,7 +119,16 @@ public class PlayerProcessor
 			}
 		}
 		
-		// Re browse player to init friends
+		// Order the players by their elo
+		Collections.sort(players, new EloComparator());
+		
+		// Affect position to each player
+		for (int i = 0; i < players.size(); i++)
+		{
+			players.get(i).getPacket().pos = i + 1;
+		}
+		
+		// Init player's friends
 		for (File file : directory.listFiles())
 		{
 			File friendsFile = new File(file.getPath() + "/friends");
@@ -147,15 +156,6 @@ public class PlayerProcessor
 			{
 				e.printStackTrace();
 			}
-		}
-		
-		// Order the players by their elo
-		Collections.sort(players, new EloComparator());
-		
-		// Affect position to each player
-		for (int i = 0; i < players.size(); i++)
-		{
-			players.get(i).getPacket().pos = i + 1;
 		}
 	}
 	
@@ -370,8 +370,7 @@ public class PlayerProcessor
 			// Then end to the last player
 			end = players.size();
 			
-			// NERISMA ADD
-			// Kurond.getFriends(Nerisma).giveCookie
+			// And start p players above
 			begin = end - 9;
 		}
 		
