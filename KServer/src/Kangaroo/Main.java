@@ -3,10 +3,12 @@ package Kangaroo;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import Packets.ClientReadyPacket;
 import Packets.ConnexionPacket;
 import Packets.DisconnexionPacket;
+import Packets.FriendRequestPacket;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
 import Packets.LadderPacket;
@@ -148,12 +150,32 @@ public class Main
 					// Received a FriendRequestPacket
 					else if (readPackets.get(i) instanceof Notification)
 					{
-						// Cast notification
-						Notification packet = (Notification)readPackets.get(i);
-						Player player = pp.getPlayerFromIp(packet.getIp());
-						player.getPacket().addNotification(packet);
+						if (readPackets.get(i) instanceof FriendRequestPacket)
+						{
+							// Cast notification
+							FriendRequestPacket packet = (FriendRequestPacket)readPackets.get(i);
+							
+							Player sender = pp.getPlayerFromIp(packet.getIp());
+							
+							// Prepare the packet
+							packet.date = new Date();
+							packet.message = new String(sender.getName() + " vous a envoyer une demande d'amis");
+							
+							// Get the player who store the notification
+							Player player = pp.isPlayerExist(packet.name);
+							
+							// TODO : Check if the player realy exist
+							
+							// Add the notification to this player
+							player.getPacket().addNotification(packet);
+							
+							System.err.println("Notification store : " + packet.toString());
+						}
+						else 
+						{
+							System.err.println("Main thread : Received an unknowned notification" + readPackets.get(i).getClass());
+						}
 						
-						System.err.println("Notification store : " + packet.toString());
 					}
 					
 					// Receive a MatchMakingPacket

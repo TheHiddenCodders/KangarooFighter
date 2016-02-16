@@ -138,12 +138,11 @@ public class PlayerProcessor
 					// Get the type of the notification
 					if (readingLine.split("|")[0].equals("FriendRequestPacket"))
 					{
-						System.err.println("Add notification");
-						// TODO : add notification here
+						System.err.println(readingLine.split("|")[1] + " :: " + readingLine.split("|")[2]);
 					}
 					else
 					{
-						System.err.println("Loading players : read an unknown notification");
+						System.err.println("Loading players : read an unknown notification : " + readingLine.split("|")[0] );
 					}
 				}
 				
