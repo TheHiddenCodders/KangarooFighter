@@ -142,7 +142,7 @@ public class PlayerProcessor
 				BufferedReader reader = new BufferedReader(new FileReader(friendsFile));
 				String readingLine;
 				
-				// Brows the friend file
+				// Browse the friend file
 				while ( (readingLine = reader.readLine()) != null)
 				{
 					// Add the name in the file into the player's friends
@@ -167,7 +167,7 @@ public class PlayerProcessor
 	 */
 	public void createPlayer(Player newPlayer)
 	{
-		// TODO : create the player file
+		// TODO : 
 		// TODO : send a ServerInfoPacket
 	}
 	

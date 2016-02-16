@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import Packets.ClientReadyPacket;
 import Packets.ConnexionPacket;
 import Packets.DisconnexionPacket;
+import Packets.FriendRequestPacket;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
 import Packets.LadderPacket;
@@ -142,6 +143,12 @@ public class Main
 						// Send filled packet
 						server.sendBuffer.sendPacket(receivedPacket);
 						
+					}
+					
+					// Received a FriendRequestPacket
+					else if (readPackets.get(i).getClass().isAssignableFrom(FriendRequestPacket.class))
+					{
+						// TODO : Add a notification in files
 					}
 					
 					// Receive a MatchMakingPacket
