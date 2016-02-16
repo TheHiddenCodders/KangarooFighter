@@ -2,7 +2,7 @@ package Packets;
 
 import java.util.Date;
 
-public class Notification  extends Packets
+public abstract class Notification  extends Packets
 {
 	public Notification(String ip)
 	{
@@ -16,6 +16,17 @@ public class Notification  extends Packets
 	
 	private static final long serialVersionUID = 7294896430046500065L;
 	public String message;
-	public Date date;
+	public String date;
 	// public Style style; style = yesno, yesOnly, ...
+	
+	@Override
+	public String toString()
+	{
+		return super.toString()
+				+ "\n"
+				+ "- [message]: " + message + "\n"
+				+ "- [date]: " + date + "\n";
+	}
+	
+	public abstract String save();
 }

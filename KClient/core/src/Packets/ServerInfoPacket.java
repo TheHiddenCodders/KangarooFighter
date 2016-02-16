@@ -12,6 +12,22 @@ public class ServerInfoPacket extends Packets
 	public int nKangaroosOnline;
 	public int nGamesOnline;
 	
+	public ServerInfoPacket(ServerInfoPacket packet) 
+	{
+		nKangaroosRegistered = packet.nKangaroosRegistered;
+		nGamesPlayed = packet.nGamesPlayed;
+		nKangaroosOnline = packet.nKangaroosOnline;
+		nGamesOnline = packet.nGamesOnline;
+	}
+
+	public ServerInfoPacket() 
+	{
+		nKangaroosRegistered = 0;
+		nGamesPlayed = 0;
+		nKangaroosOnline = 0;
+		nGamesOnline = 0;
+	}
+
 	@Override
 	public String toString()
 	{

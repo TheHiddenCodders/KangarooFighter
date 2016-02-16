@@ -2,7 +2,10 @@ package Kangaroo;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import Packets.ClientReadyPacket;
@@ -158,13 +161,16 @@ public class Main
 							Player sender = pp.getPlayerFromIp(packet.getIp());
 							
 							// Prepare the packet
-							packet.date = new Date();
+							Date today = Calendar.getInstance().getTime();   
+							Format formatter = new SimpleDateFormat("dd/MM HH:mm");
+							packet.date = formatter.format(today);
+							
 							packet.message = new String(sender.getName() + " vous a envoyer une demande d'amis");
 							
 							// Get the player who store the notification
 							Player player = pp.isPlayerExist(packet.name);
 							
-							// TODO : Check if the player realy exist
+							// TODO : Check if the player really exist
 							
 							// Add the notification to this player
 							player.getPacket().addNotification(packet);

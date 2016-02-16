@@ -16,7 +16,7 @@ public abstract class Notification  extends Packets
 	
 	private static final long serialVersionUID = 7294896430046500065L;
 	public String message;
-	public Date date;
+	public String date;
 	// public Style style; style = yesno, yesOnly, ...
 	
 	@Override

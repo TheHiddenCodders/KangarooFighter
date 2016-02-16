@@ -7,14 +7,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import Kangaroo.Player;
 import Packets.ConnexionPacket;
 import Packets.DisconnexionPacket;
+import Packets.FriendRequestPacket;
 import Packets.FriendsPacket;
 import Packets.LadderPacket;
 import Packets.LoginPacket;
@@ -136,13 +140,20 @@ public class PlayerProcessor
 					String readingLine = reader.readLine();
 					
 					// Get the type of the notification
-					if (readingLine.split("|")[0].equals("FriendRequestPacket"))
+					if (readingLine.split("-")[0].equals("FriendRequestPacket"))
 					{
-						System.err.println(readingLine.split("|")[1] + " :: " + readingLine.split("|")[2]);
+						FriendRequestPacket notif = new FriendRequestPacket();
+						notif.message = readingLine.split("-")[1];
+						
+						// Convert Date from String
+						notif.date = readingLine.split("-")[2];
+						notif.name = readingLine.split("-")[3];
+
+						players.get(players.size() - 1).getPacket().addNotification(notif);
 					}
 					else
 					{
-						System.err.println("Loading players : read an unknown notification : " + readingLine.split("|")[0] );
+						System.err.println("Loading players : read an unknown notification : " + readingLine.split("-")[0]);
 					}
 				}
 				
