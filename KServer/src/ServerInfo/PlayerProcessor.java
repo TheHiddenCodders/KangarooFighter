@@ -53,60 +53,23 @@ public class PlayerProcessor
 				File directory = new File(new File("").getAbsolutePath().concat(filePath));
 				
 				// Browse all file of the directory
-				for (int i = 0; i < directory.listFiles().length; i++)
+				for (int i = 0; i < players.size(); i++)
 				{
 					// Save players' data
-					File dataFile = new File(directory.listFiles()[i].getPath() + "/data");
+					File playerFile = new File(directory.getPath() + "/" + players.get(i).getName() + ".kfs");
 					
 					try
 					{
 						// Open the player data file
-						BufferedWriter dataWriter = new BufferedWriter(new FileWriter(dataFile));
+						BufferedWriter dataWriter = new BufferedWriter(new FileWriter(playerFile));
 						
-						// Write the player's data
-						dataWriter.write("[name]:" + players.get(i).getPacket().name);
-						dataWriter.newLine();
-						dataWriter.write("[games]:" + players.get(i).getPacket().games);
-						dataWriter.newLine();
-						dataWriter.write("[wins]:" + players.get(i).getPacket().wins);
-						dataWriter.newLine();
-						dataWriter.write("[looses]:" + players.get(i).getPacket().looses);
-						dataWriter.newLine();
-						dataWriter.write("[elo]:" +players.get(i).getPacket(). elo);
-						dataWriter.newLine();
-						dataWriter.write("[streak]:" + players.get(i).getPacket().streak);
+						// Save the player
+						dataWriter.write(players.get(i).toString());
 						dataWriter.newLine();
 						
 						// Close the file
 						dataWriter.flush();
 						dataWriter.close();
-					}
-					catch (FileNotFoundException e)
-					{
-						e.printStackTrace();
-					} 
-					catch (IOException e) 
-					{
-						e.printStackTrace();
-					}
-					
-					// Save players' friends
-					File friendFile = new File(directory.listFiles()[i].getPath() + "/friends");
-					
-					try
-					{
-						// Open the player data file
-						BufferedWriter friendWriter = new BufferedWriter(new FileWriter(friendFile));
-						
-						// Write the player's data
-						for (int j = 0; j < players.get(i).getPacket().friends.size())
-						{
-							friendWriter.write(players.get(i).getPacket().friends.get(i).name);
-						}
-						
-						// Close the file
-						friendWriter.flush();
-						friendWriter.close();
 					}
 					catch (FileNotFoundException e)
 					{
@@ -127,7 +90,7 @@ public class PlayerProcessor
 		Timer timer = new Timer();
 		
 		// Save files each 30 minutes
-		timer.schedule(saveFile, 0, 600000);
+		timer.schedule(saveFile, 0, 60000);
 	}
 	
 	/** Load player from the file stored on the server
@@ -144,21 +107,24 @@ public class PlayerProcessor
 			// Create a new PlayerPacket representing the player
 			PlayerPacket playerData = new PlayerPacket();
 			
-			// Get specific file storing players infos
-			File dataFile = new File(file.getPath() + "/data");
-			File pwdFile = new File(file.getPath() + "/pwd");
-			
 			// Get the players data from file
 			try
 			{
-				BufferedReader reader = new BufferedReader(new FileReader(dataFile));
+				BufferedReader reader = new BufferedReader(new FileReader(file));
 				
+				// Read stats
 				playerData.name = reader.readLine().split(":")[1];
 				playerData.games = Integer.parseInt(reader.readLine().split(":")[1]);
 				playerData.wins = Integer.parseInt(reader.readLine().split(":")[1]);
 				playerData.looses = Integer.parseInt(reader.readLine().split(":")[1]);
 				playerData.elo = Integer.parseInt(reader.readLine().split(":")[1]);
 				playerData.streak = Integer.parseInt(reader.readLine().split(":")[1]);
+				
+				// Create the player with those infos
+				players.add(new Player(playerData));
+				
+				// Read password
+				players.get(players.size() - 1).setPassword(reader.readLine().split(":")[1]);
 				
 				reader.close();
 			} 
@@ -170,19 +136,31 @@ public class PlayerProcessor
 			{
 				e.printStackTrace();
 			}
-				
-			// Create the player with those infos
-			players.add(new Player(playerData));
+		}
+		
+		// Init player's friends
+		for (int i = 0; i < players.size(); i++)
+		{
 			
-			// Store the password of the player
+			// Get player's friends
 			try
 			{
-				BufferedReader reader = new BufferedReader(new FileReader(pwdFile));
+				BufferedReader reader = new BufferedReader(new FileReader(directory.listFiles()[i]));
 				
-				players.get(players.size() - 1).setPassword(reader.readLine());
+				// Forget stats lines
+				for (int j = 0; j < 7; j++)
+					reader.readLine();
+				
+				// Browse the friends
+				int friendsNumber = Integer.parseInt(reader.readLine());
+				
+				for (int j = 0; j < friendsNumber; j++)
+				{
+					isPlayerExist(players.get(i).getName()).getPacket().addFriend(new FriendsPacket(isPlayerExist(reader.readLine()).getPacket()));
+				}
 				
 				reader.close();
-			} 
+			}
 			catch (FileNotFoundException e)
 			{
 				e.printStackTrace();
@@ -200,36 +178,6 @@ public class PlayerProcessor
 		for (int i = 0; i < players.size(); i++)
 		{
 			players.get(i).getPacket().pos = i + 1;
-		}
-		
-		// Init player's friends
-		for (File file : directory.listFiles())
-		{
-			File friendsFile = new File(file.getPath() + "/friends");
-			
-			// Get player's friends
-			try
-			{
-				BufferedReader reader = new BufferedReader(new FileReader(friendsFile));
-				String readingLine;
-				
-				// Browse the friend file
-				while ( (readingLine = reader.readLine()) != null)
-				{
-					// Add the name in the file into the player's friends
-					isPlayerExist(file.getName()).getPacket().addFriend(new FriendsPacket(isPlayerExist(readingLine).getPacket()));
-				}
-				
-				reader.close();
-			}
-			catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-			}
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
 		}
 	}
 	

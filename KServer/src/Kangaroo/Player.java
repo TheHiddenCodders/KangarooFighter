@@ -2,7 +2,6 @@ package Kangaroo;
 
 import Packets.GameServerPacket;
 import Packets.PlayerPacket;
-import Utils.ServerUtils;
 import enums.Direction;
 
 public class Player 
@@ -50,7 +49,7 @@ public class Player
 	 */
 	public int getElo()
 	{
-		return ServerUtils.getData(this, "elo");
+		return playerPacket.elo;
 	}
 	
 	public void createKangaroo()
@@ -87,5 +86,33 @@ public class Player
 	public void setPassword(String password) 
 	{
 		this.password = password;
+	}
+	
+	public String toString()
+	{
+		String result = new String();
+		
+		// Store player's stats
+		result = result.concat("[name]:" + playerPacket.name + "\n");
+		result = result.concat("[games]:" + playerPacket.games + "\n");
+		result = result.concat("[wins]:" + playerPacket.wins + "\n");
+		result = result.concat("[looses]:" + playerPacket.looses + "\n");
+		result = result.concat("[elo]:" + playerPacket.elo + "\n");
+		result = result.concat("[streak]:" + playerPacket.streak + "\n");
+		result = result.concat("[pwd]:" + getPassword() + "\n");
+		
+		// Store the number of friends
+		result = result.concat(playerPacket.friends.size() + "\n");
+		
+		// Store friends
+		for (int i = 0; i < playerPacket.friends.size(); i++)
+		{
+			result = result.concat(playerPacket.friends.get(i).name + "\n");
+		}
+		
+		System.err.println(result);
+		
+		return result;
+		
 	}
 }

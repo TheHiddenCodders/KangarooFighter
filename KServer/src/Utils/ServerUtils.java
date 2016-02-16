@@ -9,15 +9,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
 import Kangaroo.Player;
-import Packets.ClientDataPacket;
-import Packets.FriendsPacket;
 import Packets.NewsPacket;
 import ServerInfo.FileDateComparator;
 
@@ -144,8 +139,6 @@ public class ServerUtils
 		{
 			e.printStackTrace();
 		}	
-		
-		updateLadder();
 	}
 	
 	/**
@@ -175,97 +168,6 @@ public class ServerUtils
 		}
 		
 		return false;
-	}
-	
-	/**
-	 * Get data of the client
-	 * @param k the kangaroo
-	 * @return his data
-	 */
-	public static ClientDataPacket getPlayerDataPacket(Player p)
-	{
-		ClientDataPacket packet = new ClientDataPacket();
-		
-		File dataFile = getPlayerDataFile(p);
-
-		try
-		{
-			BufferedReader reader = new BufferedReader(new FileReader(dataFile));
-			
-			packet.name = reader.readLine().split(":")[1];
-			packet.games = Integer.parseInt(reader.readLine().split(":")[1]);
-			packet.wins = Integer.parseInt(reader.readLine().split(":")[1]);
-			packet.looses = Integer.parseInt(reader.readLine().split(":")[1]);
-			packet.elo = Integer.parseInt(reader.readLine().split(":")[1]);
-			packet.streak = Integer.parseInt(reader.readLine().split(":")[1]);
-			
-			reader.close();
-		} catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		} catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-		
-		return packet;
-	}
-	
-	/**
-	 * This method will get a field of kangaroo data
-	 * @param name the name of the kangaroo
-	 * @param key the name of the field to get
-	 * @return
-	 */
-	public static int getData(String name, String key)
-	{
-		File dataFile = getPlayerDataFile(name);
-		
-		try
-		{
-			// Read the file
-			BufferedReader reader = new BufferedReader(new FileReader(dataFile));
-			
-			reader.readLine(); // Jump the name line
-			int games = Integer.parseInt(reader.readLine().split(":")[1]);
-			int wins = Integer.parseInt(reader.readLine().split(":")[1]);
-			int looses = Integer.parseInt(reader.readLine().split(":")[1]);
-			int elo = Integer.parseInt(reader.readLine().split(":")[1]);
-			int streak = Integer.parseInt(reader.readLine().split(":")[1]);
-			
-			reader.close();
-			
-			// Apply the value modification
-			if (key.equals("games"))
-				return games;
-			else if (key.equals("wins"))
-				return wins;
-			else if (key.equals("looses"))
-				return looses;
-			else if (key.equals("elo"))
-				return elo;
-			else if (key.equals("streak"))
-				return streak;
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return -1;
-	}
-	
-	/**
-	 * This method will get a field of kangaroo data
-	 * @param k the kangaroo
-	 * @param key the name of the field to get
-	 * @return
-	 */
-	public static int getData(Player p, String key)
-	{		
-		return getData(p.getName(), key);
 	}
 	
 	/**
@@ -423,52 +325,6 @@ public class ServerUtils
 	}
 	
 	/****************************************************************
-	 * LADDER METHODS												*
-	 ****************************************************************/
-	
-	/**
-	 * This method update the ladder
-	 */
-	public static void updateLadder()
-	{
-		File ladderFile = new File(new File("").getAbsolutePath().concat("/KangarooFighters/Ladder/elo"));
-		ArrayList<File> ladder = new ArrayList<File>();
-		
-		try
-		{			
-			// Get date
-			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			Date date = new Date();
-			
-			// Find make the ladder
-			for (File file : getPlayersFiles())
-				ladder.add(file);
-
-			// Sort by Elo
-			Collections.sort(ladder, new EloComparator());
-			
-			// Write the file
-			BufferedWriter writer = new BufferedWriter(new FileWriter(ladderFile));
-			
-			writer.write("Classement mis à jour le: " + dateFormat.format(date) + ".");
-			writer.newLine();
-			
-			for (int i = 0; i < ladder.size(); i++)
-			{
-				writer.write((i + 1) + " | " + ladder.get(i).getName() + " | " + ServerUtils.getData(ladder.get(i).getName(), "elo"));
-				writer.newLine();
-			}
-			
-			writer.flush();
-			writer.close();
-			
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	/****************************************************************
 	 * NEWS METHODS													*
 	 ****************************************************************/
 	
@@ -613,41 +469,6 @@ public class ServerUtils
 	}
 	
 	/**
-	 * This method reset player stats as he just sign out to the game
-	 * @param k
-	 */
-	public static void resetPlayer(Player p)
-	{
-		resetPlayer(p.getName());
-	}
-	
-	/**
-	 * This method reset player stats as he just sign out to the game
-	 * @param name
-	 */
-	public static void resetPlayer(String name)
-	{
-		setData(name, "games", 0);	
-		setData(name, "wins", 0);	
-		setData(name, "looses", 0);	
-		setData(name, "elo", 1000);	
-		setData(name, "streak", 0);	
-		
-		updateLadder();
-	}
-	
-	/**
-	 * This method reset all the players
-	 */
-	public static void resetPlayers()
-	{
-		ArrayList<File> players = getPlayersFiles();
-		
-		for (int i = 0; i < players.size(); i++)
-			resetPlayer(players.get(i).getName());
-	}
-	
-	/**
 	 * This method will reset the friens of the kangaroo k
 	 * @param k
 	 */
@@ -680,17 +501,6 @@ public class ServerUtils
 		
 		for (int i = 0; i < players.size(); i++)
 			resetPlayerFriends(players.get(i).getName());
-	}
-	
-	/**
-	 * This method reset all the players and delete all the games contained in the games folder
-	 */
-	public static void reset()
-	{
-		resetGames();
-		resetPlayers();
-		resetPlayersFriends();
-		updateLadder();
 	}
 	
 }
