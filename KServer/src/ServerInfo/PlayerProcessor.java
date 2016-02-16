@@ -1,9 +1,11 @@
 package ServerInfo;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,14 +28,11 @@ public class PlayerProcessor
 	private ArrayList<String> waitingClients;
 	/** connectedPlayers : all Player logged in */
 	private ArrayList<Player> connectedPlayers;
-	/** playerFilePath : the path of the directory storing all players infos */
-	private String playerFilePath;
 	/** serverInfo : a reference to the main ServerInfo instance allowing to send a ServerInfoPacket when updated */
 	private ServerInfo serverInfo;
 	
 	public PlayerProcessor(String filePath, ServerInfo serverInfo)
 	{
-		this.playerFilePath = filePath;
 		this.serverInfo = serverInfo;
 		
 		waitingClients = new ArrayList<String>();
@@ -44,19 +43,91 @@ public class PlayerProcessor
 		loadPlayerFromFile(filePath);
 		
 		// Create a thread that save data
-		TimerTask saveFile = new TimerTask(){
+		TimerTask saveFile = new TimerTask()
+		{
 
 			@Override
 			public void run() 
 			{
-				// TODO : Save file here
+				// Get the directory containing player infos
+				File directory = new File(new File("").getAbsolutePath().concat(filePath));
+				
+				// Browse all file of the directory
+				for (int i = 0; i < directory.listFiles().length; i++)
+				{
+					// Save players' data
+					File dataFile = new File(directory.listFiles()[i].getPath() + "/data");
+					
+					try
+					{
+						// Open the player data file
+						BufferedWriter dataWriter = new BufferedWriter(new FileWriter(dataFile));
+						
+						// Write the player's data
+						dataWriter.write("[name]:" + players.get(i).getPacket().name);
+						dataWriter.newLine();
+						dataWriter.write("[games]:" + players.get(i).getPacket().games);
+						dataWriter.newLine();
+						dataWriter.write("[wins]:" + players.get(i).getPacket().wins);
+						dataWriter.newLine();
+						dataWriter.write("[looses]:" + players.get(i).getPacket().looses);
+						dataWriter.newLine();
+						dataWriter.write("[elo]:" +players.get(i).getPacket(). elo);
+						dataWriter.newLine();
+						dataWriter.write("[streak]:" + players.get(i).getPacket().streak);
+						dataWriter.newLine();
+						
+						// Close the file
+						dataWriter.flush();
+						dataWriter.close();
+					}
+					catch (FileNotFoundException e)
+					{
+						e.printStackTrace();
+					} 
+					catch (IOException e) 
+					{
+						e.printStackTrace();
+					}
+					
+					// Save players' friends
+					File friendFile = new File(directory.listFiles()[i].getPath() + "/friends");
+					
+					try
+					{
+						// Open the player data file
+						BufferedWriter friendWriter = new BufferedWriter(new FileWriter(friendFile));
+						
+						// Write the player's data
+						for (int j = 0; j < players.get(i).getPacket().friends.size())
+						{
+							friendWriter.write(players.get(i).getPacket().friends.get(i).name);
+						}
+						
+						// Close the file
+						friendWriter.flush();
+						friendWriter.close();
+					}
+					catch (FileNotFoundException e)
+					{
+						e.printStackTrace();
+					} 
+					catch (IOException e) 
+					{
+						e.printStackTrace();
+					}
+					
+					// TODO : save notification
+				}
+				
+				System.out.println("Server saved");
 			}
 		};
 		
 		Timer timer = new Timer();
 		
 		// Save files each 30 minutes
-		timer.schedule(saveFile, 0, 1800000);
+		timer.schedule(saveFile, 0, 600000);
 	}
 	
 	/** Load player from the file stored on the server
