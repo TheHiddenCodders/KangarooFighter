@@ -2,14 +2,14 @@ package Packets;
 
 
 
-public class FriendRequestAnswerPacket extends Notification
+public class GameInvitationAnswerPacket extends Notification
 {
-	public FriendRequestAnswerPacket(String ip) 
+	public GameInvitationAnswerPacket(String ip) 
 	{
 		super(ip);
 	}
 
-	public FriendRequestAnswerPacket() 
+	public GameInvitationAnswerPacket() 
 	{
 		super();
 	}
@@ -35,7 +35,7 @@ public class FriendRequestAnswerPacket extends Notification
 	public String save() 
 	{
 		String result = new String();
-		result = result.concat("FriendRequestPacketAnswer-");
+		result = result.concat("GameInvitationPacketAnswer-");
 		result = result.concat(message + "-");
 		result = result.concat(date + "-");
 		result = result.concat(name + "-");

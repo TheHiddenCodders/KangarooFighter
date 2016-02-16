@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public abstract class NotificationBloc extends Table 
 {
@@ -86,6 +87,21 @@ public abstract class NotificationBloc extends Table
 		{
 			addActor(ok);
 		}
+	}
+	
+	public void addYesListener(ClickListener listener)
+	{
+		yes.addListener(listener);
+	}
+	
+	public void addNoListener(ClickListener listener)
+	{
+		no.addListener(listener);
+	}
+	
+	public void addOkListener(ClickListener listener)
+	{
+		no.addListener(listener);
 	}
 	
 }

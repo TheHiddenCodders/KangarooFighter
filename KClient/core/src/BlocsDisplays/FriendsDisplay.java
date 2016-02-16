@@ -195,9 +195,12 @@ public class FriendsDisplay extends Display
 				FriendRequestPacket packet = new FriendRequestPacket();
 				
 				if (!nameField.getText().isEmpty())
-					packet.name = nameField.getText();				
+				{
+					packet.name = nameField.getText();	
+					packet.style = "YesNo";
+					homeStage.main.network.send(packet);
+				}
 				
-				homeStage.main.network.send(packet);
 				super.clicked(event, x, y);
 			}
 		});
