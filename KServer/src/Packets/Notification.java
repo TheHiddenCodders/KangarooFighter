@@ -19,5 +19,14 @@ public abstract class Notification  extends Packets
 	public Date date;
 	// public Style style; style = yesno, yesOnly, ...
 	
+	@Override
+	public String toString()
+	{
+		return super.toString()
+				+ "\n"
+				+ "- [message]: " + message + "\n"
+				+ "- [date]: " + date + "\n";
+	}
+	
 	public abstract String save();
 }

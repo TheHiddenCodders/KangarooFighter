@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import Packets.ClientReadyPacket;
 import Packets.ConnexionPacket;
 import Packets.DisconnexionPacket;
-import Packets.FriendRequestPacket;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
 import Packets.LadderPacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
+import Packets.Notification;
 import Packets.Packets;
 import Packets.SearchLadderPacket;
 import Server.Server;
@@ -146,9 +146,14 @@ public class Main
 					}
 					
 					// Received a FriendRequestPacket
-					else if (readPackets.get(i).getClass().isAssignableFrom(FriendRequestPacket.class))
+					else if (readPackets.get(i) instanceof Notification)
 					{
-						// TODO : Add a notification in files
+						// Cast notification
+						Notification packet = (Notification)readPackets.get(i);
+						Player player = pp.getPlayerFromIp(packet.getIp());
+						player.getPacket().addNotification(packet);
+						
+						System.err.println("Notification store : " + packet.toString());
 					}
 					
 					// Receive a MatchMakingPacket
