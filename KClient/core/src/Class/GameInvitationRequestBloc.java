@@ -23,8 +23,10 @@ public class GameInvitationRequestBloc extends NotificationBloc
 	{
 		super(homeStage);
 		
-		setMsg("Invitation a une partie de <c0>" + packet.message.split(" ")[0] + "</>", Color.TAN);
+		setMsg(packet.message, Color.TAN);
 		setIcone(new Texture(Gdx.files.internal("sprites/homestage/blocs/notifications/gameinvitationrequest.png")));
+		setAnswerStyle(packet.style);
+		
 	}
 	
 	/*

@@ -25,7 +25,7 @@ public abstract class NotificationBloc extends Table
 	private Image background;
 	private Image icone;
 	private ColoredLabel msg;
-	private TextButton yes, no;
+	private TextButton yes, no, ok;
 	
 	/*
 	 * Constructors
@@ -53,8 +53,8 @@ public abstract class NotificationBloc extends Table
 		no = new TextButton("Refuser", homeStage.main.skin);
 		no.setColor(Color.RED);
 		no.setPosition(295, 5); 
-		addActor(yes);
-		addActor(no);
+		ok = new TextButton("Ok", homeStage.main.skin);
+		ok.setPosition(getWidth() - ok.getWidth() - 5, 5);
 	}
 	
 	/*
@@ -75,10 +75,17 @@ public abstract class NotificationBloc extends Table
 		System.err.println(msg + " | " + this.msg.getX() + ":" + this.msg.getY());
 	}
 	
-	@Override
-	public void setPosition(float x, float y) 
+	public void setAnswerStyle(String style)
 	{
-		//this.msg.setY(y);
-		super.setPosition(x, y);
+		if (style.equals("YesNo"))
+		{
+			addActor(yes);
+			addActor(no);
+		}
+		else if (style.equals("ok"))
+		{
+			addActor(ok);
+		}
 	}
+	
 }
