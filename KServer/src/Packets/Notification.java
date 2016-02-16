@@ -1,6 +1,5 @@
 package Packets;
 
-import java.util.Date;
 
 public abstract class Notification  extends Packets
 {

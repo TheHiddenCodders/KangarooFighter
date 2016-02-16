@@ -165,7 +165,7 @@ public class Main
 							Format formatter = new SimpleDateFormat("dd/MM HH:mm");
 							packet.date = formatter.format(today);
 							
-							packet.message = new String(sender.getName() + " vous a envoyer une demande d'amis");
+							packet.message = new String("Demande d'ajout d'amis de <c0>" + sender.getName() + "</>");
 							
 							// Get the player who store the notification
 							Player player = pp.isPlayerExist(packet.name);
