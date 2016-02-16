@@ -2,9 +2,7 @@ package Class;
 
 import java.util.ArrayList;
 
-import Packets.FriendRequestPacket;
 import Packets.FriendsPacket;
-import Packets.GameInvitationRequestPacket;
 import Packets.Notification;
 import Packets.PlayerPacket;
 
@@ -29,14 +27,14 @@ public class Player
 	{
 		this.packet = packet;
 		
-		// Temp
+		/* Temp
 		FriendRequestPacket test0 = new FriendRequestPacket();
 		test0.name = "Kurond";
 		GameInvitationRequestPacket test1 = new GameInvitationRequestPacket();
 		test1.name = "Kurond";
 		
 		packet.notifications.add(test0);
-		packet.notifications.add(test1);
+		packet.notifications.add(test1);*/
 	}
 	
 	/*

@@ -131,8 +131,24 @@ public class HomeStage extends ConnectedStage
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
 			{
-				hideBlocs();
-				addActor(notifDisplay);
+				// If display is on a stage (that's mean it's added)
+				if (notifDisplay.getStage() != null)
+				{
+					// Show blocs
+					showBlocs();
+					
+					// Remove notif display
+					notifDisplay.remove();
+				}
+				else
+				{
+					// Hide blocs
+					hideBlocs();
+					
+					// Add notifdisplay
+					addActor(notifDisplay = new NotificationsDisplay(HomeStage.this));
+					notifDisplay.setPosition(10, getHeight() - 51);
+				}
 				super.clicked(event, x, y);
 			}
 		});

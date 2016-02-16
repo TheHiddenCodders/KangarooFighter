@@ -38,9 +38,8 @@ public class NotificationsTable extends Table
 	}
 	
 	/*
-	 * Getters - Setters
+	 * Methods
 	 */
-	
 	
 	public void refresh()
 	{
@@ -53,4 +52,8 @@ public class NotificationsTable extends Table
 		notifIco.setPosition(getX() + notif.getWidth() + 20, getY() + 3);
 		setWidth(notif.getWidth() + notifIco.getWidth());
 	}
+	
+	/*
+	 * Getters - Setters
+	 */
 }
