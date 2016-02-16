@@ -79,8 +79,6 @@ public class PlayerProcessor
 					{
 						e.printStackTrace();
 					}
-					
-					// TODO : save notification
 				}
 				
 				System.out.println("Server saved");
@@ -126,6 +124,29 @@ public class PlayerProcessor
 				// Read password
 				players.get(players.size() - 1).setPassword(reader.readLine().split(":")[1]);
 				
+				// Ignore friends for the moment
+				int friendsNumber = Integer.parseInt(reader.readLine());
+				for (int i = 0; i < friendsNumber; i++)
+					reader.readLine();
+				
+				// Browse player notification
+				int notificationNumber = Integer.parseInt(reader.readLine());
+				for (int i = 0; i < notificationNumber; i++)
+				{
+					String readingLine = reader.readLine();
+					
+					// Get the type of the notification
+					if (readingLine.split("|")[0].equals("FriendRequestPacket"))
+					{
+						System.err.println("Add notification");
+						// TODO : add notification here
+					}
+					else
+					{
+						System.err.println("Loading players : read an unknown notification");
+					}
+				}
+				
 				reader.close();
 			} 
 			catch (FileNotFoundException e)
@@ -153,7 +174,6 @@ public class PlayerProcessor
 				
 				// Browse the friends
 				int friendsNumber = Integer.parseInt(reader.readLine());
-				
 				for (int j = 0; j < friendsNumber; j++)
 				{
 					isPlayerExist(players.get(i).getName()).getPacket().addFriend(new FriendsPacket(isPlayerExist(reader.readLine()).getPacket()));

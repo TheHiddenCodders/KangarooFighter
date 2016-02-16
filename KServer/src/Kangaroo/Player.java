@@ -103,14 +103,19 @@ public class Player
 		
 		// Store the number of friends
 		result = result.concat(playerPacket.friends.size() + "\n");
-		
 		// Store friends
 		for (int i = 0; i < playerPacket.friends.size(); i++)
 		{
 			result = result.concat(playerPacket.friends.get(i).name + "\n");
 		}
 		
-		System.err.println(result);
+		// Store the number of notification
+		result = result.concat(playerPacket.notifications.size() + "\n");
+		// Store notifications
+		for (int i = 0; i < playerPacket.notifications.size(); i++)
+		{
+			result = result.concat(playerPacket.notifications.get(i).save() + "\n");
+		}
 		
 		return result;
 		

@@ -2,7 +2,7 @@ package Packets;
 
 import java.util.Date;
 
-public class Notification  extends Packets
+public abstract class Notification  extends Packets
 {
 	public Notification(String ip)
 	{
@@ -18,4 +18,6 @@ public class Notification  extends Packets
 	public String message;
 	public Date date;
 	// public Style style; style = yesno, yesOnly, ...
+	
+	public abstract String save();
 }
