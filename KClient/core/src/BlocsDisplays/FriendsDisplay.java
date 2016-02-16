@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -22,14 +23,14 @@ public class FriendsDisplay extends Display
 	 * Attributes
 	 */
 	
-
+	private int page = 0;
 	
 	/*
 	 * Components
 	 */
 	
 	private Label title;
-	private TextButton add;
+	private TextButton add, prev, next;
 	private TextField nameField;
 	
 	private Label[] rank, name, games, wins, loses, elo;
@@ -58,8 +59,40 @@ public class FriendsDisplay extends Display
 		// Add name
 		nameField = new TextField("", skin);
 		nameField.setPosition(add.getX() + add.getWidth(), 5);
-		nameField.setSize(getWidth() - 10 - add.getWidth(), add.getHeight());
+		nameField.setSize(getWidth() - 130 - add.getWidth(), add.getHeight());
 		addActor(nameField);
+		
+		// Add browsing buttons
+		prev = new TextButton("<", skin);
+		prev.setWidth(60);
+		prev.setPosition(nameField.getX() + nameField.getWidth(), 5);	
+		addActor(prev);
+		
+		next = new TextButton(">", skin);
+		next.setWidth(60);
+		next.setPosition(prev.getX() + prev.getWidth(), 5);	
+		addActor(next);
+		
+		// Add listeners to them
+		prev.addListener(new ClickListener() 
+		{
+			@Override
+			public void clicked(InputEvent event, float x, float y) 
+			{
+				page--;
+				super.clicked(event, x, y);
+			}
+		});
+		
+		next.addListener(new ClickListener() 
+		{
+			@Override
+			public void clicked(InputEvent event, float x, float y) 
+			{
+				page++;
+				super.clicked(event, x, y);
+			}
+		});
 		
 		// Make tabs
 		rank = new Label[9];
@@ -107,19 +140,26 @@ public class FriendsDisplay extends Display
 		System.err.println("FriendsDisplay.refresh()");
 		if (homeStage != null)
 		{
+			// Friends to show
+			int friendsToShow = homeStage.main.player.getFriends().size() % 9;
+			
+			// If it's a multiple of nine
+			if (friendsToShow == 0)
+				friendsToShow = 9;
+	
 			// Init labels
-			for (int i = 0; i < homeStage.main.player.getFriends().size(); i++)
+			for (int i = 0; i < friendsToShow; i++)
 			{
 				// Set texts
-				rank[i].setText(String.valueOf(homeStage.main.player.getFriends().get(i).pos));
-				name[i].setText(homeStage.main.player.getFriends().get(i).name);
-				games[i].setText(String.valueOf(homeStage.main.player.getFriends().get(i).games));
-				wins[i].setText(String.valueOf(homeStage.main.player.getFriends().get(i).wins));
-				loses[i].setText(String.valueOf(homeStage.main.player.getFriends().get(i).looses));
-				elo[i].setText(String.valueOf(homeStage.main.player.getFriends().get(i).elo));
+				rank[i].setText(String.valueOf(homeStage.main.player.getFriends().get(page * 9 + i).pos));
+				name[i].setText(homeStage.main.player.getFriends().get(page * 9 + i).name);
+				games[i].setText(String.valueOf(homeStage.main.player.getFriends().get(page * 9 + i).games));
+				wins[i].setText(String.valueOf(homeStage.main.player.getFriends().get(page * 9 + i).wins));
+				loses[i].setText(String.valueOf(homeStage.main.player.getFriends().get(page * 9 + i).looses));
+				elo[i].setText(String.valueOf(homeStage.main.player.getFriends().get(page * 9 + i).elo));
 				
 				// Set status
-				if (homeStage.main.player.getFriends().get(i).online)
+				if (homeStage.main.player.getFriends().get(page * 9 + i).online)
 					status[i].setDrawable(new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/online.png"))).getDrawable());
 				else
 					status[i].setDrawable(new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/offline.png"))).getDrawable());
@@ -161,6 +201,27 @@ public class FriendsDisplay extends Display
 				super.clicked(event, x, y);
 			}
 		});
+		
+		// Init browsing buttons
+		if (homeStage.main.player.getFriends().size() <= page * 9 + 9)
+		{
+			prev.setText("-");
+			prev.setTouchable(Touchable.disabled);
+			
+			next.setText("-");
+			next.setTouchable(Touchable.disabled);
+		}
+		else
+		{
+			prev.setText("<");
+			prev.setTouchable(Touchable.enabled);
+			
+			if (homeStage.main.player.getFriends().size() > page * 9 + 9)
+			{
+				next.setText(">");
+				next.setTouchable(Touchable.enabled);
+			}
+		}
 	}
 
 }

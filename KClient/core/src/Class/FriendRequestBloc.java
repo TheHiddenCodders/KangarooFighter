@@ -23,7 +23,7 @@ public class FriendRequestBloc extends NotificationBloc
 	{
 		super(homeStage);
 		
-		setMsg("Demande d'ajout d'amis de <c0>" + packet.name + "</>", Color.TAN);
+		setMsg("Demande d'ajout d'amis de <c0>" + packet.message.split(" ")[0] + "</>", Color.TAN);
 		setIcone(new Texture(Gdx.files.internal("sprites/homestage/blocs/notifications/friendrequest.png")));
 	}
 	

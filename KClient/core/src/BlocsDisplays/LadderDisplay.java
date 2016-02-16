@@ -66,22 +66,27 @@ public class LadderDisplay extends Display
 		prev.setWidth(60);
 		prev.setPosition(nameField.getX() + nameField.getWidth(), 5);	
 		addActor(prev);
+		
 		rankField = new TextField("", skin);
 		rankField.setSize(60, prev.getHeight());
 		rankField.setPosition(prev.getX() + prev.getWidth(), 5);	
 		addActor(rankField);
+		
 		next = new TextButton(">", skin);
 		next.setWidth(60);
 		next.setPosition(rankField.getX() + rankField.getWidth(), 5);
 		addActor(next);
+		
 		me = new TextButton("Moi", skin);
 		me.setWidth(60);
 		me.setColor(Color.TAN);
 		addActor(me);
+		
 		friends = new TextButton("Amis", skin);
 		friends.setWidth(60);
 		friends.setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
 		addActor(friends);
+		
 		top = new TextButton("Top", skin);
 		top.setWidth(60);
 		top.setColor(Color.GOLDENROD);
