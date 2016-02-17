@@ -305,9 +305,25 @@ public class Main
 							System.err.println(readPackets.get(i));
 						}
 						
+						// Receive a simple notification
 						else 
 						{
-							System.err.println("Main thread : Received an unknowned notification" + readPackets.get(i).getClass());
+							
+							Notification notification = (Notification)readPackets.get(i);
+							
+							// Get then sender 
+							Player sender = pp.getPlayerFromIp(notification.getIp());
+							
+							// Browse sender notification
+							for (int j = 0; j < sender.getPacket().notifications.size(); j++)
+							{
+								// If the message are the same, then the notification to delete is found
+								if (sender.getPacket().notifications.get(j).message.equals(notification.message))
+								{
+									// Delete the notification
+									sender.getPacket().notifications.remove(sender.getPacket().notifications.get(j));
+								}
+							}
 						}
 						
 					}

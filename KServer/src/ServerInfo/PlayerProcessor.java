@@ -172,6 +172,9 @@ public class PlayerProcessor
 						// Get packet field from the line
 						notif.message = readingLine.split("-")[1];
 						notif.date = readingLine.split("-")[2];
+						
+						// Add this notification to the player
+						players.get(players.size() - 1).getPacket().addNotification(notif);
 					}
 					else
 					{
