@@ -12,6 +12,8 @@ public class FriendRequestPacket extends Notification
 	public FriendRequestPacket() 
 	{
 		super();
+		
+		style = "YesNo";
 	}
 	
 	/**

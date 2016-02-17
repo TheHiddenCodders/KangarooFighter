@@ -12,6 +12,8 @@ public class FriendAnswerPacket extends Notification
 	public FriendAnswerPacket() 
 	{
 		super();
+		
+		style = "Ok";
 	}
 	
 	/**

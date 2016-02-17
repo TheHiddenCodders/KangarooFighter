@@ -1,5 +1,6 @@
 package Class;
 
+import Packets.FriendAnswerPacket;
 import Packets.FriendRequestPacket;
 import Packets.GameInvitationAnswerPacket;
 import Stages.HomeStage;
@@ -35,10 +36,9 @@ public class FriendRequestBloc extends NotificationBloc
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
 			{
-				GameInvitationAnswerPacket answer = new GameInvitationAnswerPacket();
+				FriendAnswerPacket answer = new FriendAnswerPacket();
 				answer.answer = true;
-				answer.name = packet.receiverName;
-				answer.style = "Ok";
+				answer.name = packet.senderName;
 				homeStage.main.network.send(answer);
 				super.clicked(event, x, y);
 			}
