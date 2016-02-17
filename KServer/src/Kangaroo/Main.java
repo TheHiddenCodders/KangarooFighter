@@ -11,6 +11,7 @@ import java.util.Date;
 import Packets.ClientReadyPacket;
 import Packets.ConnexionPacket;
 import Packets.DisconnexionPacket;
+import Packets.FriendAnswerPacket;
 import Packets.FriendRequestPacket;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
@@ -189,6 +190,46 @@ public class Main
 								// TODO : send FriendAnswerPacket to the sender
 							}
 						}
+						
+						else if (readPackets.get(i) instanceof FriendAnswerPacket)
+						{
+							// Cast notification
+							FriendAnswerPacket packet = (FriendAnswerPacket)readPackets.get(i);
+							
+							Player sender = pp.getPlayerFromIp(packet.getIp());
+							
+							// get the future friend
+							Player friend = pp.isPlayerExist(packet.name);
+							
+							if (friend != null)
+							{
+								// Prepare the packet
+								Date today = Calendar.getInstance().getTime();   
+								Format formatter = new SimpleDateFormat("dd/MM HH:mm");
+								packet.date = formatter.format(today);
+								
+								// Check the answer
+								if (packet.answer)
+								{
+									packet.message = sender.getName() + " a accepté votre demande d'amis";
+									
+									// TODO : create friend in files  
+								}
+								else
+								{
+									packet.message = sender.getName() + " a refusé votre demande d'amis";
+								}
+								
+								// TODO : delete FriendRequestPacket store in sender
+							}
+							else
+							{
+								// Error : the future friend doesn't exist
+							}
+							
+							System.err.println(readPackets.get(i));
+						}
+						
 						else 
 						{
 							System.err.println("Main thread : Received an unknowned notification" + readPackets.get(i).getClass());

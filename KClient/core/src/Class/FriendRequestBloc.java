@@ -49,10 +49,9 @@ public class FriendRequestBloc extends NotificationBloc
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
 			{
-				GameInvitationAnswerPacket answer = new GameInvitationAnswerPacket();
+				FriendAnswerPacket answer = new FriendAnswerPacket();
 				answer.answer = false;
-				answer.name = packet.receiverName;
-				answer.style = "Ok";
+				answer.name = packet.senderName;
 				homeStage.main.network.send(answer);
 				super.clicked(event, x, y);
 			}
