@@ -161,6 +161,8 @@ public class Main
 							
 							Player sender = pp.getPlayerFromIp(packet.getIp());
 							
+							// TODO : Check in sender notification if it have a demand from packet.name, in this case make them friend
+							
 							// Prepare the packet
 							Date today = Calendar.getInstance().getTime();   
 							Format formatter = new SimpleDateFormat("dd/MM HH:mm");
