@@ -37,7 +37,7 @@ public class FriendRequestBloc extends NotificationBloc
 			{
 				GameInvitationAnswerPacket answer = new GameInvitationAnswerPacket();
 				answer.answer = true;
-				answer.name = packet.name;
+				answer.name = packet.receiverName;
 				answer.style = "Ok";
 				homeStage.main.network.send(answer);
 				super.clicked(event, x, y);
@@ -51,7 +51,7 @@ public class FriendRequestBloc extends NotificationBloc
 			{
 				GameInvitationAnswerPacket answer = new GameInvitationAnswerPacket();
 				answer.answer = false;
-				answer.name = packet.name;
+				answer.name = packet.receiverName;
 				answer.style = "Ok";
 				homeStage.main.network.send(answer);
 				super.clicked(event, x, y);

@@ -140,12 +140,14 @@ public class PlayerProcessor
 					if (readingLine.split("-")[0].equals("FriendRequestPacket"))
 					{
 						FriendRequestPacket notif = new FriendRequestPacket();
-						notif.message = readingLine.split("-")[1];
 						
-						// Convert Date from String
+						// Get packet field from the line
+						notif.message = readingLine.split("-")[1];
 						notif.date = readingLine.split("-")[2];
-						notif.name = readingLine.split("-")[3];
-
+						notif.receiverName = readingLine.split("-")[3];
+						notif.senderName = readingLine.split("-")[4];
+						
+						// Add this notification to the player
 						players.get(players.size() - 1).getPacket().addNotification(notif);
 					}
 					else

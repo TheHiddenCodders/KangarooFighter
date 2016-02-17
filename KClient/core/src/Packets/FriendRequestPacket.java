@@ -19,14 +19,16 @@ public class FriendRequestPacket extends Notification
 	 */
 	private static final long serialVersionUID = 455349863221403030L;
 	
-	public String name;
+	public String receiverName;
+	public String senderName;
 
 	@Override
 	public String toString()
 	{
 		return super.toString()
 				+ "\n"
-				+ "- [name]: " + name + "\n";
+				+ "- [receiver]: " + receiverName + "\n"
+				+ "- [sender]: " + senderName + "\n";
 	}
 
 	@Override
@@ -36,7 +38,8 @@ public class FriendRequestPacket extends Notification
 		result = result.concat("FriendRequestPacket-");
 		result = result.concat(message + "-");
 		result = result.concat(date + "-");
-		result = result.concat(name + "-");
+		result = result.concat(receiverName + "-");
+		result = result.concat(senderName + "-");
 		
 		return result;
 	}

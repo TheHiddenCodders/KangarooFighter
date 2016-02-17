@@ -165,17 +165,29 @@ public class Main
 							Format formatter = new SimpleDateFormat("dd/MM HH:mm");
 							packet.date = formatter.format(today);
 							
+							packet.senderName = sender.getName();
 							packet.message = new String("Demande d'ajout d'amis de <c0>" + sender.getName() + "</>");
 							
 							// Get the player who store the notification
-							Player player = pp.isPlayerExist(packet.name);
+							Player player = pp.isPlayerExist(packet.receiverName);
 							
-							// TODO : Check if the player really exist
-							
-							// Add the notification to this player
-							player.getPacket().addNotification(packet);
-							
-							System.err.println("Notification store : " + packet.toString());
+							// Check if the player associate to the packet's name exist
+							if (player != null)
+							{
+								// Set the packet's ip to the receiver
+								packet.setIp(player.getIp());
+								
+								// Add the notification to this player
+								player.getPacket().addNotification(packet);
+								
+								// Send him the packet only if it is connected
+								if (pp.isPlayerConnected(player.getName()) != null)
+									server.sendBuffer.sendPacket(packet);
+							}
+							else
+							{
+								// TODO : send FriendAnswerPacket to the sender
+							}
 						}
 						else 
 						{

@@ -196,7 +196,7 @@ public class FriendsDisplay extends Display
 				
 				if (!nameField.getText().isEmpty())
 				{
-					packet.name = nameField.getText();	
+					packet.receiverName = nameField.getText();	
 					packet.style = "YesNo";
 					homeStage.main.network.send(packet);
 				}
