@@ -228,13 +228,18 @@ public class Main
 									friend.getPacket().addNotification(packet);
 									
 									// Send to sender his new playerPacket
-									server.sendBuffer.sendPacket(sender2.getPacket());
+									senderFriend.setIp(sender2.getIp());
+									server.sendBuffer.sendPacket(senderFriend);
 									
 									// Send to friend, if it is connected, his playerPacket
 									if (pp.isPlayerConnected(friend.getName()) != null)
 									{
+										// Send the notification
 										server.sendBuffer.sendPacket(packet);
-										server.sendBuffer.sendPacket(friend.getPacket());
+										
+										// Send the friend packet
+										playerFriend.setIp(friend.getIp());
+										server.sendBuffer.sendPacket(playerFriend);
 									}
 								}
 								else
