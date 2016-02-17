@@ -1,16 +1,20 @@
 package Packets;
 
 
-public abstract class Notification  extends Packets
+public class Notification  extends Packets
 {
 	public Notification(String ip)
 	{
 		super(ip);
+		
+		style = "Ok";
 	}
 	
 	public Notification()
 	{
 		super();
+		
+		style = "Ok";
 	}
 	
 	private static final long serialVersionUID = 7294896430046500065L;
@@ -28,5 +32,13 @@ public abstract class Notification  extends Packets
 				+ "- [style]: " + style + "\n";
 	}
 	
-	public abstract String save();
+	public  String save()
+	{
+		String result = new String();
+		result = result.concat("Notification-");
+		result = result.concat(message + "-");
+		result = result.concat(date + "-");
+		
+		return result;
+	}
 }

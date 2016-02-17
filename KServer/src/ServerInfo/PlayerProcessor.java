@@ -20,6 +20,7 @@ import Packets.FriendRequestPacket;
 import Packets.FriendsPacket;
 import Packets.LadderPacket;
 import Packets.LoginPacket;
+import Packets.Notification;
 import Packets.PlayerPacket;
 
 public class PlayerProcessor 
@@ -163,6 +164,14 @@ public class PlayerProcessor
 						
 						// Add this notification to the player
 						players.get(players.size() - 1).getPacket().addNotification(notif);
+					}
+					else if (readingLine.split("-")[0].equals("Notification"))
+					{
+						Notification notif = new Notification();
+						
+						// Get packet field from the line
+						notif.message = readingLine.split("-")[1];
+						notif.date = readingLine.split("-")[2];
 					}
 					else
 					{

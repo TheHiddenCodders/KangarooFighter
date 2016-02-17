@@ -159,34 +159,52 @@ public class Main
 							// Cast notification
 							FriendRequestPacket packet = (FriendRequestPacket)readPackets.get(i);
 							
+							// Get a reference of the sender
 							Player sender = pp.getPlayerFromIp(packet.getIp());
 							
 							// TODO : Check in sender notification if it have a demand from packet.name, in this case make them friend
 							
-							// Prepare the packet
+							// Get the date of now
 							Date today = Calendar.getInstance().getTime();   
 							Format formatter = new SimpleDateFormat("dd/MM HH:mm");
-							packet.date = formatter.format(today);
 							
+							// Prepare the packet
 							packet.senderName = sender.getName();
+							packet.date = formatter.format(today);
 							packet.message = new String("Demande d'ajout d'amis de <c0>" + sender.getName() + "</>");
 							
-							// Get the player who store the notification
+							// Get the player who will store the notification
 							Player player = pp.isPlayerExist(packet.receiverName);
 							
 							// Check if the player associate to the packet's name exist
 							if (player != null)
 							{
-								// Store and send the notification to player
+								// Store the notification and send it to player
 								packet.setIp(player.getIp());
 								player.getPacket().addNotification(packet);
 								
 								if (pp.isPlayerConnected(player.getName()) != null)
 									server.sendBuffer.sendPacket(packet);
+								
+								// Send a notification to sender
+								Notification succeedNotif = new Notification(sender.getIp());
+								
+								succeedNotif.date = formatter.format(today);
+								succeedNotif.message = "Une demande d'ami a été envoyé à <c0>" + packet.receiverName + "</>";
+								
+								sender.getPacket().addNotification(succeedNotif);
+								server.sendBuffer.sendPacket(succeedNotif);
 							}
 							else
 							{
-								// TODO : send FriendAnswerPacket to the sender
+								// Send a notification to sender
+								Notification failNotif = new Notification(sender.getIp());
+								
+								failNotif.date = formatter.format(today);
+								failNotif.message = "Le joueur <c0>" + packet.receiverName + "</> n'existe pas";
+								
+								sender.getPacket().addNotification(failNotif);
+								server.sendBuffer.sendPacket(failNotif);
 							}
 						}
 						
@@ -195,47 +213,54 @@ public class Main
 							// Cast notification
 							FriendAnswerPacket packet = (FriendAnswerPacket)readPackets.get(i);
 							
+							// Get a reference of the sender from the global list of players
 							Player sender = pp.getPlayerFromIp(packet.getIp());
+							sender = pp.isPlayerExist(sender.getName());
 							
 							// get the future friend
 							Player friend = pp.isPlayerExist(packet.name);
 							
 							if (friend != null)
 							{
-								// Prepare the packet
+								// Get the date
 								Date today = Calendar.getInstance().getTime();   
 								Format formatter = new SimpleDateFormat("dd/MM HH:mm");
-								packet.date = formatter.format(today);
+								
+								// Create a notification for both players
+								Notification answerNotif = new Notification(friend.getIp());
+								Notification senderNotif = new Notification(sender.getIp());
 								
 								// Check the answer
 								if (packet.answer)
 								{
-									packet.message = sender.getName() + " a accepté votre demande d'amis";
-									
-									// Get a reference of sender from the global players
-									Player sender2 = pp.isPlayerExist(sender.getName());
+									// Fill the answer notification
+									answerNotif.message = "<c0>" + sender.getName() + "</c0> a accepté votre demande d'amis";
+									answerNotif.date = formatter.format(today);
+									senderNotif.message = "Vous êtes maintenant ami avec <c0>" + friend.getName() + "</c0>";
+									senderNotif.date = formatter.format(today);
 									
 									// Create new FriendsPacket
 									FriendsPacket senderFriend = new FriendsPacket(friend.getPacket());
-									FriendsPacket playerFriend = new FriendsPacket(sender2.getPacket());
+									FriendsPacket playerFriend = new FriendsPacket(sender.getPacket());
 									
 									// Add friend to both players
-									sender2.getPacket().addFriend(senderFriend);
+									sender.getPacket().addFriend(senderFriend);
 									friend.getPacket().addFriend(playerFriend);
 									
-									// Store the notification in friend
-									packet.setIp(friend.getIp());
-									friend.getPacket().addNotification(packet);
+									// Store the notification
+									friend.getPacket().addNotification(answerNotif);
+									sender.getPacket().addNotification(senderNotif);
 									
-									// Send to sender his new playerPacket
-									senderFriend.setIp(sender2.getIp());
+									// Send to sender his new friend and his notification
+									senderFriend.setIp(sender.getIp());
 									server.sendBuffer.sendPacket(senderFriend);
+									server.sendBuffer.sendPacket(senderNotif);
 									
-									// Send to friend, if it is connected, his playerPacket
+									// Check if the friend is connected
 									if (pp.isPlayerConnected(friend.getName()) != null)
 									{
 										// Send the notification
-										server.sendBuffer.sendPacket(packet);
+										server.sendBuffer.sendPacket(answerNotif);
 										
 										// Send the friend packet
 										playerFriend.setIp(friend.getIp());
@@ -244,10 +269,33 @@ public class Main
 								}
 								else
 								{
-									packet.message = sender.getName() + " a refusé votre demande d'amis";
+									answerNotif.message = "<c0>" + sender.getName() + "</c0> a refusé votre demande d'amis";
+									answerNotif.date = formatter.format(today);
+									
+									// Check if the friend is connected
+									if (pp.isPlayerConnected(friend.getName()) != null)
+									{
+										// Send the notification
+										server.sendBuffer.sendPacket(answerNotif);
+									}
 								}
-								
-								// TODO : delete FriendRequestPacket store in sender
+							
+								// Browse sender notification
+								for (int j = 0; j < sender.getPacket().notifications.size(); j++)
+								{
+									// try to find the friend request packet using to send this FriendAnswerPacket
+									if (sender.getPacket().notifications.get(j) instanceof FriendRequestPacket)
+									{
+										FriendRequestPacket oldRequest = (FriendRequestPacket) sender.getPacket().notifications.get(j);
+										
+										// If the notification is found
+										if (oldRequest.receiverName.equals(sender.getName()) && oldRequest.senderName.equals(friend.getName()))
+										{
+											// Delete it
+											sender.getPacket().notifications.remove(sender.getPacket().notifications.get(j));
+										}
+									}
+								}
 							}
 							else
 							{
