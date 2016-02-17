@@ -245,7 +245,7 @@ public class HomeStage extends ConnectedStage
 			dataReceived();
 		}
 		
-		if (data.getClass().isAssignableFrom(Notification.class))
+		if (data instanceof Notification)
 		{
 			// Fire trigger
 			updateNotifications = true;
