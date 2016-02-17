@@ -204,6 +204,7 @@ public class HomeStage extends ConnectedStage
 		if (updateNotifications)
 		{
 			notifTable.refresh();
+			notifDisplay.refresh();
 			updateNotifications = false;
 		}
 	}
@@ -241,7 +242,7 @@ public class HomeStage extends ConnectedStage
 		{
 			// Fire trigger
 			updateFriends = true;
-			
+			System.out.println("FriendsPacket received");	
 			dataReceived();
 		}
 		
@@ -249,7 +250,7 @@ public class HomeStage extends ConnectedStage
 		{
 			// Fire trigger
 			updateNotifications = true;
-			
+			System.out.println("Notification received");	
 			dataReceived();
 		}
 	}

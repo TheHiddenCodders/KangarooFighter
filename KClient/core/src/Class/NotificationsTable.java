@@ -43,13 +43,14 @@ public class NotificationsTable extends Table
 	
 	public void refresh()
 	{
+		System.out.println("Refresh notifications table. Notifications size : " + homeStage.main.player.getNotifications().size());
 		if (homeStage.main.player.getNotifications().size() < 100)
 			notif.setText(String.valueOf(homeStage.main.player.getNotifications().size()));
 		else
 			notif.setText("99+");
 		
 		notif.pack();
-		notifIco.setPosition(getX() + notif.getWidth() + 20, getY() + 3);
+		//notifIco.setPosition(getX() + notif.getWidth() + 20, getY() + 3);
 		setWidth(notif.getWidth() + notifIco.getWidth());
 	}
 	

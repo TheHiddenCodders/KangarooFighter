@@ -137,14 +137,13 @@ public class FriendsDisplay extends Display
 	@Override
 	public void refresh(Object data) 
 	{		
-		System.err.println("FriendsDisplay.refresh()");
 		if (homeStage != null)
 		{
 			// Friends to show
 			int friendsToShow = homeStage.main.player.getFriends().size() % 9;
 			
 			// If it's a multiple of nine
-			if (friendsToShow == 0)
+			if (friendsToShow == 0 && homeStage.main.player.getFriends().size() > 0)
 				friendsToShow = 9;
 	
 			// Init labels

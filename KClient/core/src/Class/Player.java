@@ -53,8 +53,31 @@ public class Player
 		{
 			// Replace old element by new one
 			if (this.packet.friends.get(i).name.equals(packet.name))
+			{
 				this.packet.friends.set(i, packet);
+				return;
+			}	
 		}
+		
+		// If the friend didn't exists for the moment, add him
+		this.packet.friends.add(packet);		
+	}
+	
+	public void updateNotification(Notification packet)
+	{
+		// Try to find the notification
+		for (int i = 0; i < this.packet.notifications.size(); i++)
+		{
+			// Replace old element by new one
+			if (this.packet.notifications.get(i).message.equals(packet.message))
+			{
+				this.packet.friends.remove(i);
+				return;
+			}	
+		}
+		
+		// If the notifications didn't exists add her
+		this.packet.notifications.add(packet);
 	}
 
 	public String getName() {

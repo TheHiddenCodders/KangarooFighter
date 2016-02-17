@@ -81,8 +81,11 @@ public class FriendsBloc extends Bloc
 	@Override
 	public void refresh(Object data) 
 	{
+		System.out.println("Refresh friends bloc. Friends size : " + homeStage.main.player.getFriends().size());
 		if (homeStage.main.player.getFriends().size() > 0)
 		{
+			setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/background.png")));
+			
 			// Fill labels
 			for (int i = 0; i < homeStage.main.player.getFriends().size(); i++)
 			{				

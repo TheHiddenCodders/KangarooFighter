@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import Class.ConnectedStage;
 import Class.Player;
 import Packets.FriendsPacket;
+import Packets.Notification;
 import Packets.PlayerPacket;
 
 /**
@@ -67,6 +68,12 @@ public class Network extends Client
 		{
 			main.player.updateFriend((FriendsPacket) o);
 			System.out.println("Friends updated");
+		}
+		
+		if (o instanceof Notification)
+		{
+			main.player.updateNotification((Notification) o);
+			System.out.println("Notifications updated");
 		}
 
 		currentStage.setData(o);
