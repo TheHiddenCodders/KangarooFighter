@@ -175,13 +175,10 @@ public class Main
 							// Check if the player associate to the packet's name exist
 							if (player != null)
 							{
-								// Set the packet's ip to the receiver
+								// Store and send the notification to player
 								packet.setIp(player.getIp());
-								
-								// Add the notification to this player
 								player.getPacket().addNotification(packet);
 								
-								// Send him the packet only if it is connected
 								if (pp.isPlayerConnected(player.getName()) != null)
 									server.sendBuffer.sendPacket(packet);
 							}
@@ -213,7 +210,23 @@ public class Main
 								{
 									packet.message = sender.getName() + " a accepté votre demande d'amis";
 									
-									// TODO : create friend in files  
+									// Get a reference of sender from the global players
+									Player sender2 = pp.isPlayerExist(sender.getName());
+									
+									// Create new FriendsPacket
+									FriendsPacket senderFriend = new FriendsPacket(friend.getPacket());
+									FriendsPacket playerFriend = new FriendsPacket(sender2.getPacket());
+									
+									// Add friend to both players
+									sender2.getPacket().addFriend(senderFriend);
+									friend.getPacket().addFriend(playerFriend);
+									
+									// Store and send the notification to friend
+									packet.setIp(friend.getIp());
+									friend.getPacket().addNotification(packet);
+									
+									if (pp.isPlayerConnected(friend.getName()) != null)
+										server.sendBuffer.sendPacket(packet);
 								}
 								else
 								{

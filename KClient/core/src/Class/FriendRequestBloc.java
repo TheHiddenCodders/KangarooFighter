@@ -2,7 +2,6 @@ package Class;
 
 import Packets.FriendAnswerPacket;
 import Packets.FriendRequestPacket;
-import Packets.GameInvitationAnswerPacket;
 import Stages.HomeStage;
 
 import com.badlogic.gdx.Gdx;

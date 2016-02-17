@@ -15,6 +15,7 @@ import java.util.TimerTask;
 import Kangaroo.Player;
 import Packets.ConnexionPacket;
 import Packets.DisconnexionPacket;
+import Packets.FriendAnswerPacket;
 import Packets.FriendRequestPacket;
 import Packets.FriendsPacket;
 import Packets.LadderPacket;
@@ -146,6 +147,19 @@ public class PlayerProcessor
 						notif.date = readingLine.split("-")[2];
 						notif.receiverName = readingLine.split("-")[3];
 						notif.senderName = readingLine.split("-")[4];
+						
+						// Add this notification to the player
+						players.get(players.size() - 1).getPacket().addNotification(notif);
+					}
+					else if (readingLine.split("-")[0].equals("FriendAnswerPacket"))
+					{
+						FriendAnswerPacket notif = new FriendAnswerPacket();
+						
+						// Get packet field from the line
+						notif.message = readingLine.split("-")[1];
+						notif.date = readingLine.split("-")[2];
+						notif.name = readingLine.split("-")[3];
+						notif.answer = Boolean.parseBoolean( readingLine.split("-")[4]);
 						
 						// Add this notification to the player
 						players.get(players.size() - 1).getPacket().addNotification(notif);
