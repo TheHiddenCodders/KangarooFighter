@@ -190,7 +190,7 @@ public class Main
 								Notification succeedNotif = new Notification(sender.getIp());
 								
 								succeedNotif.date = formatter.format(today);
-								succeedNotif.message = "Une demande d'ami a été envoyé à <c0>" + packet.receiverName + "</>";
+								succeedNotif.message = "Une demande d'ami a ete envoye a <c0>" + packet.receiverName + "</>";
 								
 								sender.getPacket().addNotification(succeedNotif);
 								server.sendBuffer.sendPacket(succeedNotif);
@@ -234,9 +234,9 @@ public class Main
 								if (packet.answer)
 								{
 									// Fill the answer notification
-									answerNotif.message = "<c0>" + sender.getName() + "</c0> a accepté votre demande d'amis";
+									answerNotif.message = "<c0>" + sender.getName() + "</> a accepte votre demande d'amis";
 									answerNotif.date = formatter.format(today);
-									senderNotif.message = "Vous êtes maintenant ami avec <c0>" + friend.getName() + "</c0>";
+									senderNotif.message = "Vous etes maintenant ami avec <c0>" + friend.getName() + "</>";
 									senderNotif.date = formatter.format(today);
 									
 									// Create new FriendsPacket
@@ -269,7 +269,7 @@ public class Main
 								}
 								else
 								{
-									answerNotif.message = "<c0>" + sender.getName() + "</c0> a refusé votre demande d'amis";
+									answerNotif.message = "<c0>" + sender.getName() + "</> a refuse votre demande d'amis";
 									answerNotif.date = formatter.format(today);
 									
 									// Check if the friend is connected

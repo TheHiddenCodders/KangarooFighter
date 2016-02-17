@@ -55,7 +55,7 @@ public class PlayerProcessor
 				// Get the directory containing player infos
 				File directory = new File(new File("").getAbsolutePath().concat(filePath));
 				
-				// Browse all file of the directory
+				// Browse all players
 				for (int i = 0; i < players.size(); i++)
 				{
 					// Save players' data
