@@ -321,4 +321,9 @@ public class HomeStage extends ConnectedStage
 	{
 		return notifTable;
 	}
+	
+	public NotificationsDisplay getNotificationsDisplay()
+	{
+		return notifDisplay;
+	}
 }

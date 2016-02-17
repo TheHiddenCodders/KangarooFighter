@@ -34,6 +34,9 @@ public class InfoBloc extends NotificationBloc
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
 			{
+				homeStage.main.player.getNotifications().remove(notification);
+				homeStage.getNotificationsTable().refresh();
+				homeStage.getNotificationsDisplay().refresh();
 				homeStage.main.network.send(notification);
 				super.clicked(event, x, y);
 			}

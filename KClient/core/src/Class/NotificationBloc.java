@@ -83,7 +83,7 @@ public abstract class NotificationBloc extends Table
 			addActor(yes);
 			addActor(no);
 		}
-		else if (style.equals("ok"))
+		else if (style.equals("Ok"))
 		{
 			addActor(ok);
 		}
@@ -101,7 +101,7 @@ public abstract class NotificationBloc extends Table
 	
 	public void addOkListener(ClickListener listener)
 	{
-		no.addListener(listener);
+		ok.addListener(listener);
 	}
 	
 }

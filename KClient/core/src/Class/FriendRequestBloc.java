@@ -35,6 +35,10 @@ public class FriendRequestBloc extends NotificationBloc
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
 			{
+				homeStage.main.player.getNotifications().remove(packet);
+				homeStage.getNotificationsTable().refresh();
+				homeStage.getNotificationsDisplay().refresh();
+				
 				FriendAnswerPacket answer = new FriendAnswerPacket();
 				answer.answer = true;
 				answer.name = packet.senderName;
@@ -48,6 +52,10 @@ public class FriendRequestBloc extends NotificationBloc
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
 			{
+				homeStage.main.player.getNotifications().remove(packet);
+				homeStage.getNotificationsTable().refresh();
+				homeStage.getNotificationsDisplay().refresh();
+				
 				FriendAnswerPacket answer = new FriendAnswerPacket();
 				answer.answer = false;
 				answer.name = packet.senderName;

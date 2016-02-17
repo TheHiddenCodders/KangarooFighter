@@ -35,6 +35,10 @@ public class GameInvitationRequestBloc extends NotificationBloc
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
 			{
+				homeStage.main.player.getNotifications().remove(packet);
+				homeStage.getNotificationsTable().refresh();
+				homeStage.getNotificationsDisplay().refresh();
+				
 				GameInvitationAnswerPacket answer = new GameInvitationAnswerPacket();
 				answer.answer = true;
 				answer.name = packet.name;
@@ -49,6 +53,10 @@ public class GameInvitationRequestBloc extends NotificationBloc
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
 			{
+				homeStage.main.player.getNotifications().remove(packet);
+				homeStage.getNotificationsTable().refresh();
+				homeStage.getNotificationsDisplay().refresh();
+				
 				GameInvitationAnswerPacket answer = new GameInvitationAnswerPacket();
 				answer.answer = false;
 				answer.name = packet.name;
