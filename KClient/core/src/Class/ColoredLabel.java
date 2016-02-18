@@ -61,6 +61,9 @@ public class ColoredLabel extends Table
 	
 	public void setText(String sentence, Color... colors)
 	{
+		for (Label part : parts)
+			part.remove();
+			
 		parts.clear();
 		
 		parse(sentence, colors);
@@ -68,6 +71,11 @@ public class ColoredLabel extends Table
 	
 	private void parse(String sentence, Color... colors)
 	{
+		//System.out.println("Parsing :" + sentence);
+		tempPart = "";
+		state = -1;
+		cursor = 0;
+		
 		// While cursor has not pass through entire string
 		while (cursor < sentence.length())
 		{
@@ -197,33 +205,48 @@ public class ColoredLabel extends Table
 			cursor++;
 		}
 		
-		// Make last part
-		parts.get(parts.size() - 1).setText(tempPart);
-		
-		// Set pos first part
-		parts.get(0).setPosition(getX(), getY());
-		parts.get(0).pack();
-		addActor(parts.get(0));
-		
 		int width = 0;
 		int height = 0;
+		
+		// Make last part
+		if (parts.size() > 0)
+		{
+			parts.get(parts.size() - 1).setText(tempPart);
+			
+			// Set pos first part
+			parts.get(0).setPosition(getX(), getY());
+			parts.get(0).pack();
+			addActor(parts.get(0));
+			
+			width = (int) parts.get(0).getWidth();
+		}
+		
 		// Concat them
 		for (int i = 1; i < parts.size(); i++)
 		{
 			parts.get(i).pack();
 			parts.get(i).setPosition(parts.get(i - 1).getX() + parts.get(i - 1).getWidth(), getY());
-			//System.err.println(parts.get(i).getX());
 			addActor(parts.get(i));
 			
-			width += (parts.get(i - 1).getWidth() + parts.get(i).getWidth());
+			width += parts.get(i).getWidth();
 			height = (int) parts.get(i).getHeight();
-			//System.out.println(width);
 		}
 		
 		setSize(width, height);
-		//System.out.println(getWidth());
+		System.out.println("Coloredlabel width: " + getWidth());
+	}	
+	
+	@Override
+	public void setX(float x) 
+	{			
+		super.setX(x);
 		
-		// Reset cursor
-		cursor = 0;	
+		parts.get(0).setX(0);
+		
+		for (int i = 1; i < parts.size(); i++)
+		{
+			System.out.println(parts.get(i - 1).getX());
+			parts.get(i).setX(parts.get(i - 1).getX() + parts.get(i - 1).getWidth());	
+		}
 	}
 }

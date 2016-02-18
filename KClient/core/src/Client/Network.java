@@ -8,6 +8,7 @@ import Class.Player;
 import Packets.FriendsPacket;
 import Packets.Notification;
 import Packets.PlayerPacket;
+import Packets.ServerInfoPacket;
 
 /**
  * Network handle the data exchanges between client and server.
@@ -74,6 +75,12 @@ public class Network extends Client
 		{
 			main.player.updateNotification((Notification) o);
 			System.out.println("Notifications updated");
+		}
+		
+		if (o instanceof ServerInfoPacket)
+		{
+			main.serverInfos = (ServerInfoPacket) o;
+			System.out.println("Server info updated");
 		}
 
 		currentStage.setData(o);

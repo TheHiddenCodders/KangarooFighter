@@ -4,10 +4,10 @@ import BlocsDisplays.FriendsBloc;
 import BlocsDisplays.LadderBloc;
 import BlocsDisplays.NewsBloc;
 import BlocsDisplays.PersoBloc;
-import Class.ColoredLabel;
 import Class.ConnectedStage;
 import Class.NotificationsDisplay;
 import Class.NotificationsTable;
+import Class.ServerInfoLabel;
 import Client.Main;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
@@ -34,11 +34,11 @@ public class HomeStage extends ConnectedStage
 	private HomePacket homePacket;
 	private InitGamePacket gamePacket;
 	private LadderPacket ladderPacket;
-	private ServerInfoPacket serverInfoPacket;
 	
 	private boolean searchingGame = false;
 	private boolean updateFriends = false;
 	private boolean updateNotifications = false;
+	private boolean updateServerInfos = false;
 	
 	/*
 	 * Components
@@ -49,7 +49,7 @@ public class HomeStage extends ConnectedStage
 	private Image bottomRibbon;
 	private NotificationsTable notifTable;
 	private NotificationsDisplay notifDisplay;
-	private ColoredLabel serverInfo;
+	private ServerInfoLabel serverInfo;
 	
 	// Blocs
 	private PersoBloc persoBloc;
@@ -76,6 +76,14 @@ public class HomeStage extends ConnectedStage
 		main.network.send(p);
 	}
 
+	@Override
+	public void act(float delta) 
+	{
+		if (serverInfo != null)
+			serverInfo.act(delta);
+		super.act(delta);
+	}
+	
 	@Override
 	protected void initComponents() 
 	{		
@@ -106,6 +114,8 @@ public class HomeStage extends ConnectedStage
 		notifTable.setPosition(getWidth() - notifTable.getWidth() - 10, 5);
 		notifDisplay = new NotificationsDisplay(this);
 		notifDisplay.setPosition(10, getHeight() - 51);
+		serverInfo = new ServerInfoLabel(main.serverInfos, main.skin, Color.TAN);
+		serverInfo.setPosition(800, 0);
 	}
 
 	@Override
@@ -177,7 +187,6 @@ public class HomeStage extends ConnectedStage
 	protected void addActors() 
 	{
 		addActor(background);
-		addActor(bottomRibbon);
 		addActor(matchMakingLaunch);
 	}
 	
@@ -189,6 +198,8 @@ public class HomeStage extends ConnectedStage
 		addActor(persoBloc);
 		addActor(newsBloc);
 		addActor(newsBloc2);
+		addActor(serverInfo);
+		addActor(bottomRibbon);
 		addActor(notifTable);
 	}
 	
@@ -199,8 +210,8 @@ public class HomeStage extends ConnectedStage
 			main.setStage(new PreGameStage(main, gamePacket));
 		
 		if (ladderPacket != null)
-			ladderBloc.getDisplay().refresh(ladderPacket);
-		
+			ladderBloc.getDisplay().refresh(ladderPacket);;
+			
 		if (updateFriends)
 		{
 			friendsBloc.refresh(null);
@@ -214,6 +225,12 @@ public class HomeStage extends ConnectedStage
 			notifDisplay.refresh();
 			updateNotifications = false;
 		}
+		
+		if (updateServerInfos)
+		{
+			serverInfo.refresh(main.serverInfos);
+			updateServerInfos = false;
+		}
 	}
 
 	@Override
@@ -225,7 +242,7 @@ public class HomeStage extends ConnectedStage
 			this.homePacket = (HomePacket) data;
 			System.out.println("HomePacket received");
 			
-			if (main.player != null)
+			if (main.player != null && main.serverInfos != null)
 				initDataReceived();
 		}
 		
@@ -264,7 +281,7 @@ public class HomeStage extends ConnectedStage
 		if (data instanceof ServerInfoPacket)
 		{
 			// Store packet
-			this.serverInfoPacket = (ServerInfoPacket) data;
+			updateServerInfos = true;
 			System.out.println("ServerInfoPacket receveid");
 			dataReceived();
 		}

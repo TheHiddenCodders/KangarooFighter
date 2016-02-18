@@ -4,6 +4,7 @@ import Class.ConnectedStage;
 import Class.Player;
 import Packets.DisconnexionPacket;
 import Packets.Packets;
+import Packets.ServerInfoPacket;
 import Stages.ServerAccesStage;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -25,6 +26,7 @@ public class Main extends ApplicationAdapter
 	public Skin skin;
 	public Preferences prefs;
 	public Player player;
+	public ServerInfoPacket serverInfos;
 	
 	@Override
 	public void create () 
