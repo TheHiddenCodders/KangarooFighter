@@ -2,6 +2,7 @@ package Class;
 
 import Client.Main;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public abstract class ConnectedStage extends Stage
@@ -11,6 +12,9 @@ public abstract class ConnectedStage extends Stage
 	 */
 	
 	public Main main;
+	
+	/** Camera of the stage */
+	private OrthographicCamera cam;
 	
 	/** This value need to be set to true when data that apply a change is received */
 	private boolean dataReceived;
@@ -32,6 +36,10 @@ public abstract class ConnectedStage extends Stage
 		super();
 		this.main = main;
 		
+		cam = new OrthographicCamera(800, 480);
+		cam.position.set(400, 240, 0);
+		
+		getViewport().setCamera(cam);
 		init();
 	}
 	
