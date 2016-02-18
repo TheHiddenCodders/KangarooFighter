@@ -12,8 +12,6 @@ public class GameClientPacket extends Packets
 	public boolean leftPunch;
 	public boolean rightPunch;
 	public boolean guard;
-	
-	public boolean ctrlPlusD;
 
 	@Override
 	public String toString()
@@ -26,7 +24,6 @@ public class GameClientPacket extends Packets
 				+ "- [bottomArrow]: " + bottomArrow + "\n"
 				+ "- [leftPunch]: " + leftPunch + "\n"
 				+ "- [rightPunch]: " + rightPunch + "\n"
-				+ "- [guard]: " + guard + "\n"
-				+ "- [ctrlPlusD]: " + ctrlPlusD + "\n";
+				+ "- [guard]: " + guard + "\n";
 	}
 }

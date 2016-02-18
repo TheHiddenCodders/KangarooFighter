@@ -15,7 +15,7 @@ public class InitGamePacket extends Packets
 
 	private static final long serialVersionUID = -2707492392522937092L;
 	
-	public GameServerPacket player, opponent;
+	public KangarooPacket player, opponent;
 	public PlayerPacket opponentData;
 	public String mapPath;
 	public int playerWins;

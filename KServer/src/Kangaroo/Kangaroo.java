@@ -3,10 +3,7 @@ package Kangaroo;
 import java.util.ArrayList;
 
 import Animations.ServerAnimation;
-import Utils.Timer;
-import Utils.Vector2;
-import enums.BodyPart;
-import enums.Direction;
+import Packets.KangarooPacket;
 import enums.States;
 
 /**
@@ -18,18 +15,13 @@ import enums.States;
  */
 public class Kangaroo 
 {
-	private int health = 100;
-	private int damage = 5;
-	private Vector2 position = new Vector2(0, 0);
+	public KangarooPacket kStats;
+
 	private ArrayList<ServerAnimation> animations;
 	private int currentAnimation = 0;
-	private boolean flip = false;
-	private float speed = 200; // In pixel per s
-	private States state = States.idle;
-	private int	win = 0;
-	private boolean ready = false;
 	
-	private Timer speedTimer;
+	private int	win = 0;
+	//private Timer speedTimer;
 
 	
 	/**
@@ -37,12 +29,16 @@ public class Kangaroo
 	 * 
 	 * @param cp
 	 */
-	public Kangaroo(Direction position)
+	public Kangaroo(int posX, int posY)
 	{
-		this.speedTimer = new Timer();
+		kStats.state = States.idle.ordinal();
 		
-		if (position == Direction.RIGHT)
-			flip();
+		kStats.x = posX;
+		kStats.y = posY;
+		kStats.speed = 10;
+		
+		kStats.health = 100;
+		kStats.damage = 5;
 		
 		initAnim();
 	}
@@ -75,7 +71,9 @@ public class Kangaroo
 	
 	public void flip()
 	{
-		flip = !flip;
+		kStats.flip = !kStats.flip;
+		
+		// TODO : flip anim
 		
 		/*for (int i = 0; i < animations.size(); i++)
 			animations.get(i).flip();*/
@@ -112,128 +110,9 @@ public class Kangaroo
 	
 		animations.get(state.ordinal()).start();
 	}
-	
-	
-	public boolean collidWith(Kangaroo k)
-	{
-		if (this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame()) != null)
-			return true;
-
-		return false;
-	}
-	
-	public boolean punch(Kangaroo k)
-	{
-		if (this.collidWith(k) && (this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.LEFTPUNCH || this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[0] == BodyPart.RIGHTPUNCH) && k.getState() != States.hit && (this.getState() == States.leftPunch || this.getState() == States.rightPunch))
-		{
-			BodyPart touchedPart = this.getCurrentAnimation().getKeyFrame().collidWith(k.getCurrentAnimation().getKeyFrame())[1];
-			
-			// Do something
-			switch(touchedPart)
-			{
-			case BODY:
-				k.setHealth(k.getHealth() - 50);
-				break;
-			case HEAD:
-				k.setHealth(k.getHealth() - 100);
-				break;
-			case LEFTPUNCH:
-				k.setHealth(k.getHealth() - 10);
-				this.getCurrentAnimation().stop();
-				break;
-			case RIGHTPUNCH:
-				k.setHealth(k.getHealth() - 20);
-				this.getCurrentAnimation().stop();
-				break;			
-			}
-			
-			return true;
-		}
-		
-		return false;
-	}
-	
-	/*
-	 * Getters - Setters
-	 */
-	
-	public boolean isReady()
-	{
-		return ready;
-	}
-	
-	public void setReady()
-	{
-		ready = true;
-	}
-	
-	public void resetReady()
-	{
-		ready = false;
-	}
-	
-	public int getHealth()
-	{
-		return health;
-	}
-	
-	public void setHealth(int health)
-	{
-		this.health = health;
-	}
-
-	public int getDamage() {
-		return damage;
-	}
-
-	public void setDamage(int damage) {
-		this.damage = damage;
-	}
-
-	public States getState() {
-		return state;
-	}
-
-	public void setState(States state)
-	{
-		// Cancel previous offset
-		setPosition(getPosition().x + getAnimation(this.state.ordinal()).getOffset().x, getPosition().y);
-		
-		this.state = state;
-		
-		// Add the offset of this new animation
-		setPosition(getPosition().x - getAnimation(state.ordinal()).getOffset().x, getPosition().y);
-	}
-	
-	private void setPosition(float x, float y) 
-	{
-		position.x = x;
-		position.y = y;
-	}
-
-	public Vector2 getPosition() 
-	{
-		return position;
-	}
-
-	public ServerAnimation getCurrentAnimation()
-	{
-		return animations.get(currentAnimation);
-	}
-	
-	public ServerAnimation getAnimation(int index)
-	{
-		return animations.get(index);
-	}
 
 	public int getWins() 
 	{
 		return win;
 	}
-
-	public boolean getFlip() 
-	{
-		return flip;
-	}
-	
 }

@@ -5,6 +5,7 @@ import java.util.Random;
 
 import Packets.ClientReadyPacket;
 import Packets.GameClientPacket;
+import Packets.GameReadyPacket;
 import Packets.InitGamePacket;
 import Packets.Packets;
 import Server.BufferPacket;
@@ -79,6 +80,8 @@ public class Game implements Runnable
 	
 	private Timer timer;
 	
+	private ClientReadyPacket firstPacket;
+	
 	/** Constructor : Create a game with one kangaroo and wait for one other.
 	 * @param k1 the kangaroo who create the game.
 	 */
@@ -87,11 +90,8 @@ public class Game implements Runnable
 		this.gp = gp;
 		this.gameSender = new BufferPacket();
 		
-		// Store the first player and create is kangaroo
-		this.p1 = p1;
-		this.p1.createKangaroo();
-		this.gamePackets = new ArrayList<Packets>();
-		this.timer = new Timer();
+		// No first packet for the moment
+		firstPacket = null;
 		
 		// Set the state of the game
 		setState(GameStates.Waiting);
@@ -99,6 +99,12 @@ public class Game implements Runnable
 		// Choose randomly a map
 		Random r = new Random(System.currentTimeMillis());
 		mapIndex = r.nextInt(map.length);
+		
+		// Store the first player and create is kangaroo
+		this.p1 = p1;
+		this.p1.createKangaroo(player1X[mapIndex], player1Y[mapIndex]);
+		this.gamePackets = new ArrayList<Packets>();
+		this.timer = new Timer();
 	}
 	
 	/** Constructor : Create a game with two kangaroos and launch it.
@@ -122,7 +128,7 @@ public class Game implements Runnable
 	{
 		// Create the second kangaroo
 		this.p2 = p2;
-		p2.createKangaroo();
+		p2.createKangaroo(player2X[mapIndex], player2Y[mapIndex]);
 		
 		// Set the state of the game
 		setState(GameStates.Prepared);
@@ -138,43 +144,56 @@ public class Game implements Runnable
 	{
 		// The game is updated when it receive a packet (synchrone)
 		
-		// Create an object for each readable packet
-		InitGamePacket initPacket;
-		ClientReadyPacket readyPacket;
-		GameClientPacket clientPacket; 
-		
 		timer.restart();
 		
-		// Play the game until the end
-		while (state != GameStates.ended)
+		// While the game is prepared but not launched
+		while (state == GameStates.Prepared)
 		{
 			// Wait for new packets
 			gamePackets = gameSender.readPackets();
 			
 			for (int i = 0; i < gamePackets.size(); i++)
 			{
-				if (gamePackets.get(i).getClass().isAssignableFrom(InitGamePacket.class))
+				if (gamePackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
 				{
-					initPacket = (InitGamePacket) gamePackets.get(i);
-				}
-				else if (gamePackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
-				{
-					readyPacket = (ClientReadyPacket) gamePackets.get(i);
+					ClientReadyPacket readyPacket = (ClientReadyPacket) gamePackets.get(i);
 					
-					// TODO : store which player is ready. When both are ready send GameReadyPacket
-				}
-				else if (gamePackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
-				{
-					clientPacket = (GameClientPacket) gamePackets.get(i);
-					
-					// TODO : Game update here
-					// update(clientPacket);
+					if (firstPacket == null)
+						firstPacket = readyPacket;
+					else
+					{
+						// Send the GameReadyPacket to both players
+						GameReadyPacket p1Packet = new GameReadyPacket();
+						GameReadyPacket p2Packet = new GameReadyPacket();
+						
+						p1Packet.setIp(p1.getIp());
+						p2Packet.setIp(p2.getIp());
+						
+						gp.mainSender.sendPacket(p1Packet);
+						gp.mainSender.sendPacket(p2Packet);
+					}
 					
 					// TODO : Send the evolution to the sender using sendPacket
 				}
 				else
 				{
 					System.err.println("Game thread : received unreadable packet : " + gamePackets.get(i).getClass());
+				}
+			}
+		}
+		
+		// While the game is running
+		while (state == GameStates.Running)
+		{
+			// Wait for new packets
+			gamePackets = gameSender.readPackets();
+			
+			for (int i = 0; i < gamePackets.size(); i++)
+			{
+				if (gamePackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
+				{
+					// Update the game with the packet received
+					update((GameClientPacket) gamePackets.get(i));
 				}
 			}
 		}
@@ -195,8 +214,11 @@ public class Game implements Runnable
 		if (p == p1)
 		{
 			gamePacket.setIp(p1.getIp());
-			gamePacket.player = p1.getGamePacket();
-			gamePacket.opponent = p2.getGamePacket();
+			
+			gamePacket.player = p1.getKangarooPacket();
+			gamePacket.opponent = p2.getKangarooPacket();
+			
+			
 			gamePacket.opponentData = p2.getPacket();
 			gamePacket.playerWins = p1.getKangaroo().getWins();
 			gamePacket.opponentWins = p2.getKangaroo().getWins();
@@ -204,8 +226,8 @@ public class Game implements Runnable
 		else if (p == p2)
 		{
 			gamePacket.setIp(p2.getIp());
-			gamePacket.player = p2.getGamePacket();
-			gamePacket.opponent = p1.getGamePacket();
+			gamePacket.player = p2.getKangarooPacket();
+			gamePacket.opponent = p1.getKangarooPacket();
 			gamePacket.opponentData = p1.getPacket();
 			gamePacket.playerWins = p2.getKangaroo().getWins();
 			gamePacket.opponentWins = p1.getKangaroo().getWins();

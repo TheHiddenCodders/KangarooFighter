@@ -1,8 +1,7 @@
 package Kangaroo;
 
-import Packets.GameServerPacket;
+import Packets.KangarooPacket;
 import Packets.PlayerPacket;
-import enums.Direction;
 
 public class Player 
 {
@@ -52,25 +51,17 @@ public class Player
 		return playerPacket.elo;
 	}
 	
-	public void createKangaroo()
+	public void createKangaroo(int posX, int posY)
 	{
-		k = new Kangaroo(Direction.RIGHT);
+		k = new Kangaroo(posX, posY);
 	}
 	
 	/**
 	 * @return an updatekangaroopacket with this kangaroo data
 	 */
-	public GameServerPacket getGamePacket()
+	public KangarooPacket getKangarooPacket()
 	{
-		GameServerPacket p = new GameServerPacket();
-		p.ip = getIp();
-		p.x = k.getPosition().x;
-		p.y = k.getPosition().y;
-		p.health = k.getHealth();
-		p.damage = k.getDamage();
-		p.state = k.getState().ordinal();
-		p.flip = k.getFlip();
-		return p;
+		return k.kStats;
 	}
 
 	public Kangaroo getKangaroo() 

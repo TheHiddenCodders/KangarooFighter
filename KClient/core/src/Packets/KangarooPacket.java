@@ -1,21 +1,16 @@
 package Packets;
 
-
-public class GameServerPacket extends Packets
+public class KangarooPacket extends Packets
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3276163525805452816L;
-	
-	public String ip;
+	private static final long serialVersionUID = 3333230021300979600L;
+
 	public float x, y;
 	public int health;
 	public int damage;
 	public int state;
 	public boolean flip;
-
-	@Override
+	public float speed;
+	
 	public String toString()
 	{
 		return super.toString()
