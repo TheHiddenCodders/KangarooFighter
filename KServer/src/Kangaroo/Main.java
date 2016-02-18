@@ -57,7 +57,7 @@ public class Main
 		
 		// Load server data from files
 		pp = new PlayerProcessor("/KangarooFighters/Players", serverInfo);
-		gp = new GameProcessor(pp, server.sendBuffer);
+		gp = new GameProcessor(pp, server.sendBuffer); // TODO : GameProcessor need a reference to serverInfo
 		news = new News("/KangarooFighters/News");
 		
 		// Launch game threads
@@ -157,31 +157,6 @@ public class Main
 						
 						// Send filled packet
 						server.sendBuffer.sendPacket(receivedPacket);
-						
-					}
-					
-					// Received a FriendRequestPacket
-					else if (readPackets.get(i) instanceof Notification)
-					{
-						notificationReceiver((Notification) readPackets.get(i)); 
-					}
-					
-					// Receive a MatchMakingPacket
-					else if (readPackets.get(i).getClass().isAssignableFrom(MatchMakingPacket.class))
-					{
-						// Send this packet to the GameProcessor
-						gp.mainPackets.sendPacket(readPackets.get(i));
-						
-						System.out.println("Main Thread : " + pp.getPlayerFromIp(readPackets.get(i).getIp()).getName() + " go to match making");
-					}
-					
-					// Receive a ClientReadyPacket
-					else if (readPackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
-					{
-						// Send this packet to the GameProcessor
-						gp.mainPackets.sendPacket(readPackets.get(i));
-						
-						System.out.println("Main Thread : " + pp.getPlayerFromIp(readPackets.get(i).getIp()).getName() + " is ready to start a game");
 					}
 					
 					// Receive a SearchLadderPacket
@@ -209,15 +184,39 @@ public class Main
 						}
 					}
 					
+					// Received a Notification
+					else if (readPackets.get(i) instanceof Notification)
+					{
+						notificationReceiver((Notification) readPackets.get(i)); 
+					}
+					
+					// Receive a MatchMakingPacket
+					else if (readPackets.get(i).getClass().isAssignableFrom(MatchMakingPacket.class))
+					{
+						// Send this packet to the GameProcessor
+						gp.mainPackets.sendPacket(readPackets.get(i));
+						
+						System.out.println("Main Thread : " + pp.getPlayerFromIp(readPackets.get(i).getIp()).getName() + " go to match making");
+					}
+					
+					// Receive a ClientReadyPacket
+					else if (readPackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
+					{
+						// Send this packet to the GameProcessor
+						gp.mainPackets.sendPacket(readPackets.get(i));
+						
+						System.out.println("Main Thread : " + pp.getPlayerFromIp(readPackets.get(i).getIp()).getName() + " is ready to start a game");
+					}
+					
 					// Receive an unknown packet
 					else
 					{
 						System.err.println("Main thread : Receive an unknowned packet : " + readPackets.get(i).getClass());
 					}
 				}
-				else // If the received packet is null, replace the -1.
+				else // If the received packet is null.
 				{
-					System.out.println("Main thread : : Receive a null packet");
+					System.out.println("Main thread : Receive a null packet");
 				}
 			}
 		}
