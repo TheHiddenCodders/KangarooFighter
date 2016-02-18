@@ -46,6 +46,19 @@ public class Kangaroo extends AnimatedSprite
 	}
 
 	/*
+	 * Methods
+	 */
+	
+	public void update(KangarooPacket packet)
+	{
+		setPosition(packet.x, packet.y);
+		setHealth(packet.health);
+		setDamage(packet.damage);
+		setState(packet.state);
+		setFlip(packet.flip);	
+	}
+	
+	/*
 	 * Getters - Setters
 	 */
 	
