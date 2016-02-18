@@ -38,17 +38,17 @@ public class Kangaroo extends AnimatedSprite
 	{
 		this();
 		
-		setPosition(player.x, player.y);
-		setHealth(player.health);
-		setDamage(player.damage);
-		setState(player.state);
-		setFlip(player.flip);			
+		update(player);			
 	}
 
 	/*
 	 * Methods
 	 */
 	
+	/**
+	 * This method update kangaroo fields with packet's ones
+	 * @param packet
+	 */
 	public void update(KangarooPacket packet)
 	{
 		setPosition(packet.x, packet.y);
