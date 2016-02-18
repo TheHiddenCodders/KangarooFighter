@@ -4,6 +4,7 @@ import BlocsDisplays.FriendsBloc;
 import BlocsDisplays.LadderBloc;
 import BlocsDisplays.NewsBloc;
 import BlocsDisplays.PersoBloc;
+import Class.ColoredLabel;
 import Class.ConnectedStage;
 import Class.NotificationsDisplay;
 import Class.NotificationsTable;
@@ -14,6 +15,7 @@ import Packets.InitGamePacket;
 import Packets.LadderPacket;
 import Packets.MatchMakingPacket;
 import Packets.Notification;
+import Packets.ServerInfoPacket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -32,6 +34,7 @@ public class HomeStage extends ConnectedStage
 	private HomePacket homePacket;
 	private InitGamePacket gamePacket;
 	private LadderPacket ladderPacket;
+	private ServerInfoPacket serverInfoPacket;
 	
 	private boolean searchingGame = false;
 	private boolean updateFriends = false;
@@ -46,6 +49,7 @@ public class HomeStage extends ConnectedStage
 	private Image bottomRibbon;
 	private NotificationsTable notifTable;
 	private NotificationsDisplay notifDisplay;
+	private ColoredLabel serverInfo;
 	
 	// Blocs
 	private PersoBloc persoBloc;
@@ -131,7 +135,7 @@ public class HomeStage extends ConnectedStage
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
 			{
-				// If display is on a stage (that's mean it's added)
+				// If notif display is on a stage (that's mean it's added)
 				if (notifDisplay.getStage() != null)
 				{
 					// Show blocs
@@ -142,12 +146,15 @@ public class HomeStage extends ConnectedStage
 				}
 				else
 				{
-					// Hide blocs
-					hideBlocs();
-					
 					// Add notifdisplay
 					addActor(notifDisplay = new NotificationsDisplay(HomeStage.this));
 					notifDisplay.setPosition(10, getHeight() - 51);
+					
+					// Hide display if they are on stage
+					hideCurrentDisplay();
+					
+					// Hide blocs
+					hideBlocs();
 				}
 				super.clicked(event, x, y);
 			}
@@ -253,8 +260,47 @@ public class HomeStage extends ConnectedStage
 			System.out.println("Notification received");	
 			dataReceived();
 		}
+		
+		if (data instanceof ServerInfoPacket)
+		{
+			// Store packet
+			this.serverInfoPacket = (ServerInfoPacket) data;
+			System.out.println("ServerInfoPacket receveid");
+			dataReceived();
+		}
 	}
 
+	/**
+	 * This method will hide the current display if there is one open
+	 */
+	public void hideCurrentDisplay()
+	{
+		if (ladderBloc.getDisplay().getStage() != null)
+		{
+			System.out.println("Ladder bloc is on stage");
+			ladderBloc.getDisplay().remove();
+			return;
+		}
+		else if (friendsBloc.getDisplay().getStage() != null)
+		{
+			System.out.println("Friends bloc is on stage");
+			friendsBloc.getDisplay().remove();
+			return;
+		}
+		else if (newsBloc.getDisplay().getStage() != null)
+		{
+			System.out.println("News bloc is on stage");
+			newsBloc.getDisplay().remove();
+			return;
+		}
+		else if (newsBloc2.getDisplay().getStage() != null)
+		{
+			System.out.println("News bloc 2 is on stage");
+			newsBloc2.getDisplay().remove();
+			return;
+		}
+	}
+	
 	/**
 	 * This method will hide all blocs to draw a display
 	 */
@@ -293,7 +339,7 @@ public class HomeStage extends ConnectedStage
 		
 		MatchMakingPacket packet = new MatchMakingPacket();
 		packet.search = true;
-		packet.eloTolerance = 1000; 
+		packet.eloTolerance = 0; 
 		main.network.send(packet);
 	}
 	

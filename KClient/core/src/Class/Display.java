@@ -87,7 +87,10 @@ public abstract class Display extends Table
 	public boolean remove() 
 	{
 		addAction(Actions.fadeOut(0.5f));
-		homeStage.showBlocs();
+		
+		if (homeStage.getNotificationsDisplay().getStage() == null)
+			homeStage.showBlocs();
+		
 		animated = true;
 		
 		return true;
