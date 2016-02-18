@@ -42,6 +42,7 @@ public class Kangaroo extends AnimatedSprite
 		setHealth(player.health);
 		setDamage(player.damage);
 		setState(player.state);
+		setFlip(player.flip);			
 	}
 
 	/*
@@ -86,5 +87,8 @@ public class Kangaroo extends AnimatedSprite
 	public void setFlip(boolean flip)
 	{
 		this.flip = flip;
+		
+		if (flip)
+			flip();
 	}
 }

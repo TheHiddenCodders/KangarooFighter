@@ -16,6 +16,7 @@ public class Animation
 	private int currentFrame;
 	private float fps;
 	private Timer timer;
+	private boolean flip;
 	private boolean resume;
 	
 	/*
@@ -27,6 +28,7 @@ public class Animation
 		currentFrame = 0;
 		fps = 1;
 		timer = new Timer();
+		flip = false;
 		resume = false;
 	}
 	
@@ -114,6 +116,17 @@ public class Animation
 	public void load(String path)
 	{
 		// TODO
+	}
+	
+	/**
+	 * Flip the kangaroo
+	 */
+	public void flip()
+	{
+		flip = !flip;
+		
+		for (int i = 0; i < frames.length; i++)
+			frames[i].flip(flip, frames[i].isFlipY());
 	}
 	
 	/*

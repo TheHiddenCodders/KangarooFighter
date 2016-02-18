@@ -39,6 +39,12 @@ public class AnimatedSprite extends Actor
 		super.draw(batch, parentAlpha);
 	}
 	
+	public void flip()
+	{
+		for (Animation animation : animations)
+			animation.flip();
+	}
+	
 	/*
 	 * Getters - Setters
 	 */
