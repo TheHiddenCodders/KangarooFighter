@@ -84,9 +84,13 @@ public class GameProcessor implements Runnable
 	private boolean isMatching(MatchMakingPacket p1, MatchMakingPacket p2)
 	{
 		// Compute the elo rate between players
-		float eloRate = Math.abs(1 - (pp.getPlayerFromIp(p1.getIp()).getElo() / pp.getPlayerFromIp(p2.getIp()).getElo() * 100));
+		//float eloRate = Math.abs(1 - (pp.getPlayerFromIp(p1.getIp()).getElo() / pp.getPlayerFromIp(p2.getIp()).getElo() * 100));
+		float eloRate = (float) (1/(1 + Math.pow(10, -(pp.getPlayerFromIp(p1.getIp()).getElo() - pp.getPlayerFromIp(p2.getIp()).getElo())/400)));
+		float minTolerance  = Math.min(p1.eloTolerance, p2.eloTolerance);
 		
-		return (eloRate <= Math.min(p1.eloTolerance, p2.eloTolerance));
+		System.err.println("Elo rate : " + eloRate + " | " + (0.5 - minTolerance) + " < " + eloRate + " < " + (0.5 + minTolerance));
+
+		return (eloRate >= 0.5 - minTolerance && eloRate <= 0.5 + minTolerance);
 	}
 	
 	/** Tell if a players have already waited
@@ -95,7 +99,7 @@ public class GameProcessor implements Runnable
 	 */
 	private int isWaiter(MatchMakingPacket p)
 	{
-		// Brawse the list of waiting players
+		// Browse the list of waiting players
 		for (int i = 0; i < waitingPlayers.size(); i++)
 		{
 			// If the player is found
@@ -151,7 +155,7 @@ public class GameProcessor implements Runnable
 				}
 			}
 		
-			// - If no player match, then launch a waiting thread -
+			// - If no player match, make this player wait -
 			
 			// If the player don't find game
 			if (!findGame)
@@ -167,11 +171,11 @@ public class GameProcessor implements Runnable
 				// Browse all the waiting player
 				for (int i = 0; i < waitingPlayers.size(); i++)
 				{
-					// If they wait for more than 5 seconds
-					if (waitingTimers.get(isWaiter(mmPacket)).getElapsedTime() >= 5.f)
+					// If they wait for more than 15 seconds
+					if (waitingTimers.get(i).getElapsedTime() >= 15.f)
 					{
-						// Raise the tolerance
-						waitingPlayers.get(isWaiter(mmPacket)).eloTolerance += 0.5;
+						// Raise the tolerance of 1%
+						waitingPlayers.get(i).eloTolerance += 0.01;
 						
 						// Try to find an opponent
 						mainPackets.sendPacket(mmPacket);
