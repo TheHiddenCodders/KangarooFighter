@@ -72,7 +72,7 @@ public class ClientProcessor implements Runnable
 			}
 			else
 			{
-				System.out.println("Receiver Thread : Sth not a packet received");
+				System.out.println("Receiver Thread : Receive something not a packet");
 			}
 			
 			// If the client has been disconnected
@@ -94,8 +94,6 @@ public class ClientProcessor implements Runnable
 			
 			// Send disconnection packet to the server program
 			server.readBuffer.sendPacket(new DisconnexionPacket(this.getIp()));
-			
-			System.out.println("Receiver Thread : the client : " + getIp() + "has been disconncted");
 		} 
 		catch (IOException e1) 
 		{
@@ -115,8 +113,6 @@ public class ClientProcessor implements Runnable
 			
 			// Send the buffer content to the client
 			output.flush();
-			
-			System.out.println(threadName + " : Sent to " + this.getIp() + ": " + o.toString() + "\n");
 		} 
 		catch (IOException e)
 		{
