@@ -260,7 +260,11 @@ public class Game implements Runnable
 	 */
 	private void update(GameClientPacket packet)
 	{
+		Player sender = getPlayerFromIp(packet.getIp());
+		
 		serverPacket.time = timer.getElapsedTime();
+		serverPacket.player = sender.getKangarooPacket();
+		serverPacket.opponent = getOpponent(sender).getKangarooPacket();
 		
 		gp.mainSender.sendPacket(serverPacket);
 	}
