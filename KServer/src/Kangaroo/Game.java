@@ -216,7 +216,9 @@ public class Game implements Runnable
 			gamePacket.setIp(p1.getIp());
 			
 			gamePacket.player = p1.getKangarooPacket();
+			
 			gamePacket.opponent = p2.getKangarooPacket();
+			gamePacket.opponent.flip = true;
 			
 			
 			gamePacket.opponentData = p2.getPacket();
@@ -228,6 +230,8 @@ public class Game implements Runnable
 			gamePacket.setIp(p2.getIp());
 			gamePacket.player = p2.getKangarooPacket();
 			gamePacket.opponent = p1.getKangarooPacket();
+			gamePacket.player.flip = true;
+			
 			gamePacket.opponentData = p1.getPacket();
 			gamePacket.playerWins = p2.getKangaroo().getWins();
 			gamePacket.opponentWins = p1.getKangaroo().getWins();
