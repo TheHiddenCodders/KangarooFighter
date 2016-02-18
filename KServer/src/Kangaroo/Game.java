@@ -85,6 +85,9 @@ public class Game implements Runnable
 	
 	private ClientReadyPacket firstPacket;
 	
+	private long delta;
+	private long lastTime;
+	
 	/** Constructor : Create a game with one kangaroo and wait for one other.
 	 * @param k1 the kangaroo who create the game.
 	 */
@@ -165,8 +168,10 @@ public class Game implements Runnable
 					
 					if (firstPacket == null)
 						firstPacket = readyPacket;
-					else						
+					else			
+					{
 						setState(GameStates.Running);
+					}
 					
 					// TODO : Send the evolution to the sender using sendPacket
 				}
@@ -187,11 +192,17 @@ public class Game implements Runnable
 		gp.mainSender.sendPacket(p1Packet);
 		gp.mainSender.sendPacket(p2Packet);
 		
+		// Init delta time
+		lastTime = System.currentTimeMillis();
+		
 		// While the game is running
 		while (state == GameStates.Running)
 		{
 			// Wait for new packets
 			gamePackets = gameSender.readPackets();
+			
+			// Update time
+			delta = System.currentTimeMillis() - lastTime;
 			
 			for (int i = 0; i < gamePackets.size(); i++)
 			{
@@ -201,6 +212,9 @@ public class Game implements Runnable
 					update((GameClientPacket) gamePackets.get(i));
 				}
 			}
+			
+			if (delta != 0)
+				lastTime = System.currentTimeMillis();
 		}
 	}
 	
@@ -260,14 +274,16 @@ public class Game implements Runnable
 	 */
 	private void update(GameClientPacket packet)
 	{
+		System.err.println("Game update with GameClientPacket, time = " + serverPacket.time);
+		
 		Player sender = getPlayerFromIp(packet.getIp());
 		
-		serverPacket.time = timer.getElapsedTime();
+		serverPacket.time += (delta);
 		serverPacket.player = sender.getKangarooPacket();
 		serverPacket.opponent = getOpponent(sender).getKangarooPacket();
 		
 		serverPacket.setIp(packet.getIp());
-		gp.mainSender.sendPacket(serverPacket);
+		gp.mainSender.sendPacket(new GameServerPacket(serverPacket));
 	}
 	
 	/** Return the opponent
@@ -284,7 +300,7 @@ public class Game implements Runnable
 	
 	private Player getPlayerFromIp(String ip)
 	{
-		if (p1.getIp() == ip)
+		if (p1.getIp().equals(ip))
 			return p1;
 		
 		return p2;

@@ -11,6 +11,22 @@ public class KangarooPacket extends Packets
 	public boolean flip;
 	public float speed;
 	
+	public KangarooPacket(KangarooPacket player) 
+	{
+		this.x = player.x;
+		this.y = player.y;
+		this.health = player.health;
+		this.damage = player.damage;
+		this.state = player.state;
+		this.flip = player.flip;
+		this.speed = player.speed;
+	}
+
+	public KangarooPacket() 
+	{
+	
+	}
+
 	public String toString()
 	{
 		return super.toString()
