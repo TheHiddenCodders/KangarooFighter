@@ -6,6 +6,7 @@ import java.util.Random;
 import Packets.ClientReadyPacket;
 import Packets.GameClientPacket;
 import Packets.GameReadyPacket;
+import Packets.GameServerPacket;
 import Packets.InitGamePacket;
 import Packets.Packets;
 import Server.BufferPacket;
@@ -72,6 +73,8 @@ public class Game implements Runnable
 	/**  */
 	private GameStates state;
 	
+	private GameServerPacket serverPacket;
+	
 	// - Game Communication -
 	/** gameSend : send packet to games */
 	public BufferPacket gameSender;
@@ -105,6 +108,8 @@ public class Game implements Runnable
 		this.p1.createKangaroo(player1X[mapIndex], player1Y[mapIndex]);
 		this.gamePackets = new ArrayList<Packets>();
 		this.timer = new Timer();
+		
+		serverPacket = new GameServerPacket();
 	}
 	
 	/** Constructor : Create a game with two kangaroos and launch it.
@@ -255,7 +260,9 @@ public class Game implements Runnable
 	 */
 	private void update(GameClientPacket packet)
 	{
-		// TODO : the update of game here
+		serverPacket.time = timer.getElapsedTime();
+		
+		gp.mainSender.sendPacket(serverPacket);
 	}
 	
 	/** Return the opponent
