@@ -88,9 +88,9 @@ public class GameStage extends ConnectedStage
 		
 		// Init names TODO: determine which one need to be left or right
 		playerName = new Label(game.getKPlayer().getName(), new LabelStyle(main.skin.getFont("default-font"), new Color(0.3f, 0.3f, 0.3f, 1)));
-		playerName.setPosition(this.getWidth() - playerName.getWidth() - 82, this.getHeight() - playerName.getHeight() - 37);
+		playerName.setPosition(800 - playerName.getWidth() - 82, 480 - playerName.getHeight() - 37);
 		opponentName = new Label(game.getKOpponent().getName(), new LabelStyle(main.skin.getFont("default-font"), new Color(0.3f, 0.3f, 0.3f, 1)));
-		opponentName.setPosition(80, this.getHeight() - opponentName.getHeight() - 37);
+		opponentName.setPosition(80, 480 - opponentName.getHeight() - 37);
 	}
 
 	@Override
@@ -154,6 +154,7 @@ public class GameStage extends ConnectedStage
 	{
 		if (data.getClass().isAssignableFrom(GameReadyPacket.class))
 		{
+			System.out.println("Game is running");
 			game.setState(GameStates.Running);
 		}
 	}

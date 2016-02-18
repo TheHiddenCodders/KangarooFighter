@@ -94,7 +94,7 @@ public class HomeStage extends ConnectedStage
 		matchMakingLaunch = new TextButton("Jouer", main.skin);
 		matchMakingLaunch.setSize(150, 40);
 		matchMakingLaunch.setColor(Color.TAN);
-		matchMakingLaunch.setPosition(this.getWidth() / 2 - matchMakingLaunch.getWidth() / 2, this.getHeight() - matchMakingLaunch.getHeight() - 5);
+		matchMakingLaunch.setPosition(800 / 2 - matchMakingLaunch.getWidth() / 2, 480 - matchMakingLaunch.getHeight() - 5);
 		
 		// Bottom ribbon
 		bottomRibbon = new Image(new Texture(Gdx.files.internal("sprites/homestage/botribbon.png")));
@@ -111,9 +111,9 @@ public class HomeStage extends ConnectedStage
 		newsBloc2 = new NewsBloc(homePacket.news[1], this);
 		newsBloc2.setPosition(10, 50);
 		notifTable = new NotificationsTable(this);
-		notifTable.setPosition(getWidth() - notifTable.getWidth() - 10, 5);
+		notifTable.setPosition(800 - notifTable.getWidth() - 10, 5);
 		notifDisplay = new NotificationsDisplay(this);
-		notifDisplay.setPosition(10, getHeight() - 51);
+		notifDisplay.setPosition(10, 480 - 51);
 		serverInfo = new ServerInfoLabel(main.serverInfos, main.skin, Color.TAN);
 		serverInfo.setPosition(800, 0);
 	}

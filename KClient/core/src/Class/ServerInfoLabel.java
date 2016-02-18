@@ -41,7 +41,6 @@ public class ServerInfoLabel extends ColoredLabel
 	@Override
 	public void act(float delta)
 	{
-		System.err.println(getX() + getWidth());
 		if (getX() + getWidth() > 0)
 		{
 			moveBy(-1, 0);
@@ -55,7 +54,6 @@ public class ServerInfoLabel extends ColoredLabel
 			
 			setText(texts[currentText], colors);
 			setX(800);
-			System.out.println("ServerInfoLabel width: " +  this.getWidth());
 		}
 		super.act(delta);
 	};
