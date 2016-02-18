@@ -98,6 +98,9 @@ public class Main
 						
 						System.out.println("Main Thread : " + pp.getPlayerFromIp(disconnexionPacket.getIp()).getName() + " quit the server");
 						
+						// Send the packet to the GameProcessor in case the player is in match making or in a game
+						gp.mainPackets.sendPacket(disconnexionPacket);
+						
 						// Remove the disconnected player
 						pp.deconnexion(disconnexionPacket);
 					}

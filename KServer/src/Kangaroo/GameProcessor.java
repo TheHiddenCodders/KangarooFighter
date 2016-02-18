@@ -3,12 +3,12 @@ package Kangaroo;
 import java.util.ArrayList;
 
 import Packets.ClientReadyPacket;
+import Packets.DisconnexionPacket;
 import Packets.GameReadyPacket;
 import Packets.MatchMakingPacket;
 import Packets.Packets;
 import Server.BufferPacket;
 import ServerInfo.PlayerProcessor;
-import Utils.Timer;
 
 public class GameProcessor implements Runnable
 {
@@ -23,7 +23,7 @@ public class GameProcessor implements Runnable
 	/** waitingPlayers : a list of reference on player waiting for play */
 	private ArrayList<MatchMakingPacket> waitingPlayers;
 	/** waitingTimers : compute the time a player is waiting*/
-	private ArrayList<Timer> waitingTimers;
+	//private ArrayList<Timer> waitingTimers;
 	/** pp : a reference to all connected player */
 	private PlayerProcessor pp;
 	
@@ -39,7 +39,7 @@ public class GameProcessor implements Runnable
 		this.mainSender = sender;
 		
 		this.waitingPlayers = new ArrayList<MatchMakingPacket>();
-		this.waitingTimers = new ArrayList<Timer>();
+		//this.waitingTimers = new ArrayList<Timer>();
 		this.pp = pp;
 	}
 
@@ -59,6 +59,13 @@ public class GameProcessor implements Runnable
 				{
 					// Update the match making
 					matchMakingUpdate((MatchMakingPacket) packet);
+				}
+				else if (packet.getClass().isAssignableFrom(DisconnexionPacket.class))
+				{
+					int id = isWaiter(packet.getIp());
+					
+					if (id != -1)
+						waitingPlayers.remove(id);
 				}
 				// If the received packet is a GameReadyPacket
 				else if (packet.getClass().isAssignableFrom(GameReadyPacket.class))
@@ -88,7 +95,7 @@ public class GameProcessor implements Runnable
 		float eloRate = (float) (1/(1 + Math.pow(10, -(pp.getPlayerFromIp(p1.getIp()).getElo() - pp.getPlayerFromIp(p2.getIp()).getElo())/400)));
 		float minTolerance  = Math.min(p1.eloTolerance, p2.eloTolerance);
 		
-		System.err.println("Elo rate : " + eloRate + " | " + (0.5 - minTolerance) + " < " + eloRate + " < " + (0.5 + minTolerance));
+		System.err.println( (0.5 - minTolerance) + " < " + eloRate + " < " + (0.5 + minTolerance) );
 
 		return (eloRate >= 0.5 - minTolerance && eloRate <= 0.5 + minTolerance);
 	}
@@ -97,13 +104,13 @@ public class GameProcessor implements Runnable
 	 * @param p : the player to check
 	 * @return the position of the player in the wanting list
 	 */
-	private int isWaiter(MatchMakingPacket p)
+	private int isWaiter(String playerIp)
 	{
 		// Browse the list of waiting players
 		for (int i = 0; i < waitingPlayers.size(); i++)
 		{
 			// If the player is found
-			if (waitingPlayers.get(i).getIp() == p.getIp())
+			if (waitingPlayers.get(i).getIp().equals(playerIp))
 			{
 				return i;
 			}
@@ -126,32 +133,26 @@ public class GameProcessor implements Runnable
 			// Browse all the waiting players
 			for (int i = 0; i < waitingPlayers.size(); i++)
 			{
-				// Don't check the player him self
-				if (pp.getPlayerFromIp(waitingPlayers.get(i).getIp()).getName() != pp.getPlayerFromIp(mmPacket.getIp()).getName())
+				// Try to find an opponent
+				if (isMatching(mmPacket, waitingPlayers.get(i)))
 				{
-					// Try to find an opponent
-					if (isMatching(mmPacket, waitingPlayers.get(i)))
+					// Create a game and launch it in a thread
+					games.add(new Game(pp.getPlayerFromIp(waitingPlayers.get(i).getIp()), pp.getPlayerFromIp(mmPacket.getIp()), this));
+					Thread t = new Thread(games.get(games.size() - 1));
+					t.start();
+					
+					
+					// Remove the opponent from the waiting list
+					waitingPlayers.remove(waitingPlayers.get(i));
+					
+					// Remove the current packet is the player was waiting
+					if (isWaiter(mmPacket.getIp()) > -1)
 					{
-						// Create a game and launch it in a thread
-						games.add(new Game(pp.getPlayerFromIp(waitingPlayers.get(i).getIp()), pp.getPlayerFromIp(mmPacket.getIp()), this));
-						Thread t = new Thread(games.get(games.size() - 1));
-						t.start();
-						
-						
-						// Remove the opponent from the waiting list
-						waitingPlayers.remove(waitingPlayers.get(i));
-						waitingTimers.remove(waitingTimers.get(i));
-						
-						// Remove the current packet is the player was waiting
-						if (isWaiter(mmPacket) > -1)
-						{
-							waitingPlayers.remove(isWaiter(mmPacket));
-							waitingTimers.remove(isWaiter(mmPacket));
-						}
-						
-						findGame = true;
-						break;
+						waitingPlayers.remove(isWaiter(mmPacket.getIp()));
 					}
+					
+					findGame = true;
+					break;
 				}
 			}
 		
@@ -160,32 +161,15 @@ public class GameProcessor implements Runnable
 			// If the player don't find game
 			if (!findGame)
 			{
-				// If it is a new player
-				if (isWaiter(mmPacket) == -1)
-				{
-					// Create a new player and launch his associated timer
-					waitingPlayers.add(mmPacket);
-					waitingTimers.add(new Timer());
-				}
-				
-				// Browse all the waiting player
-				for (int i = 0; i < waitingPlayers.size(); i++)
-				{
-					// If they wait for more than 15 seconds
-					if (waitingTimers.get(i).getElapsedTime() >= 15.f)
-					{
-						// Raise the tolerance of 1%
-						waitingPlayers.get(i).eloTolerance += 0.01;
-						
-						// Try to find an opponent
-						mainPackets.sendPacket(mmPacket);
-					}
-				}
+				waitingPlayers.add(mmPacket);
 			}
 		}
 		else // If the player quit the queue
 		{
-			waitingPlayers.remove(pp.getPlayerFromIp(mmPacket.getIp()));
+			int id = isWaiter(mmPacket.getIp());
+			
+			if (id != -1)
+				waitingPlayers.remove(id);
 		}
 	}
 	
