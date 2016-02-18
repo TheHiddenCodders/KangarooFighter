@@ -5,7 +5,6 @@ import java.util.Random;
 
 import Packets.ClientReadyPacket;
 import Packets.GameClientPacket;
-import Packets.GameReadyPacket;
 import Packets.InitGamePacket;
 import Packets.Packets;
 import Server.BufferPacket;
@@ -78,6 +77,8 @@ public class Game implements Runnable
 	/** gamePackets : packets received from GameProcessor */
 	private ArrayList<Packets> gamePackets;
 	
+	private Timer timer;
+	
 	/** Constructor : Create a game with one kangaroo and wait for one other.
 	 * @param k1 the kangaroo who create the game.
 	 */
@@ -90,6 +91,7 @@ public class Game implements Runnable
 		this.p1 = p1;
 		this.p1.createKangaroo();
 		this.gamePackets = new ArrayList<Packets>();
+		this.timer = new Timer();
 		
 		// Set the state of the game
 		setState(GameStates.Waiting);
@@ -118,14 +120,14 @@ public class Game implements Runnable
 	 */
 	public void linkKangaroo(Player p2)
 	{
-		// Create the econd kangaroo
+		// Create the second kangaroo
 		this.p2 = p2;
 		p2.createKangaroo();
 		
 		// Set the state of the game
 		setState(GameStates.Prepared);
 		
-		// Prevent players that game is ready
+		// Tell players that game is ready
 		gp.mainSender.sendPacket((Packets) getInitPacket(p1));
 		gp.mainSender.sendPacket((Packets) getInitPacket(this.p2));
 	}
@@ -140,6 +142,8 @@ public class Game implements Runnable
 		InitGamePacket initPacket;
 		ClientReadyPacket readyPacket;
 		GameClientPacket clientPacket; 
+		
+		timer.restart();
 		
 		// Play the game until the end
 		while (state != GameStates.ended)

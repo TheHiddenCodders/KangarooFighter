@@ -141,7 +141,6 @@ public class GameProcessor implements Runnable
 					Thread t = new Thread(games.get(games.size() - 1));
 					t.start();
 					
-					
 					// Remove the opponent from the waiting list
 					waitingPlayers.remove(waitingPlayers.get(i));
 					
