@@ -31,6 +31,7 @@ public class Kangaroo
 	 */
 	public Kangaroo(int posX, int posY)
 	{
+		kStats = new KangarooPacket();
 		kStats.state = States.idle.ordinal();
 		
 		kStats.x = posX;

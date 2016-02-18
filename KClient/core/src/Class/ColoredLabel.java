@@ -233,7 +233,7 @@ public class ColoredLabel extends Table
 		}
 		
 		setSize(width, height);
-		System.out.println("Coloredlabel width: " + getWidth());
+		//System.out.println("Coloredlabel width: " + getWidth());
 	}	
 	
 	@Override
@@ -245,7 +245,7 @@ public class ColoredLabel extends Table
 		
 		for (int i = 1; i < parts.size(); i++)
 		{
-			System.out.println(parts.get(i - 1).getX());
+			//System.out.println(parts.get(i - 1).getX());
 			parts.get(i).setX(parts.get(i - 1).getX() + parts.get(i - 1).getWidth());	
 		}
 	}

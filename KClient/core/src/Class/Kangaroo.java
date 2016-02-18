@@ -1,6 +1,6 @@
 package Class;
 
-import Packets.GameServerPacket;
+import Packets.KangarooPacket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -34,14 +34,14 @@ public class Kangaroo extends AnimatedSprite
 		setAnimations(animations);
 	}
 	
-	public Kangaroo(GameServerPacket gamePacket)
+	public Kangaroo(KangarooPacket player)
 	{
 		this();
 		
-		setPosition(gamePacket.x, gamePacket.y);
-		setHealth(gamePacket.health);
-		setDamage(gamePacket.damage);
-		setState(gamePacket.state);
+		setPosition(player.x, player.y);
+		setHealth(player.health);
+		setDamage(player.damage);
+		setState(player.state);
 	}
 
 	/*
