@@ -12,10 +12,7 @@ public class Kangaroo extends AnimatedSprite
 	 * Attributes
 	 */
 	
-	private int health;
-	private int damage;
-	private int state;
-	private boolean flip;
+	private KangarooPacket packet;
 	
 	/*
 	 * Constructors
@@ -37,6 +34,8 @@ public class Kangaroo extends AnimatedSprite
 	public Kangaroo(KangarooPacket player)
 	{
 		this();
+		
+		this.packet = player;
 		
 		update(player);			
 	}
@@ -64,42 +63,42 @@ public class Kangaroo extends AnimatedSprite
 	
 	public int getHealth()
 	{
-		return health;
+		return packet.health;
 	}
 
 	public void setHealth(int health)
 	{
-		this.health = health;
+		packet.health = health;
 	}
 
 	public int getDamage() 
 	{
-		return damage;
+		return packet.damage;
 	}
 
 	public void setDamage(int damage) 
 	{
-		this.damage = damage;
+		packet.damage = damage;
 	}
 
 	public int getState() 
 	{
-		return state;
+		return packet.state;
 	}
 
 	public void setState(int state) 
 	{
-		this.state = state;
+		packet.state = state;
 	}
 
 	public boolean isFlip() 
 	{
-		return flip;
+		return packet.flip;
 	}
 
 	public void setFlip(boolean flip)
 	{
-		this.flip = flip;
+		packet.flip = flip;
 		
 		if (flip)
 			flip();

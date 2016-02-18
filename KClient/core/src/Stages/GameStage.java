@@ -62,9 +62,6 @@ public class GameStage extends ConnectedStage
 		// Update timer
 		time.setText(String.valueOf(game.getTime()));
 		
-		// Send client packet
-		main.network.send(game.getClientPacket());
-		
 		super.act(delta);
 	}
 	
@@ -163,11 +160,13 @@ public class GameStage extends ConnectedStage
 		{
 			System.out.println("Game is running");
 			game.setState(GameStates.Running);
+			main.network.send(game.getClientPacket());
 		}
 		
 		if (data instanceof GameServerPacket)
 		{
 			game.update((GameServerPacket) data);
+			main.network.send(game.getClientPacket());
 		}
 	}
 

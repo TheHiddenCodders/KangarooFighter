@@ -165,18 +165,8 @@ public class Game implements Runnable
 					
 					if (firstPacket == null)
 						firstPacket = readyPacket;
-					else
-					{
-						// Send the GameReadyPacket to both players
-						GameReadyPacket p1Packet = new GameReadyPacket();
-						GameReadyPacket p2Packet = new GameReadyPacket();
-						
-						p1Packet.setIp(p1.getIp());
-						p2Packet.setIp(p2.getIp());
-						
-						gp.mainSender.sendPacket(p1Packet);
-						gp.mainSender.sendPacket(p2Packet);
-					}
+					else						
+						setState(GameStates.Running);
 					
 					// TODO : Send the evolution to the sender using sendPacket
 				}
@@ -186,6 +176,16 @@ public class Game implements Runnable
 				}
 			}
 		}
+		
+		// Send the GameReadyPacket to both players
+		GameReadyPacket p1Packet = new GameReadyPacket();
+		GameReadyPacket p2Packet = new GameReadyPacket();
+		
+		p1Packet.setIp(p1.getIp());
+		p2Packet.setIp(p2.getIp());
+		
+		gp.mainSender.sendPacket(p1Packet);
+		gp.mainSender.sendPacket(p2Packet);
 		
 		// While the game is running
 		while (state == GameStates.Running)
@@ -266,6 +266,7 @@ public class Game implements Runnable
 		serverPacket.player = sender.getKangarooPacket();
 		serverPacket.opponent = getOpponent(sender).getKangarooPacket();
 		
+		serverPacket.setIp(packet.getIp());
 		gp.mainSender.sendPacket(serverPacket);
 	}
 	
