@@ -251,7 +251,7 @@ public class Main
 			
 			// TODO : Check in sender notification if it have a demand from packet.name, in this case make them friend
 			
-			// Get the date of now
+			// Get the today date 
 			Date today = Calendar.getInstance().getTime();   
 			Format formatter = new SimpleDateFormat("dd/MM HH:mm");
 			
@@ -266,10 +266,11 @@ public class Main
 			// Check if the player associate to the packet's name exist
 			if (player != null)
 			{
-				// Store the notification and send it to player
+				// Store the notification
 				packet.setIp(player.getIp());
 				player.getPacket().addNotification(packet);
 				
+				// If the player is connected, then send him
 				if (pp.isPlayerConnected(player.getName()) != null)
 					server.sendBuffer.sendPacket(packet);
 				
@@ -309,7 +310,7 @@ public class Main
 			
 			if (friend != null)
 			{
-				// Get the date
+				// Get the today date
 				Date today = Calendar.getInstance().getTime();   
 				Format formatter = new SimpleDateFormat("dd/MM HH:mm");
 				
@@ -317,7 +318,7 @@ public class Main
 				Notification answerNotif = new Notification(friend.getIp());
 				Notification senderNotif = new Notification(sender.getIp());
 				
-				// Check the answer
+				// Check if the answer is positive
 				if (packet.answer)
 				{
 					// Fill the answer notification
@@ -354,17 +355,20 @@ public class Main
 						server.sendBuffer.sendPacket(playerFriend);
 					}
 				}
+				
+				// If the answer is negative
 				else
 				{
+					// Prepare the negative notification
 					answerNotif.message = "<c0>" + sender.getName() + "</> a refuse votre demande d'amis";
 					answerNotif.date = formatter.format(today);
 					
-					// Check if the friend is connected
+					// Store it 
+					friend.getPacket().addNotification(answerNotif);
+					
+					// If the friend is connected, then send him the notification
 					if (pp.isPlayerConnected(friend.getName()) != null)
-					{
-						// Send the notification
 						server.sendBuffer.sendPacket(answerNotif);
-					}
 				}
 			
 				// Browse sender notification
@@ -387,13 +391,14 @@ public class Main
 			else
 			{
 				// Error : the future friend doesn't exist
+				System.out.println("Main Thread : receive a FriendAnswerPacket with an unknown player");
 			}
 		}
 		
 		// Receive a simple notification
 		else 
 		{
-			// Get then sender 
+			// Get the sender 
 			Player sender = pp.getPlayerFromIp(notification.getIp());
 			
 			// Browse sender notification
