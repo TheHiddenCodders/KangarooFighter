@@ -14,6 +14,7 @@ import Packets.DisconnexionPacket;
 import Packets.FriendAnswerPacket;
 import Packets.FriendRequestPacket;
 import Packets.FriendsPacket;
+import Packets.GameClientPacket;
 import Packets.HomePacket;
 import Packets.LadderPacket;
 import Packets.LoginPacket;
@@ -21,9 +22,7 @@ import Packets.MatchMakingPacket;
 import Packets.Notification;
 import Packets.Packets;
 import Packets.SearchLadderPacket;
-
 import Server.Server;
-
 import ServerInfo.News;
 import ServerInfo.PlayerProcessor;
 import ServerInfo.ServerInfo;
@@ -209,6 +208,13 @@ public class Main
 						gp.mainPackets.sendPacket(readPackets.get(i));
 						
 						System.out.println("Main Thread : " + pp.getPlayerFromIp(readPackets.get(i).getIp()).getName() + " is ready to start a game");
+					}
+					
+					// Receive a GameClientPacket
+					else if (readPackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
+					{
+						// Send this packet to the GameProcessor
+						gp.mainPackets.sendPacket(readPackets.get(i));
 					}
 					
 					// Receive an unknown packet
