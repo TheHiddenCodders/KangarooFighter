@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import Packets.ClientReadyPacket;
+import Packets.DisconnexionPacket;
 import Packets.GameClientPacket;
 import Packets.GameReadyPacket;
 import Packets.GameServerPacket;
@@ -206,7 +207,11 @@ public class Game implements Runnable
 			
 			for (int i = 0; i < gamePackets.size(); i++)
 			{
-				if (gamePackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
+				if (gamePackets.get(i).getClass().isAssignableFrom(DisconnexionPacket.class))
+				{
+					// TODO : End the game here
+				}
+				else if (gamePackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
 				{
 					// Update the game with the packet received
 					update((GameClientPacket) gamePackets.get(i));
@@ -278,9 +283,16 @@ public class Game implements Runnable
 		
 		Player sender = getPlayerFromIp(packet.getIp());
 		
+		// Update the server packet
 		serverPacket.time += (delta);
 		serverPacket.player = sender.getKangarooPacket();
 		serverPacket.opponent = getOpponent(sender).getKangarooPacket();
+		
+		// End the round it last 5 seconds
+		if (serverPacket.time >= 5000)
+		{
+			// TODO : Manage end of round here
+		}
 		
 		serverPacket.setIp(packet.getIp());
 		gp.mainSender.sendPacket(new GameServerPacket(serverPacket));
