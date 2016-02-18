@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import Packets.ClientReadyPacket;
 import Packets.DisconnexionPacket;
+import Packets.GameClientPacket;
 import Packets.GameReadyPacket;
 import Packets.MatchMakingPacket;
 import Packets.Packets;
@@ -73,8 +74,14 @@ public class GameProcessor implements Runnable
 					// Send it to the appropriate game
 					sendToGame(packet);
 				}
-				// If the received packet is a GameClientPacket
+				// If the received packet is a ClientReadyPacket
 				else if (packet.getClass().isAssignableFrom(ClientReadyPacket.class))
+				{
+					// Send it to the appropriate game
+					sendToGame(packet);
+				}
+				// If the received packet is a GameClientPacket
+				else if (packet.getClass().isAssignableFrom(GameClientPacket.class))
 				{
 					// Send it to the appropriate game
 					sendToGame(packet);
