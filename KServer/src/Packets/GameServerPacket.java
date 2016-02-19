@@ -11,6 +11,7 @@ public class GameServerPacket extends Packets
 	public KangarooPacket player;
 	public KangarooPacket opponent;
 	
+	public int round;
 	public float time;
 
 	public GameServerPacket() 

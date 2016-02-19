@@ -153,74 +153,87 @@ public class Game implements Runnable
 	{
 		// The game is updated when it receive a packet (synchrone)
 		
-		timer.restart();
-		
-		// While the game is prepared but not launched
-		while (state == GameStates.Prepared)
+		while (serverPacket.round <= 3)
 		{
-			// Wait for new packets
-			gamePackets = gameSender.readPackets();
+			timer.restart();
 			
-			for (int i = 0; i < gamePackets.size(); i++)
+			// While the game is prepared but not launched
+			while (state == GameStates.Prepared)
 			{
-				if (gamePackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
+				// Wait for new packets
+				gamePackets = gameSender.readPackets();
+				
+				// Browse all packets
+				for (int i = 0; i < gamePackets.size(); i++)
 				{
-					ClientReadyPacket readyPacket = (ClientReadyPacket) gamePackets.get(i);
-					
-					if (firstPacket == null)
-						firstPacket = readyPacket;
-					else			
+					// Received a ClientReadyPacket
+					if (gamePackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
 					{
-						setState(GameStates.Running);
+						ClientReadyPacket readyPacket = (ClientReadyPacket) gamePackets.get(i);
+						
+						// If the fist player is ready, then store his packet
+						if (firstPacket == null)
+							firstPacket = readyPacket;
+						// Else the two players are ready, then the game can start
+						else			
+						{
+							setState(GameStates.Running);
+						}
 					}
-					
-					// TODO : Send the evolution to the sender using sendPacket
-				}
-				else
-				{
-					System.err.println("Game thread : received unreadable packet : " + gamePackets.get(i).getClass());
+					else
+					{
+						System.err.println("Game thread : received unreadable packet : " + gamePackets.get(i).getClass());
+					}
 				}
 			}
-		}
-		
-		// Send the GameReadyPacket to both players
-		GameReadyPacket p1Packet = new GameReadyPacket();
-		GameReadyPacket p2Packet = new GameReadyPacket();
-		
-		p1Packet.setIp(p1.getIp());
-		p2Packet.setIp(p2.getIp());
-		
-		gp.mainSender.sendPacket(p1Packet);
-		gp.mainSender.sendPacket(p2Packet);
-		
-		// Init delta time
-		lastTime = System.currentTimeMillis();
-		
-		// While the game is running
-		while (state == GameStates.Running)
-		{
-			// Wait for new packets
-			gamePackets = gameSender.readPackets();
 			
-			// Update time
-			delta = System.currentTimeMillis() - lastTime;
+			// Send the GameReadyPacket to both players
+			GameReadyPacket p1Packet = new GameReadyPacket();
+			GameReadyPacket p2Packet = new GameReadyPacket();
 			
-			for (int i = 0; i < gamePackets.size(); i++)
+			p1Packet.setIp(p1.getIp());
+			p2Packet.setIp(p2.getIp());
+			
+			gp.mainSender.sendPacket(p1Packet);
+			gp.mainSender.sendPacket(p2Packet);
+			
+			// Init delta time
+			lastTime = System.currentTimeMillis();
+			
+			// While the game is running
+			while (state == GameStates.Running)
 			{
-				if (gamePackets.get(i).getClass().isAssignableFrom(DisconnexionPacket.class))
+				// Wait for new packets
+				gamePackets = gameSender.readPackets();
+				
+				// Update time
+				delta = System.currentTimeMillis() - lastTime;
+				
+				// Browse all packets
+				for (int i = 0; i < gamePackets.size(); i++)
 				{
-					// TODO : End the game here
+					// Received a DisconnexionPacket
+					if (gamePackets.get(i).getClass().isAssignableFrom(DisconnexionPacket.class))
+					{
+						// TODO : End the game here
+					}
+					// Received a GameClientPacket
+					else if (gamePackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
+					{
+						// Update the game with the packet received
+						update((GameClientPacket) gamePackets.get(i));
+					}
 				}
-				else if (gamePackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
-				{
-					// Update the game with the packet received
-					update((GameClientPacket) gamePackets.get(i));
-				}
+				
+				// Update lastTime only if delta was set
+				if (delta != 0)
+					lastTime = System.currentTimeMillis();
 			}
 			
-			if (delta != 0)
-				lastTime = System.currentTimeMillis();
+			// When a round is ended
 		}
+		
+		// When the game is ended
 	}
 	
 	/** Get the game packet depending of the kangaroo k
