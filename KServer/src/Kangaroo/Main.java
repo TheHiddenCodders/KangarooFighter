@@ -260,6 +260,7 @@ public class Main
 			Player sender = pp.getPlayerFromIp(packet.getIp());
 			
 			// TODO : Check in sender notification if it have a demand from packet.name, in this case make them friend
+			// TODO : check if players are already friends
 			
 			// Get the today date 
 			Date today = Calendar.getInstance().getTime();   

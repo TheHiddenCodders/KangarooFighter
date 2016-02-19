@@ -23,16 +23,16 @@ public class GameProcessor implements Runnable
 	
 	/** waitingPlayers : a list of reference on player waiting for play */
 	private ArrayList<MatchMakingPacket> waitingPlayers;
-	/** waitingTimers : compute the time a player is waiting*/
-	//private ArrayList<Timer> waitingTimers;
 	/** pp : a reference to all connected player */
 	private PlayerProcessor pp;
 	
 	/** a copy of received packets */
 	private ArrayList<Packets> packets;
 	
+	// TODO : send packet to main thread when modification occured to update server infos
+	
 	public GameProcessor(PlayerProcessor pp, BufferPacket sender)
-	{
+	{	
 		// Create attributes
 		this.games = new ArrayList<Game>();
 		

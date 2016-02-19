@@ -240,7 +240,6 @@ public class Game implements Runnable
 			gamePacket.setIp(p1.getIp());
 			
 			gamePacket.player = p1.getKangarooPacket();
-			
 			gamePacket.opponent = p2.getKangarooPacket();
 			gamePacket.opponent.flip = true;
 			
