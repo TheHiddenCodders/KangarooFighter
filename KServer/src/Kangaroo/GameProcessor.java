@@ -55,6 +55,7 @@ public class GameProcessor implements Runnable
 			// Browse the packets received from the main thread
 			for (Packets packet : packets)
 			{
+				// TODO / received a GameEndedPacket from game, to delete this game
 				// If the received packet is a MatchMakingPacket
 				if (packet.getClass().isAssignableFrom(MatchMakingPacket.class))
 				{

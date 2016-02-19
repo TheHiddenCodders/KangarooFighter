@@ -234,6 +234,7 @@ public class Game implements Runnable
 		}
 		
 		// When the game is ended
+		// TODO Send a GameEndedPacket
 	}
 	
 	/** Get the game packet depending of the kangaroo k
