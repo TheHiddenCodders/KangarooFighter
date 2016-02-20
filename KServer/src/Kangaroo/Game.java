@@ -218,6 +218,11 @@ public class Game implements Runnable
 					{
 						// TODO : End the game here
 						state = GameStates.ended;
+						
+						GameEndedPacket packet = new GameEndedPacket();
+						packet.game = this;
+						gp.mainPackets.sendPacket(packet);
+						
 						break;
 					}
 					// Received a GameClientPacket
@@ -237,10 +242,6 @@ public class Game implements Runnable
 		}
 		
 		// When the game is ended
-		// TODO Send a GameEndedPacket
-		GameEndedPacket packet = new GameEndedPacket();
-		packet.game = this;
-		gp.mainPackets.sendPacket(packet);
 	}
 	
 	/** Get the game packet depending of the kangaroo k
@@ -298,8 +299,6 @@ public class Game implements Runnable
 	 */
 	private void update(GameClientPacket packet)
 	{
-		System.err.println("Game update with GameClientPacket, time = " + serverPacket.time);
-		
 		Player sender = getPlayerFromIp(packet.getIp());
 		
 		// Update the server packet
@@ -321,7 +320,7 @@ public class Game implements Runnable
 	 * @param p
 	 * @return
 	 */
-	private Player getOpponent(Player p)
+	public Player getOpponent(Player p)
 	{
 		if (p == p1)
 			return p2;
@@ -329,7 +328,7 @@ public class Game implements Runnable
 		return p1;
 	}
 	
-	private Player getPlayerFromIp(String ip)
+	public Player getPlayerFromIp(String ip)
 	{
 		if (p1.getIp().equals(ip))
 			return p1;
@@ -352,5 +351,15 @@ public class Game implements Runnable
 		
 		// If the player is not in this game, then return false
 		return false;
+	}
+	
+	public Player getP1()
+	{
+		return p1;
+	}
+	
+	public Player getP2()
+	{
+		return p2;
 	}
 }

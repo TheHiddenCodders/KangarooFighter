@@ -138,14 +138,27 @@ public class Server
 						// Browse the packets received from the main thread
 						for (Packets packet : packets)
 						{
-							// Get the cp associate to this ip
-							cp = getCpFromIp(packet.getIp());
-							
-							// Send the packet to the associate client
-							if (cp != null)
-								cp.send(packet, name);
+							// If the client was disconnected delete its ClientProcessor
+							if (packet instanceof DisconnexionPacket)
+							{
+								// Get the cp associate to this ip
+								cp = getCpFromIp(packet.getIp());
+								
+								cp.close();
+								clients.remove(cp);
+							}
+							// Else send this packet to the client
 							else
-								System.err.println("Sender Thread : a packet was not send");
+							{
+								// Get the cp associate to this ip
+								cp = getCpFromIp(packet.getIp());
+								
+								// Send the packet to the associate client
+								if (cp != null)
+									cp.send(packet, name);
+								else
+									System.err.println("Sender Thread : a packet was not send");
+							}
 						}
 					}
 		         }

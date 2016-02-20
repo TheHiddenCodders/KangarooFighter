@@ -92,8 +92,12 @@ public class ClientProcessor implements Runnable
 			// Try to close the socket
 			client.close();
 			
+			DisconnexionPacket disconnexionPacket = new DisconnexionPacket(this.getIp());
+			
+			// Send disconnection packet to the sender thread, in order to delete this client processor
+			server.sendBuffer.sendPacket(disconnexionPacket);
 			// Send disconnection packet to the server program
-			server.readBuffer.sendPacket(new DisconnexionPacket(this.getIp()));
+			server.readBuffer.sendPacket(disconnexionPacket);
 		} 
 		catch (IOException e1) 
 		{
@@ -106,17 +110,20 @@ public class ClientProcessor implements Runnable
 	 */
 	public void send(Object o, String threadName)
 	{
-		try 
+		if (!client.isClosed())
 		{
-			// Write the object into the buffer
-			output.writeObject(o);
-			
-			// Send the buffer content to the client
-			output.flush();
-		} 
-		catch (IOException e)
-		{
-			e.printStackTrace();
+			try 
+			{
+				// Write the object into the buffer
+				output.writeObject(o);
+				
+				// Send the buffer content to the client
+				output.flush();
+			} 
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -133,6 +140,16 @@ public class ClientProcessor implements Runnable
 		} 
 		catch (ClassNotFoundException | IOException e)
 		{
+			try 
+			{
+				client.close();
+			} 
+			catch (IOException e1) 
+			{
+				client = null;
+				e1.printStackTrace();
+			}
+			
 			e.printStackTrace();
 		}
 		
