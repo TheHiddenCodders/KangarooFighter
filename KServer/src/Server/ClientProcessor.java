@@ -108,6 +108,8 @@ public class ClientProcessor implements Runnable
 	{
 		try 
 		{
+			System.err.println(o.getClass());
+			
 			// Write the object into the buffer
 			output.writeObject(o);
 			

@@ -73,6 +73,8 @@ public class GameProcessor implements Runnable
 				}
 				else if (packet.getClass().isAssignableFrom(GameEndedPacket.class))
 				{
+					GameEndedPacket gameEnded = (GameEndedPacket) packet;
+					games.remove(gameEnded.game);
 					System.err.println("GameProcessor receive a GameEndedPacket");
 				}
 				// If the received packet is a GameReadyPacket

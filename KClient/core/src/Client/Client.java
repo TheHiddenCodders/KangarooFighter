@@ -98,7 +98,7 @@ public abstract class Client extends Socket implements Runnable
 		{
 			packet.setIp(getInetAddress().getHostAddress() + ":" + getLocalPort());
 			
-			System.out.println("Sent : " + packet.toString());
+			//System.out.println("Sent : " + packet.toString());
 			
 			output.writeObject(packet);
 			output.flush();
