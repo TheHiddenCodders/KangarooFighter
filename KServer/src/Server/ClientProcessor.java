@@ -65,7 +65,13 @@ public class ClientProcessor implements Runnable
 			
 			// Cast the result into packet
 			Packets receivedPacket = null;
-			if (receivedObject instanceof Packets)
+			
+			// If the client has been disconnected
+			if (receivedObject instanceof DisconnexionPacket)
+			{
+				break;
+			}		
+			else if (receivedObject instanceof Packets)
 			{
 				receivedPacket = (Packets) receivedObject;
 				receivedPacket.setIp( getIp() );
@@ -73,12 +79,6 @@ public class ClientProcessor implements Runnable
 			else
 			{
 				System.out.println("Receiver Thread : Receive something not a packet");
-			}
-			
-			// If the client has been disconnected
-			if (receivedObject.getClass().isAssignableFrom(DisconnexionPacket.class))
-			{
-				break;
 			}
 			
 			// Send the received packet to the server program
@@ -108,8 +108,6 @@ public class ClientProcessor implements Runnable
 	{
 		try 
 		{
-			System.err.println(o.getClass());
-			
 			// Write the object into the buffer
 			output.writeObject(o);
 			
@@ -155,5 +153,17 @@ public class ClientProcessor implements Runnable
 	public String getIp()
 	{
 		return ((InetSocketAddress) client.getRemoteSocketAddress()).getHostString() + ":" + client.getPort();
+	}
+
+	public void close() 
+	{
+		try {
+			client.close();
+		} 
+		catch (IOException e) 
+		{
+			client = null;
+			e.printStackTrace();
+		}
 	}
 }

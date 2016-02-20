@@ -93,7 +93,13 @@ public class GameProcessor implements Runnable
 				else if (packet.getClass().isAssignableFrom(GameClientPacket.class))
 				{
 					// Send it to the appropriate game
-					sendToGame(packet);
+					boolean inGame = sendToGame(packet);
+					
+					// If the client is not in game
+					if (!inGame)
+					{
+						// TODO : Send him a packet to tell him the game is ended
+					}
 				}
 			}
 		}

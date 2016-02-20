@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import Packets.ConnexionPacket;
+import Packets.DisconnexionPacket;
 import Packets.Packets;
 
 /** Encapsulate the server socket and can handle multiple clients.
@@ -81,7 +82,7 @@ public class Server
 			public void run()
 			{
 				while(running)
-				{ 
+				{
 					try 
 					{
 						System.out.println("Acceptation thread : Server ready, wait for connections"); 
@@ -141,7 +142,10 @@ public class Server
 							cp = getCpFromIp(packet.getIp());
 							
 							// Send the packet to the associate client
-							cp.send(packet, name);
+							if (cp != null)
+								cp.send(packet, name);
+							else
+								System.err.println("Sender Thread : a packet was not send");
 						}
 					}
 		         }
@@ -206,6 +210,17 @@ public class Server
 	public void close()
 	{
 		this.running = false;
-		System.out.println("A new client is connected");  
+	}
+
+	public void removeClient(DisconnexionPacket disconnexionPacket) 
+	{
+		for (int i = 0; i < clients.size(); i++)
+		{
+			if (disconnexionPacket.getIp().equals(clients.get(i).getIp()))
+			{
+				clients.get(i).close();
+				clients.remove(clients.get(i));
+			}
+		}
 	}
 }

@@ -102,6 +102,7 @@ public class Main
 						
 						// Remove the disconnected player
 						pp.deconnexion(disconnexionPacket);
+						//server.removeClient(disconnexionPacket);
 					}
 
 					// Receive Login packet
