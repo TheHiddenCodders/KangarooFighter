@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import Packets.ClientReadyPacket;
 import Packets.DisconnexionPacket;
 import Packets.GameClientPacket;
+import Packets.GameEndedPacket;
 import Packets.GameReadyPacket;
 import Packets.MatchMakingPacket;
 import Packets.Packets;
@@ -64,10 +65,15 @@ public class GameProcessor implements Runnable
 				}
 				else if (packet.getClass().isAssignableFrom(DisconnexionPacket.class))
 				{
-					int id = isWaiter(packet.getIp());
+					// If the player is waiting for a game in match making, then remove it
+					removePlayerFromMatchMaking(packet.getIp());
 					
-					if (id != -1)
-						waitingPlayers.remove(id);
+					// If the player is in game, send the packet to the game
+					sendToGame(packet); // Game will send an GameEndedPacket when finished properly
+				}
+				else if (packet.getClass().isAssignableFrom(GameEndedPacket.class))
+				{
+					System.err.println("GameProcessor receive a GameEndedPacket");
 				}
 				// If the received packet is a GameReadyPacket
 				else if (packet.getClass().isAssignableFrom(GameReadyPacket.class))
@@ -138,6 +144,8 @@ public class GameProcessor implements Runnable
 		// If the player search a game (want to play)
 		if (mmPacket.search)
 		{
+			System.out.println("GameProcessor : " + pp.getPlayerFromIp(mmPacket.getIp()).getName() + " go to match making");
+			
 			// Browse all the waiting players
 			for (int i = 0; i < waitingPlayers.size(); i++)
 			{
@@ -145,14 +153,12 @@ public class GameProcessor implements Runnable
 				if (isMatching(mmPacket, waitingPlayers.get(i)))
 				{
 					// Create a game and launch it in a thread
-					games.add(new Game(pp.getPlayerFromIp(waitingPlayers.get(i).getIp()), pp.getPlayerFromIp(mmPacket.getIp()), this));
-					Thread t = new Thread(games.get(games.size() - 1));
-					t.start();
+					createGame(pp.getPlayerFromIp(waitingPlayers.get(i).getIp()),  pp.getPlayerFromIp(mmPacket.getIp()));
 					
 					// Remove the opponent from the waiting list
 					waitingPlayers.remove(waitingPlayers.get(i));
 					
-					// Remove the current packet is the player was waiting
+					// Remove the current packet if the player was waiting for
 					if (isWaiter(mmPacket.getIp()) > -1)
 					{
 						waitingPlayers.remove(isWaiter(mmPacket.getIp()));
@@ -173,17 +179,45 @@ public class GameProcessor implements Runnable
 		}
 		else // If the player quit the queue
 		{
-			int id = isWaiter(mmPacket.getIp());
-			
-			if (id != -1)
-				waitingPlayers.remove(id);
+			// Remove it from the match making
+			removePlayerFromMatchMaking(mmPacket.getIp());
 		}
 	}
 	
-	/** Send a packet the game where player is
-	 * @param packet : the packet to send
+	private void createGame(Player p1, Player p2)
+	{
+		games.add(new Game(p1, p2, this));
+		Thread t = new Thread(games.get(games.size() - 1));
+		t.start();
+	}
+	
+	private boolean removePlayerFromMatchMaking(String playerIp)
+	{
+		// Check if the player is waiting for game in the match making
+		int id = isWaiter(playerIp);
+		
+		// Then remove it
+		if (id != -1)
+		{
+			waitingPlayers.remove(id);
+			
+			// If the player is not disconnected
+			if (pp.getPlayerFromIp(playerIp) != null)
+				System.out.println("GameProcessor : " + pp.getPlayerFromIp(playerIp).getName() + " quit the match making");
+			else
+				System.out.println("GameProcessor : a disconnected player quit the match making");
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/** Send a packet the game where player is.
+	 * @param packet : the packet to send.
+	 * @return true if the player was in game, false otherwise.
 	 */
-	private void sendToGame(Packets packet)
+	private boolean sendToGame(Packets packet)
 	{
 		// Browse all games
 		for (int i = 0; i < games.size(); i++)
@@ -193,8 +227,10 @@ public class GameProcessor implements Runnable
 			{
 				// Send the packet to this game
 				games.get(i).gameSender.sendPacket(packet);
-				break;
+				return true;
 			}
 		}
+		
+		return false;
 	}
 }

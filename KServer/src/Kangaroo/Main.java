@@ -197,8 +197,6 @@ public class Main
 					{
 						// Send this packet to the GameProcessor
 						gp.mainPackets.sendPacket(readPackets.get(i));
-						
-						System.out.println("Main Thread : " + pp.getPlayerFromIp(readPackets.get(i).getIp()).getName() + " go to match making");
 					}
 					
 					// Receive a ClientReadyPacket

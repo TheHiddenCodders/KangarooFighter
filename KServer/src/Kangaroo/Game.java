@@ -6,6 +6,7 @@ import java.util.Random;
 import Packets.ClientReadyPacket;
 import Packets.DisconnexionPacket;
 import Packets.GameClientPacket;
+import Packets.GameEndedPacket;
 import Packets.GameReadyPacket;
 import Packets.GameServerPacket;
 import Packets.InitGamePacket;
@@ -153,7 +154,7 @@ public class Game implements Runnable
 	{
 		// The game is updated when it receive a packet (synchrone)
 		
-		while (serverPacket.round <= 3)
+		while (serverPacket.round <= 3 && state != GameStates.ended)
 		{
 			timer.restart();
 			
@@ -216,6 +217,8 @@ public class Game implements Runnable
 					if (gamePackets.get(i).getClass().isAssignableFrom(DisconnexionPacket.class))
 					{
 						// TODO : End the game here
+						state = GameStates.ended;
+						break;
 					}
 					// Received a GameClientPacket
 					else if (gamePackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
@@ -235,6 +238,9 @@ public class Game implements Runnable
 		
 		// When the game is ended
 		// TODO Send a GameEndedPacket
+		GameEndedPacket packet = new GameEndedPacket();
+		packet.game = this;
+		gp.mainPackets.sendPacket(packet);
 	}
 	
 	/** Get the game packet depending of the kangaroo k
