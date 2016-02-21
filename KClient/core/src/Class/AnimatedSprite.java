@@ -1,6 +1,7 @@
 package Class;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class AnimatedSprite extends Actor 
@@ -41,6 +42,7 @@ public class AnimatedSprite extends Actor
 	
 	public void flip()
 	{
+		System.out.println("AnimatedSprite.flip()");
 		for (Animation animation : animations)
 			animation.flip();
 	}
@@ -57,5 +59,10 @@ public class AnimatedSprite extends Actor
 	public void setAnimations(Animation[] animations)
 	{
 		this.animations = animations;
+	}
+	
+	public TextureRegion getKeyFrame()
+	{
+		return getCurrentAnimation().getKeyFrame();
 	}
 }

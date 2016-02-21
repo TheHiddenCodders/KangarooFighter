@@ -98,9 +98,10 @@ public class Kangaroo extends AnimatedSprite
 
 	public void setFlip(boolean flip)
 	{
-		packet.flip = flip;
-		
-		if (flip)
+		// Flip only if needed
+		if (flip && !getKeyFrame().isFlipX())
 			flip();
+		
+		packet.flip = flip;
 	}
 }

@@ -119,14 +119,16 @@ public class Animation
 	}
 	
 	/**
-	 * Flip the kangaroo
+	 * Flip all the frames of the animation
 	 */
 	public void flip()
 	{
 		flip = !flip;
 		
 		for (int i = 0; i < frames.length; i++)
-			frames[i].flip(flip, frames[i].isFlipY());
+			frames[i].flip(flip, false);
+		
+		System.out.println(frames[0].isFlipX() + " - " + flip);
 	}
 	
 	/*
