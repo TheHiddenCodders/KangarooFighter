@@ -78,12 +78,16 @@ public class GameProcessor implements Runnable
 					// If P1 still here, send him a GameResultPacket
 					if (gameEnded.game.getP1() != null)
 					{
-						// TODO : send a GameResultPacket to clients
+						// NERISMA tests
+						gameEnded.setIp(gameEnded.game.getP1().getIp());
+						sendToGame(gameEnded);
 					}
 					
 					if (gameEnded.game.getP2() != null)
 					{
-						// TODO : send a GameResultPacket to clients
+						// NERISMA tests
+						gameEnded.setIp(gameEnded.game.getP2().getIp());
+						sendToGame(gameEnded);
 					}
 					
 					games.remove(gameEnded.game);
