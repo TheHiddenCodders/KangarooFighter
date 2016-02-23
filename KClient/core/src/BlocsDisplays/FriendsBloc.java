@@ -88,7 +88,10 @@ public class FriendsBloc extends Bloc
 			
 			// Fill labels
 			for (int i = 0; i < name.length; i++)
-			{				
+			{			
+				if (i == homeStage.main.player.getFriends().size())
+					break;
+					
 				name[i].setText(homeStage.main.player.getFriends().get(i).name);
 								
 				if (homeStage.main.player.getFriends().get(i).online)

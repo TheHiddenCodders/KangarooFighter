@@ -22,6 +22,7 @@ public class NotificationsDisplay extends Table
 	 */
 	
 	private int page = 0;
+	private int maxPage = 0;
 	private HomeStage homeStage;
 	private ArrayList<NotificationBloc> notifications;
 	private Label pageInfo;
@@ -41,7 +42,7 @@ public class NotificationsDisplay extends Table
 		addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
 		
 		// Add page label
-		pageInfo = new Label(page + 1 + "/" + (int) Math.ceil((homeStage.main.player.getNotifications().size() / 8)), homeStage.main.skin);
+		pageInfo = new Label(page + 1 + "/" + (maxPage + 1), homeStage.main.skin);
 		
 		// Add browsing buttons
 		prev = new TextButton("<", homeStage.main.skin);
@@ -92,7 +93,8 @@ public class NotificationsDisplay extends Table
 		notifications = new ArrayList<NotificationBloc>();
 		
 		// Page info
-		pageInfo.setText(page + 1 + "/" + (int) Math.ceil(homeStage.main.player.getNotifications().size() / 8f));
+		maxPage = (int) Math.ceil((homeStage.main.player.getNotifications().size() / 8));
+		pageInfo.setText(page + 1 + "/" + (maxPage + 1));
 		pageInfo.setX(390 - pageInfo.getWidth() / 2);
 		pageInfo.setY(-380);
 		addActor(pageInfo);
@@ -109,7 +111,7 @@ public class NotificationsDisplay extends Table
 			prev.setTouchable(Touchable.enabled);
 		}
 		
-		if (page < (int) Math.ceil(homeStage.main.player.getNotifications().size() / 8f) - 1)
+		if (page < maxPage - 1)
 		{
 			next.setText(">");
 			next.setTouchable(Touchable.enabled);

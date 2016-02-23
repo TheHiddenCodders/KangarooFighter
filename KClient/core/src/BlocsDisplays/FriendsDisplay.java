@@ -80,6 +80,7 @@ public class FriendsDisplay extends Display
 			public void clicked(InputEvent event, float x, float y) 
 			{
 				page--;
+				refresh(null);
 				super.clicked(event, x, y);
 			}
 		});
@@ -88,8 +89,9 @@ public class FriendsDisplay extends Display
 		{
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
-			{
+			{				
 				page++;
+				refresh(null);
 				super.clicked(event, x, y);
 			}
 		});
@@ -136,19 +138,34 @@ public class FriendsDisplay extends Display
 
 	@Override
 	public void refresh(Object data) 
-	{		
+	{			
+		// Clear labels
+		for (int i = 0; i < rank.length; i++)
+		{
+			rank[i].remove();
+			name[i].remove();
+			games[i].remove();
+			wins[i].remove();
+			loses[i].remove();
+			elo[i].remove();
+			status[i].remove();
+		}
+		
 		if (homeStage != null)
 		{
 			// Friends to show
 			int friendsToShow = homeStage.main.player.getFriends().size() % 9;
 			
-			// If it's a multiple of nine
-			if (friendsToShow == 0 && homeStage.main.player.getFriends().size() > 0)
+			// If it's a multiple of nine or there is more than 9 friends
+			if ((friendsToShow == 0 && homeStage.main.player.getFriends().size() > 0) || homeStage.main.player.getFriends().size() > 9)
 				friendsToShow = 9;
 	
 			// Init labels
 			for (int i = 0; i < friendsToShow; i++)
 			{
+				if (page * 9 + i == homeStage.main.player.getFriends().size())
+					break;
+				
 				// Set texts
 				rank[i].setText(String.valueOf(homeStage.main.player.getFriends().get(page * 9 + i).pos));
 				name[i].setText(homeStage.main.player.getFriends().get(page * 9 + i).name);
@@ -182,6 +199,15 @@ public class FriendsDisplay extends Display
 				loses[i].setPosition(582 + 92 / 2 - loses[i].getWidth() / 2, getHeight() - 132 - i * 26.2f);
 				elo[i].setPosition(676 + 92 / 2 - elo[i].getWidth() / 2, getHeight() - 132 - i * 26.2f);
 				status[i].setPosition(14, getHeight() - 126 - i * 26.2f);
+				
+				// Add them
+				addActor(rank[i]);
+				addActor(name[i]);
+				addActor(games[i]);
+				addActor(wins[i]);
+				addActor(loses[i]);
+				addActor(elo[i]);
+				addActor(status[i]);
 			}
 		}
 		
@@ -203,26 +229,28 @@ public class FriendsDisplay extends Display
 				super.clicked(event, x, y);
 			}
 		});
-		
+
 		// Init browsing buttons
-		if (homeStage.main.player.getFriends().size() <= page * 9 + 9)
-		{
-			prev.setText("-");
-			prev.setTouchable(Touchable.disabled);
-			
-			next.setText("-");
-			next.setTouchable(Touchable.disabled);
-		}
-		else
+		if (page * 9 >= 9)
 		{
 			prev.setText("<");
 			prev.setTouchable(Touchable.enabled);
-			
-			if (homeStage.main.player.getFriends().size() > page * 9 + 9)
-			{
-				next.setText(">");
-				next.setTouchable(Touchable.enabled);
-			}
+		}
+		else
+		{
+			prev.setText("-");
+			prev.setTouchable(Touchable.disabled);
+		}
+		
+		if (homeStage.main.player.getFriends().size() > (page + 1) * 9)
+		{
+			next.setText(">");
+			next.setTouchable(Touchable.enabled);
+		}
+		else
+		{
+			next.setText("-");
+			next.setTouchable(Touchable.disabled);
 		}
 	}
 
