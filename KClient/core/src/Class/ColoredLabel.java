@@ -18,6 +18,7 @@ public class ColoredLabel extends Table
 	private int cursor = 0; 
 	private int state = -1; 
 	private Skin skin;
+	private String sentence;
 
 	// -1 = begin
 	// 0 = read a char 
@@ -72,6 +73,7 @@ public class ColoredLabel extends Table
 	private void parse(String sentence, Color... colors)
 	{
 		//System.out.println("Parsing :" + sentence);
+		this.sentence = sentence;
 		tempPart = "";
 		state = -1;
 		cursor = 0;
@@ -248,5 +250,56 @@ public class ColoredLabel extends Table
 			//System.out.println(parts.get(i - 1).getX());
 			parts.get(i).setX(parts.get(i - 1).getX() + parts.get(i - 1).getWidth());	
 		}
+	}
+	
+	public void setMaxWidth(float maxWidth)
+	{
+		System.out.println("ColoredLabel.setMaxWidth(" + maxWidth +")");
+		System.out.println(sentence);
+		System.out.println(getWidth());
+		
+		if (maxWidth > getWidth())
+			return;
+			
+		// Init needed variables
+		float tempWidth = 0;
+		int labelOutOfLimit = 0;
+		StringBuilder strDeleted = new StringBuilder("");
+		
+		// Find out of limit label
+		for (int i = 0; i < parts.size(); i++)
+		{
+			System.out.println(parts.get(i).getWidth());
+			
+			if (tempWidth + parts.get(i).getWidth() >= maxWidth)
+			{
+				labelOutOfLimit = i;
+				break;
+			}
+			
+			tempWidth += parts.get(i).getWidth();
+			System.out.println(tempWidth);
+		}
+		
+		// Find the string to sub to have the right size
+		while (tempWidth + parts.get(labelOutOfLimit).getWidth() >= maxWidth)
+		{	
+			String temp = parts.get(labelOutOfLimit).getText().toString();
+			temp = temp.substring(0, temp.length() - 1);
+			strDeleted.append(temp.charAt(temp.length() - 1));
+			
+			parts.get(labelOutOfLimit).setText(temp);
+			parts.get(labelOutOfLimit).pack();
+			
+			System.out.println(temp);
+		}
+		
+		// Add a new part with the deleted chars
+		strDeleted.reverse();
+		strDeleted.deleteCharAt(0);
+		parts.add(new Label(strDeleted, skin));
+		parts.get(parts.size() - 1).setColor(parts.get(labelOutOfLimit).getColor());
+		parts.get(parts.size() - 1).setPosition(getX(), 5);
+		addActor(parts.get(parts.size() - 1));
 	}
 }

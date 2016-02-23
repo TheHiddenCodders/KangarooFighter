@@ -87,7 +87,7 @@ public class FriendsBloc extends Bloc
 			setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/background.png")));
 			
 			// Fill labels
-			for (int i = 0; i < homeStage.main.player.getFriends().size(); i++)
+			for (int i = 0; i < name.length; i++)
 			{				
 				name[i].setText(homeStage.main.player.getFriends().get(i).name);
 								

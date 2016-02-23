@@ -81,6 +81,7 @@ public class HomeStage extends ConnectedStage
 	{
 		if (serverInfo != null)
 			serverInfo.act(delta);
+		
 		super.act(delta);
 	}
 	
@@ -113,9 +114,9 @@ public class HomeStage extends ConnectedStage
 		notifTable = new NotificationsTable(this);
 		notifTable.setPosition(800 - notifTable.getWidth() - 10, 5);
 		notifDisplay = new NotificationsDisplay(this);
-		notifDisplay.setPosition(10, 480 - 51);
+		notifDisplay.setPosition(2, 480 - 51);
 		serverInfo = new ServerInfoLabel(main.serverInfos, main.skin, Color.TAN);
-		serverInfo.setPosition(800, 0);
+		serverInfo.setPosition(800, 1);
 	}
 
 	@Override

@@ -50,6 +50,7 @@ public class NotificationsTable extends Table
 			notif.setText("99+");
 		
 		notif.pack();
+		notif.setX(notifIco.getX() - notif.getWidth() - 5);
 		//notifIco.setPosition(getX() + notif.getWidth() + 20, getY() + 3);
 		setWidth(notif.getWidth() + notifIco.getWidth());
 	}

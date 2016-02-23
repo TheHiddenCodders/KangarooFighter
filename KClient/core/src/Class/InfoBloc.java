@@ -26,6 +26,7 @@ public class InfoBloc extends NotificationBloc
 		super(homeStage);
 		
 		setMsg(notification.message, Color.TAN);
+		setDate(notification.date);
 		setIcone(new Texture(Gdx.files.internal("sprites/homestage/blocs/notifications/info.png")));
 		setAnswerStyle(notification.style);
 		

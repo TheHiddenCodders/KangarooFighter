@@ -27,6 +27,7 @@ public class FriendRequestBloc extends NotificationBloc
 		super(homeStage);
 		
 		setMsg(packet.message, Color.TAN);
+		setDate(packet.date);
 		setIcone(new Texture(Gdx.files.internal("sprites/homestage/blocs/notifications/friendrequest.png")));
 		setAnswerStyle(packet.style);
 		

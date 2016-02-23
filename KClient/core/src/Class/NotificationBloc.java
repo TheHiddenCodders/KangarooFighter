@@ -5,7 +5,9 @@ import Stages.HomeStage;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -26,6 +28,7 @@ public abstract class NotificationBloc extends Table
 	private Image background;
 	private Image icone;
 	private ColoredLabel msg;
+	private Label date;
 	private TextButton yes, no, ok;
 	
 	/*
@@ -36,24 +39,31 @@ public abstract class NotificationBloc extends Table
 	{
 		super();
 		
-		// Add background;
+		// Add background
 		background = new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/notifications/background.png")));
 		addActor(background);
+		
+		// Add fade in
+		addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
 		
 		// Set size
 		setSize(background.getWidth(), background.getHeight());
 		
 		// Make labels
 		msg = new ColoredLabel("<c0> </>", homeStage.main.skin, Color.WHITE);
-		msg.setY(20);
+		msg.setPosition(40, 25);
 		addActor(msg);
+		
+		date = new Label("", homeStage.main.skin);
+		date.setPosition(80, 15);
+		addActor(date);
 		
 		// Make buttons
 		yes = new TextButton("Accepter", homeStage.main.skin);
-		yes.setPosition(80, 5); 
+		yes.setPosition(getWidth() - yes.getWidth() * 2 - 5, 5);
 		no = new TextButton("Refuser", homeStage.main.skin);
 		no.setColor(Color.RED);
-		no.setPosition(295, 5); 
+		no.setPosition(getWidth() - no.getWidth() - 5, 5); 
 		ok = new TextButton("Ok", homeStage.main.skin);
 		ok.setPosition(getWidth() - ok.getWidth() - 5, 5);
 	}
@@ -72,8 +82,12 @@ public abstract class NotificationBloc extends Table
 	public void setMsg(String msg, Color... colors)
 	{
 		this.msg.setText(msg, colors);
-		this.msg.setX(getWidth() / 2 - this.msg.getWidth() / 2 + 30);
-		System.err.println(msg + " | " + this.msg.getX() + ":" + this.msg.getY());
+		this.msg.setMaxWidth(300);
+	}
+	
+	public void setDate(String date)
+	{
+		this.date.setText(date);
 	}
 	
 	public void setAnswerStyle(String style)
