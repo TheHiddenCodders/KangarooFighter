@@ -94,7 +94,7 @@ public class Game
 	public void update(GameServerPacket packet)
 	{
 		// Update time
-		time = packet.time;
+		time = ((int) packet.time / 100) / 10;
 		
 		// Update players statistics
 		player.update(packet.player);
@@ -127,7 +127,6 @@ public class Game
 		{
 			if (roundResults[i] == null)
 				position = i;
-				
 		}
 			
 		roundResults[position] = packet;
