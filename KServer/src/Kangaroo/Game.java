@@ -68,10 +68,6 @@ public class Game implements Runnable
 	private Player p1 = null, p2 = null;
 	/** mapIndex : the index of the map (background) */
 	private int mapIndex;
-	/** timer : compute the time of the game */
-	//private Timer timer;
-	/** time ; the current time of the game */
-	//private float time;
 	/**  */
 	private GameStates state;
 	
