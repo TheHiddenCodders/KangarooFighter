@@ -2,6 +2,7 @@ package Stages;
 
 import Class.ConnectedStage;
 import Class.Game;
+import Class.GameTimer;
 import Class.ProgressBar;
 import Client.Main;
 import Enums.GameStates;
@@ -32,7 +33,7 @@ public class GameStage extends ConnectedStage
 	
 	private Image background;
 	private ProgressBar playerBar, opponentBar;
-	private Label time;
+	private GameTimer timer;
 	private Label playerName, opponentName;
 
 	/*
@@ -61,7 +62,7 @@ public class GameStage extends ConnectedStage
 		game.update(delta);
 		
 		// Update timer
-		time.setText(String.valueOf(game.getTime()));
+		timer.refresh(game.getTime());
 		
 		super.act(delta);
 	}
@@ -75,7 +76,8 @@ public class GameStage extends ConnectedStage
 	@Override
 	protected void initComponents()
 	{
-		time = new Label("-", main.skin);
+		timer = new GameTimer(new LabelStyle(main.skin.getFont("korean32"), Color.TAN));
+		timer.setPosition(800 / 2 - timer.getWidth() / 2, 480 - 50);
 	}
 
 	@Override
@@ -129,7 +131,7 @@ public class GameStage extends ConnectedStage
 	@Override
 	protected void addActors() 
 	{
-		addActor(time);
+		addActor(timer);
 	}
 
 	@Override
