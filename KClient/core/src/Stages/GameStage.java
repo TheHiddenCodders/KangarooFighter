@@ -180,8 +180,12 @@ public class GameStage extends ConnectedStage
 			// Update timer
 			timer.refresh(game.getTime());
 			
-			// Send new client packet
-			main.network.send(game.getClientPacket());
+			// If the game isn't ended 
+			if (game.getState() == GameStates.Running)
+			{
+				// Send new client packet
+				main.network.send(game.getClientPacket());
+			}
 		}
 		
 		if (data instanceof RoundResultPacket)
