@@ -18,7 +18,6 @@ public class ColoredLabel extends Table
 	private int cursor = 0; 
 	private int state = -1; 
 	private Skin skin;
-	private String sentence;
 
 	// -1 = begin
 	// 0 = read a char 
@@ -73,7 +72,6 @@ public class ColoredLabel extends Table
 	private void parse(String sentence, Color... colors)
 	{
 		//System.out.println("Parsing :" + sentence);
-		this.sentence = sentence;
 		tempPart = "";
 		state = -1;
 		cursor = 0;
@@ -253,11 +251,7 @@ public class ColoredLabel extends Table
 	}
 	
 	public void setMaxWidth(float maxWidth)
-	{
-		System.out.println("ColoredLabel.setMaxWidth(" + maxWidth +")");
-		System.out.println(sentence);
-		System.out.println(getWidth());
-		
+	{		
 		if (maxWidth > getWidth())
 			return;
 			
@@ -268,9 +262,7 @@ public class ColoredLabel extends Table
 		
 		// Find out of limit label
 		for (int i = 0; i < parts.size(); i++)
-		{
-			System.out.println(parts.get(i).getWidth());
-			
+		{			
 			if (tempWidth + parts.get(i).getWidth() >= maxWidth)
 			{
 				labelOutOfLimit = i;
@@ -278,7 +270,6 @@ public class ColoredLabel extends Table
 			}
 			
 			tempWidth += parts.get(i).getWidth();
-			System.out.println(tempWidth);
 		}
 		
 		// Find the string to sub to have the right size
@@ -290,8 +281,6 @@ public class ColoredLabel extends Table
 			
 			parts.get(labelOutOfLimit).setText(temp);
 			parts.get(labelOutOfLimit).pack();
-			
-			System.out.println(temp);
 		}
 		
 		// Add a new part with the deleted chars
