@@ -6,6 +6,7 @@ import Class.ProgressBar;
 import Client.Main;
 import Enums.GameStates;
 import Packets.ClientReadyPacket;
+import Packets.GameEndedPacket;
 import Packets.GameReadyPacket;
 import Packets.GameServerPacket;
 import Packets.InitGamePacket;

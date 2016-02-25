@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import Packets.ClientReadyPacket;
 import Packets.DisconnexionPacket;
 import Packets.GameClientPacket;
+import Packets.GameEndedPacket;
 import Packets.GameReadyPacket;
 import Packets.MatchMakingPacket;
 import Packets.Packets;
@@ -73,21 +74,26 @@ public class GameProcessor implements Runnable
 				}
 				else if (packet.getClass().isAssignableFrom(ServerGameEndedPacket.class))
 				{
-					ServerGameEndedPacket gameEnded = (ServerGameEndedPacket) packet;
+					ServerGameEndedPacket serverGameEnded = (ServerGameEndedPacket) packet;
 					
-					games.remove(gameEnded.game);
+					games.remove(serverGameEnded.game);
 					
-					// If player are still in game, send them GameResultPacket (store in the game)
-					if (gameEnded.game.getP1() != null)
+					// If player are still in game
+					if (serverGameEnded.game.getP1() != null)
 					{
-						// NERISMA tests
-						gameEnded.setIp(gameEnded.game.getP1().getIp());
+						// Send a GameEndedPacket to p1
+						GameEndedPacket P1gameEnded = new GameEndedPacket();
+						
+						P1gameEnded.setIp(serverGameEnded.game.getP1().getIp());
+						mainSender.sendPacket(P1gameEnded);
 					}
-					
-					if (gameEnded.game.getP2() != null)
+					if (serverGameEnded.game.getP2() != null)
 					{
-						// NERISMA tests
-						gameEnded.setIp(gameEnded.game.getP2().getIp());
+						// Send a GameEndedPacket to p1
+						GameEndedPacket P2gameEnded = new GameEndedPacket();
+						
+						P2gameEnded.setIp(serverGameEnded.game.getP2().getIp());
+						mainSender.sendPacket(P2gameEnded);
 					}
 				}
 				// If the received packet is a GameReadyPacket

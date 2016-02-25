@@ -15,6 +15,7 @@ import Packets.FriendAnswerPacket;
 import Packets.FriendRequestPacket;
 import Packets.FriendsPacket;
 import Packets.GameClientPacket;
+import Packets.GameEndedPacket;
 import Packets.HomePacket;
 import Packets.LadderPacket;
 import Packets.LoginPacket;
@@ -214,6 +215,13 @@ public class Main
 					{
 						// Send this packet to the GameProcessor
 						gp.mainPackets.sendPacket(readPackets.get(i));
+					}
+					
+					// Receive a GameEndedPacket
+					else if (readPackets.get(i).getClass().isAssignableFrom(GameEndedPacket.class))
+					{
+						// Send this packet to client
+						server.sendBuffer.sendPacket(readPackets.get(i));
 					}
 					
 					// Receive an unknown packet
