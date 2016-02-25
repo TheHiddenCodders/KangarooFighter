@@ -306,10 +306,14 @@ public class Game implements Runnable
 		serverPacket.player = sender.getKangarooPacket();
 		serverPacket.opponent = getOpponent(sender).getKangarooPacket();
 		
-		// End the round it last 5 seconds
-		if (serverPacket.time >= 5000)
+		// End the round it last 3 seconds
+		if (serverPacket.time >= 3000)
 		{
-			// TODO : Manage end of round here
+			ServerGameEndedPacket gameEnded = new ServerGameEndedPacket();
+			gameEnded.game = this;
+			
+			gp.mainPackets.sendPacket(gameEnded);
+			
 		}
 		
 		serverPacket.setIp(packet.getIp());
