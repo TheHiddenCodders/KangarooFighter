@@ -75,24 +75,22 @@ public class GameProcessor implements Runnable
 				{
 					GameEndedPacket gameEnded = (GameEndedPacket) packet;
 					
-					// If P1 still here, send him a GameResultPacket
+					games.remove(gameEnded.game);
+					
+					// If player are still in game, send them GameResultPacket (store in the game)
 					if (gameEnded.game.getP1() != null)
 					{
 						// NERISMA tests
 						gameEnded.setIp(gameEnded.game.getP1().getIp());
-						sendToGame(gameEnded);
+						//sendToGame(gameEnded);
 					}
 					
 					if (gameEnded.game.getP2() != null)
 					{
 						// NERISMA tests
 						gameEnded.setIp(gameEnded.game.getP2().getIp());
-						sendToGame(gameEnded);
+						//sendToGame(gameEnded);
 					}
-					
-					games.remove(gameEnded.game);
-					
-					System.err.println("GameProcessor receive a GameEndedPacket");
 				}
 				// If the received packet is a GameReadyPacket
 				else if (packet.getClass().isAssignableFrom(GameReadyPacket.class))
@@ -130,7 +128,6 @@ public class GameProcessor implements Runnable
 	private boolean isMatching(MatchMakingPacket p1, MatchMakingPacket p2)
 	{
 		// Compute the elo rate between players
-		//float eloRate = Math.abs(1 - (pp.getPlayerFromIp(p1.getIp()).getElo() / pp.getPlayerFromIp(p2.getIp()).getElo() * 100));
 		float eloRate = (float) (1/(1 + Math.pow(10, -(pp.getPlayerFromIp(p1.getIp()).getElo() - pp.getPlayerFromIp(p2.getIp()).getElo())/400)));
 		float minTolerance  = Math.min(p1.eloTolerance, p2.eloTolerance);
 		
