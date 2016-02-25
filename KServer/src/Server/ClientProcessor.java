@@ -2,8 +2,10 @@ package Server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 import Packets.DisconnexionPacket;
 import Packets.Packets;
@@ -60,14 +62,18 @@ public class ClientProcessor implements Runnable
 			Object receivedObject = null;
 			
 			// Waiting for object from the client
-			while (receivedObject == null)
+			while (receivedObject == null && !client.isClosed())
 				receivedObject = receiveFromClient();	
 			
 			// Cast the result into packet
 			Packets receivedPacket = null;
 			
 			// If the client has been disconnected
-			if (receivedObject instanceof DisconnexionPacket)
+			if (receivedObject == null)
+			{
+				System.out.println("Receiver Thread : Receive null packet");
+			}
+			else if (receivedObject instanceof DisconnexionPacket)
 			{
 				break;
 			}		
@@ -120,6 +126,11 @@ public class ClientProcessor implements Runnable
 				// Send the buffer content to the client
 				output.flush();
 			} 
+			catch (SocketException e)
+			{
+				// TODO maybe do sth here
+				System.out.println("Socket was closed");
+			}
 			catch (IOException e)
 			{
 				e.printStackTrace();
@@ -136,9 +147,16 @@ public class ClientProcessor implements Runnable
 		try
 		{	
 			// And return it
-			return input.readObject();
+			if (input == null)
+			{
+				System.err.println("input is null");
+			}
+			else
+			{
+				return input.readObject();
+			}
 		} 
-		catch (ClassNotFoundException | IOException e)
+		catch (ClassNotFoundException | IOException | ClassCastException e)
 		{
 			try 
 			{
@@ -150,7 +168,7 @@ public class ClientProcessor implements Runnable
 				e1.printStackTrace();
 			}
 			
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		// Otherwise return null
