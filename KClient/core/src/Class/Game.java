@@ -29,11 +29,12 @@ public class Game
 	 * Attributes
 	 */
 
+	private InitGamePacket initGamePacket;
 	private Kangaroo player, opponent;
-	private GameClientPacket packet;
-	private Timer timer;	
+	private GameClientPacket packet;	
 	private Texture background;
 	private GameStates state = GameStates.Created;
+	private RoundResultPacket[] roundResults;
 	
 	/*
 	 * Constructors
@@ -43,6 +44,9 @@ public class Game
 	{
 		super();
 		
+		// Store game packet
+		this.initGamePacket = gamePacket;
+		
 		// Init kangaroos
 		player = new Kangaroo(gamePacket.player);
 		opponent = new Kangaroo(gamePacket.opponent);
@@ -50,25 +54,29 @@ public class Game
 		// Init map
 		background = new Texture(Gdx.files.internal("sprites/gamestage/maps/" + gamePacket.mapPath));
 		
-		// Init timer
-		timer = new Timer();
-		
 		// Init game client packet
 		packet = new GameClientPacket();
+		
+		// Init round results packets
+		roundResults = new RoundResultPacket[3];
+		
+		// Init first round
+		initRound();
 	}
 	
 	/*
 	 * Methods
 	 */
 	
+	/**
+	 * This method will update the players animatons and store the controls of the player
+	 * @param delta
+	 */
 	public void update(float delta)
 	{
 		// Update game
 		if (state == GameStates.Running)
-		{
-			// Update time
-			timer.update();
-			
+		{			
 			// Update kangaroos
 			player.act(delta);
 			opponent.act(delta);
@@ -78,10 +86,23 @@ public class Game
 		}
 	}	
 	
+	/**
+	 * This method will update players and opponents statistics (positions life etc)
+	 * @param packet
+	 */
 	public void update(GameServerPacket packet)
 	{
 		player.update(packet.player);
 		opponent.update(packet.opponent);
+	}
+	
+	/**
+	 * This method init a round
+	 */
+	private void initRound()
+	{
+		player.update(initGamePacket.player);
+		opponent.update(initGamePacket.opponent);
 	}
 	
 	/**
@@ -162,5 +183,20 @@ public class Game
 	public GameClientPacket getClientPacket()
 	{
 		return packet;
+	}
+	
+	public void endRound(RoundResultPacket packet)
+	{
+		// Get position of the new result packet
+		int position = 0;
+		
+		for (int i = 0; i < roundResults.length; i++)
+		{
+			if (roundResults[i] == null)
+				position = i;
+				
+		}
+			
+		roundResults[position] = packet;
 	}
 }

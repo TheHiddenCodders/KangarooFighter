@@ -176,6 +176,12 @@ public class GameStage extends ConnectedStage
 			main.network.send(game.getClientPacket());
 		}
 		
+		if (data instanceof RoundResultPacket)
+		{
+			System.out.println("Round is over");
+			game.endRound((RoundResultPacket) data);
+		}
+		
 		if (data instanceof GameEndedPacket)
 		{
 			System.out.println("Game is ended");
