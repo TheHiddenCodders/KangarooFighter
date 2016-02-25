@@ -143,7 +143,10 @@ public class GameStage extends ConnectedStage
 		// Add timer after background and all
 		addActor(timer);
 	
+		// Set game loaded
 		game.setState(GameStates.Loaded);
+		
+		// Send client ready packet
 		main.network.send(new ClientReadyPacket());
 	}
 
@@ -160,7 +163,11 @@ public class GameStage extends ConnectedStage
 		if (data instanceof GameReadyPacket)
 		{
 			System.out.println("Game is running");
+			
+			// Set game running
 			game.setState(GameStates.Running);
+			
+			// Set first client packet
 			main.network.send(game.getClientPacket());
 		}
 		
@@ -180,13 +187,22 @@ public class GameStage extends ConnectedStage
 		if (data instanceof RoundResultPacket)
 		{
 			System.out.println("Round is over");
+			
+			// End round and init next one of the game
 			game.endRound((RoundResultPacket) data);
+			
+			// Send new client ready packet
+			main.network.send(new ClientReadyPacket());
 		}
 		
 		if (data instanceof GameEndedPacket)
 		{
 			System.out.println("Game is ended");
+			
+			// Set game ended
 			game.setState(GameStates.Ended);
+			
+			// Tell the stage that data has been received to treat them
 			dataReceived();
 		}
 	}

@@ -94,7 +94,7 @@ public class Game
 	public void update(GameServerPacket packet)
 	{
 		// Update time
-		time = ((int) packet.time / 100) / 10;
+		time = ((int) (packet.time / 100)) / 10f;
 		
 		// Update players statistics
 		player.update(packet.player);
@@ -112,6 +112,9 @@ public class Game
 		// Reset players
 		player.update(initGamePacket.player);
 		opponent.update(initGamePacket.opponent);
+		
+		// Change game state
+		setState(GameStates.Loaded);
 	}
 	
 	/**
