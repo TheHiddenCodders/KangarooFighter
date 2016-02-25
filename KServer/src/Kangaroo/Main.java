@@ -97,7 +97,10 @@ public class Main
 						// Get the packet
 						DisconnexionPacket disconnexionPacket = (DisconnexionPacket) readPackets.get(i);
 						
-						System.out.println("Main Thread : " + pp.getPlayerFromIp(disconnexionPacket.getIp()).getName() + " quit the server");
+						Player tempPlayer = pp.getPlayerFromIp(disconnexionPacket.getIp());
+						
+						if (tempPlayer != null)
+							System.out.println("Main Thread : " + pp.getPlayerFromIp(disconnexionPacket.getIp()).getName() + " quit the server");
 						
 						// Send the packet to the GameProcessor in case the player is in match making or in a game
 						gp.mainPackets.sendPacket(disconnexionPacket);
