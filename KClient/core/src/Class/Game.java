@@ -154,6 +154,11 @@ public class Game
 		this.state = state;
 	}
 	
+	public GameStates getState()
+	{
+		return state;
+	}
+	
 	public GameClientPacket getClientPacket()
 	{
 		return packet;

@@ -149,14 +149,14 @@ public class GameStage extends ConnectedStage
 	@Override
 	protected void onDataReceived() 
 	{
-		// TODO Auto-generated method stub
-
+		if (game.getState() == GameStates.Ended)
+			main.setStage(new EndGameStage(main));
 	}
 
 	@Override
 	public void setData(Object data) 
 	{
-		if (data.getClass().isAssignableFrom(GameReadyPacket.class))
+		if (data instanceof GameReadyPacket)
 		{
 			System.out.println("Game is running");
 			game.setState(GameStates.Running);
@@ -167,6 +167,13 @@ public class GameStage extends ConnectedStage
 		{
 			game.update((GameServerPacket) data);
 			main.network.send(game.getClientPacket());
+		}
+		
+		if (data instanceof GameEndedPacket)
+		{
+			System.out.println("Game is ended");
+			game.setState(GameStates.Ended);
+			dataReceived();
 		}
 	}
 
