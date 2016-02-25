@@ -4,7 +4,7 @@ import Enums.GameStates;
 import Packets.GameClientPacket;
 import Packets.GameServerPacket;
 import Packets.InitGamePacket;
-import Utils.Timer;
+import Packets.RoundResultPacket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -35,6 +35,7 @@ public class Game
 	private Texture background;
 	private GameStates state = GameStates.Created;
 	private RoundResultPacket[] roundResults;
+	private float time;
 	
 	/*
 	 * Constructors
@@ -92,6 +93,10 @@ public class Game
 	 */
 	public void update(GameServerPacket packet)
 	{
+		// Update time
+		time = packet.time;
+		
+		// Update players statistics
 		player.update(packet.player);
 		opponent.update(packet.opponent);
 	}
@@ -101,8 +106,34 @@ public class Game
 	 */
 	private void initRound()
 	{
+		// Reset time
+		time = 0;
+		
+		// Reset players
 		player.update(initGamePacket.player);
 		opponent.update(initGamePacket.opponent);
+	}
+	
+	/**
+	 * This method end a round, reseting kangaroos and time (also storing round result packet)
+	 * @param packet
+	 */
+	public void endRound(RoundResultPacket packet)
+	{
+		// Get position of the new result packet
+		int position = 0;
+		
+		for (int i = 0; i < roundResults.length; i++)
+		{
+			if (roundResults[i] == null)
+				position = i;
+				
+		}
+			
+		roundResults[position] = packet;
+		
+		// Init next round
+		initRound();
 	}
 	
 	/**
@@ -167,7 +198,7 @@ public class Game
 	
 	public float getTime()
 	{
-		return timer.getElapsedTime();
+		return time;
 	}
 	
 	public void setState(GameStates state)
@@ -183,20 +214,5 @@ public class Game
 	public GameClientPacket getClientPacket()
 	{
 		return packet;
-	}
-	
-	public void endRound(RoundResultPacket packet)
-	{
-		// Get position of the new result packet
-		int position = 0;
-		
-		for (int i = 0; i < roundResults.length; i++)
-		{
-			if (roundResults[i] == null)
-				position = i;
-				
-		}
-			
-		roundResults[position] = packet;
 	}
 }
