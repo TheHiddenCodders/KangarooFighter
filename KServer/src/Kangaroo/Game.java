@@ -10,6 +10,7 @@ import Packets.GameReadyPacket;
 import Packets.GameServerPacket;
 import Packets.InitGamePacket;
 import Packets.Packets;
+import Packets.RoundResultPacket;
 import Packets.ServerGameEndedPacket;
 import Server.BufferPacket;
 import Utils.Timer;
@@ -71,6 +72,8 @@ public class Game implements Runnable
 	/**  */
 	private GameStates state;
 	
+	private ArrayList<RoundResultPacket> previousResult;
+	
 	private GameServerPacket serverPacket;
 	
 	// - Game Communication -
@@ -111,6 +114,7 @@ public class Game implements Runnable
 		this.timer = new Timer();
 		
 		serverPacket = new GameServerPacket();
+		previousResult = new ArrayList<RoundResultPacket>();
 	}
 	
 	/** Constructor : Create a game with two kangaroos and launch it.
@@ -302,14 +306,30 @@ public class Game implements Runnable
 		serverPacket.player = sender.getKangarooPacket();
 		serverPacket.opponent = getOpponent(sender).getKangarooPacket();
 		
-		// End the round it last 3 seconds
-		if (serverPacket.time >= 3000)
+		System.err.println(serverPacket.time);
+		
+		// If the actual round is ended (2sec)
+		if (serverPacket.time >= 2000)
 		{
-			ServerGameEndedPacket gameEnded = new ServerGameEndedPacket();
-			gameEnded.game = this;
-			
-			gp.mainPackets.sendPacket(gameEnded);
-			
+			// If this isn't the 3rd round
+			if (previousResult.size() < 3)
+			{
+				// Send the result packet and wait for client ready
+				previousResult.add( new RoundResultPacket() );
+				
+				// TODO : fill the packet and send it to client
+				
+				// TODO : prepare game for a new round
+				serverPacket.time = 0;
+			}
+			else
+			{
+				// Game is ended - Send the ServerGameEndedPacket to GameProcessor
+				ServerGameEndedPacket gameEnded = new ServerGameEndedPacket();
+				gameEnded.game = this;
+				
+				gp.mainPackets.sendPacket(gameEnded);
+			}
 		}
 		
 		serverPacket.setIp(packet.getIp());
