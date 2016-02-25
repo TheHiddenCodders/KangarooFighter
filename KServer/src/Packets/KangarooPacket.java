@@ -13,6 +13,7 @@ public class KangarooPacket extends Packets
 	
 	public KangarooPacket(KangarooPacket player) 
 	{
+		super(player.getIp());
 		this.x = player.x;
 		this.y = player.y;
 		this.health = player.health;
@@ -24,7 +25,7 @@ public class KangarooPacket extends Packets
 
 	public KangarooPacket() 
 	{
-	
+		super();
 	}
 
 	public String toString()

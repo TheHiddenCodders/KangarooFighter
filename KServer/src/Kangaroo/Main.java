@@ -22,6 +22,7 @@ import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.Notification;
 import Packets.Packets;
+import Packets.RoundResultPacket;
 import Packets.SearchLadderPacket;
 import Server.Server;
 import ServerInfo.News;
@@ -206,8 +207,6 @@ public class Main
 					{
 						// Send this packet to the GameProcessor
 						gp.mainPackets.sendPacket(readPackets.get(i));
-						
-						System.out.println("Main Thread : " + pp.getPlayerFromIp(readPackets.get(i).getIp()).getName() + " is ready to start a game");
 					}
 					
 					// Receive a GameClientPacket
@@ -219,6 +218,13 @@ public class Main
 					
 					// Receive a GameEndedPacket
 					else if (readPackets.get(i).getClass().isAssignableFrom(GameEndedPacket.class))
+					{
+						// Send this packet to client
+						server.sendBuffer.sendPacket(readPackets.get(i));
+					}
+					
+					// Receive a GameEndedPacket
+					else if (readPackets.get(i).getClass().isAssignableFrom(RoundResultPacket.class))
 					{
 						// Send this packet to client
 						server.sendBuffer.sendPacket(readPackets.get(i));

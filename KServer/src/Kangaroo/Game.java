@@ -158,91 +158,106 @@ public class Game implements Runnable
 		{
 			timer.restart();
 			
-			// While the game is prepared but not launched
-			while (state == GameStates.Prepared)
+			while (state !=  GameStates.ended)
 			{
-				// Wait for new packets
-				gamePackets = gameSender.readPackets();
-				
-				// Browse all packets
-				for (int i = 0; i < gamePackets.size(); i++)
+				// While the game is prepared but not launched
+				while (state == GameStates.Prepared)
 				{
-					// Received a ClientReadyPacket
-					if (gamePackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
+					// Wait for new packets
+					gamePackets = gameSender.readPackets();
+					
+					// Browse all packets
+					for (int i = 0; i < gamePackets.size(); i++)
 					{
-						ClientReadyPacket readyPacket = (ClientReadyPacket) gamePackets.get(i);
-						
-						// If the fist player is ready, then store his packet
-						if (firstPacket == null)
-							firstPacket = readyPacket;
-						// Else the two players are ready, then the game can start
-						else			
+						// Received a ClientReadyPacket
+						if (gamePackets.get(i).getClass().isAssignableFrom(ClientReadyPacket.class))
 						{
-							setState(GameStates.Running);
+							ClientReadyPacket readyPacket = (ClientReadyPacket) gamePackets.get(i);
+							
+							System.out.println("Game thread : " + getPlayerFromIp(readyPacket.getIp()).getName() + " is ready to start round " + previousResult.size());
+							
+							// If the fist player is ready, then store his packet
+							if (firstPacket == null)
+								firstPacket = readyPacket;
+							// Else the two players are ready, then the game can start
+							else			
+							{
+								setState(GameStates.Running);
+								firstPacket = null;
+							}
+						}
+						else if (gamePackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
+						{
+							System.err.println("End Round Result from Game");
+							
+							// Send the RoundResultPacket to the second player
+							previousResult.get(previousResult.size() - 1).setIp(gamePackets.get(i).getIp());
+							gp.mainSender.sendPacket(new RoundResultPacket(previousResult.get(previousResult.size() - 1)));
+						}
+						else
+						{
+							System.err.println("Game thread : received unreadable packet : " + gamePackets.get(i).getClass());
 						}
 					}
-					else
-					{
-						System.err.println("Game thread : received unreadable packet : " + gamePackets.get(i).getClass());
-					}
 				}
-			}
-			
-			// Send the GameReadyPacket to both players
-			GameReadyPacket p1Packet = new GameReadyPacket();
-			GameReadyPacket p2Packet = new GameReadyPacket();
-			
-			p1Packet.setIp(p1.getIp());
-			p2Packet.setIp(p2.getIp());
-			
-			gp.mainSender.sendPacket(p1Packet);
-			gp.mainSender.sendPacket(p2Packet);
-			
-			// Init delta time
-			lastTime = System.currentTimeMillis();
-			
-			// While the game is running
-			while (state !=  GameStates.ended)
-			while (state == GameStates.Running)
-			{
-				// Wait for new packets
-				gamePackets = gameSender.readPackets();
 				
-				// Update time
-				delta = System.currentTimeMillis() - lastTime;
+				// Send the GameReadyPacket to both players
+				GameReadyPacket p1Packet = new GameReadyPacket();
+				GameReadyPacket p2Packet = new GameReadyPacket();
 				
-				// Browse all packets
-				for (int i = 0; i < gamePackets.size(); i++)
+				p1Packet.setIp(p1.getIp());
+				p2Packet.setIp(p2.getIp());
+				
+				gp.mainSender.sendPacket(p1Packet);
+				gp.mainSender.sendPacket(p2Packet);
+				
+				// Init delta time
+				lastTime = System.currentTimeMillis();
+				
+				// While the game is running
+				while (state == GameStates.Running)
 				{
-					// Received a DisconnexionPacket
-					if (gamePackets.get(i).getClass().isAssignableFrom(DisconnexionPacket.class))
+					// Wait for new packets
+					gamePackets = gameSender.readPackets();
+					
+					// Update time
+					delta = System.currentTimeMillis() - lastTime;
+					
+					// Browse all packets
+					for (int i = 0; i < gamePackets.size(); i++)
 					{
-						// TODO : End the game here
-						state = GameStates.ended;
-						
-						ServerGameEndedPacket packet = new ServerGameEndedPacket();
-						packet.game = this;
-						gp.mainPackets.sendPacket(packet);
-						
-						break;
+						// Received a DisconnexionPacket
+						if (gamePackets.get(i).getClass().isAssignableFrom(DisconnexionPacket.class))
+						{
+							// TODO : End the game here
+							state = GameStates.ended;
+							
+							ServerGameEndedPacket packet = new ServerGameEndedPacket();
+							packet.game = this;
+							gp.mainPackets.sendPacket(packet);
+							
+							break;
+						}
+						// Received a GameClientPacket
+						else if (gamePackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
+						{
+							// Update the game with the packet received
+							update((GameClientPacket) gamePackets.get(i));
+						}
 					}
-					// Received a GameClientPacket
-					else if (gamePackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
-					{
-						// Update the game with the packet received
-						update((GameClientPacket) gamePackets.get(i));
-					}
+					
+					// Update lastTime only if delta was set
+					if (delta != 0)
+						lastTime = System.currentTimeMillis();
 				}
-				
-				// Update lastTime only if delta was set
-				if (delta != 0)
-					lastTime = System.currentTimeMillis();
+			
+				// When a round is ended
 			}
 			
-			// When a round is ended
+			// When the game is ended
 		}
 		
-		// When the game is ended
+		
 	}
 	
 	/** Get the game packet depending of the kangaroo k
@@ -307,25 +322,31 @@ public class Game implements Runnable
 		serverPacket.player = sender.getKangarooPacket();
 		serverPacket.opponent = getOpponent(sender).getKangarooPacket();
 		
-		System.err.println(serverPacket.time);
-		
 		// If the actual round is ended (2sec)
 		if (serverPacket.time >= 2000)
-		{
+		{	
 			// If this isn't the 3rd round
 			if (previousResult.size() < 3)
 			{
 				// Send the result packet and wait for client ready
 				previousResult.add( new RoundResultPacket() );
 				
-				// TODO : fill the packet and send it to client
+				// Fill the packet in
+				previousResult.get(previousResult.size() - 1).setIp(sender.getIp());
+				previousResult.get(previousResult.size() - 1).winner = serverPacket.player;
+				previousResult.get(previousResult.size() - 1).loser = serverPacket.opponent;
+				
+				System.err.println("End round result from update");
+				
+				// Send a copy to the client
+				gp.mainSender.sendPacket(new RoundResultPacket(previousResult.get(previousResult.size() - 1)));
 				
 				// TODO : prepare game for a new round
 				p1.createKangaroo(player1X[mapIndex], player1Y[mapIndex]);
 				p2.createKangaroo(player2X[mapIndex], player2Y[mapIndex]);
 				serverPacket.time = 0;
 				
-				state = GameStates.Waiting;
+				state = GameStates.Prepared;
 			}
 			else
 			{
@@ -334,11 +355,17 @@ public class Game implements Runnable
 				gameEnded.game = this;
 				
 				gp.mainPackets.sendPacket(gameEnded);
+				
+				state = GameStates.ended;
 			}
 		}
 		
-		serverPacket.setIp(packet.getIp());
-		gp.mainSender.sendPacket(new GameServerPacket(serverPacket));
+		// If game is still running send the update to client
+		if (state == GameStates.Running)
+		{
+			serverPacket.setIp(packet.getIp());
+			gp.mainSender.sendPacket(new GameServerPacket(serverPacket));
+		}
 	}
 	
 	/** Return the opponent
