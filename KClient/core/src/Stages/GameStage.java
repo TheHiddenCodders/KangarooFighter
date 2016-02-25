@@ -57,13 +57,7 @@ public class GameStage extends ConnectedStage
 
 	@Override
 	public void act(float delta)
-	{
-		// Update game
-		game.update(delta);
-		
-		// Update timer
-		timer.refresh(game.getTime());
-		
+	{				
 		super.act(delta);
 	}
 	
@@ -76,7 +70,7 @@ public class GameStage extends ConnectedStage
 	@Override
 	protected void initComponents()
 	{
-		timer = new GameTimer(new LabelStyle(main.skin.getFont("korean32"), Color.TAN));
+		timer = new GameTimer(new LabelStyle(main.skin.getFont("korean-32"), Color.TAN));
 		timer.setPosition(800 / 2 - timer.getWidth() / 2, 480 - 50);
 	}
 
@@ -131,7 +125,7 @@ public class GameStage extends ConnectedStage
 	@Override
 	protected void addActors() 
 	{
-		addActor(timer);
+
 	}
 
 	@Override
@@ -144,6 +138,9 @@ public class GameStage extends ConnectedStage
 		addActor(opponentBar);
 		addActor(playerName);
 		addActor(opponentName);
+		
+		// Add timer after background and all
+		addActor(timer);
 	
 		game.setState(GameStates.Loaded);
 		main.network.send(new ClientReadyPacket());
@@ -168,7 +165,14 @@ public class GameStage extends ConnectedStage
 		
 		if (data instanceof GameServerPacket)
 		{
+			// Update game statements
 			game.update((GameServerPacket) data);
+			game.update(Gdx.graphics.getDeltaTime());
+			
+			// Update timer
+			timer.refresh(game.getTime());
+			
+			// Send new client packet
 			main.network.send(game.getClientPacket());
 		}
 		

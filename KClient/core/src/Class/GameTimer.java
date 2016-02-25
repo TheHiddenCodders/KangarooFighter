@@ -45,6 +45,7 @@ public class GameTimer extends Table
 	
 	public void refresh(float time)
 	{
-		this.time.setText(String.valueOf((int) (time / 1000)));
+		System.err.println("GameTimer.refresh()");
+		this.time.setText(String.valueOf((int) time));
 	}
 }
