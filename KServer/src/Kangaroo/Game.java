@@ -202,6 +202,7 @@ public class Game implements Runnable
 			lastTime = System.currentTimeMillis();
 			
 			// While the game is running
+			while (state !=  GameStates.ended)
 			while (state == GameStates.Running)
 			{
 				// Wait for new packets
@@ -320,7 +321,11 @@ public class Game implements Runnable
 				// TODO : fill the packet and send it to client
 				
 				// TODO : prepare game for a new round
+				p1.createKangaroo(player1X[mapIndex], player1Y[mapIndex]);
+				p2.createKangaroo(player2X[mapIndex], player2Y[mapIndex]);
 				serverPacket.time = 0;
+				
+				state = GameStates.Waiting;
 			}
 			else
 			{
