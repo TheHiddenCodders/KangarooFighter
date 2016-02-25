@@ -6,11 +6,11 @@ import java.util.Random;
 import Packets.ClientReadyPacket;
 import Packets.DisconnexionPacket;
 import Packets.GameClientPacket;
-import Packets.GameEndedPacket;
 import Packets.GameReadyPacket;
 import Packets.GameServerPacket;
 import Packets.InitGamePacket;
 import Packets.Packets;
+import Packets.ServerGameEndedPacket;
 import Server.BufferPacket;
 import Utils.Timer;
 import enums.GameStates;
@@ -219,7 +219,7 @@ public class Game implements Runnable
 						// TODO : End the game here
 						state = GameStates.ended;
 						
-						GameEndedPacket packet = new GameEndedPacket();
+						ServerGameEndedPacket packet = new ServerGameEndedPacket();
 						packet.game = this;
 						gp.mainPackets.sendPacket(packet);
 						

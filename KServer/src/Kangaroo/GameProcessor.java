@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import Packets.ClientReadyPacket;
 import Packets.DisconnexionPacket;
 import Packets.GameClientPacket;
-import Packets.GameEndedPacket;
 import Packets.GameReadyPacket;
 import Packets.MatchMakingPacket;
 import Packets.Packets;
+import Packets.ServerGameEndedPacket;
 import Server.BufferPacket;
 import ServerInfo.PlayerProcessor;
 
@@ -71,9 +71,9 @@ public class GameProcessor implements Runnable
 					// If the player is in game, send the packet to the game
 					sendToGame(packet); // Game will send an GameEndedPacket when finished properly
 				}
-				else if (packet.getClass().isAssignableFrom(GameEndedPacket.class))
+				else if (packet.getClass().isAssignableFrom(ServerGameEndedPacket.class))
 				{
-					GameEndedPacket gameEnded = (GameEndedPacket) packet;
+					ServerGameEndedPacket gameEnded = (ServerGameEndedPacket) packet;
 					
 					games.remove(gameEnded.game);
 					
@@ -82,14 +82,12 @@ public class GameProcessor implements Runnable
 					{
 						// NERISMA tests
 						gameEnded.setIp(gameEnded.game.getP1().getIp());
-						//sendToGame(gameEnded);
 					}
 					
 					if (gameEnded.game.getP2() != null)
 					{
 						// NERISMA tests
 						gameEnded.setIp(gameEnded.game.getP2().getIp());
-						//sendToGame(gameEnded);
 					}
 				}
 				// If the received packet is a GameReadyPacket
