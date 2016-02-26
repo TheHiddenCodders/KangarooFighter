@@ -8,7 +8,6 @@ public class HomePacket extends Packets
 
 	public NewsPacket[] news;
 	public LadderPacket ladder;
-	public ServerInfoPacket serverInfos;
 	
 	public HomePacket(String ip) 
 	{

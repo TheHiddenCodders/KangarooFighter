@@ -2,7 +2,6 @@ package Server;
 
 import Packets.HomePacket;
 import Packets.NewsPacket;
-import Packets.ServerInfoPacket;
 
 /**
  * This class build a packet in function of the packet received
@@ -53,7 +52,7 @@ public class PacketFactory
 	{
 		packet.news = new NewsPacket[2];
 		//packet.ladderPlayers = new PlayerPacket[5];
-		packet.serverInfos = new ServerInfoPacket();
+		//packet.serverInfos = new ServerInfoPacket();
 		
 		return packet;
 	}

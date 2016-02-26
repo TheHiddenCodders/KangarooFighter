@@ -62,9 +62,8 @@ public abstract class Display extends Table
 			}
 		});
 		
-		// Add them
+		// Add the background
 		addActor(background);
-		addActor(closeButton);
 	}
 	
 	/*
@@ -74,6 +73,11 @@ public abstract class Display extends Table
 	@Override
 	public void act(float delta) 
 	{
+		// Only add the close button once all the display elements are loaded
+		if (closeButton.getStage() == null)
+			addActor(closeButton);
+		
+		// Wait for fade out animation to be over before removing the display
 		if (getActions().size == 0 && animated)
 			super.remove();
 			
@@ -81,7 +85,7 @@ public abstract class Display extends Table
 	};
 	
 	/**
-	 * Override remove method so bloc will fade out before beeing removed of stage
+	 * Overrided remove method so display will fade out before beeing removed of stage
 	 */
 	@Override
 	public boolean remove() 
