@@ -72,7 +72,7 @@ public class GameStage extends ConnectedStage
 	protected void initComponents()
 	{
 		timer = new GameTimer(new LabelStyle(main.skin.getFont("korean-32"), Color.TAN));
-		timer.setPosition(800 / 2 - timer.getWidth() / 2, 480 - 50);
+		timer.setPosition(800 / 2 - timer.getWidth() / 2, 480 - 100);
 	}
 
 	@Override

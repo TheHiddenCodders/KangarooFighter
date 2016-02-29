@@ -1,6 +1,7 @@
 package BlocsDisplays;
 
 import Class.Display;
+import Class.FriendActionBloc;
 import Packets.FriendRequestPacket;
 
 import com.badlogic.gdx.Gdx;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -35,6 +37,9 @@ public class FriendsDisplay extends Display
 	
 	private Label[] rank, name, games, wins, loses, elo;
 	private Image[] status;
+	
+	private FriendActionBloc actionBloc;
+	
 	/*
 	 * Constructors
 	 */
@@ -135,10 +140,13 @@ public class FriendsDisplay extends Display
 			addActor(status[i]);
 		}
 	}
-
+	
 	@Override
 	public void refresh(Object data) 
 	{			
+		// Make action bloc
+		actionBloc = new FriendActionBloc(homeStage);
+				
 		// Clear labels
 		for (int i = 0; i < rank.length; i++)
 		{
@@ -199,6 +207,86 @@ public class FriendsDisplay extends Display
 				loses[i].setPosition(582 + 92 / 2 - loses[i].getWidth() / 2, getHeight() - 132 - i * 26.2f);
 				elo[i].setPosition(676 + 92 / 2 - elo[i].getWidth() / 2, getHeight() - 132 - i * 26.2f);
 				status[i].setPosition(14, getHeight() - 126 - i * 26.2f);
+						
+				// Keep i
+				final int i2 = i;
+				
+				// Add listeners
+				rank[i].addListener(new ClickListener() 
+				{
+					@Override
+					public void clicked(InputEvent event, float x, float y) 
+					{
+						actionBloc.setFriend(homeStage.main.player.getFriends().get(page * 9 + i2));
+						actionBloc.setPosition(200, rank[i2].getY() + 10);
+						addActor(actionBloc);
+						super.clicked(event, x, y);
+					}
+				});
+				
+				name[i].addListener(new ClickListener() 
+				{
+					@Override
+					public void clicked(InputEvent event, float x, float y) 
+					{
+						actionBloc.setFriend(homeStage.main.player.getFriends().get(page * 9 + i2));
+						actionBloc.setPosition(200, rank[i2].getY() + 10);
+						
+						if (actionBloc.getActions().size == 0)
+							actionBloc.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
+						
+						addActor(actionBloc);
+						super.clicked(event, x, y);
+					}
+				});
+				
+				games[i].addListener(new ClickListener() 
+				{
+					@Override
+					public void clicked(InputEvent event, float x, float y) 
+					{
+						actionBloc.setFriend(homeStage.main.player.getFriends().get(page * 9 + i2));
+						actionBloc.setPosition(200, rank[i2].getY() + 10);
+						addActor(actionBloc);
+						super.clicked(event, x, y);
+					}
+				});
+				
+				wins[i].addListener(new ClickListener() 
+				{
+					@Override
+					public void clicked(InputEvent event, float x, float y) 
+					{
+						actionBloc.setFriend(homeStage.main.player.getFriends().get(page * 9 + i2));
+						actionBloc.setPosition(200, rank[i2].getY() + 10);
+						addActor(actionBloc);
+						super.clicked(event, x, y);
+					}
+				});
+				
+				loses[i].addListener(new ClickListener() 
+				{
+					@Override
+					public void clicked(InputEvent event, float x, float y) 
+					{
+						actionBloc.setFriend(homeStage.main.player.getFriends().get(page * 9 + i2));
+						actionBloc.setPosition(200, rank[i2].getY() + 10);
+						addActor(actionBloc);
+						super.clicked(event, x, y);
+					}
+				});
+				
+				elo[i].addListener(new ClickListener() 
+				{
+					@Override
+					public void clicked(InputEvent event, float x, float y) 
+					{
+						actionBloc.setFriend(homeStage.main.player.getFriends().get(page * 9 + i2));
+						actionBloc.setPosition(200, rank[i2].getY() + 10);
+						addActor(actionBloc);
+						super.clicked(event, x, y);
+					}
+				});
 				
 				// Add them
 				addActor(rank[i]);
@@ -222,7 +310,6 @@ public class FriendsDisplay extends Display
 				if (!nameField.getText().isEmpty())
 				{
 					packet.receiverName = nameField.getText();	
-					packet.style = "YesNo";
 					homeStage.main.network.send(packet);
 				}
 				
@@ -253,5 +340,4 @@ public class FriendsDisplay extends Display
 			next.setTouchable(Touchable.disabled);
 		}
 	}
-
 }

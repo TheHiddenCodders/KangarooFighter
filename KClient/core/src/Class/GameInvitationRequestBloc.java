@@ -42,7 +42,7 @@ public class GameInvitationRequestBloc extends NotificationBloc
 				
 				GameInvitationAnswerPacket answer = new GameInvitationAnswerPacket();
 				answer.answer = true;
-				answer.name = packet.name;
+				answer.name = packet.senderName;
 				answer.style = "Ok";
 				homeStage.main.network.send(answer);
 				super.clicked(event, x, y);
@@ -60,7 +60,7 @@ public class GameInvitationRequestBloc extends NotificationBloc
 				
 				GameInvitationAnswerPacket answer = new GameInvitationAnswerPacket();
 				answer.answer = false;
-				answer.name = packet.name;
+				answer.name = packet.senderName;
 				answer.style = "Ok";
 				homeStage.main.network.send(answer);
 				super.clicked(event, x, y);
