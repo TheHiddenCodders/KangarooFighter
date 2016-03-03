@@ -1,0 +1,12 @@
+03/03/2016
+---- EndGameStage ----
+Afficher l'élo change
+Faire le background
+Init a partir du end game packet
+
+---- GameStage ----
+Afficher les rounds gagnés sur le game stage a partir des round results packet
+Afficher les animations de fin et de début de round
+
+---- InscriptionStage ----
+Vérifier que tout est ok pour la gestion de l'inscription

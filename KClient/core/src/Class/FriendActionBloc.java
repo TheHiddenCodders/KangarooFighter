@@ -105,7 +105,6 @@ public class FriendActionBloc extends Table
 			{
 				GameInvitationRequestPacket packet = new GameInvitationRequestPacket();
 				packet.receiverName = friend.name;
-				System.err.println(friend.name);
 				homeStage.main.network.send(packet);
 				remove();
 				super.clicked(event, x, y);

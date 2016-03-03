@@ -123,17 +123,16 @@ public class Game
 	 * @param packet
 	 */
 	public void endRound(RoundResultPacket packet)
-	{
-		// Get position of the new result packet
-		int position = 0;
-		
+	{		
 		for (int i = 0; i < roundResults.length; i++)
 		{
 			if (roundResults[i] == null)
-				position = i;
+			{
+				roundResults[i] = packet;
+				System.out.println("Store round result packet at index " + i);
+				break;
+			}
 		}
-			
-		roundResults[position] = packet;
 		
 		// Change winner name
 		if (packet.winner.x == player.getPacket().x)
