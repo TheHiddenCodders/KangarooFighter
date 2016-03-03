@@ -16,6 +16,7 @@ import Packets.FriendRequestPacket;
 import Packets.FriendsPacket;
 import Packets.GameClientPacket;
 import Packets.GameEndedPacket;
+import Packets.GameInvitationRequestPacket;
 import Packets.HomePacket;
 import Packets.LadderPacket;
 import Packets.LoginPacket;
@@ -109,8 +110,6 @@ public class Main
 						pp.deconnexion(disconnexionPacket);
 						
 						tempPlayer = pp.isPlayerExist(tempPlayer.getName());
-						
-						System.err.println(tempPlayer.getPacket().online);
 						
 						// Browse player's friends
 						for (int j = 0; j < tempPlayer.getPacket().friends.size(); j++)
@@ -296,50 +295,117 @@ public class Main
 			Player sender = pp.getPlayerFromIp(packet.getIp());
 			
 			// TODO : Check in sender notification if it have a demand from packet.name, in this case make them friend
-			// TODO : check if players are already friends
 			
 			// Get the today date 
 			Date today = Calendar.getInstance().getTime();   
 			Format formatter = new SimpleDateFormat("dd/MM HH:mm");
 			
-			// Prepare the packet
-			packet.senderName = sender.getName();
-			packet.date = formatter.format(today);
-			packet.message = new String("Demande d'ajout d'amis de <c0>" + sender.getName() + "</>");
-			
-			// Get the player who will store the notification
-			Player player = pp.isPlayerExist(packet.receiverName);
-			
-			// Check if the player associate to the packet's name exist
-			if (player != null)
-			{
-				// Store the notification
-				packet.setIp(player.getIp());
-				player.getPacket().addNotification(packet);
-				
-				// If the player is connected, then send him
-				if (pp.isPlayerConnected(player.getName()) != null)
-					server.sendBuffer.sendPacket(packet);
-				
-				// Send a notification to sender
-				Notification succeedNotif = new Notification(sender.getIp());
-				
-				succeedNotif.date = formatter.format(today);
-				succeedNotif.message = "Une demande d'ami a ete envoye a <c0>" + packet.receiverName + "</>";
-				
-				sender.getPacket().addNotification(succeedNotif);
-				server.sendBuffer.sendPacket(succeedNotif);
-			}
-			else
+			// Can't send player request to himself
+			if (sender.getName().equals(packet.receiverName))
 			{
 				// Send a notification to sender
 				Notification failNotif = new Notification(sender.getIp());
 				
 				failNotif.date = formatter.format(today);
-				failNotif.message = "Le joueur <c0>" + packet.receiverName + "</> n'existe pas";
+				failNotif.message = "On dirait que <c0>" + packet.receiverName + "</> c'est toi !";
 				
 				sender.getPacket().addNotification(failNotif);
 				server.sendBuffer.sendPacket(failNotif);
+			}
+			// If sender want to become friend with someone different than himself
+			else
+			{
+				boolean alreadyFriend = false;
+				
+				// Check if players are not already friends
+				for (int i = 0; i < sender.getPacket().friends.size(); i++)
+				{
+					if ( sender.getPacket().friends.get(i).name.equals(packet.receiverName))
+						alreadyFriend = true;
+				}
+				
+				if (alreadyFriend)
+				{
+					// Send a notification to sender
+					Notification failNotif = new Notification(sender.getIp());
+					
+					failNotif.date = formatter.format(today);
+					failNotif.message = "<c0>" + packet.receiverName + "</> est deja votre ami.";
+					
+					sender.getPacket().addNotification(failNotif);
+					server.sendBuffer.sendPacket(failNotif);
+				}
+				else
+				{
+					boolean alreadyNotified = false;
+					
+					// Check if the other player have already sent a friend request
+					for (int i = 0; i < sender.getPacket().notifications.size(); i++)
+					{
+						if (sender.getPacket().notifications.get(i) instanceof FriendRequestPacket)
+						{
+							FriendRequestPacket oldRequest = (FriendRequestPacket) sender.getPacket().notifications.get(i);
+							
+							if (oldRequest.senderName.equals(packet.receiverName))
+							{
+								alreadyNotified = true;
+								sender.getPacket().notifications.remove(i);
+							}
+						}
+					}
+					
+					if (alreadyNotified)
+					{
+						// Don't send the friend request packet, and make them friend
+						FriendAnswerPacket friendAnswer = new FriendAnswerPacket(sender.getIp());
+						friendAnswer.name = packet.receiverName;
+						friendAnswer.answer = true;
+						
+						server.readBuffer.sendPacket(friendAnswer);
+					}
+					else
+					{
+						// Prepare the packet
+						packet.senderName = sender.getName();
+						packet.date = formatter.format(today);
+						packet.message = new String("Demande d'ajout d'amis de <c0>" + sender.getName() + "</>");
+						
+						// Get the player who will store the notification
+						Player player = pp.isPlayerExist(packet.receiverName);
+						
+						// Check if the player associate to the packet's name exist
+						if (player != null)
+						{
+							// Store the notification
+							packet.setIp(player.getIp());
+							player.getPacket().addNotification(packet);
+							
+							// If the player is connected, then send him
+							if (pp.isPlayerConnected(player.getName()) != null)
+								server.sendBuffer.sendPacket(packet);
+							
+							// Send a notification to sender
+							Notification succeedNotif = new Notification(sender.getIp());
+							
+							succeedNotif.date = formatter.format(today);
+							succeedNotif.message = "Une demande d'ami a ete envoye a <c0>" + packet.receiverName + "</>";
+							
+							sender.getPacket().addNotification(succeedNotif);
+							server.sendBuffer.sendPacket(succeedNotif);
+						}
+						else
+						{
+							// Send a notification to sender
+							Notification failNotif = new Notification(sender.getIp());
+							
+							failNotif.date = formatter.format(today);
+							failNotif.message = "Le joueur <c0>" + packet.receiverName + "</> n'existe pas";
+							
+							sender.getPacket().addNotification(failNotif);
+							server.sendBuffer.sendPacket(failNotif);
+						}
+					}
+				}
 			}
 		}
 		
@@ -440,6 +506,11 @@ public class Main
 				// Error : the future friend doesn't exist
 				System.out.println("Main Thread : receive a FriendAnswerPacket with an unknown player");
 			}
+		}
+		
+		else if (notification instanceof GameInvitationRequestPacket)
+		{
+			System.err.println("GameInvitationRequestPacket received");
 		}
 		
 		// Receive a simple notification
