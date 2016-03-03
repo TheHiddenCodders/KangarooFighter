@@ -6,6 +6,18 @@ public class RoundResultPacket extends Packets
 	
 	public KangarooPacket winner, loser;
 	
+	public RoundResultPacket(RoundResultPacket roundResultPacket) 
+	{
+		super(roundResultPacket.getIp());
+		this.winner = new KangarooPacket(roundResultPacket.winner);
+		this.loser = new KangarooPacket(roundResultPacket.loser);
+	}
+
+	public RoundResultPacket() 
+	{
+		super();
+	}
+
 	@Override
 	public String toString()
 	{

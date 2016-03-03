@@ -11,7 +11,26 @@ public class GameServerPacket extends Packets
 	public KangarooPacket player;
 	public KangarooPacket opponent;
 	
+	public int round;
 	public float time;
+
+	public GameServerPacket() 
+	{
+		this.player = new KangarooPacket();
+		this.opponent = new KangarooPacket();
+		
+		this.time = 0;
+	}
+	
+	public GameServerPacket(GameServerPacket serverPacket) 
+	{
+		super(serverPacket.getIp());
+		
+		this.player = new KangarooPacket(serverPacket.player);
+		this.opponent = new KangarooPacket(serverPacket.opponent);
+		
+		this.time = serverPacket.time;
+	}
 
 	@Override
 	public String toString()

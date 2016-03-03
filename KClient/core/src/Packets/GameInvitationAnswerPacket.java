@@ -12,8 +12,6 @@ public class GameInvitationAnswerPacket extends Notification
 	public GameInvitationAnswerPacket() 
 	{
 		super();
-		
-		style = "Ok";
 	}
 	
 	/**
