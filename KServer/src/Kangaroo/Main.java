@@ -245,6 +245,8 @@ public class Main
 					{
 						// Send this packet to client
 						server.sendBuffer.sendPacket(readPackets.get(i));
+						
+						// TODO : apply the elo changes (reorder players)
 					}
 					
 					// Receive a GameEndedPacket

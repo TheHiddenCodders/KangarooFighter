@@ -107,7 +107,7 @@ public class GameProcessor implements Runnable
 						// TODO : fill roundResult
 						P1gameEnded.roundResults = null;
 						// TODO : manage elo change - Apply elo change in main thread
-						P1gameEnded.eloChange = (int) (serverGameEnded.game.getP1().getElo() + (p1W - D));
+						P1gameEnded.eloChange = (int)((p1W - D)*20);
 							
 						
 						P1gameEnded.setIp(serverGameEnded.game.getP1().getIp());
@@ -121,11 +121,13 @@ public class GameProcessor implements Runnable
 						// TODO : fill roundResult
 						P2gameEnded.roundResults = null;
 						// TODO : manage elo change - Apply elo change in main thread
-						P2gameEnded.eloChange = (int) (serverGameEnded.game.getP1().getElo() + (p2W - D));
+						P2gameEnded.eloChange = (int)((p2W - D)*20);
 						
 						P2gameEnded.setIp(serverGameEnded.game.getP2().getIp());
 						mainSender.sendPacket(P2gameEnded);
 					}
+					
+					System.err.println("p1w: " + p1W + ", p2w: " + p2W + ", D = " + D);
 				}
 				// If the received packet is a GameReadyPacket
 				else if (packet.getClass().isAssignableFrom(GameReadyPacket.class))
