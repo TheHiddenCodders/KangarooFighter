@@ -78,6 +78,26 @@ public class GameProcessor implements Runnable
 					
 					games.remove(serverGameEnded.game);
 					
+					// Determine winner
+					int p1W, p2W;
+					
+					Player winner = serverGameEnded.game.getWinner();
+					
+					// compute the K factor for each player
+					if (winner == serverGameEnded.game.getP1())
+					{
+						p1W = 1;
+						p2W = 0;
+					}
+					else
+					{
+						p1W = 0;
+						p2W = 1;
+					}
+					
+					// Compute D, the eloRate
+					float D = (float) (1/(1 + Math.pow(10, -(pp.getPlayerFromIp(serverGameEnded.game.getP1().getIp()).getElo() - pp.getPlayerFromIp(serverGameEnded.game.getP2().getIp()).getElo())/400)));
+					
 					// If player are still in game
 					if (serverGameEnded.game.getP1() != null)
 					{
@@ -86,8 +106,9 @@ public class GameProcessor implements Runnable
 						
 						// TODO : fill roundResult
 						P1gameEnded.roundResults = null;
-						// TODO : manage elo change
-						P1gameEnded.eloChange = 0;
+						// TODO : manage elo change - Apply elo change in main thread
+						P1gameEnded.eloChange = (int) (serverGameEnded.game.getP1().getElo() + (p1W - D));
+							
 						
 						P1gameEnded.setIp(serverGameEnded.game.getP1().getIp());
 						mainSender.sendPacket(P1gameEnded);
@@ -99,8 +120,8 @@ public class GameProcessor implements Runnable
 						
 						// TODO : fill roundResult
 						P2gameEnded.roundResults = null;
-						// TODO : manage elo change
-						P2gameEnded.eloChange = 0;
+						// TODO : manage elo change - Apply elo change in main thread
+						P2gameEnded.eloChange = (int) (serverGameEnded.game.getP1().getElo() + (p2W - D));
 						
 						P2gameEnded.setIp(serverGameEnded.game.getP2().getIp());
 						mainSender.sendPacket(P2gameEnded);
