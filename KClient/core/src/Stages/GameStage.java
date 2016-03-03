@@ -154,7 +154,7 @@ public class GameStage extends ConnectedStage
 	protected void onDataReceived() 
 	{
 		if (game.getState() == GameStates.Ended)
-			main.setStage(new EndGameStage(main));
+			main.setStage(new EndGameStage(main, game));
 	}
 
 	@Override

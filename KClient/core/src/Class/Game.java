@@ -35,6 +35,7 @@ public class Game
 	private Texture background;
 	private GameStates state = GameStates.Created;
 	private RoundResultPacket[] roundResults;
+	private String winnerName;
 	private float time;
 	
 	/*
@@ -134,6 +135,12 @@ public class Game
 			
 		roundResults[position] = packet;
 		
+		// Change winner name
+		if (packet.winner.equals(player.getPacket()))
+			winnerName = player.getName();
+		else if (packet.winner.equals(opponent.getPacket()))
+			winnerName = opponent.getName();
+		
 		// Init next round
 		initRound();
 	}
@@ -216,5 +223,20 @@ public class Game
 	public GameClientPacket getClientPacket()
 	{
 		return packet;
+	}
+	
+	public RoundResultPacket[] getRoundResults()
+	{
+		return roundResults;
+	}
+	
+	public InitGamePacket getInitGamePacket()
+	{
+		return initGamePacket;
+	}
+	
+	public String getWinnerName()
+	{
+		return winnerName;
 	}
 }

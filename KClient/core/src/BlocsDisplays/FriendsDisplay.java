@@ -84,6 +84,9 @@ public class FriendsDisplay extends Display
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
 			{
+				if (actionBloc.getStage() != null)
+					actionBloc.remove();
+				
 				page--;
 				refresh(null);
 				super.clicked(event, x, y);
@@ -94,7 +97,10 @@ public class FriendsDisplay extends Display
 		{
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
-			{				
+			{		
+				if (actionBloc.getStage() != null)
+					actionBloc.remove();
+				
 				page++;
 				refresh(null);
 				super.clicked(event, x, y);
@@ -139,6 +145,15 @@ public class FriendsDisplay extends Display
 			addActor(elo[i]);
 			addActor(status[i]);
 		}
+	}
+	
+	@Override
+	public void act(float delta) 
+	{
+		if (Gdx.input.justTouched() && Gdx.input.getY() < 160 && actionBloc.getStage() != null)
+			actionBloc.remove();
+			
+		super.act(delta);
 	}
 	
 	@Override

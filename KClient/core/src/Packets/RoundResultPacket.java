@@ -4,7 +4,7 @@ public class RoundResultPacket extends Packets
 {
 	private static final long serialVersionUID = -5449562136787855633L;
 	
-	KangarooPacket winner, loser;
+	public KangarooPacket winner, loser;
 	
 	@Override
 	public String toString()

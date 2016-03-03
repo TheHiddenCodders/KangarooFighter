@@ -67,7 +67,10 @@ public class FriendActionBloc extends Table
 	{
 		// Wait for fade out animation to be over before removing the display
 		if (getActions().size == 0 && animated)
-			super.remove();		
+		{
+			super.remove();	
+			animated = false;
+		}
 		
 		super.act(delta);
 	}

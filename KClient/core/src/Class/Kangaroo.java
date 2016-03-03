@@ -104,4 +104,9 @@ public class Kangaroo extends AnimatedSprite
 		
 		packet.flip = flip;
 	}
+	
+	public KangarooPacket getPacket()
+	{
+		return packet;
+	}
 }

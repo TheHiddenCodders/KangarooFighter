@@ -79,7 +79,10 @@ public abstract class Display extends Table
 		
 		// Wait for fade out animation to be over before removing the display
 		if (getActions().size == 0 && animated)
+		{
+			animated = false;
 			super.remove();
+		}
 			
 		super.act(delta);
 	};
