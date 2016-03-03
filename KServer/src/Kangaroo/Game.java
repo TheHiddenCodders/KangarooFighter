@@ -370,6 +370,25 @@ public class Game implements Runnable
 		}
 	}
 	
+	public Player getWinner()
+	{
+		int p1Win = 0;
+		
+		if (state != GameStates.ended)
+			return null;
+		
+		for (RoundResultPacket result : previousResult)
+		{
+			if (result.winner == serverPacket.player)
+				p1Win++;
+		}
+		
+		if (p1Win == 2)
+			return p1;
+		
+		return p2;
+	}
+	
 	/** Return the opponent
 	 * @param p
 	 * @return

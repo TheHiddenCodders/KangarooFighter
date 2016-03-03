@@ -84,6 +84,11 @@ public class GameProcessor implements Runnable
 						// Send a GameEndedPacket to p1
 						GameEndedPacket P1gameEnded = new GameEndedPacket();
 						
+						// TODO : fill roundResult
+						P1gameEnded.roundResults = null;
+						// TODO : manage elo change
+						P1gameEnded.eloChange = 0;
+						
 						P1gameEnded.setIp(serverGameEnded.game.getP1().getIp());
 						mainSender.sendPacket(P1gameEnded);
 					}
@@ -91,6 +96,11 @@ public class GameProcessor implements Runnable
 					{
 						// Send a GameEndedPacket to p1
 						GameEndedPacket P2gameEnded = new GameEndedPacket();
+						
+						// TODO : fill roundResult
+						P2gameEnded.roundResults = null;
+						// TODO : manage elo change
+						P2gameEnded.eloChange = 0;
 						
 						P2gameEnded.setIp(serverGameEnded.game.getP2().getIp());
 						mainSender.sendPacket(P2gameEnded);

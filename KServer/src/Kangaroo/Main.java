@@ -513,14 +513,16 @@ public class Main
 			// Cast notification
 			GameInvitationRequestPacket packet = (GameInvitationRequestPacket)notification;
 			
+			System.err.println(packet);
+			
 			// Get a reference of the sender from the global list of players
 			Player sender = pp.getPlayerFromIp(packet.getIp());
 			sender = pp.isPlayerExist(sender.getName());
 			
 			// get the future friend
-			Player friend = pp.isPlayerExist(packet.name);
+			Player friend = pp.isPlayerExist(packet.receiverName);
 			
-			System.err.println("Friend : " + packet.name);
+			System.err.println("Friend : " + packet.receiverName);
 			
 			
 			if (friend != null)
@@ -530,7 +532,7 @@ public class Main
 				Format formatter = new SimpleDateFormat("dd/MM HH:mm");
 				
 				// Can't send player request to himself
-				if (sender.getName().equals(packet.name))
+				if (sender.getName().equals(packet.receiverName))
 				{
 					// Send a notification to sender
 					Notification failNotif = new Notification(sender.getIp());
