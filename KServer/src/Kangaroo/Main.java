@@ -558,9 +558,15 @@ public class Main
 						sender.getPacket().addNotification(failNotif);
 						server.sendBuffer.sendPacket(failNotif);
 					}
+					else
+					{
+						// TODO : send the notif to the friend
+					}
 				}
 			}
 		}
+		
+		// TODO : manage GameInvitationAnswerPacket
 		
 		// Receive a simple notification
 		else 
