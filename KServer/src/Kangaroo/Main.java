@@ -58,7 +58,7 @@ public class Main
 		
 		// Load server data from files
 		pp = new PlayerProcessor("/KangarooFighters/Players", serverInfo);
-		gp = new GameProcessor(pp, server.sendBuffer); // TODO : GameProcessor need a reference to serverInfo
+		gp = new GameProcessor(pp, server.sendBuffer);
 		news = new News("/KangarooFighters/News");
 		
 		// Launch game threads
@@ -107,6 +107,28 @@ public class Main
 						
 						// Remove the disconnected player
 						pp.deconnexion(disconnexionPacket);
+						
+						tempPlayer = pp.isPlayerExist(tempPlayer.getName());
+						
+						System.err.println(tempPlayer.getPacket().online);
+						
+						// Browse player's friends
+						for (int j = 0; j < tempPlayer.getPacket().friends.size(); j++)
+						{
+							// If this friend is connected
+							if (tempPlayer.getPacket().friends.get(j).online)
+							{	
+								// Get the "player" associated to this friend
+								Player friendPlayer = pp.isPlayerExist(tempPlayer.getPacket().friends.get(j).name);
+								
+								// Create a friend packet to notify the disconnexion to a friend
+								FriendsPacket friendPacket = new FriendsPacket(tempPlayer.getPacket());
+								friendPacket.setIp(friendPlayer.getIp());
+								
+								// Send this packet to the friend
+								server.sendBuffer.sendPacket(friendPacket);
+							}
+						}
 						//server.removeClient(disconnexionPacket);
 					}
 

@@ -368,7 +368,7 @@ public class PlayerProcessor
 	 */
 	public void deconnexion(DisconnexionPacket packet)
 	{
-		Player player = isPlayerConnected(getPlayerFromIp(packet.getIp()).getName());
+		Player player = getPlayerFromIp(packet.getIp());
 		
 		// If the player is login
 		if (player != null)
@@ -378,6 +378,28 @@ public class PlayerProcessor
 		waitingClients.remove(packet.getIp());
 		
 		// TODO : notified friend this client is deco
+		
+		player = isPlayerExist(player.getName());
+		
+		// Browse all player friends
+		for (int i = 0; i < player.getPacket().friends.size(); i++)
+		{
+			// Try to find player in his friend's, friend list
+			Player friendPlayer = isPlayerExist(player.getPacket().friends.get(i).name);
+			
+			// Put me offline in my friends friends packets
+			for (int j = 0; j < friendPlayer.getPacket().friends.size(); j++)
+			{
+				if (friendPlayer.getPacket().friends.get(j).name.equals(player.getName()))
+				{
+					friendPlayer.getPacket().friends.get(j).online = false;
+					break;
+				}
+			}
+		}
+		
+		// Put me offline in my own packet
+		player.getPacket().online = false;
 		
 		// Update the ServerInfoPacket
 		serverInfo.update(this);
