@@ -348,7 +348,7 @@ public class HomeStage extends ConnectedStage
 	/**
 	 * Launch the matchmaking process, including UI changes
 	 */
-	private void launchMatchMaking()
+	public void launchMatchMaking()
 	{
 		// UI change
 		matchMakingLaunch.setColor(Color.RED);

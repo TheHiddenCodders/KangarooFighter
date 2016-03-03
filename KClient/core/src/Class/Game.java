@@ -136,10 +136,16 @@ public class Game
 		roundResults[position] = packet;
 		
 		// Change winner name
-		if (packet.winner.equals(player.getPacket()))
+		if (packet.winner.x == player.getPacket().x)
+		{
 			winnerName = player.getName();
-		else if (packet.winner.equals(opponent.getPacket()))
+			System.out.println("Player wins");
+		}
+		else if (packet.winner.x == opponent.getPacket().x)
+		{
 			winnerName = opponent.getName();
+			System.out.println("Opponent wins");
+		}
 		
 		// Init next round
 		initRound();

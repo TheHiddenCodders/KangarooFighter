@@ -47,8 +47,20 @@ public class GameTimer extends Table
 	
 	public void refresh(float time)
 	{
-		this.time.setText(String.valueOf(time));
-		this.time.pack();
-		this.time.setPosition(getWidth() / 2 - this.time.getWidth() / 2 , getHeight() / 2 - this.time.getHeight() / 2);
+		boolean needPack = false;
+		
+		// Check if pack is needed or not
+		if (this.time.getText().toString().length() != String.valueOf(time).length())
+			needPack = true;
+			
+		// Set new text
+		this.time.setText(String.valueOf(time));	
+		
+		// If pack is need, pack and set the new position
+		if (needPack)
+		{
+			this.time.pack();
+			this.time.setPosition(getWidth() / 2 - this.time.getWidth() / 2 , getHeight() / 2 - this.time.getHeight() / 2);
+		}
 	}
 }
