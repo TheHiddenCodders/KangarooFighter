@@ -2,6 +2,7 @@ package Class;
 
 import Enums.GameStates;
 import Packets.GameClientPacket;
+import Packets.GameEndedPacket;
 import Packets.GameServerPacket;
 import Packets.InitGamePacket;
 import Packets.RoundResultPacket;
@@ -35,6 +36,7 @@ public class Game
 	private Texture background;
 	private GameStates state = GameStates.Created;
 	private RoundResultPacket[] roundResults;
+	private GameEndedPacket gameEndedPacket;
 	private String winnerName;
 	private float time;
 	
@@ -243,5 +245,15 @@ public class Game
 	public String getWinnerName()
 	{
 		return winnerName;
+	}
+
+	public void setEndGamePacket(GameEndedPacket data)
+	{
+		gameEndedPacket = data;
+	}
+	
+	public GameEndedPacket getGameEndedPacket()
+	{
+		return gameEndedPacket;
 	}
 }

@@ -203,6 +203,9 @@ public class GameStage extends ConnectedStage
 		{
 			System.out.println("Game is ended");
 			
+			// Set game ended packet to game
+			game.setEndGamePacket((GameEndedPacket) data);
+			
 			// Set game ended
 			game.setState(GameStates.Ended);
 			

@@ -28,6 +28,7 @@ public class EndGameStage extends ConnectedStage
 	private Image header;
 	private Image background;
 	private TextButton replay, home;
+	private Label eloChange;
 	private Label playerName, opponentName, roundDuration;
 	private Label[] playerHealths, opponentHealths, playerHits, opponentHits, roundDurations;
 
@@ -90,6 +91,10 @@ public class EndGameStage extends ConnectedStage
 			
 		header = new Image(headerTexture);
 		header.setY(background.getHeight());
+		
+		// Elo change
+		eloChange = new Label(String.valueOf(game.getGameEndedPacket().eloChange), main.skin);
+		eloChange.setPosition(390, 300);
 		
 		// Opponent name
 		opponentName = new Label(game.getKOpponent().getName(), main.skin);
@@ -212,6 +217,7 @@ public class EndGameStage extends ConnectedStage
 		addActor(header);		
 		addActor(playerName);
 		addActor(opponentName);
+		addActor(eloChange);
 		
 		// Add labels
 		for (int i = 0; i < playerHealths.length; i++)
