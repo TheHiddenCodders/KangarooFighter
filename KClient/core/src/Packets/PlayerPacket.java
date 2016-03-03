@@ -31,6 +31,7 @@ public class PlayerPacket extends Packets
 	public int streak;
 	public int pos;
 	public boolean online;
+	public boolean inGame;
 	public ArrayList<FriendsPacket> friends;
 	public ArrayList<Notification> notifications;
 
@@ -46,7 +47,8 @@ public class PlayerPacket extends Packets
 				+ "- [elo]: " + elo + "\n"
 				+ "- [streak]: " + streak + "\n"
 				+ "- [pos]: " + pos + "\n"
-				+ "- [online]: " + online + "\n";
+				+ "- [online]: " + online + "\n"
+				+ "- [in game]: " + inGame + "\n";
 	}
 	
 	public void addFriend(FriendsPacket newFriend)

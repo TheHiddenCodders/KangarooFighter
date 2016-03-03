@@ -15,6 +15,7 @@ public class FriendsPacket extends Packets
 		wins = packet.wins;
 		pos = packet.pos;
 		online = packet.online;
+		inGame = packet.inGame;
 	}
 	
 	public FriendsPacket(String ip) 
@@ -40,6 +41,7 @@ public class FriendsPacket extends Packets
 	public int streak;
 	public int pos;
 	public boolean online;
+	public boolean inGame;
 
 	@Override
 	public String toString()
@@ -53,6 +55,7 @@ public class FriendsPacket extends Packets
 				+ "- [elo]: " + elo + "\n"
 				+ "- [streak]: " + streak + "\n"
 				+ "- [pos]: " + pos + "\n"
-				+ "- [online]: " + online + "\n";
+				+ "- [online]: " + online + "\n"
+				+ "- [in game]: " + inGame + "\n";
 	}
 }

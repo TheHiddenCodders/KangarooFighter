@@ -510,7 +510,54 @@ public class Main
 		
 		else if (notification instanceof GameInvitationRequestPacket)
 		{
-			System.err.println("GameInvitationRequestPacket received");
+			// Cast notification
+			GameInvitationRequestPacket packet = (GameInvitationRequestPacket)notification;
+			
+			// Get a reference of the sender from the global list of players
+			Player sender = pp.getPlayerFromIp(packet.getIp());
+			sender = pp.isPlayerExist(sender.getName());
+			
+			// get the future friend
+			Player friend = pp.isPlayerExist(packet.name);
+			
+			System.err.println("Friend : " + packet.name);
+			
+			
+			if (friend != null)
+			{
+				// Get the today date
+				Date today = Calendar.getInstance().getTime();   
+				Format formatter = new SimpleDateFormat("dd/MM HH:mm");
+				
+				// Can't send player request to himself
+				if (sender.getName().equals(packet.name))
+				{
+					// Send a notification to sender
+					Notification failNotif = new Notification(sender.getIp());
+					
+					failNotif.date = formatter.format(today);
+					failNotif.message = "Tu ne peux pas faire de partie avec toi meme !";
+					
+					sender.getPacket().addNotification(failNotif);
+					server.sendBuffer.sendPacket(failNotif);
+				}
+				// If sender want to launch a game with someone different than himself
+				else
+				{
+					// Check if the friend is in game
+					if (friend.getPacket().inGame)
+					{
+						// Send a notification to sender
+						Notification failNotif = new Notification(sender.getIp());
+						
+						failNotif.date = formatter.format(today);
+						failNotif.message = "<c0>" + friend.getName() + "</> est deja en train de jouer";
+						
+						sender.getPacket().addNotification(failNotif);
+						server.sendBuffer.sendPacket(failNotif);
+					}
+				}
+			}
 		}
 		
 		// Receive a simple notification

@@ -370,36 +370,37 @@ public class PlayerProcessor
 	{
 		Player player = getPlayerFromIp(packet.getIp());
 		
-		// If the player is login
-		if (player != null)
-			connectedPlayers.remove(player);
-		
 		// If the player is not login, then he is in waiting list
 		waitingClients.remove(packet.getIp());
 		
 		// TODO : notified friend this client is deco
 		
-		player = isPlayerExist(player.getName());
-		
-		// Browse all player friends
-		for (int i = 0; i < player.getPacket().friends.size(); i++)
+		// If the player is login
+		if (player != null)
 		{
-			// Try to find player in his friend's, friend list
-			Player friendPlayer = isPlayerExist(player.getPacket().friends.get(i).name);
+			connectedPlayers.remove(player);
+			player = isPlayerExist(player.getName());
 			
-			// Put me offline in my friends friends packets
-			for (int j = 0; j < friendPlayer.getPacket().friends.size(); j++)
+			// Browse all player friends
+			for (int i = 0; i < player.getPacket().friends.size(); i++)
 			{
-				if (friendPlayer.getPacket().friends.get(j).name.equals(player.getName()))
+				// Try to find player in his friend's, friend list
+				Player friendPlayer = isPlayerExist(player.getPacket().friends.get(i).name);
+				
+				// Put me offline in my friends friends packets
+				for (int j = 0; j < friendPlayer.getPacket().friends.size(); j++)
 				{
-					friendPlayer.getPacket().friends.get(j).online = false;
-					break;
+					if (friendPlayer.getPacket().friends.get(j).name.equals(player.getName()))
+					{
+						friendPlayer.getPacket().friends.get(j).online = false;
+						break;
+					}
 				}
 			}
+			
+			// Put me offline in my own packet
+			player.getPacket().online = false;
 		}
-		
-		// Put me offline in my own packet
-		player.getPacket().online = false;
 		
 		// Update the ServerInfoPacket
 		serverInfo.update(this);

@@ -105,6 +105,7 @@ public class Game implements Runnable
 		mapIndex = r.nextInt(map.length);
 		
 		// Store the first player and create is kangaroo
+		p1.getPacket().inGame = true;
 		this.p1 = p1;
 		this.p1.createKangaroo(player1X[mapIndex], player1Y[mapIndex]);
 		this.gamePackets = new ArrayList<Packets>();
@@ -133,6 +134,7 @@ public class Game implements Runnable
 	public void linkKangaroo(Player p2)
 	{
 		// Create the second kangaroo
+		p2.getPacket().inGame = true;
 		this.p2 = p2;
 		p2.createKangaroo(player2X[mapIndex], player2Y[mapIndex]);
 		
