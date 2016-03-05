@@ -95,12 +95,15 @@ public class GameProcessor implements Runnable
 						p2W = 1;
 					}
 					
-					// Compute D, the eloRate
+					// Compute D : the eloRate
 					float D = (float) (1/(1 + Math.pow(10, -(pp.getPlayerFromIp(serverGameEnded.game.getP1().getIp()).getElo() - pp.getPlayerFromIp(serverGameEnded.game.getP2().getIp()).getElo())/400)));
 					
 					// If player are still in game
 					if (serverGameEnded.game.getP1() != null)
 					{
+						// P1 is not in game anymore
+						serverGameEnded.game.getP1().getPacket().inGame = false;
+						
 						// Send a GameEndedPacket to p1
 						GameEndedPacket P1gameEnded = new GameEndedPacket();
 						
@@ -115,7 +118,10 @@ public class GameProcessor implements Runnable
 					}
 					if (serverGameEnded.game.getP2() != null)
 					{
-						// Send a GameEndedPacket to p1
+						// P2 is not in game anymore
+						serverGameEnded.game.getP2().getPacket().inGame = false;
+						
+						// Send a GameEndedPacket to p2
 						GameEndedPacket P2gameEnded = new GameEndedPacket();
 						
 						// TODO : fill roundResult

@@ -16,6 +16,7 @@ import Packets.FriendRequestPacket;
 import Packets.FriendsPacket;
 import Packets.GameClientPacket;
 import Packets.GameEndedPacket;
+import Packets.GameInvitationAnswerPacket;
 import Packets.GameInvitationRequestPacket;
 import Packets.HomePacket;
 import Packets.LadderPacket;
@@ -249,7 +250,7 @@ public class Main
 						// TODO : apply the elo changes (reorder players)
 					}
 					
-					// Receive a GameEndedPacket
+					// Receive a RoundResult
 					else if (readPackets.get(i).getClass().isAssignableFrom(RoundResultPacket.class))
 					{
 						// Send this packet to client
@@ -515,17 +516,12 @@ public class Main
 			// Cast notification
 			GameInvitationRequestPacket packet = (GameInvitationRequestPacket)notification;
 			
-			System.err.println(packet);
-			
 			// Get a reference of the sender from the global list of players
 			Player sender = pp.getPlayerFromIp(packet.getIp());
 			sender = pp.isPlayerExist(sender.getName());
 			
 			// get the future friend
 			Player friend = pp.isPlayerExist(packet.receiverName);
-			
-			System.err.println("Friend : " + packet.receiverName);
-			
 			
 			if (friend != null)
 			{
@@ -555,20 +551,44 @@ public class Main
 						Notification failNotif = new Notification(sender.getIp());
 						
 						failNotif.date = formatter.format(today);
-						failNotif.message = "<c0>" + friend.getName() + "</> est deja en train de jouer";
+						failNotif.message = "<c0>" + friend.getName() + "</> est deja en train de jouer.";
 						
 						sender.getPacket().addNotification(failNotif);
 						server.sendBuffer.sendPacket(failNotif);
 					}
 					else
 					{
-						// TODO : send the notif to the friend
+						// Prepare the packet
+						packet.senderName = sender.getName();
+						packet.date = formatter.format(today);
+						packet.message = new String("<c0>" + sender.getName() + "</> veut lancer une partie.");
+						
+						// Store the notification
+						packet.setIp(friend.getIp());
+						friend.getPacket().addNotification(packet);
+						
+						// If the player is connected, then send him
+						if (pp.isPlayerConnected(friend.getName()) != null)
+							server.sendBuffer.sendPacket(packet);
+						
+						// Send a notification to sender
+						Notification succeedNotif = new Notification(sender.getIp());
+						
+						succeedNotif.date = formatter.format(today);
+						succeedNotif.message = "Une demande de partie a ete envoye a <c0>" + packet.receiverName + "</>";
+						
+						sender.getPacket().addNotification(succeedNotif);
+						server.sendBuffer.sendPacket(succeedNotif);
 					}
 				}
 			}
 		}
 		
 		// TODO : manage GameInvitationAnswerPacket
+		else if (notification instanceof GameInvitationAnswerPacket)
+		{
+			System.err.println("GameInvitationAnswerPacket");
+		}
 		
 		// Receive a simple notification
 		else 
