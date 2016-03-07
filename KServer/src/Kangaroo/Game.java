@@ -208,7 +208,7 @@ public class Game implements Runnable
 					}
 					else
 					{
-						System.err.println("Game thread : received unreadable packet : " + gamePackets.get(i).getClass());
+						System.err.println("Game thread : received unreadable packet : " + gamePackets.get(i).getClass() + " in " + state + " state");
 					}
 				}
 			}

@@ -212,7 +212,7 @@ public class InscriptionStage extends ConnectedStage
 		}
 		else
 		{
-			other.setText("Les mots de passes ne orrespondent pas");
+			other.setText("Les mots de passes ne correspondent pas");
 		}
 	}
 	

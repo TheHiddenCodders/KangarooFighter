@@ -97,6 +97,7 @@ public class GameProcessor implements Runnable
 					}
 					
 					// Compute D : the eloRate
+					// TODO FIX: can't get a player from ip if he is dc
 					float D = (float) (1/(1 + Math.pow(10, -(pp.getPlayerFromIp(serverGameEnded.game.getP1().getIp()).getElo() - pp.getPlayerFromIp(serverGameEnded.game.getP2().getIp()).getElo())/400)));
 					
 					// If player are still in game

@@ -46,8 +46,8 @@ public class Network extends Client
 	{
 		if (debug)
 		{
-			//System.out.println("While on stage " + currentStage.getClass().getSimpleName());
-			//System.out.println("Received : " + o.toString());
+			System.out.println("While on stage " + currentStage.getClass().getSimpleName());
+			System.out.println("Received : " + o.toString());
 		}
 		
 		// If it's a player packet, update player

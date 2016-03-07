@@ -91,10 +91,7 @@ public class Main extends ApplicationAdapter
 			System.out.println("Going to " + stage.getClass().getSimpleName());
 		
 		if (network != null)
-		{
-			System.out.println("Network updated");
 			network.setStage(stage);
-		}
 		else
 			System.out.println("Network not updated");
 		
