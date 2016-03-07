@@ -333,14 +333,15 @@ public class Game implements Runnable
 		serverPacket.opponent = getOpponent(sender).getKangarooPacket();
 		
 		// If the actual round is ended (2sec)
-		if (serverPacket.time >= 2000)
+		if (serverPacket.time >= 1000)
 		{
 			// Send the result packet and wait for client ready
 			previousResult.add( new RoundResultPacket() );
-			
-			// Fill the packet in
-			previousResult.get(previousResult.size() - 1).winner = serverPacket.player;
-			previousResult.get(previousResult.size() - 1).loser = serverPacket.opponent;
+
+			// Fill the packet in (NERISMA: add winner name and change winner/loser by player/opponent)
+			previousResult.get(previousResult.size() - 1).winnerName = p1.getName();
+			previousResult.get(previousResult.size() - 1).player = serverPacket.player;
+			previousResult.get(previousResult.size() - 1).opponent = serverPacket.opponent;
 			
 			// If this isn't the 3rd round
 			if (previousResult.size() < 3)
@@ -379,7 +380,7 @@ public class Game implements Runnable
 		
 		for (RoundResultPacket result : previousResult)
 		{
-			if (result.winner == serverPacket.player)
+			if (result.winnerName == p1.getName())
 				p1Win++;
 		}
 		
@@ -434,5 +435,10 @@ public class Game implements Runnable
 	public Player getP2()
 	{
 		return p2;
+	}
+	
+	public ArrayList<RoundResultPacket> getRoundResults()
+	{
+		return previousResult;
 	}
 }

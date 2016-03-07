@@ -4,13 +4,14 @@ public class RoundResultPacket extends Packets
 {
 	private static final long serialVersionUID = -5449562136787855633L;
 	
-	public KangarooPacket winner, loser;
+	public KangarooPacket player, opponent;
+	public String winnerName;
 	
 	public RoundResultPacket(RoundResultPacket roundResultPacket) 
 	{
 		super(roundResultPacket.getIp());
-		this.winner = new KangarooPacket(roundResultPacket.winner);
-		this.loser = new KangarooPacket(roundResultPacket.loser);
+		this.player = new KangarooPacket(roundResultPacket.player);
+		this.opponent = new KangarooPacket(roundResultPacket.opponent);
 	}
 
 	public RoundResultPacket() 

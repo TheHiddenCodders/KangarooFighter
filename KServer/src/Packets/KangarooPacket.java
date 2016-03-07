@@ -10,6 +10,7 @@ public class KangarooPacket extends Packets
 	public int state;
 	public boolean flip;
 	public float speed;
+	public int hits;
 	
 	public KangarooPacket(KangarooPacket player) 
 	{
@@ -21,6 +22,7 @@ public class KangarooPacket extends Packets
 		this.state = player.state;
 		this.flip = player.flip;
 		this.speed = player.speed;
+		this.hits = player.hits;
 	}
 
 	public KangarooPacket() 
@@ -38,6 +40,7 @@ public class KangarooPacket extends Packets
 				+ "- [health]: " + health + "\n"
 				+ "- [damage]: " + damage + "\n"
 				+ "- [state]: " + state + "\n"
-				+ "- [flip]: " + flip + "\n";
+				+ "- [flip]: " + flip + "\n"
+				+ "- [hits]: " + hits + "\n";
 	}
 }

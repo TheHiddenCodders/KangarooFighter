@@ -37,11 +37,13 @@ public class Main extends ApplicationAdapter
 		BitmapFont koreanFont = new BitmapFont(Gdx.files.internal("ui/korean.fnt"));
 		BitmapFont korean32Font = new BitmapFont(Gdx.files.internal("ui/korean-32.fnt"));
 		BitmapFont arialFont = new BitmapFont(Gdx.files.internal("ui/arial.fnt"));
+		BitmapFont dotum32Font = new BitmapFont(Gdx.files.internal("ui/dotum-32.fnt"));
 		
 		// Add fonts 
 		skin.add("korean", koreanFont, BitmapFont.class);
 		skin.add("korean-32", korean32Font, BitmapFont.class);
 		skin.add("arial", arialFont, BitmapFont.class);
+		skin.add("dotum-32", dotum32Font, BitmapFont.class);
 		
 		// Get prefs
 		prefs = Gdx.app.getPreferences("KangarooFighters");

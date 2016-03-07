@@ -9,6 +9,7 @@ import Packets.GameEndedPacket;
 import Packets.GameReadyPacket;
 import Packets.MatchMakingPacket;
 import Packets.Packets;
+import Packets.RoundResultPacket;
 import Packets.ServerGameEndedPacket;
 import Server.BufferPacket;
 import ServerInfo.PlayerProcessor;
@@ -107,8 +108,8 @@ public class GameProcessor implements Runnable
 						// Send a GameEndedPacket to p1
 						GameEndedPacket P1gameEnded = new GameEndedPacket();
 						
-						// TODO : fill roundResult
-						P1gameEnded.roundResults = null;
+						// Fill round results
+						P1gameEnded.roundResults = serverGameEnded.game.getRoundResults().toArray(new RoundResultPacket[serverGameEnded.game.getRoundResults().size()]);
 						// TODO : manage elo change - Apply elo change in main thread
 						P1gameEnded.eloChange = (int)((p1W - D)*20);
 							
@@ -125,7 +126,7 @@ public class GameProcessor implements Runnable
 						GameEndedPacket P2gameEnded = new GameEndedPacket();
 						
 						// TODO : fill roundResult
-						P2gameEnded.roundResults = null;
+						P2gameEnded.roundResults = serverGameEnded.game.getRoundResults().toArray(new RoundResultPacket[serverGameEnded.game.getRoundResults().size()]);
 						// TODO : manage elo change - Apply elo change in main thread
 						P2gameEnded.eloChange = (int)((p2W - D)*20);
 						

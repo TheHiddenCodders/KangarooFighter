@@ -1,5 +1,6 @@
 package Stages;
 
+import Class.ColoredLabel;
 import Class.ConnectedStage;
 import Class.Game;
 import Client.Main;
@@ -27,8 +28,9 @@ public class EndGameStage extends ConnectedStage
 	
 	private Image header;
 	private Image background;
+	private Image[] rounds, healths, hits;
 	private TextButton replay, home;
-	private Label eloChange;
+	private ColoredLabel eloChange;
 	private Label playerName, opponentName, roundDuration;
 	private Label[] playerHealths, opponentHealths, playerHits, opponentHits, roundDurations;
 
@@ -42,6 +44,19 @@ public class EndGameStage extends ConnectedStage
 		
 		// Store game 
 		this.game = game;
+		
+		// To test 
+		this.game.getRoundResults()[0].winnerName = game.getKPlayer().getName();
+		this.game.getRoundResults()[0].player.health = 11;
+		this.game.getRoundResults()[0].player.hits = 12;
+		this.game.getRoundResults()[0].opponent.health = 0;
+		this.game.getRoundResults()[0].opponent.hits = 15;
+		this.game.getRoundResults()[1].winnerName = game.getKPlayer().getName();
+		this.game.getRoundResults()[1].player.health = 11;
+		this.game.getRoundResults()[1].player.hits = 12;
+		this.game.getRoundResults()[1].opponent.health = 0;
+		this.game.getRoundResults()[1].opponent.hits = 15;
+		this.game.getRoundResults()[2] = null;
 		
 		initDataReceived();
 	}
@@ -69,14 +84,14 @@ public class EndGameStage extends ConnectedStage
 		
 		// Replay button
 		replay = new TextButton("Rejouer", main.skin);
-		replay.setSize(100, 50);
-		replay.setPosition(800 - replay.getWidth() - 10, 10);
+		replay.setSize(100, 35);
+		replay.setPosition(800 - replay.getWidth() - 5, 5);
 		replay.setColor(Color.TAN);
 		
 		// Home button
 		home = new TextButton("Accueil", main.skin);
-		home.setSize(100, 50);
-		home.setPosition(replay.getX() - replay.getWidth() - 10, 10);
+		home.setSize(100, 35);
+		home.setPosition(5, 5);
 	}
 
 	@Override
@@ -93,8 +108,12 @@ public class EndGameStage extends ConnectedStage
 		header.setY(background.getHeight());
 		
 		// Elo change
-		eloChange = new Label(String.valueOf(game.getGameEndedPacket().eloChange), main.skin);
-		eloChange.setPosition(390, 300);
+		if (game.getGameEndedPacket().eloChange > 0)
+			eloChange = new ColoredLabel("+" + game.getGameEndedPacket().eloChange + "<c0> elo </>", main.skin, Color.TAN);
+		else
+			eloChange = new ColoredLabel(game.getGameEndedPacket().eloChange + "<c0> elo </>", main.skin, Color.TAN);
+		
+		eloChange.setPosition(800 / 2 - eloChange.getWidth() / 2, 310);
 		
 		// Opponent name
 		opponentName = new Label(game.getKOpponent().getName(), main.skin);
@@ -102,56 +121,98 @@ public class EndGameStage extends ConnectedStage
 		
 		// Player name
 		playerName = new Label(game.getKPlayer().getName(), main.skin);
+		playerName.setColor(Color.TAN);
 		playerName.setPosition(50, opponentName.getY() + opponentName.getHeight() + 10);	
 				
-		// Init Labels dependng of round size
+		// Init Labels depending of round size
 		playerHealths = new Label[game.getRoundResults().length];
 		opponentHealths = new Label[game.getRoundResults().length];
 		playerHits = new Label[game.getRoundResults().length];
 		opponentHits = new Label[game.getRoundResults().length];
 		roundDurations = new Label[game.getRoundResults().length];
 		
+		// Init images depending of round size
+		rounds = new Image[game.getRoundResults().length];
+		healths = new Image[game.getRoundResults().length];
+		hits = new Image[game.getRoundResults().length];
+		
+		
 		// Fill labels
+		System.err.println("Rounds : " + game.getRoundResults().length);
 		for (int i = 0; i < game.getRoundResults().length; i++)		
 		{
-			// TODO : change winners and losers by player and opponent in round result packet
-			
-			// Determine who is who
-			if (game.getWinnerName().equals(main.player.getName()))
-			{	
-				// Init player health
-				playerHealths[i] = new Label(String.valueOf(game.getRoundResults()[i].winner.health), main.skin);
-				playerHealths[i].setPosition(200 + 100 * i, playerName.getY());
-				
-				// Init opponent health
-				opponentHealths[i] = new Label(String.valueOf(game.getRoundResults()[i].loser.health), main.skin);
-				opponentHealths[i].setPosition(200 + 100 * i, opponentName.getY());
-			}
-			else
+			if (game.getRoundResults()[i] != null)
 			{
+				// This means player win the round i
+				if (game.getRoundResults()[i].winnerName == main.player.getName())
+					rounds[i] = new Image(new Texture(Gdx.files.internal("sprites/endgamestage/roundwin.png")));
+				else
+					rounds[i] = new Image(new Texture(Gdx.files.internal("sprites/endgamestage/roundlose.png")));
+				
+				// Place the round image
+				rounds[i].setPosition(165 + i * 200, 200);
+				
+				// Labels
 				// Init player health
-				playerHealths[i] = new Label(String.valueOf(game.getRoundResults()[i].loser.health), main.skin);
-				playerHealths[i].setPosition(200 + 100 * i, playerName.getY());
+				playerHealths[i] = new Label(String.valueOf(game.getRoundResults()[i].player.health), main.skin);
 				
 				// Init opponent health
-				opponentHealths[i] = new Label(String.valueOf(game.getRoundResults()[i].winner.health), main.skin);
-				opponentHealths[i].setPosition(200 + 100 * i, opponentName.getY());
-			}
+				opponentHealths[i] = new Label(String.valueOf(game.getRoundResults()[i].opponent.health), main.skin);
 				
-			// TODO : Add hits in round results
-			
-			// Init player hits
-			playerHits[i] = new Label("0", main.skin);
-			playerHits[i].setPosition(200 + 100 * i, playerName.getY());
-			
-			// Init opponent hits
-			opponentHits[i] = new Label("0", main.skin);
-			opponentHits[i].setPosition(200 + 100 * i, opponentName.getY());
-			
-			// Init round duration
-			// TODO : Store round duration in round result packet
-			roundDurations[i] = new Label("0:00", main.skin);
-			roundDurations[i].setPosition(200 + 100 * i, roundDuration.getY());
+				// Init player hits
+				playerHits[i] = new Label(String.valueOf(game.getRoundResults()[i].player.hits), main.skin);
+				
+				// Init opponent hits
+				opponentHits[i] = new Label(String.valueOf(game.getRoundResults()[i].opponent.hits), main.skin);
+				
+				// Health and hit images
+				// If player health > to opponent health
+				if (game.getRoundResults()[i].player.health > game.getRoundResults()[i].opponent.health)
+				{
+					healths[i] = new Image(new Texture(Gdx.files.internal("sprites/endgamestage/lifewin.png")));
+					playerHealths[i].setColor(Color.TAN);
+					opponentHealths[i].setColor(Color.LIGHT_GRAY);
+				}
+				else if (game.getRoundResults()[i].player.health < game.getRoundResults()[i].opponent.health)
+				{
+					healths[i] = new Image(new Texture(Gdx.files.internal("sprites/endgamestage/lifelose.png")));
+					opponentHealths[i].setColor(Color.TAN);
+					playerHealths[i].setColor(Color.LIGHT_GRAY);
+				}
+				else
+					healths[i] = new Image(new Texture(Gdx.files.internal("sprites/endgamestage/life.png")));
+				
+				// Set pos
+				healths[i].setPosition(rounds[i].getX(), rounds[i].getY() - healths[i].getHeight() - 10);
+				
+				// If player hits > to opponent hits
+				if (game.getRoundResults()[i].player.hits > game.getRoundResults()[i].opponent.hits)
+				{
+					hits[i] = new Image(new Texture(Gdx.files.internal("sprites/endgamestage/hitwin.png")));
+					playerHits[i].setColor(Color.TAN);
+					opponentHits[i].setColor(Color.LIGHT_GRAY);
+				}
+				else if (game.getRoundResults()[i].player.hits < game.getRoundResults()[i].opponent.hits)
+				{
+					hits[i] = new Image(new Texture(Gdx.files.internal("sprites/endgamestage/hitlose.png")));
+					opponentHits[i].setColor(Color.TAN);
+					playerHits[i].setColor(Color.LIGHT_GRAY);
+				}
+				else
+					hits[i] = new Image(new Texture(Gdx.files.internal("sprites/endgamestage/hit.png")));
+					
+				// Set pos
+				hits[i].setPosition(healths[i].getX() + healths[i].getWidth() + 15, rounds[i].getY() - hits[i].getHeight() - 10);
+				playerHealths[i].setPosition(healths[i].getX() + healths[i].getWidth() / 2 - playerHealths[i].getWidth() / 2, playerName.getY());
+				opponentHealths[i].setPosition(healths[i].getX() + healths[i].getWidth() / 2 - opponentHealths[i].getWidth() / 2, opponentName.getY());
+				playerHits[i].setPosition(hits[i].getX() + hits[i].getWidth() / 2 - playerHits[i].getWidth() / 2, playerName.getY());
+				opponentHits[i].setPosition(hits[i].getX() + hits[i].getWidth() / 2 - opponentHits[i].getWidth() / 2, opponentName.getY());
+				
+				// Init round duration
+				// TODO : Store round duration in round result packet
+				roundDurations[i] = new Label("0:00", main.skin);
+				roundDurations[i].setPosition(rounds[i].getX() + rounds[i].getWidth() / 2 - roundDurations[i].getWidth() / 2, roundDuration.getY());
+			}
 		}
 	}
 
@@ -219,12 +280,20 @@ public class EndGameStage extends ConnectedStage
 		addActor(opponentName);
 		addActor(eloChange);
 		
-		// Add labels
-		for (int i = 0; i < playerHealths.length; i++)
+		// Add labels and images
+		for (int i = 0; i < game.getRoundResults().length; i++)
 		{
-			addActor(playerHealths[i]);
-			addActor(opponentHealths[i]);
-			addActor(roundDurations[i]);
+			if (game.getRoundResults()[i] != null)
+			{
+				addActor(rounds[i]);
+				addActor(healths[i]);
+				addActor(hits[i]);
+				addActor(playerHealths[i]);
+				addActor(opponentHealths[i]);
+				addActor(playerHits[i]);
+				addActor(opponentHits[i]);
+				addActor(roundDurations[i]);
+			}
 		}
 	}
 

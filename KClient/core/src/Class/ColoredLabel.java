@@ -3,6 +3,7 @@ package Class;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -273,7 +274,7 @@ public class ColoredLabel extends Table
 		}
 		
 		// Find the string to sub to have the right size
-		while (tempWidth + parts.get(labelOutOfLimit).getWidth() >= maxWidth)
+		while (tempWidth + parts.get(labelOutOfLimit).getWidth() >= maxWidth && strDeleted.length() <= parts.get(labelOutOfLimit).getText().toString().length())
 		{	
 			String temp = parts.get(labelOutOfLimit).getText().toString();
 			temp = temp.substring(0, temp.length() - 1);
@@ -290,5 +291,11 @@ public class ColoredLabel extends Table
 		parts.get(parts.size() - 1).setColor(parts.get(labelOutOfLimit).getColor());
 		parts.get(parts.size() - 1).setPosition(getX(), 5);
 		addActor(parts.get(parts.size() - 1));
+	}
+	
+	public void setFont(BitmapFont font)
+	{
+		for (Label part : parts)
+			part.getStyle().font = font;
 	}
 }

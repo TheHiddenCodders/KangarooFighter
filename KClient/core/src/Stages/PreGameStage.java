@@ -24,7 +24,7 @@ public class PreGameStage extends ConnectedStage
 	private Timer timer;
 	
 	/** When timer reach this value, pre-game stage is over */
-	private static final float DELAY = 6f;
+	private static final float DELAY = 2f;
 	
 	/*
 	 * Components

@@ -136,18 +136,6 @@ public class Game
 			}
 		}
 		
-		// Change winner name
-		if (packet.winner.x == player.getPacket().x)
-		{
-			winnerName = player.getName();
-			System.out.println("Player wins");
-		}
-		else if (packet.winner.x == opponent.getPacket().x)
-		{
-			winnerName = opponent.getName();
-			System.out.println("Opponent wins");
-		}
-		
 		// Init next round
 		initRound();
 	}
@@ -250,6 +238,12 @@ public class Game
 	public void setEndGamePacket(GameEndedPacket data)
 	{
 		gameEndedPacket = data;
+		roundResults = data.roundResults;
+		
+		if (data.eloChange > 0)
+			winnerName = player.getName();
+		else
+			winnerName = opponent.getName();
 	}
 	
 	public GameEndedPacket getGameEndedPacket()
