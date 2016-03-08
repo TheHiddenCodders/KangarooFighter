@@ -2,6 +2,7 @@ package Stages;
 
 import Class.ConnectedStage;
 import Client.Main;
+import Packets.GameEndedPacket;
 import Packets.InitGamePacket;
 import Utils.Timer;
 
@@ -195,15 +196,14 @@ public class PreGameStage extends ConnectedStage
 	@Override
 	protected void onDataReceived() 
 	{
-		// TODO Auto-generated method stub
-		
+		main.setStage(new HomeStage(main));		
 	}
 
 	@Override
 	public void setData(Object data)
 	{
-		// TODO Auto-generated method stub
-		
+		if (data instanceof GameEndedPacket)
+			dataReceived();
 	}
 
 }
