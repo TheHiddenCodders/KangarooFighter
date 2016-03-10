@@ -1,5 +1,6 @@
 package Client;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -80,6 +81,9 @@ public abstract class Client extends Socket implements Runnable
 		} catch (ClassNotFoundException e)
 		{
 			e.printStackTrace();
+		} catch (EOFException e)
+		{
+			System.err.println("Socket closed");
 		} catch (IOException e)
 		{
 			e.printStackTrace();

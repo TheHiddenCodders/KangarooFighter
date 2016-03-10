@@ -45,7 +45,7 @@ public class EndGameStage extends ConnectedStage
 		// Store game 
 		this.game = game;
 		
-		// To test 
+		/* To test 
 		this.game.getRoundResults()[0].winnerName = game.getKPlayer().getName();
 		this.game.getRoundResults()[0].player.health = 11;
 		this.game.getRoundResults()[0].player.hits = 12;
@@ -56,7 +56,7 @@ public class EndGameStage extends ConnectedStage
 		this.game.getRoundResults()[1].player.hits = 12;
 		this.game.getRoundResults()[1].opponent.health = 0;
 		this.game.getRoundResults()[1].opponent.hits = 15;
-		this.game.getRoundResults()[2] = null;
+		this.game.getRoundResults()[2] = null;*/
 		
 		initDataReceived();
 	}

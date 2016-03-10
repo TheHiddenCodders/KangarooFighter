@@ -44,46 +44,49 @@ public class Network extends Client
 	@Override
 	public void onReceived(Object o)
 	{
-		if (debug)
+		if (o != null)
 		{
-			System.out.println("While on stage " + currentStage.getClass().getSimpleName());
-			System.out.println("Received : " + o.toString());
-		}
-		
-		// If it's a player packet, update player
-		if (o.getClass().isAssignableFrom(PlayerPacket.class))
-		{			
-			if (main.player != null)
+			if (debug)
 			{
-				main.player.update((PlayerPacket) o);
-				System.out.println("Player updated");
+				System.out.println("While on stage " + currentStage.getClass().getSimpleName());
+				System.out.println("Received : " + o.toString());
 			}
-			else
+			
+			// If it's a player packet, update player
+			if (o.getClass().isAssignableFrom(PlayerPacket.class))
+			{			
+				if (main.player != null)
+				{
+					main.player.update((PlayerPacket) o);
+					System.out.println("Player updated");
+				}
+				else
+				{
+					main.player = new Player((PlayerPacket) o);
+					System.out.println("Player created");
+				}
+			}
+			
+			if (o.getClass().isAssignableFrom(FriendsPacket.class))
 			{
-				main.player = new Player((PlayerPacket) o);
-				System.out.println("Player created");
+				main.player.updateFriend((FriendsPacket) o);
+				System.out.println("Friends updated");
 			}
+			
+			if (o instanceof Notification)
+			{
+				main.player.updateNotification((Notification) o);
+				System.out.println("Notifications updated");
+			}
+			
+			if (o instanceof ServerInfoPacket)
+			{
+				main.serverInfos = (ServerInfoPacket) o;
+				System.out.println("Server info updated");
+			}
+	
+			currentStage.setData(o);
 		}
-		
-		if (o.getClass().isAssignableFrom(FriendsPacket.class))
-		{
-			main.player.updateFriend((FriendsPacket) o);
-			System.out.println("Friends updated");
-		}
-		
-		if (o instanceof Notification)
-		{
-			main.player.updateNotification((Notification) o);
-			System.out.println("Notifications updated");
-		}
-		
-		if (o instanceof ServerInfoPacket)
-		{
-			main.serverInfos = (ServerInfoPacket) o;
-			System.out.println("Server info updated");
-		}
-
-		currentStage.setData(o);
 		
 	}
 	
