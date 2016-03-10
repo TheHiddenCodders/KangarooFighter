@@ -7,6 +7,7 @@ import Class.ProgressBar;
 import Client.Main;
 import Enums.GameStates;
 import Packets.ClientReadyPacket;
+import Packets.GameClientPacket;
 import Packets.GameEndedPacket;
 import Packets.GameReadyPacket;
 import Packets.GameServerPacket;
@@ -14,6 +15,7 @@ import Packets.InitGamePacket;
 import Packets.RoundResultPacket;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -22,6 +24,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 
 public class GameStage extends ConnectedStage 
 {
+	/*
+	 * Controls
+	 */
+	
+	private static int AKey = Keys.A;
+	private static int ZKey = Keys.Z;
+	private static int RKey = Keys.R;
+	private static int leftKey = Keys.LEFT;
+	private static int rightKey = Keys.RIGHT;
+	private static int upKey = Keys.UP;
+	private static int downKey = Keys.DOWN;
+	
 	/*
 	 * Attributes
 	 */
@@ -162,7 +176,7 @@ public class GameStage extends ConnectedStage
 			game.setState(GameStates.Running);
 			
 			// Send first client packet
-			main.network.send(game.getClientPacket());
+			main.network.send(getClientPacket());
 			
 			onDataReceived();
 		}
@@ -180,8 +194,7 @@ public class GameStage extends ConnectedStage
 			if (game.getState() == GameStates.Running)
 			{
 				// Send new client packet
-				System.err.println(game.getClientPacket());
-				main.network.send(game.getClientPacket());
+				main.network.send(getClientPacket());
 			}
 		}
 		
@@ -209,5 +222,46 @@ public class GameStage extends ConnectedStage
 			// Tell the stage that data has been received to treat them
 			dataReceived();
 		}
+	}
+	
+	public GameClientPacket getClientPacket()
+	{
+		GameClientPacket packet = new GameClientPacket();
+		if (Gdx.input.isKeyPressed(leftKey))
+			packet.leftArrow = true;
+		else
+			packet.leftArrow = false;
+	
+		if (Gdx.input.isKeyPressed(rightKey))			
+			packet.rightArrow = true;
+		else
+			packet.rightArrow = false;
+		
+		if (Gdx.input.isKeyPressed(upKey))
+			packet.topArrow = true;
+		else
+			packet.topArrow = false;
+		
+		if (Gdx.input.isKeyPressed(downKey))
+			packet.bottomArrow = true;
+		else
+			packet.bottomArrow = false;
+		
+		if (Gdx.input.isKeyPressed(AKey))
+			packet.leftPunch = true;
+		else
+			packet.leftPunch = false;
+		
+		if (Gdx.input.isKeyPressed(ZKey))
+			packet.rightPunch = true;
+		else
+			packet.rightPunch= false;
+		
+		if (Gdx.input.isKeyPressed(RKey))
+			packet.guard = true;
+		else
+			packet.guard = false;
+		
+		return packet;
 	}
 }
