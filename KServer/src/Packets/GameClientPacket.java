@@ -26,4 +26,23 @@ public class GameClientPacket extends Packets
 				+ "- [rightPunch]: " + rightPunch + "\n"
 				+ "- [guard]: " + guard + "\n";
 	}
+	
+	public GameClientPacket()
+	{
+		super();
+	}
+	public GameClientPacket(GameClientPacket copy)
+	{
+		super(copy.getIp());
+		
+		System.err.println("Called");
+		
+		this.leftArrow = copy.leftArrow;
+		this.rightArrow  = copy.rightArrow;
+		this.topArrow = copy.topArrow;
+		this.bottomArrow = copy.bottomArrow;
+		this.leftPunch = copy.leftPunch;
+		this.rightPunch = copy.rightPunch;
+		this.guard = copy.guard;
+	}
 }
