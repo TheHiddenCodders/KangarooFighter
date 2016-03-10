@@ -23,6 +23,7 @@ public class GameInvitationRequestPacket extends Notification
 	
 	public String receiverName;
 	public String senderName;
+	public boolean expired = false;
 
 	@Override
 	public String toString()
