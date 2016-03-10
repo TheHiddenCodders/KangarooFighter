@@ -20,6 +20,7 @@ import Packets.GameInvitationAnswerPacket;
 import Packets.GameInvitationRequestPacket;
 import Packets.HomePacket;
 import Packets.LadderPacket;
+import Packets.LaunchGamePacket;
 import Packets.LoginPacket;
 import Packets.MatchMakingPacket;
 import Packets.Notification;
@@ -562,6 +563,7 @@ public class Main
 						packet.senderName = sender.getName();
 						packet.date = formatter.format(today);
 						packet.message = new String("<c0>" + sender.getName() + "</> veut lancer une partie.");
+						packet.expired = false;
 						
 						// Store the notification
 						packet.setIp(friend.getIp());
@@ -584,10 +586,52 @@ public class Main
 			}
 		}
 		
-		// TODO : manage GameInvitationAnswerPacket
 		else if (notification instanceof GameInvitationAnswerPacket)
 		{
 			System.err.println("GameInvitationAnswerPacket");
+			
+			GameInvitationAnswerPacket packet = (GameInvitationAnswerPacket)notification;
+			
+			// Get sender
+			Player player = pp.getPlayerFromIp(packet.getIp());
+			
+			// Get friend
+			Player friend = pp.isPlayerExist(packet.name);
+			
+			// Check if friend exist
+			if (friend != null)
+			{
+				boolean gameOk = false;
+				
+				// Try to find the associate request
+				for (int i = 0; i < player.getPacket().notifications.size(); i++)
+				{
+					if (player.getPacket().notifications.get(i) instanceof GameInvitationRequestPacket)
+					{
+						GameInvitationRequestPacket castPacket = (GameInvitationRequestPacket)player.getPacket().notifications.get(i);
+						
+						// If sending request stil exist
+						if(castPacket.senderName.equals(friend.getName()) && castPacket.receiverName.equals(player.getName()))
+						{
+							gameOk = true;
+							break;
+						}
+					}
+				}
+				
+				if (gameOk)
+				{
+					// If game can be launched
+					// Send the packet to the GameProcessor
+					gp.mainPackets.sendPacket(new LaunchGamePacket(player.getIp(), friend.getIp()));
+				}
+				else
+				{
+					// If friend can't launch the game
+				}
+				
+				// TODO : when client disconnect, delete GameInvitationRequestPacket store in his friends (to tell he can't do a game)
+			}
 		}
 		
 		// Receive a simple notification

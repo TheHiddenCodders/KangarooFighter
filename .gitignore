@@ -1,1 +1,3 @@
 KServer/bin/Kangaroo/Kangaroo.class
+*.kfs
+KClient/core/src/com/genesys/kclient/Hitbox.java

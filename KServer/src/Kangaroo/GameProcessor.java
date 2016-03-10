@@ -7,6 +7,7 @@ import Packets.DisconnexionPacket;
 import Packets.GameClientPacket;
 import Packets.GameEndedPacket;
 import Packets.GameReadyPacket;
+import Packets.LaunchGamePacket;
 import Packets.MatchMakingPacket;
 import Packets.Packets;
 import Packets.RoundResultPacket;
@@ -58,7 +59,6 @@ public class GameProcessor implements Runnable
 			// Browse the packets received from the main thread
 			for (Packets packet : packets)
 			{
-				// TODO / received a GameEndedPacket from game, to delete this game
 				// If the received packet is a MatchMakingPacket
 				if (packet.getClass().isAssignableFrom(MatchMakingPacket.class))
 				{
@@ -158,8 +158,15 @@ public class GameProcessor implements Runnable
 					// If the client is not in game
 					if (!inGame)
 					{
-						// TODO : Send him a packet to tell him the game is ended
+						// TODO : Send him a notification to tell him the game is ended
 					}
+				}
+				// If the received packet is a GameClientPacket
+				else if (packet.getClass().isAssignableFrom(LaunchGamePacket.class))
+				{
+					LaunchGamePacket launchPacket = (LaunchGamePacket)packet;
+					createGame(pp.getPlayerFromIp(launchPacket.p1Ip),  pp.getPlayerFromIp(launchPacket.p2Ip));
+					// TODO : manage type of game
 				}
 			}
 		}
@@ -221,6 +228,7 @@ public class GameProcessor implements Runnable
 				{
 					// Create a game and launch it in a thread
 					createGame(pp.getPlayerFromIp(waitingPlayers.get(i).getIp()),  pp.getPlayerFromIp(mmPacket.getIp()));
+					// TODO : manage game type
 					
 					// Remove the opponent from the waiting list
 					waitingPlayers.remove(waitingPlayers.get(i));
