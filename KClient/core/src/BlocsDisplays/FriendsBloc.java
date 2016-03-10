@@ -102,5 +102,7 @@ public class FriendsBloc extends Bloc
 				status[i].setVisible(true);
 			}
 		}
+		
+		display.refresh(data);
 	}
 }

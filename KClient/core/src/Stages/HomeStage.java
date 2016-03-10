@@ -1,6 +1,7 @@
 package Stages;
 
 import BlocsDisplays.FriendsBloc;
+import BlocsDisplays.FriendsDisplay;
 import BlocsDisplays.LadderBloc;
 import BlocsDisplays.NewsBloc;
 import BlocsDisplays.PersoBloc;
@@ -389,5 +390,10 @@ public class HomeStage extends ConnectedStage
 	public NotificationsDisplay getNotificationsDisplay()
 	{
 		return notifDisplay;
+	}
+	
+	public FriendsBloc getFriendBloc()
+	{
+		return friendsBloc;
 	}
 }
