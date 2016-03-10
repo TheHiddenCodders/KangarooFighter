@@ -1,8 +1,6 @@
 package Animations;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
-
 import enums.BodyPart;
 
 public class Hitbox
@@ -35,7 +33,7 @@ public class Hitbox
 	{
 		this();
 		
-		globalHitbox.setLocation(hitbox.getGlobalHitbox().x, hitbox.getGlobalHitbox().y);
+		globalHitbox.setPosition(hitbox.getGlobalHitbox().getX(), hitbox.getGlobalHitbox().getY());
 		
 		for (int i = 0; i < hitbox.rectangles.size(); i++)
 		{
@@ -52,28 +50,14 @@ public class Hitbox
 	 * Translate X all the polygons by value
 	 * @param value
 	 */
-	public void translateX(int value)
+	public void translate(float x, float y)
 	{
 		// Translate the global hitbox
-		globalHitbox.translate(value, 0);
+		globalHitbox.translate(x, y);
 			
 		// Translate each rectangle
 		for (Rectangle a : rectangles)
-			a.translate(value, 0);
-	}
-	
-	/**
-	 * Translate Y all the polygons by value
-	 * @param value
-	 */
-	public void translateY(int value)
-	{
-		// Translate the global hitbox
-		globalHitbox.translate(0, value);
-
-		// Translate each rectangle
-		for (Rectangle a : rectangles)
-			a.translate(0, value);
+			a.translate(x, y);
 	}
 	
 	/**
@@ -115,7 +99,7 @@ public class Hitbox
 	{
 		for (Rectangle rect : rectangles)
 		{
-			rect.setLocation(globalHitbox.width - rect.x - rect.width, rect.y);
+			rect.setPosition(globalHitbox.getWidth() - rect.getX() - rect.getWidth(), rect.getY());
 			
 		}
 	}
@@ -149,10 +133,11 @@ public class Hitbox
 		globalHitbox.setSize(w, h);
 	}
 	
-	public void setPosition(int posX, int posY)
+	public void setPosition(float posX, float posY)
 	{
-		int lastPosX = globalHitbox.getLocation().x, lastPosY = globalHitbox.getLocation().y;
-		globalHitbox.setLocation(posY,  posY);
+		float lastPosX = globalHitbox.getX(), lastPosY = globalHitbox.getY();
+		
+		globalHitbox.setPosition(posX,  posY);
 		
 		for (Rectangle rect : rectangles)
 		{

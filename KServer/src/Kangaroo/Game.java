@@ -3,6 +3,7 @@ package Kangaroo;
 import java.util.ArrayList;
 import java.util.Random;
 
+import Animations.Rectangle;
 import Packets.ClientReadyPacket;
 import Packets.DisconnexionPacket;
 import Packets.GameClientPacket;
@@ -333,7 +334,7 @@ public class Game implements Runnable
 		serverPacket.opponent = getOpponent(sender).getKangarooPacket();
 		
 		// If the actual round is ended (10sec)
-		if (serverPacket.time >= 10000)
+		if (serverPacket.time >= 30000)
 		{
 			// Send the result packet and wait for client ready
 			previousResult.add( new RoundResultPacket() );
@@ -367,7 +368,24 @@ public class Game implements Runnable
 		{
 			if (packet.leftArrow)
 			{
-				p1.getKangarooPacket().x += delta * 2;
+				sender.getKangarooPacket().x -= delta * 0.2;
+				sender.getKangaroo().testHitbox.translate(-(float)(delta * 0.2), 0.f);
+				
+				//System.err.println(sender.getKangaroo().testHitbox.getGlobalHitbox().getX() + ", " + sender.getKangaroo().testHitbox.getGlobalHitbox().getY());
+				
+				// If kangaroo is out of screen (right side)
+				if (sender.getKangaroo().testHitbox.getGlobalHitbox().contains(new Rectangle(-100.f, 0.f, 100.f, 480.f) ))
+				{
+					sender.getKangarooPacket().x = 0;
+					sender.getKangaroo().testHitbox.setPosition(0.f, 0.f);
+				}
+				
+				// If kangaroo is out of screen (left side)
+				if (sender.getKangaroo().testHitbox.getGlobalHitbox().contains(new Rectangle(800.f, 0.f, 100.f, 480.f) ))
+				{
+					sender.getKangarooPacket().x = 800 - sender.getKangaroo().testHitbox.getGlobalHitbox().getWidth();
+					sender.getKangaroo().testHitbox.setPosition(0.f, 800 - sender.getKangaroo().testHitbox.getGlobalHitbox().getWidth());
+				}
 			}
 		}
 		

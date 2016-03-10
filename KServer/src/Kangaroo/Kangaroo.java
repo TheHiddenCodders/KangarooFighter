@@ -58,7 +58,7 @@ public class Kangaroo
 	 */
 	private void initAnim()
 	{
-		animations = new ArrayList<ServerAnimation>();
+		/*animations = new ArrayList<ServerAnimation>();
 		
 		animations.add(new ServerAnimation("assets/anims/idle.hba"));
 		animations.add(new ServerAnimation("assets/anims/walk.hba")); // Movement
@@ -74,7 +74,7 @@ public class Kangaroo
 		animations.get(States.guard.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.leftPunch.ordinal()).setMode(ServerAnimation.onePlay);
 		animations.get(States.rightPunch.ordinal()).setMode(ServerAnimation.onePlay);
-		//animations.get(States.idleGuard.ordinal()).setMode(ServerAnimation.foreverPlay);
+		//animations.get(States.idleGuard.ordinal()).setMode(ServerAnimation.foreverPlay);*/
 	}
 	
 	public void flip()
@@ -97,12 +97,12 @@ public class Kangaroo
 	 */
 	public void launchAnimation(int index)
 	{
-		if (animations.get(currentAnimation).getMode() == ServerAnimation.foreverPlay)
+		/*if (animations.get(currentAnimation).getMode() == ServerAnimation.foreverPlay)
 			animations.get(currentAnimation).stop();
 		
 		currentAnimation = index;
 		
-		animations.get(index).start();
+		animations.get(index).start();*/
 	}
 	
 	/**
@@ -112,11 +112,11 @@ public class Kangaroo
 	public void launchAnimation(States state)
 	{
 		//if (animations.get(currentAnimation).getMode() == ServerAnimation.foreverPlay)
-		animations.get(currentAnimation).stop();
+		/*animations.get(currentAnimation).stop();
 		
 		currentAnimation = state.ordinal();
 	
-		animations.get(state.ordinal()).start();
+		animations.get(state.ordinal()).start();/*/
 	}
 
 	public int getWins() 

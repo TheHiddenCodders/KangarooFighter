@@ -1,21 +1,9 @@
 package Animations;
 
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-
-import Utils.Rectangle;
-import Utils.Timer;
-import Utils.Vector2;
 
 public class ServerAnimation 
 {
-	public static final int foreverPlay = 0;
+	/*public static final int foreverPlay = 0;
 	public static final int onePlay = 1;
 	
 	private ArrayList<Hitbox> hitboxes;
@@ -80,7 +68,6 @@ public class ServerAnimation
 	/**
 	 * Load the animation from a file
 	 * @param path
-	 */
 	public void load(String path)
 	{
 		File file = new File(path);
@@ -163,7 +150,6 @@ public class ServerAnimation
 	
 	/*
 	 * Getters - Setters
-	 */
 	
 	public boolean isOver()
 	{
@@ -230,5 +216,5 @@ public class ServerAnimation
 	public Vector2 getOffset()
 	{
 		return offset;
-	}
+	}*/
 }

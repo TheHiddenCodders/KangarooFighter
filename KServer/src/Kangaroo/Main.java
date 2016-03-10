@@ -238,7 +238,6 @@ public class Main
 					// Receive a GameClientPacket
 					else if (readPackets.get(i).getClass().isAssignableFrom(GameClientPacket.class))
 					{
-						System.err.println(readPackets.get(i));
 						// Send this packet to the GameProcessor
 						gp.mainPackets.sendPacket(readPackets.get(i));
 					}
