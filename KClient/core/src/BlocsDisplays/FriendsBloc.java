@@ -47,24 +47,6 @@ public class FriendsBloc extends Bloc
 		title.setPosition(getWidth() / 2 - title.getWidth() / 2, getHeight() - title.getHeight() - 5); 
 		addActor(title);
 		
-		// Make tabs 
-		name = new Label[5];
-		status = new Image[5];
-		
-		for (int i = 0; i < name.length; i++)
-		{
-			name[i] = new Label("", skin);
-			name[i].setPosition(35, getHeight() - 52 - i * 26.5f);
-			name[i].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
-			
-			status[i] = new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/offline.png")));
-			status[i].setPosition(9, getHeight() - 58 - i * 26.5f);
-			status[i].setVisible(false);
-			
-			addActor(name[i]);
-			addActor(status[i]);
-		}
-		
 		// Set background if no friends
 		if (homeStage.main.player.getFriends().size() == 0)
 			setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/background1.png")));
@@ -81,9 +63,42 @@ public class FriendsBloc extends Bloc
 	@Override
 	public void refresh(Object data) 
 	{
+		// Remove old unused image and label
+		if (name != null)
+		{
+			for (int i = 0; i < name.length; i++)
+			{
+				name[i].remove();
+				status[i].remove();
+			}
+		}
+		
 		System.out.println("Refresh friends bloc. Friends size : " + homeStage.main.player.getFriends().size());
 		if (homeStage.main.player.getFriends().size() > 0)
 		{
+			// Make tabs 
+			int tabSize = homeStage.main.player.getFriends().size();
+			
+			if (tabSize > 5)
+				tabSize = 5;
+			
+			name = new Label[tabSize];
+			status = new Image[tabSize];
+			
+			for (int i = 0; i < name.length; i++)
+			{
+				name[i] = new Label("", skin);
+				name[i].setPosition(35, getHeight() - 52 - i * 26.5f);
+				name[i].setColor(105f / 255f, 124f / 255f, 201f / 255f, 1);
+				
+				status[i] = new Image(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/offline.png")));
+				status[i].setPosition(9, getHeight() - 58 - i * 26.5f);
+				status[i].setVisible(false);
+				
+				addActor(name[i]);
+				addActor(status[i]);
+			}
+			
 			setBackground(new Texture(Gdx.files.internal("sprites/homestage/blocs/friends/background.png")));
 			
 			// Fill labels

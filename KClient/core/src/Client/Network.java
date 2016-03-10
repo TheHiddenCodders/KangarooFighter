@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 
 import Class.ConnectedStage;
 import Class.Player;
+import Packets.DeleteFriendPacket;
 import Packets.FriendsPacket;
 import Packets.Notification;
 import Packets.PlayerPacket;
@@ -70,6 +71,12 @@ public class Network extends Client
 			if (o.getClass().isAssignableFrom(FriendsPacket.class))
 			{
 				main.player.updateFriend((FriendsPacket) o);
+				System.out.println("Friends updated");
+			}
+			
+			if (o instanceof DeleteFriendPacket)
+			{
+				main.player.deleteFriend((DeleteFriendPacket) o);
 				System.out.println("Friends updated");
 			}
 			

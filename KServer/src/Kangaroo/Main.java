@@ -10,6 +10,7 @@ import java.util.Date;
 
 import Packets.ClientReadyPacket;
 import Packets.ConnexionPacket;
+import Packets.DeleteFriendPacket;
 import Packets.DisconnexionPacket;
 import Packets.FriendAnswerPacket;
 import Packets.FriendRequestPacket;
@@ -257,6 +258,51 @@ public class Main
 					{
 						// Send this packet to client
 						server.sendBuffer.sendPacket(readPackets.get(i));
+					}
+					
+					// Receive a FriendsPacket
+					else if (readPackets.get(i).getClass().isAssignableFrom(FriendsPacket.class))
+					{
+						// Get the sender 
+						Player sender = pp.getPlayerFromIp(readPackets.get(i).getIp());
+						
+						// Get the packet in his form
+						FriendsPacket receivedPacket = (FriendsPacket) readPackets.get(i);
+						
+						// Browse sender friends
+						for (int j = 0; j < sender.getPacket().friends.size(); j++)
+						{
+							// If names are the same, delete friend found
+							if (sender.getPacket().friends.get(j).name.equals(receivedPacket.name))
+							{
+								// Delete friend
+								sender.getPacket().friends.remove(sender.getPacket().friends.get(j));
+								
+								break;
+							}
+						}
+						
+						// Get the friend
+						Player friend = pp.isPlayerExist(receivedPacket.name);
+						
+						// Browse friend friends
+						for (int j = 0; j < friend.getPacket().friends.size(); j++)
+						{
+							// If names are the same, delete friend found
+							if (friend.getPacket().friends.get(j).name.equals(sender.getName()))
+							{						
+								DeleteFriendPacket deleteFriendPacket = new DeleteFriendPacket(friend.getIp());
+								deleteFriendPacket.friend = friend.getPacket().friends.get(j);
+								
+								// Send friend a delete friend packet
+								server.sendBuffer.sendPacket(deleteFriendPacket);
+								
+								// Delete friend
+								friend.getPacket().friends.remove(friend.getPacket().friends.get(j));
+								
+								break;
+							}
+						}
 					}
 					
 					// Receive an unknown packet

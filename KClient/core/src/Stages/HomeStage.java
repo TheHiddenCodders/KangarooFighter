@@ -1,7 +1,6 @@
 package Stages;
 
 import BlocsDisplays.FriendsBloc;
-import BlocsDisplays.FriendsDisplay;
 import BlocsDisplays.LadderBloc;
 import BlocsDisplays.NewsBloc;
 import BlocsDisplays.PersoBloc;
@@ -10,6 +9,7 @@ import Class.NotificationsDisplay;
 import Class.NotificationsTable;
 import Class.ServerInfoLabel;
 import Client.Main;
+import Packets.DeleteFriendPacket;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
 import Packets.InitGamePacket;
@@ -285,6 +285,14 @@ public class HomeStage extends ConnectedStage
 			// Store packet
 			updateServerInfos = true;
 			System.out.println("ServerInfoPacket receveid");
+			dataReceived();
+		}
+		
+		if (data instanceof DeleteFriendPacket)
+		{
+			// Store packet
+			updateFriends = true;
+			System.out.println("DeleteFriends receveid");
 			dataReceived();
 		}
 	}
