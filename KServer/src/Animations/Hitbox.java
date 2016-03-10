@@ -112,8 +112,12 @@ public class Hitbox
 	 * @param fullWidth
 	 */
 	public void flip()
-	{			
-		// TODO : Flip hitboxes
+	{
+		for (Rectangle rect : rectangles)
+		{
+			rect.setLocation(globalHitbox.width - rect.x - rect.width, rect.y);
+			
+		}
 	}
 	
 	@Override
@@ -143,6 +147,17 @@ public class Hitbox
 	{
 		// TODO : check if the new size contain all rectangle
 		globalHitbox.setSize(w, h);
+	}
+	
+	public void setPosition(int posX, int posY)
+	{
+		int lastPosX = globalHitbox.getLocation().x, lastPosY = globalHitbox.getLocation().y;
+		globalHitbox.setLocation(posY,  posY);
+		
+		for (Rectangle rect : rectangles)
+		{
+			rect.translate(lastPosX - posX, lastPosY - posY);
+		}
 	}
 	
 	public Rectangle getGlobalHitbox()

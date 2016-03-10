@@ -54,6 +54,7 @@ public class GameStage extends ConnectedStage
 		game.getKPlayer().setName(main.player.getName());
 		game.getKOpponent().setName(gamePacket.opponentData.name);
 		
+		Gdx.input.setInputProcessor(this);
 		initDataReceived();
 	}
 	
@@ -214,8 +215,8 @@ public class GameStage extends ConnectedStage
 			game.setState(GameStates.Running);
 			
 			// Launch round animations
-			launchRoundAnimations = true;
-			
+			//launchRoundAnimations = true;
+			main.network.send(game.getClientPacket());
 			onDataReceived();
 		}
 		

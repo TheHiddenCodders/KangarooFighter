@@ -2,6 +2,7 @@ package Kangaroo;
 
 import java.util.ArrayList;
 
+import Animations.Hitbox;
 import Animations.ServerAnimation;
 import Packets.KangarooPacket;
 import enums.States;
@@ -19,6 +20,8 @@ public class Kangaroo
 
 	private ArrayList<ServerAnimation> animations;
 	private int currentAnimation = 0;
+	
+	public Hitbox testHitbox;
 	
 	private int	win = 0;
 	//private Timer speedTimer;
@@ -40,6 +43,10 @@ public class Kangaroo
 		
 		kStats.health = 100;
 		kStats.damage = 5;
+		
+		testHitbox = new Hitbox();
+		testHitbox.setSize(51, 63);
+		testHitbox.setPosition(posX, posY);
 		
 		initAnim();
 	}

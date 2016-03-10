@@ -332,8 +332,8 @@ public class Game implements Runnable
 		serverPacket.player = sender.getKangarooPacket();
 		serverPacket.opponent = getOpponent(sender).getKangarooPacket();
 		
-		// If the actual round is ended (2sec)
-		if (serverPacket.time >= 1000)
+		// If the actual round is ended (10sec)
+		if (serverPacket.time >= 10000)
 		{
 			// Send the result packet and wait for client ready
 			previousResult.add( new RoundResultPacket() );
@@ -360,6 +360,14 @@ public class Game implements Runnable
 				state = GameStates.ended;
 				
 				System.err.println("Game ended");
+			}
+		}
+		// Round running
+		else
+		{
+			if (packet.leftArrow)
+			{
+				p1.getKangarooPacket().x += delta * 2;
 			}
 		}
 		
