@@ -1,5 +1,7 @@
 package Packets;
 
+import Enums.GameTypes;
+
 
 public class InitGamePacket extends Packets
 {
@@ -15,6 +17,7 @@ public class InitGamePacket extends Packets
 
 	private static final long serialVersionUID = -2707492392522937092L;
 	
+	public GameTypes gameType;
 	public KangarooPacket player, opponent;
 	public PlayerPacket opponentData;
 	public String mapPath;

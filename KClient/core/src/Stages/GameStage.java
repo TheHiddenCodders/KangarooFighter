@@ -12,10 +12,12 @@ import Packets.GameReadyPacket;
 import Packets.GameServerPacket;
 import Packets.InitGamePacket;
 import Packets.RoundResultPacket;
+import Utils.Timer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -27,6 +29,7 @@ public class GameStage extends ConnectedStage
 	 */
 	
 	private Game game;
+	private boolean launchRoundAnimations = false;
 	
 	/*
 	 * Components
@@ -36,6 +39,8 @@ public class GameStage extends ConnectedStage
 	private ProgressBar playerBar, opponentBar;
 	private GameTimer timer;
 	private Label playerName, opponentName;
+	private Image roundTexts[], readyText, winText, loseText;
+	private Timer animationsTimer;
 
 	/*
 	 * Constructors
@@ -58,7 +63,15 @@ public class GameStage extends ConnectedStage
 
 	@Override
 	public void act(float delta)
-	{				
+	{	
+		if (launchRoundAnimations)
+		{
+			// Delete text that 
+			if (animationsTimer.getElapsedTime() > 2)
+			{
+				readyText.addAction(Actions.fadeOut(1));
+			}
+		}
 		super.act(delta);
 	}
 	
@@ -73,6 +86,33 @@ public class GameStage extends ConnectedStage
 	{
 		timer = new GameTimer(new LabelStyle(main.skin.getFont("korean-32"), Color.TAN));
 		timer.setPosition(800 / 2 - timer.getWidth() / 2, 480 - 100);
+		
+		// Round texts
+		roundTexts = new Image[3];
+		for (int i = 0; i < roundTexts.length; i++)
+		{
+			roundTexts[i] = new Image(new Texture(Gdx.files.internal("sprites/gamestage/texts/round" + i + ".png")));
+			roundTexts[i].setPosition(800 / 2 - roundTexts[i].getWidth() / 2, 480 / 2 - roundTexts[i].getHeight() / 2);
+			roundTexts[i].addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1)));
+		}
+		
+		// Ready text
+		readyText = new Image(new Texture(Gdx.files.internal("sprites/gamestage/texts/ready.png")));
+		readyText.setPosition(800 / 2 - readyText.getWidth() / 2, 480 / 2 - readyText.getHeight() / 2);
+		readyText.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(1)));
+		
+		// Win text
+		winText = new Image(new Texture(Gdx.files.internal("sprites/gamestage/texts/win.png")));
+		winText.setPosition(800 / 2 - winText.getWidth() / 2, 480 / 2 - winText.getHeight() / 2);
+		winText.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
+		
+		// Lose text
+		loseText = new Image(new Texture(Gdx.files.internal("sprites/gamestage/texts/win.png")));
+		loseText.setPosition(800 / 2 - readyText.getWidth() / 2, 480 / 2 - readyText.getHeight() / 2);
+		loseText.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
+		
+		// Init animations timer
+		animationsTimer = new Timer();
 	}
 
 	@Override
@@ -155,6 +195,12 @@ public class GameStage extends ConnectedStage
 	{
 		if (game.getState() == GameStates.Ended)
 			main.setStage(new EndGameStage(main, game));
+		
+		if (launchRoundAnimations)
+		{
+			animationsTimer.restart();
+			addActor(readyText);
+		}
 	}
 
 	@Override
@@ -167,8 +213,10 @@ public class GameStage extends ConnectedStage
 			// Set game running
 			game.setState(GameStates.Running);
 			
-			// Set first client packet
-			main.network.send(game.getClientPacket());
+			// Launch round animations
+			launchRoundAnimations = true;
+			
+			onDataReceived();
 		}
 		
 		if (data instanceof GameServerPacket)

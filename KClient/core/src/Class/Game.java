@@ -39,6 +39,7 @@ public class Game
 	private GameEndedPacket gameEndedPacket;
 	private String winnerName;
 	private float time;
+	private int round = 0;
 	
 	/*
 	 * Constructors
@@ -136,6 +137,9 @@ public class Game
 			}
 		}
 		
+		// Add round
+		round++;
+		
 		// Init next round
 		initRound();
 	}
@@ -208,6 +212,11 @@ public class Game
 	public void setState(GameStates state)
 	{
 		this.state = state;
+	}
+	
+	public int getRound()
+	{
+		return round;
 	}
 	
 	public GameStates getState()
