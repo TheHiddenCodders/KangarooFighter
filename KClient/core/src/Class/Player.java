@@ -2,6 +2,7 @@ package Class;
 
 import java.util.ArrayList;
 
+import Packets.DeleteFriendPacket;
 import Packets.FriendsPacket;
 import Packets.Notification;
 import Packets.PlayerPacket;
@@ -54,13 +55,31 @@ public class Player
 			// Replace old element by new one
 			if (this.packet.friends.get(i).name.equals(packet.name))
 			{
+				// Update the friend
 				this.packet.friends.set(i, packet);
+				
 				return;
 			}	
 		}
 		
 		// If the friend didn't exists for the moment, add him
 		this.packet.friends.add(packet);		
+	}
+	
+	public void deleteFriend(DeleteFriendPacket packet)
+	{
+		// Find index of this friend
+		for (int i = 0; i < this.packet.friends.size(); i++)
+		{
+			// Replace old element by new one
+			if (this.packet.friends.get(i).name.equals(packet.friend.name))
+			{
+				// Update the friend
+				this.packet.friends.remove(i);
+				
+				return;
+			}	
+		}
 	}
 	
 	public void updateNotification(Notification packet)

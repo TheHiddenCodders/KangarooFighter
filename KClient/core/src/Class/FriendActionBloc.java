@@ -117,7 +117,9 @@ public class FriendActionBloc extends Table
 			@Override
 			public void clicked(InputEvent event, float x, float y) 
 			{
-				// TODO
+				homeStage.main.network.send(friend);
+				homeStage.main.player.getFriends().remove(friend);
+				homeStage.getFriendBloc().refresh(null);
 				remove();
 				super.clicked(event, x, y);
 			}

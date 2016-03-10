@@ -9,6 +9,7 @@ import Class.NotificationsDisplay;
 import Class.NotificationsTable;
 import Class.ServerInfoLabel;
 import Client.Main;
+import Packets.DeleteFriendPacket;
 import Packets.FriendsPacket;
 import Packets.HomePacket;
 import Packets.InitGamePacket;
@@ -286,6 +287,14 @@ public class HomeStage extends ConnectedStage
 			System.out.println("ServerInfoPacket receveid");
 			dataReceived();
 		}
+		
+		if (data instanceof DeleteFriendPacket)
+		{
+			// Store packet
+			updateFriends = true;
+			System.out.println("DeleteFriends receveid");
+			dataReceived();
+		}
 	}
 
 	/**
@@ -389,5 +398,10 @@ public class HomeStage extends ConnectedStage
 	public NotificationsDisplay getNotificationsDisplay()
 	{
 		return notifDisplay;
+	}
+	
+	public FriendsBloc getFriendBloc()
+	{
+		return friendsBloc;
 	}
 }
