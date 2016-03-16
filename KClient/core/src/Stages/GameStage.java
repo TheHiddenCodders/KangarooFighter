@@ -51,6 +51,8 @@ public class GameStage extends ConnectedStage
 	private GameTimer timer;
 	private Label playerName, opponentName;
 
+	private Label debugGameState, debugPacket, debugControls, debugPlayer, debugOpponent;
+	
 	/*
 	 * Constructors
 	 */
@@ -102,6 +104,23 @@ public class GameStage extends ConnectedStage
 		playerName.setPosition(800 - playerName.getWidth() - 82, 480 - playerName.getHeight() - 37);
 		opponentName = new Label(game.getKOpponent().getName(), new LabelStyle(main.skin.getFont("default-font"), new Color(0.3f, 0.3f, 0.3f, 1)));
 		opponentName.setPosition(80, 480 - opponentName.getHeight() - 37);
+		
+		// Debug
+		debugGameState = new Label("Game state: " + game.getState().name(), main.skin);
+		debugGameState.setColor(Color.TAN);
+		debugGameState.setPosition(800 / 2 - debugGameState.getWidth() / 2, 10);
+		debugPacket = new Label("", main.skin);
+		debugPacket.setColor(Color.CYAN);
+		debugPacket.setPosition(10, 100);
+		debugControls = new Label("", main.skin);
+		debugControls.setColor(Color.GREEN);
+		debugControls.setPosition(500, 100);
+		debugPlayer = new Label("", main.skin);
+		debugPlayer.setColor(Color.RED);
+		debugPlayer.setPosition(10, 350);
+		debugOpponent = new Label("", main.skin);
+		debugOpponent.setColor(Color.RED);
+		debugOpponent.setPosition(500, 350);
 	}
 
 	@Override
@@ -144,10 +163,17 @@ public class GameStage extends ConnectedStage
 		addActor(background);
 		addActor(game.getKPlayer());
 		addActor(game.getKOpponent());
-		addActor(playerBar);
-		addActor(opponentBar);
-		addActor(playerName);
-		addActor(opponentName);
+		//addActor(playerBar);
+		//addActor(opponentBar);
+		//addActor(playerName);
+		//addActor(opponentName);
+		
+		// Add debugs
+		addActor(debugGameState);
+		addActor(debugControls);
+		addActor(debugPacket);
+		addActor(debugPlayer);
+		addActor(debugOpponent);
 		
 		// Add timer after background and all
 		addActor(timer);
@@ -183,12 +209,21 @@ public class GameStage extends ConnectedStage
 		
 		if (data instanceof GameServerPacket)
 		{
+			GameServerPacket packet = (GameServerPacket) data;
+			
 			// Update game statements
-			game.update((GameServerPacket) data);
+			game.update(packet);
 			game.update(Gdx.graphics.getDeltaTime());
 			
 			// Update timer
 			timer.refresh(game.getTime());
+			
+			// Update debug
+			debugPacket.setText(packet.toString());
+			debugControls.setText(getClientPacket().toString());
+			debugGameState.setText("Game state: " + game.getState().name());
+			debugPlayer.setText(game.getKPlayer().getPacket().toString());
+			debugOpponent.setText(game.getKOpponent().getPacket().toString());
 			
 			// If the game isn't ended 
 			if (game.getState() == GameStates.Running)
